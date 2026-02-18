@@ -1,0 +1,1304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AFTERGLO — Permanent Outdoor LED Lighting | South Jordan, Utah</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d1117;
+      --bg2:      #111827;
+      --bg3:      #1a2233;
+      --accent:   #f59e0b;
+      --accent2:  #fbbf24;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #1e293b;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.15;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    img { display: block; width: 100%; }
+
+    section { width: 100%; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-pad { padding: 96px 0; }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+    }
+
+    /* ─── SCROLL ANIMATIONS ────────────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .fade-delay-1 { transition-delay: 0.1s; }
+    .fade-delay-2 { transition-delay: 0.2s; }
+    .fade-delay-3 { transition-delay: 0.3s; }
+    .fade-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── BUTTONS ──────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 24px rgba(245,158,11,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      box-shadow: 0 6px 32px rgba(245,158,11,0.5);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ─── NAVBAR ───────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
+    }
+    #navbar.scrolled {
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(245,158,11,0.7), 0 0 40px rgba(245,158,11,0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-cta { margin-left: 16px; }
+
+    /* Mobile hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h);
+      left: 0; right: 0;
+      background: rgba(13,17,23,0.98);
+      backdrop-filter: blur(16px);
+      padding: 24px;
+      flex-direction: column;
+      gap: 24px;
+      z-index: 999;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── HERO ─────────────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding-top: var(--nav-h);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 110%, rgba(245,158,11,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 50% at 20% 80%,  rgba(245,158,11,0.08) 0%, transparent 60%),
+        linear-gradient(180deg, #0d1117 0%, #0a0f18 100%);
+      z-index: 0;
+    }
+
+    /* Animated ambient orbs */
+    .hero-bg::before, .hero-bg::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      animation: float 8s ease-in-out infinite;
+    }
+    .hero-bg::before {
+      width: 500px; height: 500px;
+      background: rgba(245,158,11,0.07);
+      bottom: -100px; left: -100px;
+      animation-delay: 0s;
+    }
+    .hero-bg::after {
+      width: 400px; height: 400px;
+      background: rgba(245,158,11,0.05);
+      bottom: -50px; right: 0;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50%       { transform: translateY(-30px) scale(1.05); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 860px;
+      padding: 0 24px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(245,158,11,0.1);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .hero-badge::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--accent);
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero-headline {
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      margin-bottom: 24px;
+    }
+    .hero-headline span { color: var(--accent); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 600px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .hero-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      justify-content: center;
+      margin-top: 72px;
+      padding-top: 48px;
+      border-top: 1px solid var(--border);
+    }
+    .hero-stat strong {
+      display: block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .hero-stat span {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0.4;
+      animation: scrollBounce 2s ease-in-out infinite;
+      z-index: 1;
+    }
+    .scroll-hint span { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .scroll-hint svg { width: 20px; height: 20px; }
+    @keyframes scrollBounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* ─── WHY PERMANENT ────────────────────────────────────────────── */
+    #why {
+      background: var(--bg2);
+      padding: 96px 0;
+    }
+    .why-header { text-align: center; margin-bottom: 64px; }
+    .why-header .section-sub { margin: 0 auto; text-align: center; }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .feature-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+    .feature-card:hover { border-color: rgba(245,158,11,0.3); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .feature-card:hover::before { transform: scaleX(1); }
+
+    .card-icon {
+      width: 52px; height: 52px;
+      background: rgba(245,158,11,0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      font-size: 1.5rem;
+    }
+
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .card-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── HOW IT WORKS ─────────────────────────────────────────────── */
+    #how { padding: 96px 0; }
+    .how-header { text-align: center; margin-bottom: 64px; }
+    .how-header .section-sub { margin: 0 auto; text-align: center; }
+
+    .steps-wrap {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 0;
+      position: relative;
+    }
+
+    .steps-wrap::before {
+      content: '';
+      position: absolute;
+      top: 60px;
+      left: calc(16.66% + 24px);
+      right: calc(16.66% + 24px);
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 32px 48px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-num {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #d97706);
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      box-shadow: 0 0 0 8px rgba(245,158,11,0.1), 0 0 32px rgba(245,158,11,0.25);
+    }
+
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .step-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
+
+    /* ─── PRODUCTS / TECH ──────────────────────────────────────────── */
+    #tech {
+      background: var(--bg2);
+      padding: 96px 0;
+    }
+
+    .tech-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .tech-visual {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      aspect-ratio: 4/3;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Decorative LED strip mock-up */
+    .led-mock {
+      width: 90%;
+      height: 90%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .led-strip {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b, #fbbf24, #f59e0b);
+      box-shadow: 0 0 16px rgba(245,158,11,0.8), 0 0 32px rgba(245,158,11,0.4);
+    }
+    .led-strip.blue  { background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6); box-shadow: 0 0 16px rgba(59,130,246,0.8), 0 0 32px rgba(59,130,246,0.4); }
+    .led-strip.green { background: linear-gradient(90deg, #10b981, #34d399, #10b981); box-shadow: 0 0 16px rgba(16,185,129,0.8), 0 0 32px rgba(16,185,129,0.4); }
+    .led-strip.red   { background: linear-gradient(90deg, #ef4444, #f87171, #ef4444); box-shadow: 0 0 16px rgba(239,68,68,0.8),   0 0 32px rgba(239,68,68,0.4); }
+    .led-glow-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.7;
+      margin-top: 16px;
+    }
+
+    .tech-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .tech-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+    .tech-list li::before {
+      content: '✦';
+      color: var(--accent);
+      flex-shrink: 0;
+      margin-top: 2px;
+      font-size: 0.7rem;
+    }
+    .tech-list li strong { color: var(--text); }
+
+    /* ─── GALLERY ──────────────────────────────────────────────────── */
+    #gallery { padding: 96px 0; }
+    .gallery-header { text-align: center; margin-bottom: 48px; }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 16px;
+    }
+    .gallery-grid .g-item:first-child {
+      grid-column: span 2;
+      grid-row: span 1;
+    }
+    .gallery-grid .g-item:nth-child(4) {
+      grid-column: span 2;
+    }
+
+    .g-item {
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 16/10;
+      position: relative;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      cursor: pointer;
+    }
+    .g-item:first-child  { aspect-ratio: 16/9; }
+    .g-item:nth-child(4) { aspect-ratio: 16/9; }
+
+    /* SVG placeholder scenes */
+    .g-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      background: var(--bg3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .g-house {
+      font-size: 4rem;
+      filter: drop-shadow(0 0 20px rgba(245,158,11,0.6));
+    }
+
+    .g-glow-bar {
+      height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+      opacity: 0.7;
+    }
+
+    .g-item:nth-child(1) .g-house { font-size: 6rem; }
+    .g-item:nth-child(2) .g-glow-bar { width: 80%; background: linear-gradient(90deg, transparent, #3b82f6, transparent); }
+    .g-item:nth-child(3) .g-glow-bar { width: 70%; background: linear-gradient(90deg, transparent, #10b981, transparent); }
+    .g-item:nth-child(4) .g-house { font-size: 5rem; }
+    .g-item:nth-child(5) .g-glow-bar { width: 75%; background: linear-gradient(90deg, transparent, #ef4444, transparent); }
+
+    .g-item:hover .g-placeholder { background: var(--bg2); }
+    .g-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
+      padding: 20px 16px 16px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+    .g-item:hover .g-caption { transform: translateY(0); }
+
+    /* ─── TESTIMONIALS ─────────────────────────────────────────────── */
+    #testimonials {
+      background: var(--bg2);
+      padding: 96px 0;
+    }
+    .testi-header { text-align: center; margin-bottom: 64px; }
+    .testi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .testi-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 32px;
+      transition: border-color 0.3s;
+    }
+    .testi-card:hover { border-color: rgba(245,158,11,0.25); }
+
+    .stars { color: var(--accent); font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 20px; }
+
+    .testi-quote {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.8;
+      margin-bottom: 28px;
+      font-style: italic;
+    }
+    .testi-quote::before { content: '"'; font-size: 3rem; color: var(--accent); line-height: 0; vertical-align: -1rem; margin-right: 4px; font-style: normal; }
+
+    .testi-author { display: flex; align-items: center; gap: 14px; }
+    .testi-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #d97706);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .testi-name { font-weight: 600; font-size: 0.9rem; color: #fff; }
+    .testi-loc  { font-size: 0.8rem; color: var(--muted); }
+
+    /* ─── PRICING / CTA BANNER ─────────────────────────────────────── */
+    #cta { padding: 80px 0; }
+    .cta-inner {
+      background: linear-gradient(135deg, var(--bg3) 0%, #1a1f2e 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 72px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 120%, rgba(245,158,11,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .cta-inner::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    .cta-tag {
+      display: inline-block;
+      background: rgba(245,158,11,0.15);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 100px;
+      margin-bottom: 24px;
+    }
+    .cta-headline {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .cta-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .cta-price small { font-size: 1.1rem; color: var(--muted); font-weight: 400; }
+    .cta-sub { font-size: 1rem; color: var(--muted); margin-bottom: 40px; }
+    .cta-actions { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
+    .cta-note { margin-top: 24px; font-size: 0.8rem; color: var(--muted); }
+
+    /* ─── FOOTER ───────────────────────────────────────────────────── */
+    #footer {
+      background: #070b10;
+      border-top: 1px solid var(--border);
+      padding: 64px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+    }
+
+    .footer-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .footer-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(245,158,11,0.6), 0 0 40px rgba(245,158,11,0.25);
+    }
+
+    .footer-desc {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 24px;
+      max-width: 280px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 12px;
+    }
+    .social-link {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .social-link:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: rgba(245,158,11,0.08);
+    }
+
+    .footer-col-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      font-size: 0.875rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--accent); }
+
+    .footer-contact { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-contact li { font-size: 0.875rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+    .footer-contact a { color: var(--muted); transition: color 0.2s; }
+    .footer-contact a:hover { color: var(--accent); }
+
+    .footer-bottom {
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 0.8rem; color: var(--muted); transition: color 0.2s; }
+    .footer-legal a:hover { color: var(--accent); }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+
+      .tech-inner {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+      }
+      .footer-grid > div:first-child {
+        grid-column: span 2;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .gallery-grid .g-item:first-child,
+      .gallery-grid .g-item:nth-child(4) {
+        grid-column: span 2;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .section-pad { padding: 64px 0; }
+      .hero-stats { gap: 24px; }
+      .steps-wrap::before { display: none; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-grid > div:first-child { grid-column: auto; }
+      .cta-inner { padding: 48px 24px; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .gallery-grid .g-item:first-child,
+      .gallery-grid .g-item:nth-child(4) {
+        grid-column: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ──────────────────────────────────────────── -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="#hero" class="nav-logo">AFTER<span>GLO</span></a>
+
+        <ul class="nav-links">
+          <li><a href="#why">Why Permanent</a></li>
+          <li><a href="#how">How It Works</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#testimonials">Reviews</a></li>
+        </ul>
+
+        <a href="#cta" class="btn btn-primary nav-cta">Get a Quote</a>
+
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="#why"          onclick="closeMenu()">Why Permanent</a>
+      <a href="#how"          onclick="closeMenu()">How It Works</a>
+      <a href="#tech"         onclick="closeMenu()">Products</a>
+      <a href="#gallery"      onclick="closeMenu()">Gallery</a>
+      <a href="#testimonials" onclick="closeMenu()">Reviews</a>
+      <a href="#cta" class="btn btn-primary" style="text-align:center" onclick="closeMenu()">Get a Free Quote</a>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-badge">Serving Salt Lake, Davis &amp; Weber Counties</div>
+      <h1 class="hero-headline">
+        Light Up Your Home.<br><span>Year&nbsp;Round.</span>
+      </h1>
+      <p class="hero-sub">
+        Professional permanent roofline LED lighting — installed once, controlled forever.
+        No ladders. No tangles. No seasonal hassle. Just stunning curb appeal on demand.
+      </p>
+      <div class="hero-actions">
+        <a href="#cta" class="btn btn-primary">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          Get a Free Quote
+        </a>
+        <a href="#gallery" class="btn btn-ghost">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>
+          See Our Work
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat fade-in">
+          <strong>500+</strong>
+          <span>Homes Illuminated</span>
+        </div>
+        <div class="hero-stat fade-in fade-delay-1">
+          <strong>16M+</strong>
+          <span>Color Options</span>
+        </div>
+        <div class="hero-stat fade-in fade-delay-2">
+          <strong>5★</strong>
+          <span>Average Rating</span>
+        </div>
+        <div class="hero-stat fade-in fade-delay-3">
+          <strong>10yr</strong>
+          <span>Fixture Warranty</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-hint">
+      <span>Scroll</span>
+      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m-7-7 7 7 7-7"/></svg>
+    </div>
+  </section>
+
+  <!-- ─── WHY PERMANENT ────────────────────────────────────── -->
+  <section id="why">
+    <div class="container">
+      <div class="why-header fade-in">
+        <div class="section-label">The Permanent Advantage</div>
+        <h2 class="section-title">Why Permanent LED Lighting?</h2>
+        <p class="section-sub">Forget the annual ladder climb. AFTERGLO installs a fully integrated system that lives in your roofline — ready whenever you are.</p>
+      </div>
+      <div class="cards-grid">
+        <div class="feature-card fade-in">
+          <div class="card-icon">🏠</div>
+          <h3 class="card-title">Never Hang Lights Again</h3>
+          <p class="card-desc">Our fixtures are permanently mounted in your roofline, protected from the elements and invisible during the day. Holidays, game days, and everyday ambiance — always ready.</p>
+        </div>
+        <div class="feature-card fade-in fade-delay-1">
+          <div class="card-icon">🌈</div>
+          <h3 class="card-title">16 Million Color Options</h3>
+          <p class="card-desc">Full RGBW LED technology means you can match any mood, holiday, or sports team color with pixel-perfect precision — all from your smartphone.</p>
+        </div>
+        <div class="feature-card fade-in fade-delay-2">
+          <div class="card-icon">📱</div>
+          <h3 class="card-title">App-Controlled Anywhere</h3>
+          <p class="card-desc">Schedule scenes, trigger holiday sequences, or change colors on the fly. Our smart controller works with your phone, voice assistants, and home automation.</p>
+        </div>
+        <div class="feature-card fade-in fade-delay-3">
+          <div class="card-icon">⚡</div>
+          <h3 class="card-title">Built to Last a Decade</h3>
+          <p class="card-desc">IP65-rated weatherproof fixtures, UV-stable materials, and low-voltage wiring designed to handle Utah's freeze-thaw cycles and intense summer sun.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── HOW IT WORKS ─────────────────────────────────────── -->
+  <section id="how">
+    <div class="container">
+      <div class="how-header fade-in">
+        <div class="section-label">Simple Process</div>
+        <h2 class="section-title">Up &amp; Running in 3 Steps</h2>
+        <p class="section-sub">We handle everything from design to final walkthrough. Most residential installs are completed in a single day.</p>
+      </div>
+      <div class="steps-wrap">
+        <div class="step fade-in">
+          <div class="step-num">1</div>
+          <h3 class="step-title">Free Consultation</h3>
+          <p class="step-desc">We visit your home, measure your roofline, and build a custom lighting plan. You'll see exactly what it will look like — including a color preview — before we touch a thing.</p>
+        </div>
+        <div class="step fade-in fade-delay-1">
+          <div class="step-num">2</div>
+          <h3 class="step-title">Professional Installation</h3>
+          <p class="step-desc">Our licensed crew mounts flush-channel fixtures along your eaves, runs low-voltage wiring, and connects your smart controller. Clean, fast, and guaranteed.</p>
+        </div>
+        <div class="step fade-in fade-delay-2">
+          <div class="step-num">3</div>
+          <h3 class="step-title">Enjoy Forever</h3>
+          <p class="step-desc">We walk you through the app, set up your first scene, and leave you with a system that's backed by a 10-year fixture warranty and lifetime installation support.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRODUCTS / TECH ──────────────────────────────────── -->
+  <section id="tech">
+    <div class="container">
+      <div class="tech-inner">
+        <div class="tech-visual fade-in">
+          <div class="led-mock">
+            <div class="led-strip"></div>
+            <div class="led-strip blue"></div>
+            <div class="led-strip green"></div>
+            <div class="led-strip red"></div>
+            <div class="led-strip"></div>
+            <p class="led-glow-text">16 million colors — pixel addressable</p>
+          </div>
+        </div>
+        <div class="fade-in fade-delay-1">
+          <div class="section-label">The Hardware</div>
+          <h2 class="section-title">Commercial-Grade Fixtures, Residential Price</h2>
+          <p class="section-sub">We install only professional-quality components — the same technology trusted by luxury hotels and commercial properties.</p>
+          <ul class="tech-list">
+            <li><div><strong>IP65 Weatherproof Rating</strong> — sealed against rain, snow, dust, and UV</div></li>
+            <li><div><strong>RGBW Full-Spectrum LEDs</strong> — warm white + 16 million vivid colors</div></li>
+            <li><div><strong>Low-Voltage DC Wiring</strong> — safe, energy-efficient, code-compliant</div></li>
+            <li><div><strong>Pixel-Addressable Channels</strong> — zone control and animated effects</div></li>
+            <li><div><strong>Wi-Fi Smart Controller</strong> — app, voice, and automation compatible</div></li>
+            <li><div><strong>10-Year Fixture Warranty</strong> — we stand behind every product we install</div></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── GALLERY ──────────────────────────────────────────── -->
+  <section id="gallery">
+    <div class="container">
+      <div class="gallery-header fade-in">
+        <div class="section-label">Our Work</div>
+        <h2 class="section-title">Homes We've Illuminated</h2>
+        <p class="section-sub" style="margin:0 auto; text-align:center;">From warm white elegance to full holiday spectacles — every install is unique.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="g-item fade-in">
+          <div class="g-placeholder">
+            <div class="g-house">🏡</div>
+            <div class="g-glow-bar" style="width:90%"></div>
+            <div class="g-glow-bar" style="width:75%; opacity:0.5"></div>
+          </div>
+          <div class="g-caption">South Jordan — Warm White Roofline</div>
+        </div>
+        <div class="g-item fade-in fade-delay-1">
+          <div class="g-placeholder">
+            <div class="g-house">🏘️</div>
+            <div class="g-glow-bar" style="width:80%;background:linear-gradient(90deg,transparent,#3b82f6,transparent)"></div>
+          </div>
+          <div class="g-caption">Draper — Blue Holiday Display</div>
+        </div>
+        <div class="g-item fade-in fade-delay-2">
+          <div class="g-placeholder">
+            <div class="g-house">🏠</div>
+            <div class="g-glow-bar" style="width:70%;background:linear-gradient(90deg,transparent,#10b981,transparent)"></div>
+          </div>
+          <div class="g-caption">Sandy — Custom Color Scene</div>
+        </div>
+        <div class="g-item fade-in fade-delay-1">
+          <div class="g-placeholder">
+            <div class="g-house" style="font-size:5rem">🏡</div>
+            <div class="g-glow-bar" style="width:85%;background:linear-gradient(90deg,transparent,#f59e0b,#ef4444,transparent)"></div>
+          </div>
+          <div class="g-caption">West Jordan — Patriotic 4th of July</div>
+        </div>
+        <div class="g-item fade-in fade-delay-3">
+          <div class="g-placeholder">
+            <div class="g-house">🏰</div>
+            <div class="g-glow-bar" style="width:75%;background:linear-gradient(90deg,transparent,#ef4444,transparent)"></div>
+          </div>
+          <div class="g-caption">Murray — Christmas Red &amp; Green</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TESTIMONIALS ─────────────────────────────────────── -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="testi-header fade-in">
+        <div class="section-label">Customer Reviews</div>
+        <h2 class="section-title">Neighbors Are Talking</h2>
+      </div>
+      <div class="testi-grid">
+        <div class="testi-card fade-in">
+          <div class="stars">★★★★★</div>
+          <p class="testi-quote">We had AFTERGLO install our system before Christmas and I can't believe how much we love it. The app is so easy — we changed the whole house to green and red in about 10 seconds. Our neighbors keep asking who did it.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">JM</div>
+            <div>
+              <div class="testi-name">Jason &amp; Michelle R.</div>
+              <div class="testi-loc">South Jordan, UT</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card fade-in fade-delay-1">
+          <div class="stars">★★★★★</div>
+          <p class="testi-quote">Best home improvement investment we've made. The crew was professional, finished in one day, and the install is completely invisible in daylight. We use warm white every night now — it makes the house look incredible.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">KT</div>
+            <div>
+              <div class="testi-name">Karen T.</div>
+              <div class="testi-loc">Riverton, UT</div>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card fade-in fade-delay-2">
+          <div class="stars">★★★★★</div>
+          <p class="testi-quote">I was skeptical about the price at first, but after one season of not putting up Christmas lights, I'm a total convert. No ladders, no tangled strands, no forgetting to take them down in March. Worth every penny.</p>
+          <div class="testi-author">
+            <div class="testi-avatar">BC</div>
+            <div>
+              <div class="testi-name">Bryan C.</div>
+              <div class="testi-loc">Draper, UT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRICING / CTA BANNER ─────────────────────────────── -->
+  <section id="cta">
+    <div class="container">
+      <div class="cta-inner">
+        <div class="cta-tag">Limited Spring Installs Available</div>
+        <h2 class="cta-headline">Ready to Transform Your Home?</h2>
+        <div class="cta-price">Starting at $1,500 <small>installed</small></div>
+        <p class="cta-sub">Pricing varies by linear footage. Free on-site consultation with no pressure and no obligation.</p>
+        <div class="cta-actions">
+          <a href="tel:+18015550100" class="btn btn-primary" style="font-size:1rem; padding:16px 36px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Call (801) 555-0100
+          </a>
+          <a href="mailto:hello@afterglo.com" class="btn btn-ghost" style="font-size:1rem; padding:16px 36px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            Email Us
+          </a>
+        </div>
+        <p class="cta-note">✦ No hard sell &nbsp;·&nbsp; Same-day quote &nbsp;·&nbsp; Licensed &amp; insured in Utah</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────── -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">AFTER<span>GLO</span></div>
+          <p class="footer-desc">South Jordan's premier permanent roofline LED lighting company. We design, install, and support smart lighting systems built to last a decade.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Google">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Services</h4>
+          <ul class="footer-links">
+            <li><a href="#why">Permanent Roofline Lighting</a></li>
+            <li><a href="#tech">Smart Controls</a></li>
+            <li><a href="#how">Installation</a></li>
+            <li><a href="#cta">Free Consultation</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Service Areas</h4>
+          <ul class="footer-links">
+            <li><a href="#cta">Salt Lake County</a></li>
+            <li><a href="#cta">Davis County</a></li>
+            <li><a href="#cta">Weber County</a></li>
+            <li><a href="#cta">South Jordan</a></li>
+            <li><a href="#cta">Draper &amp; Sandy</a></li>
+            <li><a href="#cta">West Jordan &amp; Riverton</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Contact</h4>
+          <ul class="footer-contact">
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <a href="tel:+18015550100">(801) 555-0100</a>
+            </li>
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:hello@afterglo.com">hello@afterglo.com</a>
+            </li>
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              South Jordan, Utah 84009
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 Afterglo LLC. All rights reserved. Licensed &amp; Insured in Utah.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── JAVASCRIPT ───────────────────────────────────────── -->
+  <script>
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 20);
+    }, { passive: true });
+
+    // Mobile hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      // Animate hamburger to X
+      const spans = hamburger.querySelectorAll('span');
+      if (menuOpen) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+      }
+    });
+
+    function closeMenu() {
+      menuOpen = false;
+      mobileMenu.classList.remove('open');
+      const spans = hamburger.querySelectorAll('span');
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+
+    // Scroll-triggered fade-in via IntersectionObserver
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+
+    // Active nav link highlight on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navAs = document.querySelectorAll('.nav-links a');
+    const activateNav = () => {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 120) current = s.id;
+      });
+      navAs.forEach(a => {
+        a.style.color = a.getAttribute('href') === '#' + current ? 'var(--accent)' : '';
+      });
+    };
+    window.addEventListener('scroll', activateNav, { passive: true });
+  </script>
+</body>
+</html>
