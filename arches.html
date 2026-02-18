@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LED Arches & Yard Props | AFTERGLO Lighting Co.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #141414;
+      --accent:   #c8921e;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; }
+    section { width: 100%; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section-pad { padding: 96px 0; }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.75;
+    }
+
+    /* Fade animations */
+    .fade-in { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-delay-1 { transition-delay: 0.1s; }
+    .fade-delay-2 { transition-delay: 0.2s; }
+    .fade-delay-3 { transition-delay: 0.3s; }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 24px rgba(200,146,30,0.35); }
+    .btn-primary:hover { background: var(--accent2); box-shadow: 0 6px 32px rgba(200,146,30,0.5); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── NAVBAR ─────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      background: rgba(8,8,8,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+    }
+    .nav-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--accent); }
+
+    .nav-cta-wrap { display: flex; align-items: center; gap: 24px; }
+
+    /* Mobile hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; }
+    .mobile-menu {
+      display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
+      background: rgba(8,8,8,0.98); backdrop-filter: blur(16px);
+      padding: 24px; flex-direction: column; gap: 24px;
+      z-index: 999; border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 8px 0; border-bottom: 1px solid var(--border); }
+
+    /* ─── PAGE HERO ──────────────────────────────────────── */
+    #page-hero {
+      padding-top: var(--nav-h);
+      min-height: 75vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 30% 100%, rgba(200,146,30,0.14) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 50% at 80% 80%,  rgba(168,85,247,0.06) 0%, transparent 60%),
+        linear-gradient(180deg, #080808 0%, #050508 100%);
+    }
+    .page-hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      padding: 80px 0;
+    }
+
+    /* Big animated arch in hero */
+    .hero-arch-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .hero-arch-wrap::before {
+      content: '';
+      position: absolute;
+      width: 300px; height: 300px;
+      border-radius: 50%;
+      background: rgba(200,146,30,0.04);
+      filter: blur(60px);
+    }
+
+    @keyframes colorCycle {
+      0%   { fill: #c8921e; filter: drop-shadow(0 0 6px #c8921e); }
+      14%  { fill: #ef4444; filter: drop-shadow(0 0 6px #ef4444); }
+      28%  { fill: #a855f7; filter: drop-shadow(0 0 6px #a855f7); }
+      42%  { fill: #3b82f6; filter: drop-shadow(0 0 6px #3b82f6); }
+      57%  { fill: #10b981; filter: drop-shadow(0 0 6px #10b981); }
+      71%  { fill: #f59e0b; filter: drop-shadow(0 0 6px #f59e0b); }
+      85%  { fill: #ec4899; filter: drop-shadow(0 0 6px #ec4899); }
+      100% { fill: #c8921e; filter: drop-shadow(0 0 6px #c8921e); }
+    }
+    .led-dot { animation: colorCycle 4s ease-in-out infinite; }
+    .led-dot:nth-child(2)  { animation-delay: 0.25s; }
+    .led-dot:nth-child(3)  { animation-delay: 0.5s; }
+    .led-dot:nth-child(4)  { animation-delay: 0.75s; }
+    .led-dot:nth-child(5)  { animation-delay: 1.0s; }
+    .led-dot:nth-child(6)  { animation-delay: 1.25s; }
+    .led-dot:nth-child(7)  { animation-delay: 1.5s; }
+    .led-dot:nth-child(8)  { animation-delay: 1.75s; }
+    .led-dot:nth-child(9)  { animation-delay: 2.0s; }
+    .led-dot:nth-child(10) { animation-delay: 2.25s; }
+    .led-dot:nth-child(11) { animation-delay: 2.5s; }
+    .led-dot:nth-child(12) { animation-delay: 2.75s; }
+    .led-dot:nth-child(13) { animation-delay: 3.0s; }
+    .led-dot:nth-child(14) { animation-delay: 3.25s; }
+    .led-dot:nth-child(15) { animation-delay: 3.5s; }
+    .led-dot:nth-child(16) { animation-delay: 3.75s; }
+    .led-dot:nth-child(17) { animation-delay: 0.15s; }
+    .led-dot:nth-child(18) { animation-delay: 0.45s; }
+
+    .hero-text-col .hero-headline {
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+    .hero-text-col .hero-headline span { color: var(--accent); }
+    .hero-text-col .hero-sub {
+      font-size: 1.1rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 36px;
+      max-width: 480px;
+    }
+    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* ─── PRODUCTS GRID ──────────────────────────────────── */
+    #products { padding: 96px 0; background: var(--bg2); }
+    .products-header { text-align: center; margin-bottom: 64px; }
+    .products-header .section-sub { margin: 0 auto; text-align: center; }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .product-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+    .product-card:hover { border-color: rgba(200,146,30,0.35); transform: translateY(-6px); box-shadow: 0 24px 64px rgba(0,0,0,0.5); }
+
+    .product-visual {
+      aspect-ratio: 4/3;
+      background: #050505;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 1px solid var(--border);
+    }
+    .product-visual::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 50% at 50% 100%, rgba(200,146,30,0.07) 0%, transparent 70%);
+    }
+
+    .product-badge {
+      position: absolute;
+      top: 12px; right: 12px;
+      background: rgba(200,146,30,0.15);
+      border: 1px solid rgba(200,146,30,0.3);
+      color: var(--accent);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 100px;
+      z-index: 1;
+    }
+
+    .product-info { padding: 28px; }
+    .product-name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .product-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.7; margin-bottom: 20px; }
+    .product-specs { display: flex; gap: 16px; flex-wrap: wrap; }
+    .spec-chip {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* ─── APP DEEP DIVE ──────────────────────────────────── */
+    #app-deep { padding: 96px 0; }
+    .app-deep-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    /* Larger phone mockup */
+    .phone-large {
+      width: 260px;
+      margin: 0 auto;
+      background: #111;
+      border-radius: 44px;
+      border: 2px solid #333;
+      padding: 14px;
+      box-shadow: 0 0 0 1px #222, 0 30px 80px rgba(0,0,0,0.7), 0 0 60px rgba(200,146,30,0.08);
+    }
+    .phone-large .phone-notch {
+      width: 90px; height: 26px;
+      background: #111;
+      border-radius: 0 0 16px 16px;
+      margin: 0 auto 10px;
+      border: 2px solid #222;
+      border-top: none;
+    }
+    .phone-large .phone-screen {
+      background: #0a0a0a;
+      border-radius: 32px;
+      overflow: hidden;
+    }
+    .app-topbar {
+      background: #111;
+      padding: 12px 18px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #222;
+    }
+    .app-topbar-logo { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 900; letter-spacing: 0.08em; color: #fff; }
+    .app-topbar-logo span { color: var(--accent); }
+    .app-status { display: flex; gap: 4px; align-items: center; font-size: 0.65rem; color: var(--muted); }
+    .app-dot { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; }
+
+    .app-body-lg { padding: 16px 16px 0; }
+    .app-section-title { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+
+    .app-zones {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .app-zone {
+      flex: 1;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 10px 8px;
+      text-align: center;
+    }
+    .app-zone.zone-active { border-color: var(--accent); background: rgba(200,146,30,0.1); }
+    .app-zone-icon { font-size: 1.1rem; margin-bottom: 4px; }
+    .app-zone-name { font-size: 0.6rem; font-weight: 600; color: var(--muted); }
+    .app-zone.zone-active .app-zone-name { color: var(--accent); }
+
+    .app-scene-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    .app-scene-pill {
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 8px 4px;
+      font-size: 0.58rem;
+      font-weight: 600;
+      text-align: center;
+      color: var(--muted);
+    }
+    .app-scene-pill.active { background: rgba(200,146,30,0.12); border-color: rgba(200,146,30,0.4); color: var(--accent); }
+
+    .app-color-strip {
+      height: 28px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, #ef4444, #f97316, #eab308, #22c55e, #3b82f6, #a855f7, #ec4899);
+      margin-bottom: 12px;
+      position: relative;
+    }
+    .app-color-cursor {
+      position: absolute;
+      top: -4px; left: 30%;
+      width: 16px; height: 36px;
+      border: 3px solid #fff;
+      border-radius: 6px;
+      background: transparent;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+
+    .app-schedule-row {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .app-schedule-info { font-size: 0.62rem; color: var(--muted); }
+    .app-schedule-info strong { display: block; color: var(--text); font-size: 0.68rem; margin-bottom: 2px; }
+    .app-toggle {
+      width: 32px; height: 18px;
+      background: var(--accent);
+      border-radius: 9px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .app-toggle::after {
+      content: '';
+      position: absolute;
+      top: 3px; right: 3px;
+      width: 12px; height: 12px;
+      background: #fff;
+      border-radius: 50%;
+    }
+    .app-toggle.off { background: #2a2a2a; }
+    .app-toggle.off::after { right: auto; left: 3px; }
+
+    .app-bottom-bar {
+      display: flex;
+      border-top: 1px solid #1a1a1a;
+      padding: 10px 0 6px;
+    }
+    .app-tab {
+      flex: 1;
+      text-align: center;
+      font-size: 0.55rem;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+    }
+    .app-tab.active { color: var(--accent); }
+    .app-tab-dot { width: 18px; height: 3px; border-radius: 2px; background: var(--accent); margin: 2px auto 0; }
+
+    /* Feature breakdown */
+    .feature-breakdown { display: flex; flex-direction: column; gap: 28px; }
+    .feat-row { display: flex; gap: 20px; align-items: flex-start; }
+    .feat-num {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      background: rgba(200,146,30,0.1);
+      border: 1px solid rgba(200,146,30,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .feat-body h4 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .feat-body p  { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+    /* ─── GALLERY PLACEHOLDER ────────────────────────────── */
+    #arch-gallery { padding: 96px 0; background: var(--bg2); }
+    .arch-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .arch-gallery-grid .ag-item:first-child { grid-column: span 2; }
+
+    .ag-item {
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 16/10;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ag-item:first-child { aspect-ratio: 16/9; }
+
+    .ag-icon { font-size: 3rem; filter: drop-shadow(0 0 16px rgba(200,146,30,0.5)); }
+    .ag-item:first-child .ag-icon { font-size: 5rem; }
+    .ag-label {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+      padding: 20px 16px 14px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      transform: translateY(100%);
+      transition: transform 0.3s;
+    }
+    .ag-item:hover .ag-label { transform: translateY(0); }
+    .ag-glow { height: 3px; border-radius: 2px; width: 70%; opacity: 0.6; }
+
+    /* ─── FINAL CTA ──────────────────────────────────────── */
+    #arch-cta { padding: 80px 0; }
+    .arch-cta-inner {
+      background: linear-gradient(135deg, var(--bg3) 0%, #1a1f2e 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 72px 48px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .arch-cta-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 50% 120%, rgba(200,146,30,0.1) 0%, transparent 65%);
+      pointer-events: none;
+    }
+    .arch-cta-inner::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    #footer {
+      background: #070b10;
+      border-top: 1px solid var(--border);
+      padding: 40px 0;
+    }
+    .footer-simple {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .footer-logo span { color: var(--accent); text-shadow: 0 0 16px rgba(200,146,30,0.6); }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .page-hero-inner { grid-template-columns: 1fr; gap: 40px; padding: 60px 0; }
+      .hero-arch-wrap { order: -1; }
+      .app-deep-inner { grid-template-columns: 1fr; gap: 48px; }
+      .arch-gallery-grid { grid-template-columns: 1fr 1fr; }
+      .arch-gallery-grid .ag-item:first-child { grid-column: span 2; }
+      .hamburger { display: flex; }
+      .nav-cta-hide { display: none; }
+    }
+    @media (max-width: 600px) {
+      .arch-gallery-grid { grid-template-columns: 1fr; }
+      .arch-gallery-grid .ag-item:first-child { grid-column: auto; }
+      .arch-cta-inner { padding: 48px 24px; }
+      .footer-simple { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ────────────────────────────────────────── -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+        <a href="index.html" class="nav-back nav-cta-hide">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 12H5m7-7-7 7 7 7"/></svg>
+          Back to Home
+        </a>
+        <div class="nav-cta-wrap">
+          <a href="index.html#cta" class="btn btn-primary nav-cta-hide">Get a Free Quote</a>
+          <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html">Home</a>
+      <a href="index.html#why">Why Permanent</a>
+      <a href="index.html#gallery">Gallery</a>
+      <a href="index.html#cta" class="btn btn-primary" style="text-align:center">Get a Free Quote</a>
+    </div>
+  </nav>
+
+  <!-- ─── PAGE HERO ─────────────────────────────────────── -->
+  <section id="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container">
+      <div class="page-hero-inner">
+
+        <!-- Left: big animated arch -->
+        <div class="hero-arch-wrap fade-in">
+          <svg viewBox="0 0 420 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;">
+            <!-- Posts -->
+            <rect x="36" y="240" width="12" height="90" rx="4" fill="#1a1a1a"/>
+            <rect x="372" y="240" width="12" height="90" rx="4" fill="#1a1a1a"/>
+            <!-- Second arch (inner) -->
+            <path d="M60 270 Q210 60 360 270" stroke="#111" stroke-width="8" fill="none" stroke-linecap="round"/>
+            <!-- Main arch tube -->
+            <path d="M42 260 Q210 20 378 260" stroke="#1c1c1c" stroke-width="14" fill="none" stroke-linecap="round"/>
+            <path d="M42 260 Q210 20 378 260" stroke="#252525" stroke-width="8"  fill="none" stroke-linecap="round"/>
+            <!-- LED dots outer arch -->
+            <circle class="led-dot" cx="42"  cy="260" r="7"/>
+            <circle class="led-dot" cx="72"  cy="204" r="7"/>
+            <circle class="led-dot" cx="110" cy="154" r="7"/>
+            <circle class="led-dot" cx="155" cy="112" r="7"/>
+            <circle class="led-dot" cx="210" cy="90"  r="7"/>
+            <circle class="led-dot" cx="265" cy="112" r="7"/>
+            <circle class="led-dot" cx="310" cy="154" r="7"/>
+            <circle class="led-dot" cx="348" cy="204" r="7"/>
+            <circle class="led-dot" cx="378" cy="260" r="7"/>
+            <!-- LED dots inner arch -->
+            <circle class="led-dot" cx="60"  cy="270" r="5"/>
+            <circle class="led-dot" cx="90"  cy="216" r="5"/>
+            <circle class="led-dot" cx="128" cy="168" r="5"/>
+            <circle class="led-dot" cx="168" cy="130" r="5"/>
+            <circle class="led-dot" cx="210" cy="114" r="5"/>
+            <circle class="led-dot" cx="252" cy="130" r="5"/>
+            <circle class="led-dot" cx="292" cy="168" r="5"/>
+            <circle class="led-dot" cx="330" cy="216" r="5"/>
+            <circle class="led-dot" cx="360" cy="270" r="5"/>
+            <!-- Ground line -->
+            <line x1="0" y1="330" x2="420" y2="330" stroke="#1a1a1a" stroke-width="2"/>
+            <!-- Ground glow -->
+            <ellipse cx="210" cy="330" rx="160" ry="6" fill="rgba(200,146,30,0.05)"/>
+          </svg>
+        </div>
+
+        <!-- Right: text -->
+        <div class="hero-text-col fade-in fade-delay-1">
+          <div class="section-label">Beyond the Roofline</div>
+          <h1 class="hero-headline">
+            Custom LED Arches<br>&amp; <span>Yard Props</span>
+          </h1>
+          <p class="hero-sub">
+            Pixel-addressable LED arches, star props, pillars, and custom yard displays — all running on the same controller as your roofline lights. One app. One system. Infinite possibilities.
+          </p>
+          <div class="hero-actions">
+            <a href="index.html#cta" class="btn btn-primary">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+              Get a Free Quote
+            </a>
+            <a href="#products" class="btn btn-ghost">See Products</a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRODUCTS ──────────────────────────────────────── -->
+  <section id="products">
+    <div class="container">
+      <div class="products-header fade-in">
+        <div class="section-label">What We Offer</div>
+        <h2 class="section-title">Add-On Lighting Products</h2>
+        <p class="section-sub">Every product uses the same RGBW pixel-addressable technology as our roofline system — seamlessly integrated into your existing setup.</p>
+      </div>
+      <div class="products-grid">
+
+        <div class="product-card fade-in">
+          <div class="product-visual">
+            <div class="product-badge">Most Popular</div>
+            <svg viewBox="0 0 300 200" fill="none" style="width:80%;max-width:280px;">
+              <rect x="28" y="130" width="8" height="65" rx="3" fill="#222"/>
+              <rect x="264" y="130" width="8" height="65" rx="3" fill="#222"/>
+              <path d="M32 148 Q150 20 268 148" stroke="#1c1c1c" stroke-width="10" fill="none" stroke-linecap="round"/>
+              <path d="M32 148 Q150 20 268 148" stroke="#252525" stroke-width="6"  fill="none" stroke-linecap="round"/>
+              <circle class="led-dot" cx="32"  cy="148" r="5"/>
+              <circle class="led-dot" cx="57"  cy="112" r="5"/>
+              <circle class="led-dot" cx="88"  cy="80"  r="5"/>
+              <circle class="led-dot" cx="118" cy="56"  r="5"/>
+              <circle class="led-dot" cx="150" cy="46"  r="5"/>
+              <circle class="led-dot" cx="182" cy="56"  r="5"/>
+              <circle class="led-dot" cx="212" cy="80"  r="5"/>
+              <circle class="led-dot" cx="243" cy="112" r="5"/>
+              <circle class="led-dot" cx="268" cy="148" r="5"/>
+              <ellipse cx="150" cy="195" rx="90" ry="4" fill="rgba(200,146,30,0.05)"/>
+            </svg>
+          </div>
+          <div class="product-info">
+            <div class="product-name">LED Arch</div>
+            <p class="product-desc">Custom-built pixel-addressable arches in any size. Dual-layer LED rings create a stunning tunnel of color. Perfect for driveways, pathways, and events.</p>
+            <div class="product-specs">
+              <span class="spec-chip">Any size</span>
+              <span class="spec-chip">RGBW</span>
+              <span class="spec-chip">Weatherproof</span>
+              <span class="spec-chip">App-controlled</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card fade-in fade-delay-1">
+          <div class="product-visual">
+            <svg viewBox="0 0 240 220" fill="none" style="width:60%;max-width:180px;">
+              <!-- Star shape -->
+              <polygon points="120,20 132,85 195,85 144,124 163,190 120,152 77,190 96,124 45,85 108,85"
+                fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
+              <!-- LED dots on star points -->
+              <circle class="led-dot" cx="120" cy="22"  r="6"/>
+              <circle class="led-dot" cx="192" cy="87"  r="6"/>
+              <circle class="led-dot" cx="162" cy="188" r="6"/>
+              <circle class="led-dot" cx="78"  cy="188" r="6"/>
+              <circle class="led-dot" cx="48"  cy="87"  r="6"/>
+              <!-- Center glow -->
+              <circle cx="120" cy="110" r="20" fill="rgba(200,146,30,0.05)"/>
+              <ellipse cx="120" cy="215" rx="70" ry="4" fill="rgba(200,146,30,0.04)"/>
+            </svg>
+          </div>
+          <div class="product-info">
+            <div class="product-name">Star Props</div>
+            <p class="product-desc">Large illuminated star displays with LED-outlined points. Stake them in your yard, line your driveway, or mount them on your home for a stunning seasonal display.</p>
+            <div class="product-specs">
+              <span class="spec-chip">Stake mount</span>
+              <span class="spec-chip">RGBW</span>
+              <span class="spec-chip">Multiple sizes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="product-card fade-in fade-delay-2">
+          <div class="product-visual">
+            <svg viewBox="0 0 200 220" fill="none" style="width:55%;max-width:160px;">
+              <!-- Pillar -->
+              <rect x="75" y="30" width="50" height="160" rx="6" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
+              <!-- Cap -->
+              <rect x="65" y="20" width="70" height="18" rx="4" fill="#222"/>
+              <rect x="65" y="188" width="70" height="18" rx="4" fill="#222"/>
+              <!-- LED rings -->
+              <circle class="led-dot" cx="100" cy="55"  r="5"/>
+              <circle class="led-dot" cx="100" cy="85"  r="5"/>
+              <circle class="led-dot" cx="100" cy="115" r="5"/>
+              <circle class="led-dot" cx="100" cy="145" r="5"/>
+              <circle class="led-dot" cx="100" cy="175" r="5"/>
+              <ellipse cx="100" cy="215" rx="50" ry="4" fill="rgba(200,146,30,0.05)"/>
+            </svg>
+          </div>
+          <div class="product-info">
+            <div class="product-name">Illuminated Pillars</div>
+            <p class="product-desc">Tall LED pillars with color-ringed accents. Line your driveway entrance, flank your front door, or create a grand pathway effect for holidays and events.</p>
+            <div class="product-specs">
+              <span class="spec-chip">Driveway</span>
+              <span class="spec-chip">Pathway</span>
+              <span class="spec-chip">RGBW rings</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── APP DEEP DIVE ─────────────────────────────────── -->
+  <section id="app-deep">
+    <div class="container">
+      <div class="app-deep-inner">
+
+        <!-- Left: large phone mockup -->
+        <div class="fade-in" style="display:flex;justify-content:center;">
+          <div class="phone-large">
+            <div class="phone-notch"></div>
+            <div class="phone-screen">
+              <div class="app-topbar">
+                <div class="app-topbar-logo">AFTER<span>GLO</span></div>
+                <div class="app-status"><div class="app-dot"></div><span style="font-size:0.6rem;color:#94a3b8;margin-left:4px">Connected</span></div>
+              </div>
+              <div class="app-body-lg">
+
+                <div class="app-section-title">Control Zones</div>
+                <div class="app-zones">
+                  <div class="app-zone zone-active">
+                    <div class="app-zone-icon">🏠</div>
+                    <div class="app-zone-name">Roofline</div>
+                  </div>
+                  <div class="app-zone zone-active">
+                    <div class="app-zone-icon">🌈</div>
+                    <div class="app-zone-name">Arches</div>
+                  </div>
+                  <div class="app-zone">
+                    <div class="app-zone-icon">⭐</div>
+                    <div class="app-zone-name">Props</div>
+                  </div>
+                </div>
+
+                <div class="app-section-title">Scenes</div>
+                <div class="app-scene-row">
+                  <div class="app-scene-pill active">🎄 Xmas</div>
+                  <div class="app-scene-pill">🇺🇸 July 4th</div>
+                  <div class="app-scene-pill">🎃 Halloween</div>
+                  <div class="app-scene-pill">🏈 Game Day</div>
+                  <div class="app-scene-pill">🌈 Rainbow</div>
+                  <div class="app-scene-pill">🤍 Warm White</div>
+                </div>
+
+                <div class="app-section-title">Color</div>
+                <div class="app-color-strip">
+                  <div class="app-color-cursor"></div>
+                </div>
+
+                <div class="app-section-title">Schedules</div>
+                <div class="app-schedule-row">
+                  <div class="app-schedule-info">
+                    <strong>Sunset Auto-On</strong>
+                    Daily · All Zones
+                  </div>
+                  <div class="app-toggle"></div>
+                </div>
+                <div class="app-schedule-row">
+                  <div class="app-schedule-info">
+                    <strong>Midnight Off</strong>
+                    Daily · All Zones
+                  </div>
+                  <div class="app-toggle"></div>
+                </div>
+                <div class="app-schedule-row">
+                  <div class="app-schedule-info">
+                    <strong>Christmas Mode</strong>
+                    Dec 1 – Jan 2
+                  </div>
+                  <div class="app-toggle off"></div>
+                </div>
+
+              </div>
+              <div class="app-bottom-bar">
+                <div class="app-tab active">
+                  <span>🏠</span><span style="font-size:0.5rem">Home</span>
+                  <div class="app-tab-dot"></div>
+                </div>
+                <div class="app-tab">
+                  <span>🎨</span><span style="font-size:0.5rem">Scenes</span>
+                </div>
+                <div class="app-tab">
+                  <span>🗓️</span><span style="font-size:0.5rem">Schedule</span>
+                </div>
+                <div class="app-tab">
+                  <span>⚙️</span><span style="font-size:0.5rem">Settings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: feature breakdown -->
+        <div class="fade-in fade-delay-1">
+          <div class="section-label">The Control App</div>
+          <h2 class="section-title">One App for Your Entire Light System</h2>
+          <p class="section-sub" style="margin-bottom:40px;">Your roofline, arches, and yard props all live in one place. No juggling multiple apps or controllers — everything is unified.</p>
+
+          <div class="feature-breakdown">
+            <div class="feat-row">
+              <div class="feat-num">01</div>
+              <div class="feat-body">
+                <h4>Zone-Based Control</h4>
+                <p>Control your roofline, arches, and props independently or all at once. Set different colors or scenes per zone without any extra equipment.</p>
+              </div>
+            </div>
+            <div class="feat-row">
+              <div class="feat-num">02</div>
+              <div class="feat-body">
+                <h4>Pre-Built Holiday Scenes</h4>
+                <p>Christmas, Halloween, 4th of July, Game Day — one tap and every light in your system switches instantly. No manual adjustments.</p>
+              </div>
+            </div>
+            <div class="feat-row">
+              <div class="feat-num">03</div>
+              <div class="feat-body">
+                <h4>Smart Scheduling</h4>
+                <p>Set lights to turn on at sunset and off at midnight automatically. Program seasonal schedules weeks in advance so you never have to think about it.</p>
+              </div>
+            </div>
+            <div class="feat-row">
+              <div class="feat-num">04</div>
+              <div class="feat-body">
+                <h4>16 Million Colors</h4>
+                <p>Full RGBW color wheel with warm white. Dial in any color for any occasion — your home exactly how you imagine it.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── GALLERY ───────────────────────────────────────── -->
+  <section id="arch-gallery">
+    <div class="container">
+      <div style="text-align:center;margin-bottom:48px;" class="fade-in">
+        <div class="section-label">Gallery</div>
+        <h2 class="section-title">Arches &amp; Props in the Wild</h2>
+      </div>
+      <div class="arch-gallery-grid">
+        <div class="ag-item fade-in">
+          <div class="ag-icon">🌈</div>
+          <div style="height:3px;width:85%;border-radius:2px;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7);opacity:0.7;"></div>
+          <div class="ag-label">Double LED Arch — Rainbow Scene</div>
+        </div>
+        <div class="ag-item fade-in fade-delay-1">
+          <div class="ag-icon">⭐</div>
+          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#c8921e,transparent);opacity:0.7;"></div>
+          <div class="ag-label">Star Props — Warm Gold</div>
+        </div>
+        <div class="ag-item fade-in fade-delay-2">
+          <div class="ag-icon">🎄</div>
+          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#22c55e,transparent);opacity:0.7;"></div>
+          <div class="ag-label">Arch — Christmas Scene</div>
+        </div>
+        <div class="ag-item fade-in fade-delay-1">
+          <div class="ag-icon">🏈</div>
+          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#3b82f6,transparent);opacity:0.7;"></div>
+          <div class="ag-label">Arch + Pillars — Game Day Blue</div>
+        </div>
+        <div class="ag-item fade-in fade-delay-2">
+          <div class="ag-icon">🎃</div>
+          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#f97316,transparent);opacity:0.7;"></div>
+          <div class="ag-label">Star Props — Halloween Orange</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── CTA ───────────────────────────────────────────── -->
+  <section id="arch-cta">
+    <div class="container">
+      <div class="arch-cta-inner fade-in">
+        <div class="section-label">Ready to Add On?</div>
+        <h2 class="section-title" style="margin-bottom:16px;">Build Your Complete Light Show</h2>
+        <p style="font-size:1rem;color:var(--muted);margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto;">Arches, props, and roofline lights installed together in one visit. One controller. One app. One incredible setup.</p>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;">
+          <a href="index.html#cta" class="btn btn-primary" style="font-size:1rem;padding:16px 36px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            Get a Free Quote
+          </a>
+          <a href="index.html" class="btn btn-ghost" style="font-size:1rem;padding:16px 36px;">Back to Home</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ────────────────────────────────────────── -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-simple">
+        <div class="footer-logo">AFTER<span>GLO</span></div>
+        <p class="footer-copy">© 2026 Ward Legacy Group LLC. Afterglo is a division of Ward Legacy Group LLC. Licensed &amp; Insured in Utah.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Hamburger
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      const spans = hamburger.querySelectorAll('span');
+      if (menuOpen) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+      }
+    });
+
+    // Fade-in observer
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
