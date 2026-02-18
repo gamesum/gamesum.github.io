@@ -151,11 +151,17 @@
       height: var(--nav-h);
     }
 
-    .nav-logo img {
-      height: 46px;
-      width: auto;
-      display: block;
-      filter: drop-shadow(0 0 12px rgba(200,146,30,0.4));
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4), 0 0 60px rgba(200,146,30,0.2);
     }
 
     .nav-links {
@@ -268,12 +274,6 @@
       text-align: center;
       max-width: 860px;
       padding: 0 24px;
-    }
-
-    .hero-logo {
-      width: min(420px, 80vw);
-      margin: 0 auto 36px;
-      filter: drop-shadow(0 0 32px rgba(200,146,30,0.5)) drop-shadow(0 0 64px rgba(200,146,30,0.2));
     }
 
     .hero-badge {
@@ -753,12 +753,18 @@
       margin-bottom: 56px;
     }
 
-    .footer-logo img {
-      height: 52px;
-      width: auto;
-      display: block;
+    .footer-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
       margin-bottom: 16px;
-      filter: drop-shadow(0 0 10px rgba(200,146,30,0.3));
+    }
+    .footer-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(200,146,30,0.7), 0 0 40px rgba(200,146,30,0.3);
     }
 
     .footer-desc {
@@ -882,7 +888,7 @@
   <nav id="navbar">
     <div class="container">
       <div class="nav-inner">
-        <a href="#hero" class="nav-logo"><img src="Resources/afterglo.png" alt="Afterglo Lighting Co."></a>
+        <a href="#hero" class="nav-logo">AFTER<span>GLO</span></a>
 
         <ul class="nav-links">
           <li><a href="#why">Why Permanent</a></li>
@@ -912,7 +918,6 @@
   <section id="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
-      <img src="Resources/afterglo.png" alt="Afterglo Lighting Co." class="hero-logo">
       <div class="hero-badge">Serving Salt Lake, Davis &amp; Weber Counties</div>
       <h1 class="hero-headline">
         Light Up Your Home.<br><span>Year&nbsp;Round.</span>
@@ -1170,7 +1175,7 @@
     <div class="container">
       <div class="footer-grid">
         <div>
-          <div class="footer-logo"><img src="Resources/afterglo.png" alt="Afterglo Lighting Co."></div>
+          <div class="footer-logo">AFTER<span>GLO</span></div>
           <p class="footer-desc">South Jordan's premier permanent roofline LED lighting company. We design, install, and support smart lighting systems built to last a decade.</p>
           <div class="social-links">
             <a href="#" class="social-link" aria-label="Facebook">
