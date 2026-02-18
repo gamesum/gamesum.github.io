@@ -12,14 +12,15 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #0d1117;
-      --bg2:      #111827;
-      --bg3:      #1a2233;
-      --accent:   #f59e0b;
-      --accent2:  #fbbf24;
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #141414;
+      --accent:   #c8921e;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
       --text:     #e2e8f0;
       --muted:    #94a3b8;
-      --border:   #1e293b;
+      --border:   #222222;
       --radius:   12px;
       --nav-h:    72px;
     }
@@ -111,11 +112,11 @@
     .btn-primary {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 4px 24px rgba(245,158,11,0.35);
+      box-shadow: 0 4px 24px rgba(200,146,30,0.35);
     }
     .btn-primary:hover {
       background: var(--accent2);
-      box-shadow: 0 6px 32px rgba(245,158,11,0.5);
+      box-shadow: 0 6px 32px rgba(200,146,30,0.5);
     }
 
     .btn-ghost {
@@ -150,17 +151,11 @@
       height: var(--nav-h);
     }
 
-    .nav-logo {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-    }
-    .nav-logo span {
-      color: var(--accent);
-      text-shadow: 0 0 20px rgba(245,158,11,0.7), 0 0 40px rgba(245,158,11,0.3);
+    .nav-logo img {
+      height: 46px;
+      width: auto;
+      display: block;
+      filter: drop-shadow(0 0 12px rgba(200,146,30,0.4));
     }
 
     .nav-links {
@@ -235,9 +230,9 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 110%, rgba(245,158,11,0.18) 0%, transparent 65%),
-        radial-gradient(ellipse 60% 50% at 20% 80%,  rgba(245,158,11,0.08) 0%, transparent 60%),
-        linear-gradient(180deg, #0d1117 0%, #0a0f18 100%);
+        radial-gradient(ellipse 100% 60% at 50% 100%, rgba(0,0,0,0.75) 0%, transparent 70%),
+        radial-gradient(ellipse 100% 40% at 50% 0%,   rgba(0,0,0,0.85) 0%, transparent 60%),
+        url('Resources/AFTERGLOLIGHITNGCOMTNS.png') center center / cover no-repeat;
       z-index: 0;
     }
 
@@ -251,13 +246,13 @@
     }
     .hero-bg::before {
       width: 500px; height: 500px;
-      background: rgba(245,158,11,0.07);
+      background: rgba(200,146,30,0.09);
       bottom: -100px; left: -100px;
       animation-delay: 0s;
     }
     .hero-bg::after {
       width: 400px; height: 400px;
-      background: rgba(245,158,11,0.05);
+      background: rgba(200,146,30,0.06);
       bottom: -50px; right: 0;
       animation-delay: 4s;
     }
@@ -275,12 +270,18 @@
       padding: 0 24px;
     }
 
+    .hero-logo {
+      width: min(420px, 80vw);
+      margin: 0 auto 36px;
+      filter: drop-shadow(0 0 32px rgba(200,146,30,0.5)) drop-shadow(0 0 64px rgba(200,146,30,0.2));
+    }
+
     .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(245,158,11,0.1);
-      border: 1px solid rgba(245,158,11,0.25);
+      background: rgba(200,146,30,0.1);
+      border: 1px solid rgba(200,146,30,0.25);
       border-radius: 100px;
       padding: 6px 16px;
       font-size: 0.8rem;
@@ -403,12 +404,12 @@
       transform-origin: left;
       transition: transform 0.4s ease;
     }
-    .feature-card:hover { border-color: rgba(245,158,11,0.3); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+    .feature-card:hover { border-color: rgba(200,146,30,0.3); transform: translateY(-6px); box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
     .feature-card:hover::before { transform: scaleX(1); }
 
     .card-icon {
       width: 52px; height: 52px;
-      background: rgba(245,158,11,0.1);
+      background: rgba(200,146,30,0.1);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -468,7 +469,7 @@
       align-items: center;
       justify-content: center;
       margin: 0 auto 28px;
-      box-shadow: 0 0 0 8px rgba(245,158,11,0.1), 0 0 32px rgba(245,158,11,0.25);
+      box-shadow: 0 0 0 8px rgba(200,146,30,0.1), 0 0 32px rgba(200,146,30,0.25);
     }
 
     .step-title {
@@ -520,7 +521,7 @@
       height: 6px;
       border-radius: 3px;
       background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b, #fbbf24, #f59e0b);
-      box-shadow: 0 0 16px rgba(245,158,11,0.8), 0 0 32px rgba(245,158,11,0.4);
+      box-shadow: 0 0 16px rgba(200,146,30,0.8), 0 0 32px rgba(200,146,30,0.4);
     }
     .led-strip.blue  { background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6); box-shadow: 0 0 16px rgba(59,130,246,0.8), 0 0 32px rgba(59,130,246,0.4); }
     .led-strip.green { background: linear-gradient(90deg, #10b981, #34d399, #10b981); box-shadow: 0 0 16px rgba(16,185,129,0.8), 0 0 32px rgba(16,185,129,0.4); }
@@ -604,7 +605,7 @@
 
     .g-house {
       font-size: 4rem;
-      filter: drop-shadow(0 0 20px rgba(245,158,11,0.6));
+      filter: drop-shadow(0 0 20px rgba(200,146,30,0.6));
     }
 
     .g-glow-bar {
@@ -652,7 +653,7 @@
       padding: 36px 32px;
       transition: border-color 0.3s;
     }
-    .testi-card:hover { border-color: rgba(245,158,11,0.25); }
+    .testi-card:hover { border-color: rgba(200,146,30,0.25); }
 
     .stars { color: var(--accent); font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 20px; }
 
@@ -698,7 +699,7 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 70% 60% at 50% 120%, rgba(245,158,11,0.12) 0%, transparent 65%);
+        radial-gradient(ellipse 70% 60% at 50% 120%, rgba(200,146,30,0.12) 0%, transparent 65%);
       pointer-events: none;
     }
     .cta-inner::after {
@@ -710,7 +711,7 @@
     }
     .cta-tag {
       display: inline-block;
-      background: rgba(245,158,11,0.15);
+      background: rgba(200,146,30,0.15);
       color: var(--accent);
       font-size: 0.8rem;
       font-weight: 600;
@@ -752,18 +753,12 @@
       margin-bottom: 56px;
     }
 
-    .footer-logo {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.5rem;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+    .footer-logo img {
+      height: 52px;
+      width: auto;
+      display: block;
       margin-bottom: 16px;
-    }
-    .footer-logo span {
-      color: var(--accent);
-      text-shadow: 0 0 20px rgba(245,158,11,0.6), 0 0 40px rgba(245,158,11,0.25);
+      filter: drop-shadow(0 0 10px rgba(200,146,30,0.3));
     }
 
     .footer-desc {
@@ -794,7 +789,7 @@
     .social-link:hover {
       border-color: var(--accent);
       color: var(--accent);
-      background: rgba(245,158,11,0.08);
+      background: rgba(200,146,30,0.08);
     }
 
     .footer-col-title {
@@ -887,7 +882,7 @@
   <nav id="navbar">
     <div class="container">
       <div class="nav-inner">
-        <a href="#hero" class="nav-logo">AFTER<span>GLO</span></a>
+        <a href="#hero" class="nav-logo"><img src="Resources/afterglo.png" alt="Afterglo Lighting Co."></a>
 
         <ul class="nav-links">
           <li><a href="#why">Why Permanent</a></li>
@@ -917,6 +912,7 @@
   <section id="hero">
     <div class="hero-bg"></div>
     <div class="hero-content">
+      <img src="Resources/afterglo.png" alt="Afterglo Lighting Co." class="hero-logo">
       <div class="hero-badge">Serving Salt Lake, Davis &amp; Weber Counties</div>
       <h1 class="hero-headline">
         Light Up Your Home.<br><span>Year&nbsp;Round.</span>
@@ -1174,7 +1170,7 @@
     <div class="container">
       <div class="footer-grid">
         <div>
-          <div class="footer-logo">AFTER<span>GLO</span></div>
+          <div class="footer-logo"><img src="Resources/afterglo.png" alt="Afterglo Lighting Co."></div>
           <p class="footer-desc">South Jordan's premier permanent roofline LED lighting company. We design, install, and support smart lighting systems built to last a decade.</p>
           <div class="social-links">
             <a href="#" class="social-link" aria-label="Facebook">
