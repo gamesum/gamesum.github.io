@@ -1189,22 +1189,11 @@
           <div class="pain-item">Blown bulbs</div>
           <div class="pain-item">Yearly spend</div>
           <div class="pain-item">Same look</div>
-          <!-- SVG snake: zigzags L→R across word 1, down, R→L word 2, down… -->
-          <!-- viewBox 0 0 100 540 maps to 100%×540px (6 rows × 90px) -->
-          <!-- Path length: 6×100 + 5×90 = 1050 units -->
-          <svg class="pain-snake" viewBox="0 0 100 540" preserveAspectRatio="none" aria-hidden="true">
-            <path id="painPath"
-              d="M 0,45 L 100,45
-                 L 100,135 L 0,135
-                 L 0,225 L 100,225
-                 L 100,315 L 0,315
-                 L 0,405 L 100,405
-                 L 100,495 L 0,495"
-              fill="none" stroke="#c8921e" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"
-              vector-effect="non-scaling-stroke"/>
-            <circle id="painHead" cx="0" cy="45" r="4"
-              fill="#f0b233" vector-effect="non-scaling-stroke" opacity="0"/>
+          <!-- Path built dynamically by JS based on real DOM measurements -->
+          <svg class="pain-snake" id="painSvg" aria-hidden="true">
+            <path id="painPath" fill="none" stroke="#c8921e" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+            <circle id="painHead" cx="0" cy="0" r="5" fill="#f0b233" opacity="0"/>
           </svg>
         </div>
       </div>
@@ -1636,33 +1625,63 @@
     }, { threshold: 0.12 });
     fadeEls.forEach(el => observer.observe(el));
 
-    // Scroll-driven snake — draws as you scroll through #why
+    // Scroll-driven snake — path built from real DOM measurements
     (function() {
       const whySect  = document.getElementById('why');
+      const svg      = document.getElementById('painSvg');
       const painPath = document.getElementById('painPath');
       const painHead = document.getElementById('painHead');
-      const painEls  = document.querySelectorAll('.pain-item');
-      // Total path length: 6 horizontal (×100) + 5 vertical (×90) = 1050 units
-      const TOTAL = 1050;
-      // Cumulative path length at the midpoint of each word's horizontal run
-      // Word i horizontal starts after i×190 units (100 horiz + 90 vert per row)
-      const midpoints = [50, 240, 430, 620, 810, 1000].map(v => v / TOTAL);
+      const container= document.getElementById('painItems');
+      const painEls  = Array.from(container.querySelectorAll('.pain-item'));
 
-      painPath.style.strokeDasharray  = TOTAL;
-      painPath.style.strokeDashoffset = TOTAL;
+      let TOTAL = 0, midpoints = [];
+
+      function build() {
+        const cRect = container.getBoundingClientRect();
+        const W = cRect.width;
+        const H = cRect.height;
+
+        // Set SVG to match container in pixel space (no scaling distortion)
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        svg.setAttribute('width', W);
+        svg.setAttribute('height', H);
+
+        // Measure the vertical center of each word in container-relative space
+        let d = '';
+        painEls.forEach((el, i) => {
+          const r = el.getBoundingClientRect();
+          const y = r.top - cRect.top + r.height / 2;
+          const fromX = i % 2 === 0 ? 0 : W;
+          const toX   = i % 2 === 0 ? W : 0;
+          d += i === 0
+            ? `M ${fromX},${y} L ${toX},${y}`
+            : ` L ${fromX},${y} L ${toX},${y}`;
+        });
+
+        painPath.setAttribute('d', d);
+        TOTAL = painPath.getTotalLength();
+        painPath.style.strokeDasharray  = TOTAL;
+        painPath.style.strokeDashoffset = TOTAL;
+
+        // Compute what fraction along the path is the midpoint of each word's
+        // horizontal run: word i starts at i*(W + rowH), midpoint += W/2
+        const rowH = H / painEls.length;
+        midpoints = painEls.map((_, i) => {
+          const mid = i * (W + rowH) + W / 2;
+          return mid / TOTAL;
+        });
+      }
 
       function update() {
+        if (!TOTAL) return;
         const rect = whySect.getBoundingClientRect();
         const winH = window.innerHeight;
-        // Start drawing when section top hits 75% of viewport
-        // Finish when section bottom clears 20% of viewport
-        const start = winH * 0.75;
-        const range = rect.height + winH * 0.55;
+        const start = winH * 0.8;
+        const range = rect.height + winH * 0.5;
         const p = Math.max(0, Math.min(1, (start - rect.top) / range));
 
         painPath.style.strokeDashoffset = TOTAL * (1 - p);
 
-        // Move glowing head dot along path
         if (p > 0 && p < 1) {
           const pt = painPath.getPointAtLength(TOTAL * p);
           painHead.setAttribute('cx', pt.x);
@@ -1672,12 +1691,13 @@
           painHead.setAttribute('opacity', '0');
         }
 
-        // Strike through each word as snake crosses its midpoint
         painEls.forEach((el, i) => el.classList.toggle('struck', p > midpoints[i]));
       }
 
+      // Build after fonts + layout are ready, then keep updated
+      window.addEventListener('load',   () => { build(); update(); });
+      window.addEventListener('resize', () => { build(); update(); });
       window.addEventListener('scroll', update, { passive: true });
-      update();
     })();
 
     // Active nav link highlight on scroll
