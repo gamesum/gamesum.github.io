@@ -1675,9 +1675,9 @@
 
       function update() {
         if (!TOTAL) return;
-        const rect = whySect.getBoundingClientRect();
+        const rect = container.getBoundingClientRect(); // measure the items, not the full section
         const winH = window.innerHeight;
-        // p=0 when section top hits viewport center; p=1 when section bottom hits viewport center
+        // p=0 when first item top hits viewport center; p=1 when last item bottom hits viewport center
         const p = Math.max(0, Math.min(1, (winH / 2 - rect.top) / rect.height));
 
         painPath.style.strokeDashoffset = TOTAL * (1 - p);
