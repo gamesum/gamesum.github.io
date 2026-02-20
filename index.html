@@ -1677,10 +1677,8 @@
         if (!TOTAL) return;
         const rect = whySect.getBoundingClientRect();
         const winH = window.innerHeight;
-        // Snake starts when section center reaches viewport center
-        const start = winH / 2 - rect.height / 2;
-        const range = rect.height * 0.9;
-        const p = Math.max(0, Math.min(1, (start - rect.top) / range));
+        // p=0 when section top hits viewport center; p=1 when section bottom hits viewport center
+        const p = Math.max(0, Math.min(1, (winH / 2 - rect.top) / rect.height));
 
         painPath.style.strokeDashoffset = TOTAL * (1 - p);
 
