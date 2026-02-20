@@ -369,15 +369,15 @@
       position: relative;
       display: flex;
       flex-direction: column;
+      gap: 24px;
     }
     .pain-item {
       font-family: 'Outfit', sans-serif;
       font-size: clamp(2.2rem, 5.5vw, 3.6rem);
       font-weight: 800;
       color: rgba(255,255,255,0.1);
-      height: 90px;
-      display: flex;
-      align-items: center;
+      display: block;
+      padding: 2px 0 18px;
       transition: color 0.45s ease;
       position: relative;
       z-index: 1;
@@ -389,9 +389,9 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
-      z-index: 2;
+      z-index: 0;
       overflow: visible;
-      filter: drop-shadow(0 0 5px rgba(200,146,30,0.7));
+      filter: drop-shadow(0 0 6px rgba(200,146,30,0.8));
     }
 
     /* ─── HOW IT WORKS ─────────────────────────────────────────────── */
@@ -1646,11 +1646,11 @@
         svg.setAttribute('width', W);
         svg.setAttribute('height', H);
 
-        // Measure the vertical center of each word in container-relative space
+        // Measure the bottom of each word block in container-relative space
+        const ys = painEls.map(el => el.getBoundingClientRect().bottom - cRect.top);
+
         let d = '';
-        painEls.forEach((el, i) => {
-          const r = el.getBoundingClientRect();
-          const y = r.top - cRect.top + r.height / 2;
+        ys.forEach((y, i) => {
           const fromX = i % 2 === 0 ? 0 : W;
           const toX   = i % 2 === 0 ? W : 0;
           d += i === 0
@@ -1663,11 +1663,12 @@
         painPath.style.strokeDasharray  = TOTAL;
         painPath.style.strokeDashoffset = TOTAL;
 
-        // Compute what fraction along the path is the midpoint of each word's
-        // horizontal run: word i starts at i*(W + rowH), midpoint += W/2
-        const rowH = H / painEls.length;
-        midpoints = painEls.map((_, i) => {
-          const mid = i * (W + rowH) + W / 2;
+        // Compute midpoints from actual cumulative segment lengths
+        let cumLen = 0;
+        midpoints = ys.map((y, i) => {
+          if (i > 0) cumLen += Math.abs(y - ys[i - 1]); // vertical segment
+          const mid = cumLen + W / 2;                    // midpoint of horizontal run
+          cumLen += W;
           return mid / TOTAL;
         });
       }
@@ -1676,9 +1677,9 @@
         if (!TOTAL) return;
         const rect = whySect.getBoundingClientRect();
         const winH = window.innerHeight;
-        // Snake starts as section bottom enters viewport, finishes when section top clears center
-        const start = winH;
-        const range = rect.height;
+        // Snake starts when section center reaches viewport center
+        const start = winH / 2 - rect.height / 2;
+        const range = rect.height * 0.9;
         const p = Math.max(0, Math.min(1, (start - rect.top) / range));
 
         painPath.style.strokeDashoffset = TOTAL * (1 - p);
