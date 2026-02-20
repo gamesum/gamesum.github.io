@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AFTERGLO — Permanent Outdoor LED Lighting | South Jordan, Utah</title>
+  <title>AFTERGLO,Permanent Outdoor LED Lighting | South Jordan, Utah</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -273,7 +273,7 @@
       z-index: 1;
       text-align: center;
       max-width: 860px;
-      padding: 0 24px;
+      padding: 48px 24px 0;
     }
 
     .hero-badge {
@@ -351,25 +351,6 @@
     }
 
     /* Scroll indicator */
-    .scroll-hint {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-      opacity: 0.4;
-      animation: scrollBounce 2s ease-in-out infinite;
-      z-index: 1;
-    }
-    .scroll-hint span { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; }
-    .scroll-hint svg { width: 20px; height: 20px; }
-    @keyframes scrollBounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50%       { transform: translateX(-50%) translateY(6px); }
-    }
 
     /* ─── WHY PERMANENT ────────────────────────────────────────────── */
     #why {
@@ -439,16 +420,7 @@
       position: relative;
     }
 
-    .steps-wrap::before {
-      content: '';
-      position: absolute;
-      top: 60px;
-      left: calc(16.66% + 24px);
-      right: calc(16.66% + 24px);
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), transparent);
-      z-index: 0;
-    }
+    .steps-wrap::before { display: none; }
 
     .step {
       text-align: center;
@@ -892,7 +864,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 72px;
-      align-items: center;
+      align-items: flex-start;
     }
 
     /* Left: arch visual */
@@ -1190,9 +1162,9 @@
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           Get a Free Quote
         </a>
-        <a href="#gallery" class="btn btn-ghost">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16"/></svg>
-          See Our Work
+        <a href="afterglo-visualizer.html" class="btn btn-ghost">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.64-6.36-1.42 1.42M5.05 18.95l-1.41 1.41M18.95 18.95l-1.41-1.41M5.05 5.05 3.64 3.64"/></svg>
+          Try the Visualizer
         </a>
       </div>
       <div class="hero-stats">
@@ -1214,10 +1186,6 @@
         </div>
       </div>
     </div>
-    <div class="scroll-hint">
-      <span>Scroll</span>
-      <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m-7-7 7 7 7-7"/></svg>
-    </div>
   </section>
 
   <!-- ─── WHY PERMANENT ────────────────────────────────────── -->
@@ -1226,18 +1194,18 @@
       <div class="why-header fade-in">
         <div class="section-label">The Permanent Advantage</div>
         <h2 class="section-title">Why Permanent LED Lighting?</h2>
-        <p class="section-sub">Forget the annual ladder climb. AFTERGLO installs a fully integrated system that lives in your roofline — ready whenever you are.</p>
+        <p class="section-sub">Forget the annual ladder climb. AFTERGLO installs a fully integrated system that lives in your roofline,ready whenever you are.</p>
       </div>
       <div class="cards-grid">
         <div class="feature-card fade-in">
           <div class="card-icon">🏠</div>
           <h3 class="card-title">Never Hang Lights Again</h3>
-          <p class="card-desc">Our fixtures are permanently mounted in your roofline, protected from the elements and invisible during the day. Holidays, game days, and everyday ambiance — always ready.</p>
+          <p class="card-desc">Our fixtures are permanently mounted in your roofline, protected from the elements and invisible during the day. Holidays, game days, and everyday ambiance,always ready.</p>
         </div>
         <div class="feature-card fade-in fade-delay-1">
           <div class="card-icon">🌈</div>
           <h3 class="card-title">16 Million Color Options</h3>
-          <p class="card-desc">Full RGBW LED technology means you can match any mood, holiday, or sports team color with pixel-perfect precision — all from your smartphone.</p>
+          <p class="card-desc">Full RGBW LED technology means you can match any mood, holiday, or sports team color with pixel-perfect precision,all from your smartphone.</p>
         </div>
         <div class="feature-card fade-in fade-delay-2">
           <div class="card-icon">📱</div>
@@ -1247,7 +1215,7 @@
         <div class="feature-card fade-in fade-delay-3">
           <div class="card-icon">⚡</div>
           <h3 class="card-title">Built to Last a Decade</h3>
-          <p class="card-desc">IP65-rated weatherproof fixtures, UV-stable materials, and low-voltage wiring designed to handle Utah's freeze-thaw cycles and intense summer sun.</p>
+          <p class="card-desc">IP67-rated weatherproof fixtures, UV-stable materials, and low-voltage wiring designed to handle Utah's freeze-thaw cycles and intense summer sun.</p>
         </div>
       </div>
     </div>
@@ -1265,7 +1233,7 @@
         <div class="step fade-in">
           <div class="step-num">1</div>
           <h3 class="step-title">Free Consultation</h3>
-          <p class="step-desc">We visit your home, measure your roofline, and build a custom lighting plan. You'll see exactly what it will look like — including a color preview — before we touch a thing.</p>
+          <p class="step-desc">We visit your home, measure your roofline, and build a custom lighting plan. You'll see exactly what it will look like,including a color preview,before we touch a thing.</p>
         </div>
         <div class="step fade-in fade-delay-1">
           <div class="step-num">2</div>
@@ -1275,7 +1243,7 @@
         <div class="step fade-in fade-delay-2">
           <div class="step-num">3</div>
           <h3 class="step-title">Enjoy Forever</h3>
-          <p class="step-desc">We walk you through the app, set up your first scene, and leave you with a system that's backed by a 10-year fixture warranty and lifetime installation support.</p>
+          <p class="step-desc">We walk you through the app, set up your first scene, and leave you with a system that's backed by a 5-year+ fixture warranty and lifetime installation support.</p>
         </div>
       </div>
     </div>
@@ -1284,6 +1252,11 @@
   <!-- ─── ARCHES & APP PREVIEW ───────────────────────────────── -->
   <section id="arches-preview">
     <div class="container">
+      <div style="text-align:center;max-width:620px;margin:0 auto 56px;">
+        <div class="section-label">One App. Everything.</div>
+        <h2 class="section-title">Your Entire Light Show<br>in Your Pocket</h2>
+        <p class="section-sub">Every LED is individually addressable — accent your home's dormers, columns, and roofline details with precision, then switch to a full holiday show with one tap. All from your phone.</p>
+      </div>
       <div class="arches-split">
 
         <!-- Left: arch visual + prop cards -->
@@ -1312,7 +1285,7 @@
               <!-- Glow reflection on ground -->
               <ellipse cx="160" cy="195" rx="100" ry="4" fill="rgba(200,146,30,0.06)"/>
             </svg>
-            <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch — same app, same controller</div>
+            <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch,same app, same controller</div>
           </div>
 
           <!-- Prop cards -->
@@ -1337,12 +1310,6 @@
 
         <!-- Right: app mockup + feature list -->
         <div class="app-side fade-in fade-delay-1">
-          <div>
-            <div class="section-label">One App. Everything.</div>
-            <h2 class="section-title">Your Entire Light Show<br>in Your Pocket</h2>
-            <p class="section-sub" style="margin-bottom:32px;">Roofline lights, arches, yard props — all controlled from one app connected to your home Wi-Fi. Set schedules, pick scenes, and dim with a tap.</p>
-          </div>
-
           <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;">
             <!-- Phone mockup -->
             <div class="phone-mockup">
@@ -1375,6 +1342,13 @@
 
             <!-- Feature list -->
             <ul class="app-features-list" style="flex:1;min-width:180px;">
+              <li>
+                <div class="app-feat-icon">🏛️</div>
+                <div class="app-feat-text">
+                  <strong>Architectural Accent</strong>
+                  <span>Each LED controlled independently to highlight dormers, columns, arches, and roofline details</span>
+                </div>
+              </li>
               <li>
                 <div class="app-feat-icon">🗓️</div>
                 <div class="app-feat-text">
@@ -1430,20 +1404,20 @@
             <div class="led-strip green"></div>
             <div class="led-strip red"></div>
             <div class="led-strip"></div>
-            <p class="led-glow-text">16 million colors — pixel addressable</p>
+            <p class="led-glow-text">16 million colors,pixel addressable</p>
           </div>
         </div>
         <div class="fade-in fade-delay-1">
           <div class="section-label">The Hardware</div>
           <h2 class="section-title">Commercial-Grade Fixtures, Residential Price</h2>
-          <p class="section-sub">We install only professional-quality components — the same technology trusted by luxury hotels and commercial properties.</p>
+          <p class="section-sub">We install only professional-quality components,the same technology trusted by luxury hotels and commercial properties.</p>
           <ul class="tech-list">
-            <li><div><strong>IP65 Weatherproof Rating</strong> — sealed against rain, snow, dust, and UV</div></li>
-            <li><div><strong>RGBW Full-Spectrum LEDs</strong> — warm white + 16 million vivid colors</div></li>
-            <li><div><strong>Low-Voltage DC Wiring</strong> — safe, energy-efficient, code-compliant</div></li>
-            <li><div><strong>Pixel-Addressable Channels</strong> — zone control and animated effects</div></li>
-            <li><div><strong>Wi-Fi Smart Controller</strong> — app, voice, and automation compatible</div></li>
-            <li><div><strong>10-Year Fixture Warranty</strong> — we stand behind every product we install</div></li>
+            <li><div><strong>IP67 Weatherproof Rating</strong>,sealed against rain, snow, dust, and UV</div></li>
+            <li><div><strong>RGBW Full-Spectrum LEDs</strong>,warm white + 16 million vivid colors</div></li>
+            <li><div><strong>Low-Voltage DC Wiring</strong>,safe, energy-efficient, code-compliant</div></li>
+            <li><div><strong>Pixel-Addressable Channels</strong>,zone control and animated effects</div></li>
+            <li><div><strong>Wi-Fi Smart Controller</strong>,app, voice, and automation compatible</div></li>
+            <li><div><strong>5-Year+ Fixture Warranty</strong>,we stand behind every product we install</div></li>
           </ul>
         </div>
       </div>
@@ -1456,7 +1430,7 @@
       <div class="gallery-header fade-in">
         <div class="section-label">Our Work</div>
         <h2 class="section-title">Homes We've Illuminated</h2>
-        <p class="section-sub" style="margin:0 auto; text-align:center;">From warm white elegance to full holiday spectacles — every install is unique.</p>
+        <p class="section-sub" style="margin:0 auto; text-align:center;">From warm white elegance to full holiday spectacles,every install is unique.</p>
       </div>
       <div class="gallery-grid">
         <div class="g-item fade-in">
@@ -1465,35 +1439,35 @@
             <div class="g-glow-bar" style="width:90%"></div>
             <div class="g-glow-bar" style="width:75%; opacity:0.5"></div>
           </div>
-          <div class="g-caption">South Jordan — Warm White Roofline</div>
+          <div class="g-caption">South Jordan,Warm White Roofline</div>
         </div>
         <div class="g-item fade-in fade-delay-1">
           <div class="g-placeholder">
             <div class="g-house">🏘️</div>
             <div class="g-glow-bar" style="width:80%;background:linear-gradient(90deg,transparent,#3b82f6,transparent)"></div>
           </div>
-          <div class="g-caption">Draper — Blue Holiday Display</div>
+          <div class="g-caption">Draper,Blue Holiday Display</div>
         </div>
         <div class="g-item fade-in fade-delay-2">
           <div class="g-placeholder">
             <div class="g-house">🏠</div>
             <div class="g-glow-bar" style="width:70%;background:linear-gradient(90deg,transparent,#10b981,transparent)"></div>
           </div>
-          <div class="g-caption">Sandy — Custom Color Scene</div>
+          <div class="g-caption">Sandy,Custom Color Scene</div>
         </div>
         <div class="g-item fade-in fade-delay-1">
           <div class="g-placeholder">
             <div class="g-house" style="font-size:5rem">🏡</div>
             <div class="g-glow-bar" style="width:85%;background:linear-gradient(90deg,transparent,#f59e0b,#ef4444,transparent)"></div>
           </div>
-          <div class="g-caption">West Jordan — Patriotic 4th of July</div>
+          <div class="g-caption">West Jordan,Patriotic 4th of July</div>
         </div>
         <div class="g-item fade-in fade-delay-3">
           <div class="g-placeholder">
             <div class="g-house">🏰</div>
             <div class="g-glow-bar" style="width:75%;background:linear-gradient(90deg,transparent,#ef4444,transparent)"></div>
           </div>
-          <div class="g-caption">Murray — Christmas Red &amp; Green</div>
+          <div class="g-caption">Murray,Christmas Red &amp; Green</div>
         </div>
       </div>
     </div>
@@ -1509,7 +1483,7 @@
       <div class="testi-grid">
         <div class="testi-card fade-in">
           <div class="stars">★★★★★</div>
-          <p class="testi-quote">We had AFTERGLO install our system before Christmas and I can't believe how much we love it. The app is so easy — we changed the whole house to green and red in about 10 seconds. Our neighbors keep asking who did it.</p>
+          <p class="testi-quote">We had AFTERGLO install our system before Christmas and I can't believe how much we love it. The app is so easy,we changed the whole house to green and red in about 10 seconds. Our neighbors keep asking who did it.</p>
           <div class="testi-author">
             <div class="testi-avatar">JM</div>
             <div>
@@ -1520,7 +1494,7 @@
         </div>
         <div class="testi-card fade-in fade-delay-1">
           <div class="stars">★★★★★</div>
-          <p class="testi-quote">Best home improvement investment we've made. The crew was professional, finished in one day, and the install is completely invisible in daylight. We use warm white every night now — it makes the house look incredible.</p>
+          <p class="testi-quote">Best home improvement investment we've made. The crew was professional, finished in one day, and the install is completely invisible in daylight. We use warm white every night now,it makes the house look incredible.</p>
           <div class="testi-author">
             <div class="testi-avatar">KT</div>
             <div>
@@ -1614,15 +1588,15 @@
           <ul class="footer-contact">
             <li>
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-              <a href="tel:+18015550100">(801) 555-0100</a>
+              <a href="tel:+13853374144">(385) 337-4144</a>
             </li>
             <li>
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              <a href="mailto:hello@afterglo.com">hello@afterglo.com</a>
+              <a href="mailto:wardlegacygroup@gmail.com">wardlegacygroup@gmail.com</a>
             </li>
             <li>
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
-              South Jordan, Utah 84009
+              South Jordan, Utah 84095
             </li>
           </ul>
         </div>

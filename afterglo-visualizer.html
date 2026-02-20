@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AFTERGLO – Light Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #08121c;
+    --navy-light: #0d1a28;
+    --navy-mid: #122030;
+    --accent: #c8921e;
+    --accent-bright: #f0b233;
+    --accent-dim: #7a5510;
+    --white: #eeeae2;
+    --gray: #6a7f96;
+    --panel-bg: rgba(8,18,28,0.96);
+    --border: rgba(200,146,30,0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--navy);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 14px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,18,28,0.97);
+    backdrop-filter: blur(16px);
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    flex-shrink: 0;
+  }
+
+  .nav-logo {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+  .nav-logo span {
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4), 0 0 60px rgba(200,146,30,0.2);
+  }
+
+  .header-right { display: flex; align-items: center; gap: 12px; }
+
+  .header-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    opacity: 0.8;
+    display: none;
+  }
+
+  .header-cta {
+    background: var(--accent);
+    color: #08121c;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 7px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.82rem;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+    transition: background 0.2s, box-shadow 0.2s;
+    text-transform: uppercase;
+  }
+  .header-cta:hover {
+    background: var(--accent-bright);
+    box-shadow: 0 0 20px rgba(200,146,30,0.4);
+  }
+
+  /* ── MAIN LAYOUT ── */
+  .app-body {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+    height: calc(100vh - 57px);
+  }
+
+  /* ── LEFT PANEL ── */
+  .panel {
+    width: 268px;
+    min-width: 268px;
+    background: var(--panel-bg);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200,146,30,0.2) transparent;
+  }
+  .panel::-webkit-scrollbar { width: 4px; }
+  .panel::-webkit-scrollbar-thumb { background: rgba(200,146,30,0.2); border-radius: 2px; }
+
+  .panel-section {
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .panel-section summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .panel-section summary::-webkit-details-marker { display: none; }
+  .panel-section summary::after {
+    content: '▸';
+    font-size: 0.65rem;
+    color: var(--accent);
+    transition: transform 0.18s;
+    flex-shrink: 0;
+  }
+  .panel-section[open] > summary::after { transform: rotate(90deg); }
+  .panel-section summary h3 {
+    margin: 0;
+  }
+  .panel-section h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .panel-section-body {
+    padding: 0 18px 16px;
+  }
+
+  /* Upload */
+  .upload-zone {
+    border: 1.5px dashed rgba(200,146,30,0.3);
+    border-radius: 10px;
+    background: rgba(200,146,30,0.03);
+    padding: 22px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  .upload-zone:hover {
+    border-color: rgba(200,146,30,0.6);
+    background: rgba(200,146,30,0.07);
+  }
+  .upload-zone svg { margin: 0 auto 8px; display: block; opacity: 0.45; }
+  .upload-zone p { font-size: 0.78rem; color: var(--gray); line-height: 1.55; }
+  .upload-zone p strong { color: var(--accent); }
+  #fileInput { display: none; }
+
+  /* Tools */
+  .tool-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+  .tool-btn {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    padding: 9px 6px;
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.72rem;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.18s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .tool-btn svg { width: 16px; height: 16px; }
+  .tool-btn:hover { border-color: rgba(200,146,30,0.35); color: var(--white); }
+  .tool-btn.active {
+    background: rgba(200,146,30,0.12);
+    border-color: rgba(200,146,30,0.5);
+    color: var(--accent);
+  }
+
+  /* Color swatches */
+  /* Theme preset grid */
+  .theme-label {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.55rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gray);
+    margin: 0 0 6px;
+  }
+  .theme-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    margin-bottom: 4px;
+  }
+  .theme-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    padding: 8px 4px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 8px;
+    color: var(--gray);
+    font-size: 0.66rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'DM Sans', sans-serif;
+    line-height: 1.2;
+    text-align: center;
+  }
+  .theme-btn:hover { background: rgba(200,146,30,0.1); border-color: rgba(200,146,30,0.3); color: #fff; }
+  .theme-btn.active { background: rgba(200,146,30,0.18); border-color: rgba(200,146,30,0.6); color: var(--accent); }
+  .theme-dot {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+  }
+  /* Custom color picker */
+  .color-picker-wrap { margin-top: 12px; position: relative; }
+  .color-picker-face {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    cursor: pointer;
+    color: var(--gray);
+    font-size: 0.8rem;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .color-picker-face:hover { border-color: rgba(200,146,30,0.4); color: #fff; }
+  .color-picker-preview {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.2);
+    background: #f0b233;
+    flex-shrink: 0;
+  }
+  #customColor { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+
+  /* Sliders */
+  .slider-row { margin-bottom: 12px; }
+  .slider-row label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.74rem;
+    color: var(--gray);
+    margin-bottom: 5px;
+  }
+  .slider-row label span { color: var(--white); font-weight: 500; }
+  input[type="range"] {
+    width: 100%;
+    -webkit-appearance: none;
+    height: 3px;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    outline: none;
+    cursor: pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: var(--accent);
+    cursor: pointer;
+    box-shadow: 0 0 7px rgba(200,146,30,0.7);
+  }
+  input[type="color"] {
+    width: 100%; height: 30px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.08);
+    background: none;
+    cursor: pointer;
+    padding: 2px;
+  }
+
+  /* Tabs (preview / pattern) */
+  .tab-group { display: flex; background: rgba(255,255,255,0.04); border-radius: 7px; padding: 3px; gap: 2px; }
+  .tab-btn {
+    flex: 1;
+    padding: 6px 4px;
+    border-radius: 5px;
+    border: none;
+    background: none;
+    color: var(--gray);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.7rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    text-align: center;
+  }
+  .tab-btn.active { background: rgba(200,146,30,0.18); color: var(--accent); font-weight: 600; }
+  .tab-btn:hover:not(.active) { color: var(--white); }
+
+
+  /* Toggle */
+  .toggle-row {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--gray);
+    margin-top: 10px;
+  }
+  .toggle {
+    width: 36px; height: 19px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .toggle.on { background: var(--accent); }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 13px; height: 13px;
+    border-radius: 50%;
+    background: white;
+    top: 3px; left: 3px;
+    transition: left 0.2s;
+  }
+  .toggle.on::after { left: 20px; }
+
+  /* Action buttons */
+  .action-btn {
+    width: 100%; padding: 10px;
+    border-radius: 8px; border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600; font-size: 0.82rem;
+    cursor: pointer;
+    transition: all 0.18s;
+    margin-bottom: 7px;
+    letter-spacing: 0.02em;
+  }
+  .action-btn:last-child { margin-bottom: 0; }
+  .action-btn.primary { background: var(--accent); color: #08121c; }
+  .action-btn.primary:hover { background: var(--accent-bright); box-shadow: 0 0 16px rgba(200,146,30,0.35); }
+  .action-btn.secondary { background: rgba(255,255,255,0.05); color: var(--gray); border: 1px solid rgba(255,255,255,0.07); }
+  .action-btn.secondary:hover { color: var(--white); background: rgba(255,255,255,0.09); }
+  .action-btn.danger { background: rgba(239,68,68,0.08); color: #f87171; border: 1px solid rgba(239,68,68,0.18); }
+  .action-btn.danger:hover { background: rgba(239,68,68,0.16); }
+
+  /* ── CANVAS AREA ── */
+  .canvas-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .canvas-wrap {
+    position: relative;
+    display: none;
+    flex-shrink: 0;
+  }
+
+  #baseCanvas {
+    display: block;
+    max-width: 100%;
+  }
+  #overlayCanvas, #interactCanvas {
+    position: absolute;
+    top: 0; left: 0;
+    pointer-events: none;
+  }
+  #interactCanvas { pointer-events: all; }
+
+  .placeholder {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0.35;
+    pointer-events: none;
+    gap: 14px;
+  }
+  .placeholder h3 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; }
+  .placeholder p { font-size: 0.82rem; color: var(--gray); }
+
+  .canvas-tip {
+    position: fixed;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0,0,0,0.75);
+    border: 1px solid rgba(200,146,30,0.2);
+    color: var(--gray);
+    font-size: 0.72rem;
+    padding: 6px 16px;
+    border-radius: 16px;
+    backdrop-filter: blur(8px);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 50;
+  }
+
+  #nightOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0);
+    pointer-events: none;
+    transition: background 0.5s;
+  }
+
+  /* ── RIGHT PANEL ── */
+  .right-panel {
+    width: 210px;
+    min-width: 210px;
+    background: var(--panel-bg);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(200,146,30,0.2) transparent;
+  }
+
+  .rp-section {
+    padding: 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .rp-section h3 {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+    font-weight: 700;
+  }
+
+  .stat-card {
+    background: rgba(200,146,30,0.06);
+    border: 1px solid rgba(200,146,30,0.1);
+    border-radius: 9px;
+    padding: 12px;
+    margin-bottom: 8px;
+  }
+  .stat-card .val {
+    font-family: 'Outfit', sans-serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .stat-card .val sub { font-size: 0.9rem; }
+  .stat-card .lbl { font-size: 0.68rem; color: var(--gray); }
+
+  .benefit-list { font-size: 0.72rem; color: var(--gray); line-height: 1.8; }
+  .benefit-list div::before { content: '✓ '; color: var(--accent); }
+
+  .cta-box {
+    padding: 16px;
+    background: linear-gradient(160deg, rgba(200,146,30,0.12), rgba(200,146,30,0.04));
+    border-top: 1px solid rgba(200,146,30,0.15);
+    text-align: center;
+  }
+  .cta-box h4 { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
+  .cta-box p { font-size: 0.72rem; color: var(--gray); margin-bottom: 12px; line-height: 1.55; }
+  .cta-phone { color: var(--accent); font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 10px; }
+
+  /* ── LEAD MODAL ── */
+  #leadModal {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-inner {
+    background: #0d1a28;
+    border: 1px solid rgba(200,146,30,0.3);
+    border-radius: 14px;
+    padding: 36px 32px;
+    max-width: 400px;
+    width: 92%;
+    position: relative;
+  }
+  .modal-inner h2 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 4px; }
+  .modal-inner h2 span { color: var(--accent); text-shadow: 0 0 20px rgba(200,146,30,0.6); }
+  .modal-inner p { color: var(--gray); font-size: 0.82rem; margin-bottom: 22px; line-height: 1.55; }
+  .modal-inner input, .modal-inner select {
+    width: 100%; padding: 11px 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 8px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.88rem;
+    margin-bottom: 9px;
+  }
+  .modal-inner input:focus { outline: none; border-color: rgba(200,146,30,0.5); }
+  .close-btn { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--gray); font-size: 1.2rem; cursor: pointer; }
+  .close-btn:hover { color: white; }
+
+  /* Spline node dots on interact canvas are drawn by JS */
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+  <div class="header-right">
+    <span class="header-tag">Light Visualizer</span>
+    <button class="header-cta" onclick="openLeadForm()">Get Free Quote →</button>
+  </div>
+</header>
+
+<div class="app-body">
+
+  <!-- ══ LEFT PANEL ══ -->
+  <div class="panel">
+
+    <details class="panel-section" open>
+      <summary><h3>📷 Upload Home Photo</h3></summary>
+      <div class="panel-section-body">
+        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+          <svg width="34" height="34" viewBox="0 0 34 34" fill="none">
+            <rect x="3" y="9" width="28" height="20" rx="3" stroke="#c8921e" stroke-width="1.5"/>
+            <circle cx="12" cy="18" r="3" stroke="#c8921e" stroke-width="1.5"/>
+            <path d="M3 23l6-5 5 4 5-6 12 7" stroke="#c8921e" stroke-width="1.5" stroke-linejoin="round"/>
+            <path d="M17 3v8M14 5l3-3 3 3" stroke="#c8921e" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <p><strong>Click to upload</strong><br>your home exterior<br><span style="font-size:0.68rem;opacity:0.5">JPG or PNG · any size</span></p>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" onchange="loadImage(event)">
+      </div>
+    </details>
+
+    <details class="panel-section">
+      <summary><h3>🔧 Drawing Tool</h3></summary>
+      <div class="panel-section-body">
+        <div class="tool-btns">
+          <button class="tool-btn" id="btn-dot" onclick="setTool('dot')">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+              <circle cx="10" cy="10" r="4"/>
+              <circle cx="4" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+              <circle cx="16" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+            </svg>
+            Single Dot
+          </button>
+          <button class="tool-btn active" id="btn-spline" onclick="setTool('spline')">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M2 16 C5 4, 9 4, 10 10 S15 16, 18 4"/>
+              <circle cx="2" cy="16" r="1.5" fill="currentColor" stroke="none"/>
+              <circle cx="10" cy="10" r="1.5" fill="currentColor" stroke="none"/>
+              <circle cx="18" cy="4" r="1.5" fill="currentColor" stroke="none"/>
+            </svg>
+            Spline Run
+          </button>
+          <button class="tool-btn" id="btn-erase" onclick="setTool('erase')">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M3 17l4-4 7 4H3z"/>
+              <path d="M7 13L15 5l3 3-8 8"/>
+            </svg>
+            Erase Run
+          </button>
+          <button class="tool-btn" id="btn-move" onclick="setTool('move')">
+            <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M10 2v16M2 10h16"/>
+              <path d="M10 2l-2 2M10 2l2 2M18 10l-2-2M18 10l-2 2M10 18l-2-2M10 18l2-2M2 10l2-2M2 10l2 2"/>
+            </svg>
+            Move Node
+          </button>
+        </div>
+        <div style="margin-top:8px; padding:8px; background:rgba(200,146,30,0.06); border-radius:7px; font-size:0.7rem; color:var(--gray); line-height:1.6;" id="toolHint">
+          Click to add nodes · Double-click to finish run · Right-click to cancel
+        </div>
+      </div>
+    </details>
+
+    <details class="panel-section">
+      <summary><h3>🎨 Color & Effect</h3></summary>
+      <div class="panel-section-body">
+        <p class="theme-label">Effects</p>
+        <div class="theme-grid">
+          <button class="theme-btn active" onclick="setTheme('solid','#ffe4a0','#ffb347',this)">
+            <div class="theme-dot" style="background:#ffe4a0;box-shadow:0 0 6px #ffb347aa"></div>Solid
+          </button>
+          <button class="theme-btn" onclick="setTheme('twinkle','#ffe4a0','#ffb347',this)">
+            <div class="theme-dot" style="background:#ffe4a0;box-shadow:0 0 6px #ffb347aa"></div>Twinkle
+          </button>
+          <button class="theme-btn" onclick="setTheme('comet','#ffe4a0','#ffb347',this)">
+            <div class="theme-dot" style="background:#ffe4a0;box-shadow:0 0 6px #ffb347aa"></div>Comet
+          </button>
+          <button class="theme-btn" onclick="setTheme('shimmer','#ffe4a0','#ffb347',this)">
+            <div class="theme-dot" style="background:#ffe4a0;box-shadow:0 0 6px #ffb347aa"></div>Shimmer
+          </button>
+          <button class="theme-btn" onclick="setTheme('fire',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(#ff4400,#ff8800)"></div>Fire
+          </button>
+          <button class="theme-btn" onclick="setTheme('rainbow',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#f00,#f80,#ff0,#0f0,#00f,#80f)"></div>Rainbow
+          </button>
+        </div>
+        <p class="theme-label" style="margin-top:10px">Holidays</p>
+        <div class="theme-grid">
+          <button class="theme-btn" onclick="setTheme('twinkle','#ff3366','#cc0040',this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#ff3366,#ff80aa)"></div>Valentine's
+          </button>
+          <button class="theme-btn" onclick="setTheme('fire','#ff6600','#882200',this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#ff6600,#6600aa)"></div>Halloween
+          </button>
+          <button class="theme-btn" onclick="setTheme('patriotic',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#ff2020 33%,#fff 33%,#fff 66%,#2255ff 66%)"></div>Patriotic
+          </button>
+          <button class="theme-btn" onclick="setTheme('shimmer','#22d45e','#0a8a30',this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#22d45e,#115e28)"></div>St. Patrick's
+          </button>
+        </div>
+        <div class="color-picker-wrap">
+          <div class="color-picker-face">
+            <div class="color-picker-preview" id="colorPickerPreview"></div>
+            <span>Custom Color</span>
+          </div>
+          <input type="color" id="customColor" value="#f0b233">
+        </div>
+        <div class="toggle-row" style="margin-top:10px">
+          <span>Animate</span>
+          <div class="toggle" id="animToggle" onclick="toggleAnim()"></div>
+        </div>
+      </div>
+    </details>
+
+    <details class="panel-section">
+      <summary><h3>⚙️ Light Settings</h3></summary>
+      <div class="panel-section-body">
+        <div class="slider-row">
+          <label>Brightness <span id="brightnessVal">90%</span></label>
+          <input type="range" id="brightness" min="20" max="100" value="90" oninput="updateSettings()">
+        </div>
+        <div class="slider-row">
+          <label>LEDs per run <span id="ledCountVal">24</span></label>
+          <input type="range" id="ledCount" min="4" max="500" value="24" oninput="updateSettings()">
+        </div>
+      </div>
+    </details>
+
+    <details class="panel-section">
+      <summary><h3>🌙 Scene</h3></summary>
+      <div class="panel-section-body">
+        <div class="tab-group" id="previewTabs">
+          <button class="tab-btn active" onclick="setPreviewMode('day',this)">Day</button>
+          <button class="tab-btn" onclick="setPreviewMode('dusk',this)">Dusk</button>
+          <button class="tab-btn" onclick="setPreviewMode('night',this)">Night</button>
+        </div>
+      </div>
+    </details>
+
+
+    <details class="panel-section">
+      <summary><h3>⚡ Actions</h3></summary>
+      <div class="panel-section-body">
+        <button class="action-btn primary" onclick="downloadImage()">⬇ Download Preview</button>
+        <button class="action-btn secondary" onclick="undoLastRun()">↩ Undo Last Run</button>
+        <button class="action-btn danger" onclick="clearAll()">✕ Clear All</button>
+      </div>
+    </details>
+
+  </div>
+
+  <!-- ══ CANVAS ══ -->
+  <div class="canvas-area" id="canvasArea">
+    <div class="placeholder" id="placeholder">
+      <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+        <rect x="6" y="18" width="60" height="46" rx="4" stroke="#c8921e" stroke-width="1.5"/>
+        <polygon points="36,6 66,28 6,28" fill="rgba(200,146,30,0.08)" stroke="#c8921e" stroke-width="1.5"/>
+        <circle cx="28" cy="20" r="1.2" fill="#c8921e"/><circle cx="36" cy="18" r="1.2" fill="#c8921e"/><circle cx="44" cy="20" r="1.2" fill="#c8921e"/>
+        <line x1="28" y1="20" x2="28" y2="28" stroke="#c8921e" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="36" y1="18" x2="36" y2="28" stroke="#c8921e" stroke-width="0.8" stroke-dasharray="2,2"/>
+        <line x1="44" y1="20" x2="44" y2="28" stroke="#c8921e" stroke-width="0.8" stroke-dasharray="2,2"/>
+      </svg>
+      <h3>Upload Your Home Photo</h3>
+      <p>Then trace your roofline with the Spline tool</p>
+    </div>
+    <div class="canvas-wrap" id="canvasWrap">
+      <canvas id="baseCanvas"></canvas>
+      <div id="nightOverlay"></div>
+      <canvas id="overlayCanvas"></canvas>
+      <canvas id="interactCanvas"></canvas>
+    </div>
+    <div class="canvas-tip" id="canvasTip" style="display:none">Upload a photo to begin</div>
+  </div>
+
+  <!-- ══ RIGHT PANEL ══ -->
+  <div class="right-panel">
+
+    <div class="rp-section">
+      <h3>📊 Your Design</h3>
+      <div class="stat-card">
+        <div class="val" id="statLights">0</div>
+        <div class="lbl">Total LEDs</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="statRuns">0</div>
+        <div class="lbl">Light runs</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="statFeet">—<sub style="font-size:0.9rem">ft</sub></div>
+        <div class="lbl">Est. footage</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="statCost">$—</div>
+        <div class="lbl">Est. install cost</div>
+      </div>
+    </div>
+
+    <div class="rp-section">
+      <h3>✅ Why Permanent LEDs?</h3>
+      <div class="benefit-list">
+        <div>Never hang lights again</div>
+        <div>App-controlled colors</div>
+        <div>50,000+ hour lifespan</div>
+        <div>IP67 weatherproof</div>
+        <div>Holiday-ready in seconds</div>
+        <div>Increases home value</div>
+      </div>
+    </div>
+
+    <div class="cta-box">
+      <h4>Love your preview?</h4>
+      <p>Get a professional installation quote — Salt Lake, Davis & Weber counties.</p>
+      <a class="cta-phone" href="tel:+18015551234">📞 (801) 555-1234</a>
+      <button class="action-btn primary" style="margin-bottom:0;" onclick="openLeadForm()">Get Free Quote</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ LEAD MODAL ══ -->
+<div id="leadModal">
+  <div class="modal-inner">
+    <button class="close-btn" onclick="closeLeadForm()">✕</button>
+    <h2>AFTER<span>GLO</span></h2>
+    <p>Get a free personalized quote. We'll respond within 24 hours.</p>
+    <form onsubmit="submitLead(event)">
+      <input type="text" placeholder="Full Name *" required>
+      <input type="tel" placeholder="Phone Number *" required>
+      <input type="email" placeholder="Email Address">
+      <input type="text" placeholder="City / Neighborhood">
+      <button type="submit" class="action-btn primary" style="margin-top:6px;margin-bottom:0;">Send Quote Request →</button>
+    </form>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════════════
+let img = null;
+let canvasW = 0, canvasH = 0;
+
+// A "run" is a completed polyline: { nodes: [{x,y} normalized], color, settings snapshot }
+let runs = [];
+
+// Active spline being drawn
+let activeNodes = []; // [{x,y} normalized] - in progress
+let hoveredPos = null; // mouse position during draw
+
+let tool = 'spline';
+let previewMode = 'day';
+let pattern = 'solid';
+let animating = false;
+let animToggleOn = false;
+let animFrame = null;
+let dragRunIdx = null, dragNodeIdx = null;
+let isDragging = false;
+
+let settings = { brightness: 90, glow: 7, bulbSize: 0, ledCount: 24, droop: 60 };
+let _offCanvas = null, _offCtx = null; // reusable offscreen canvas for soft edge masking
+
+const COLOR_PRESETS = [
+  { name:'Warm White', hex:'#ffe4a0', glow:'#ffb347' },
+  { name:'Pure White', hex:'#e8f4ff', glow:'#b0ccff' },
+  { name:'Cool White', hex:'#b8d4ff', glow:'#5580ff' },
+  { name:'Amber',      hex:'#f0b233', glow:'#e07a10' },
+  { name:'Red',        hex:'#ff3333', glow:'#bb0000' },
+  { name:'Green',      hex:'#22d45e', glow:'#0a8a30' },
+  { name:'Blue',       hex:'#3b82f6', glow:'#1a40cc' },
+  { name:'Purple',     hex:'#b44fff', glow:'#7a20cc' },
+  { name:'Pink',       hex:'#f46fbb', glow:'#cc1f7a' },
+  { name:'Teal',       hex:'#2de0c8', glow:'#0aa090' },
+  { name:'Multi',      hex:'multi',   glow:'multi'   },
+  { name:'Rainbow',    hex:'rainbow', glow:'rainbow' },
+];
+let currentColor = COLOR_PRESETS[0];
+
+const MULTI_COLORS = [
+  {hex:'#ff3333',glow:'#bb0000'},{hex:'#ff8800',glow:'#cc5500'},
+  {hex:'#ffee00',glow:'#ccbb00'},{hex:'#22d45e',glow:'#0a8a30'},
+  {hex:'#3b82f6',glow:'#1a40cc'},{hex:'#b44fff',glow:'#7a20cc'},
+];
+
+// ════════════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════════════
+function init() {
+  document.getElementById('customColor').addEventListener('input', e => {
+    currentColor = { name:'Custom', hex:e.target.value, glow:e.target.value };
+    document.getElementById('colorPickerPreview').style.background = e.target.value;
+    document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+    runs.forEach(r => r.color = {...currentColor});
+    renderLights();
+  });
+  // Init preview dot color
+  document.getElementById('colorPickerPreview').style.background = currentColor.hex || '#f0b233';
+  setTool('spline');
+}
+
+function setTheme(pat, hex, glow, btn) {
+  pattern = pat;
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  if (hex !== null && hex !== undefined) {
+    currentColor = { name:'Theme', hex, glow: glow || hex };
+    document.getElementById('colorPickerPreview').style.background = hex;
+    runs.forEach(r => r.color = {...currentColor});
+  }
+  if (pat !== 'solid' && !animating) {
+    animating = true;
+    animToggleOn = true;
+    document.getElementById('animToggle').classList.add('on');
+    startLoop();
+  } else {
+    renderLights();
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  IMAGE LOAD
+// ════════════════════════════════════════════════════════════
+function loadImage(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    img = new Image();
+    img.onload = () => {
+      setupCanvases();
+      document.getElementById('placeholder').style.display = 'none';
+      document.getElementById('canvasWrap').style.display = 'block';
+      document.getElementById('canvasTip').style.display = 'block';
+      drawBase();
+      renderLights();
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function setupCanvases() {
+  const area = document.getElementById('canvasArea');
+  const maxW = area.clientWidth;
+  const maxH = area.clientHeight;
+  const ratio = img.width / img.height;
+  // Fit inside the viewport — scale by width first, then clamp to height
+  canvasW = Math.min(maxW, img.width);
+  canvasH = Math.round(canvasW / ratio);
+  if (canvasH > maxH) { canvasH = maxH; canvasW = Math.round(canvasH * ratio); }
+
+  ['baseCanvas','overlayCanvas','interactCanvas'].forEach(id => {
+    const c = document.getElementById(id);
+    c.width = canvasW; c.height = canvasH;
+    c.style.width = canvasW + 'px'; c.style.height = canvasH + 'px';
+  });
+
+  const ic = document.getElementById('interactCanvas');
+  ic.removeEventListener('click', onCanvasClick);
+  ic.removeEventListener('dblclick', onDblClick);
+  ic.removeEventListener('contextmenu', onRightClick);
+  ic.removeEventListener('mousemove', onMouseMove);
+  ic.removeEventListener('mousedown', onMouseDown);
+  ic.removeEventListener('mouseup', onMouseUp);
+  ic.addEventListener('click', onCanvasClick);
+  ic.addEventListener('dblclick', onDblClick);
+  ic.addEventListener('contextmenu', onRightClick);
+  ic.addEventListener('mousemove', onMouseMove);
+  ic.addEventListener('mousedown', onMouseDown);
+  ic.addEventListener('mouseup', onMouseUp);
+}
+
+function drawBase() {
+  const c = document.getElementById('baseCanvas');
+  c.getContext('2d').drawImage(img, 0, 0, canvasW, canvasH);
+}
+
+// ════════════════════════════════════════════════════════════
+//  INTERACTION
+// ════════════════════════════════════════════════════════════
+function getPos(e) {
+  const ic = document.getElementById('interactCanvas');
+  const r = ic.getBoundingClientRect();
+  return { x: (e.clientX - r.left) / canvasW, y: (e.clientY - r.top) / canvasH };
+}
+
+let lastClickTime = 0;
+
+function onCanvasClick(e) {
+  if (!img || isDragging) return;
+  // Suppress the click that fires right after dblclick
+  const now = Date.now();
+  if (now - lastClickTime < 350) return;
+
+  const pos = getPos(e);
+
+  if (tool === 'dot') {
+    // Single dot becomes a 1-node run (renders as one bulb)
+    runs.push({ nodes:[pos], color: {...currentColor}, settings: {...settings} });
+    updateStats(); renderLights();
+  } else if (tool === 'spline') {
+    activeNodes.push(pos);
+    renderLights();
+    updateTip();
+  } else if (tool === 'erase') {
+    // Find nearest run and remove it
+    let best = -1, bestDist = 20/canvasW;
+    runs.forEach((run, ri) => {
+      run.nodes.forEach(n => {
+        const d = Math.hypot(n.x-pos.x, n.y-pos.y)*canvasW;
+        if (d < 20 && d < bestDist*canvasW) { bestDist=d/canvasW; best=ri; }
+      });
+    });
+    if (best>=0) { runs.splice(best,1); updateStats(); renderLights(); }
+  }
+}
+
+function onDblClick(e) {
+  lastClickTime = Date.now();
+  if (tool !== 'spline' || activeNodes.length < 2) {
+    activeNodes = []; renderLights(); return;
+  }
+  // Commit run
+  runs.push({ nodes:[...activeNodes], color:{...currentColor}, settings:{...settings} });
+  activeNodes = [];
+  updateStats(); renderLights();
+  updateTip();
+}
+
+function onRightClick(e) {
+  e.preventDefault();
+  if (tool === 'spline' && activeNodes.length > 0) {
+    activeNodes.pop(); renderLights();
+  }
+}
+
+function onMouseMove(e) {
+  hoveredPos = getPos(e);
+  if (tool === 'spline' && activeNodes.length > 0) renderLights();
+
+  // Move node drag
+  if (dragRunIdx !== null) {
+    isDragging = true;
+    runs[dragRunIdx].nodes[dragNodeIdx] = hoveredPos;
+    renderLights();
+  }
+}
+
+function onMouseDown(e) {
+  if (tool !== 'move' || !img) return;
+  const pos = getPos(e);
+  let best = -1, bestNi = -1, bestD = 20;
+  runs.forEach((run,ri) => {
+    run.nodes.forEach((n,ni) => {
+      const d = Math.hypot((n.x-pos.x)*canvasW, (n.y-pos.y)*canvasH);
+      if (d < bestD) { bestD=d; best=ri; bestNi=ni; }
+    });
+  });
+  if (best>=0) { dragRunIdx=best; dragNodeIdx=bestNi; isDragging=false; }
+}
+
+function onMouseUp() {
+  dragRunIdx = null; dragNodeIdx = null;
+  setTimeout(()=>{ isDragging=false; }, 30);
+}
+
+// ════════════════════════════════════════════════════════════
+//  RENDER
+// ════════════════════════════════════════════════════════════
+function renderLights() {
+  if (!img) return;
+  const oc = document.getElementById('overlayCanvas');
+  const ic = document.getElementById('interactCanvas');
+  const octx = oc.getContext('2d');
+  const ictx = ic.getContext('2d');
+  octx.clearRect(0, 0, canvasW, canvasH);
+  ictx.clearRect(0, 0, canvasW, canvasH);
+
+  const t = Date.now() / 1000;
+
+  // Draw all completed runs
+  // Reuse/resize offscreen canvas for soft horizontal edge masking
+  if (!_offCanvas || _offCanvas.width !== canvasW || _offCanvas.height !== canvasH) {
+    _offCanvas = document.createElement('canvas');
+    _offCanvas.width = canvasW; _offCanvas.height = canvasH;
+    _offCtx = _offCanvas.getContext('2d');
+  }
+  runs.forEach((run, ri) => {
+    const pts = sampleRunPoints(run.nodes, run.settings.ledCount);
+    const count = pts.length;
+    const xs = pts.map(p => p.x * canvasW);
+    const minX = Math.min(...xs);
+    const maxX = Math.max(...xs);
+    const needsSoftEdge = maxX > minX;
+
+    if (needsSoftEdge) {
+      // Draw run onto offscreen canvas
+      _offCtx.clearRect(0, 0, canvasW, canvasH);
+      const sceneMult = previewMode === 'day' ? 0.4 : previewMode === 'dusk' ? 0.8 : 1.0;
+      // sceneMult is always > 0 now (day=0.4, dusk=0.8, night=1.0)
+      pts.forEach((pt, i) => {
+        const col = resolveColor(run.color, i, ri, count, t);
+        const alpha = getAlpha(i, count, ri, t, run.settings) * (run.settings.brightness/100) * sceneMult;
+        drawLightPointFull(_offCtx, pt.x*canvasW, pt.y*canvasH, col.bulb, col.glow, alpha, run.settings, count);
+      });
+      // Soft-erase beyond the horizontal endpoints using destination-out gradients
+      const fadeW = Math.max(run.settings.glow * 5, 20); // matches ambient radius
+      _offCtx.globalCompositeOperation = 'destination-out';
+      // Left: fade from invisible-erase at minX to full-erase at minX-fadeW
+      const gL = _offCtx.createLinearGradient(minX - fadeW, 0, minX, 0);
+      gL.addColorStop(0, 'rgba(0,0,0,1)');
+      gL.addColorStop(1, 'rgba(0,0,0,0)');
+      _offCtx.fillStyle = gL;
+      _offCtx.fillRect(0, 0, minX, canvasH);
+      // Right: fade from invisible-erase at maxX to full-erase at maxX+fadeW
+      const gR = _offCtx.createLinearGradient(maxX, 0, maxX + fadeW, 0);
+      gR.addColorStop(0, 'rgba(0,0,0,0)');
+      gR.addColorStop(1, 'rgba(0,0,0,1)');
+      _offCtx.fillStyle = gR;
+      _offCtx.fillRect(maxX, 0, canvasW - maxX, canvasH);
+      _offCtx.globalCompositeOperation = 'source-over';
+      // Composite the masked run onto the overlay using screen blend for additive light
+      octx.globalCompositeOperation = 'screen';
+      octx.drawImage(_offCanvas, 0, 0);
+      octx.globalCompositeOperation = 'source-over';
+    } else {
+      // Single-dot run — no edge masking needed
+      const sceneMult = previewMode === 'day' ? 0.4 : previewMode === 'dusk' ? 0.8 : 1.0;
+      if (sceneMult > 0) {
+        pts.forEach((pt, i) => {
+          const col = resolveColor(run.color, i, ri, count, t);
+          const alpha = getAlpha(i, count, ri, t, run.settings) * (run.settings.brightness/100) * sceneMult;
+          drawLightPointFull(octx, pt.x*canvasW, pt.y*canvasH, col.bulb, col.glow, alpha, run.settings, count);
+        });
+      }
+    }
+  });
+
+  // Draw active spline in-progress
+  if (activeNodes.length > 0) {
+    // Draw node dots
+    ictx.save();
+    activeNodes.forEach((n, i) => {
+      const x = n.x*canvasW, y = n.y*canvasH;
+      ictx.beginPath();
+      ictx.arc(x, y, 5, 0, Math.PI*2);
+      ictx.fillStyle = i===0 ? 'rgba(200,146,30,0.9)' : 'rgba(200,146,30,0.6)';
+      ictx.fill();
+      ictx.strokeStyle = 'rgba(255,255,255,0.5)';
+      ictx.lineWidth = 1;
+      ictx.stroke();
+
+      // Node label
+      if (i>0) {
+        ictx.strokeStyle = 'rgba(200,146,30,0.4)';
+        ictx.lineWidth = 1;
+        ictx.setLineDash([4,3]);
+        const prev = activeNodes[i-1];
+        ictx.beginPath();
+        ictx.moveTo(prev.x*canvasW, prev.y*canvasH);
+        ictx.lineTo(x, y);
+        ictx.stroke();
+        ictx.setLineDash([]);
+      }
+    });
+
+    // Line to mouse
+    if (hoveredPos) {
+      const last = activeNodes[activeNodes.length-1];
+      ictx.strokeStyle = 'rgba(200,146,30,0.85)';
+      ictx.lineWidth = 1.5;
+      ictx.setLineDash([4,3]);
+      ictx.beginPath();
+      ictx.moveTo(last.x*canvasW, last.y*canvasH);
+      ictx.lineTo(hoveredPos.x*canvasW, hoveredPos.y*canvasH);
+      ictx.stroke();
+      ictx.setLineDash([]);
+    }
+
+    // Preview LEDs on active path
+    if (activeNodes.length >= 2) {
+      const pts = sampleRunPoints(activeNodes, settings.ledCount);
+      pts.forEach((pt, i) => {
+        const col = resolveColor(currentColor, i, 999, pts.length, t);
+        drawLightPointFull(octx, pt.x*canvasW, pt.y*canvasH, col.bulb, col.glow, 0.7*(settings.brightness/100), settings, pts.length);
+      });
+    }
+
+    ictx.restore();
+  }
+
+  // Move mode: show node handles on all runs
+  if (tool === 'move') {
+    ictx.save();
+    runs.forEach(run => {
+      run.nodes.forEach(n => {
+        ictx.beginPath();
+        ictx.arc(n.x*canvasW, n.y*canvasH, 5, 0, Math.PI*2);
+        ictx.fillStyle = 'rgba(200,146,30,0.5)';
+        ictx.fill();
+        ictx.strokeStyle = 'rgba(255,255,255,0.6)';
+        ictx.lineWidth = 1;
+        ictx.stroke();
+      });
+    });
+    ictx.restore();
+  }
+
+  updateNightOverlay();
+}
+
+// ── Linear segment sampling (arc-length parameterized) ───────
+function sampleRunPoints(nodes, count) {
+  if (nodes.length === 1) return [nodes[0]];
+  if (count <= 1) return [nodes[0]];
+
+  // Compute each segment's pixel length
+  const segLens = [];
+  let totalLen = 0;
+  for (let i = 0; i < nodes.length - 1; i++) {
+    const dx = (nodes[i+1].x - nodes[i].x) * canvasW;
+    const dy = (nodes[i+1].y - nodes[i].y) * canvasH;
+    const len = Math.hypot(dx, dy);
+    segLens.push(len);
+    totalLen += len;
+  }
+  if (totalLen < 1e-9) return Array(count).fill({...nodes[0]});
+
+  // Cumulative lengths at each node
+  const cumLen = [0];
+  for (const l of segLens) cumLen.push(cumLen[cumLen.length - 1] + l);
+
+  // Place LEDs at perfectly equal arc-length intervals
+  const result = [];
+  for (let i = 0; i < count; i++) {
+    const target = (i / (count - 1)) * totalLen;
+    let seg = 0;
+    while (seg < nodes.length - 2 && cumLen[seg + 1] <= target) seg++;
+    const t = segLens[seg] < 1e-9 ? 0 : (target - cumLen[seg]) / segLens[seg];
+    result.push({
+      x: nodes[seg].x + (nodes[seg+1].x - nodes[seg].x) * t,
+      y: nodes[seg].y + (nodes[seg+1].y - nodes[seg].y) * t
+    });
+  }
+  return result;
+}
+
+// ── Light rendering ───────────────────────────────────────────
+function drawLightPointFull(ctx, x, y, bulbColor, glowColor, alpha, s, count) {
+  const glowR = s.glow;      // user's setting (default 10px)
+  const bulbR = s.bulbSize;  // user's setting (default 2px)
+  const beam  = s.droop / 30; // beam length scale (2.0 at default, max 4.0)
+  // Scale glow layers down as LED count increases so stacked screen blends don't over-saturate
+  const df = Math.min(1.0, Math.sqrt(24 / Math.max(count || 1, 1)));
+
+  ctx.save();
+  ctx.globalCompositeOperation = 'screen';
+
+  // ─ Layer 0: environmental spill — night/dusk only, simulates beam lighting wall & ground ─
+  if (previewMode !== 'day') {
+    const envR = glowR * 20;
+    const env = ctx.createRadialGradient(x, y + 3, 0, x, y + 3, envR);
+    env.addColorStop(0,    hexAlpha(glowColor, 0.022 * alpha * df));
+    env.addColorStop(0.25, hexAlpha(glowColor, 0.009 * alpha * df));
+    env.addColorStop(0.55, hexAlpha(glowColor, 0.003 * alpha * df));
+    env.addColorStop(1,    'rgba(0,0,0,0)');
+    ctx.fillStyle = env;
+    ctx.fillRect(x - envR, y + 3, envR * 2, envR * beam * 1.5); // extra long reach
+  }
+
+  // ─ Layer 1: wide ambient cone — radiant, pulled way down ─
+  const ambR = glowR * 5;
+  const amb = ctx.createRadialGradient(x, y + 3, glowR * 1.5, x, y + 3, ambR);
+  amb.addColorStop(0,    hexAlpha(glowColor, 0.027 * alpha * df));
+  amb.addColorStop(0.4,  hexAlpha(glowColor, 0.010 * alpha * df));
+  amb.addColorStop(0.75, hexAlpha(glowColor, 0.003 * alpha * df));
+  amb.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = amb;
+  ctx.fillRect(x - ambR, y + 3, ambR * 2, ambR * beam);
+
+  // ─ Layer 2: mid bloom cone — radiant, pulled down ─
+  const midR = glowR * 2;
+  const mid = ctx.createRadialGradient(x, y + 3, glowR * 0.3, x, y + 3, midR);
+  mid.addColorStop(0,    hexAlpha(glowColor, 0.15 * alpha * df));
+  mid.addColorStop(0.35, hexAlpha(glowColor, 0.055 * alpha * df));
+  mid.addColorStop(0.70, hexAlpha(glowColor, 0.015 * alpha * df));
+  mid.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = mid;
+  ctx.fillRect(x - midR, y + 3, midR * 2, midR * beam);
+
+  // ─ Layer 3: inner aura — immediate brightness at 30% ─
+  const innerR = glowR * 0.5;
+  const inner = ctx.createRadialGradient(x, y, 0, x, y, innerR);
+  inner.addColorStop(0,    hexAlpha('#ffffff', 0.29 * alpha * df));
+  inner.addColorStop(0.25, hexAlpha(bulbColor, 0.24 * alpha * df));
+  inner.addColorStop(0.60, hexAlpha(glowColor, 0.07 * alpha * df));
+  inner.addColorStop(1,    'rgba(0,0,0,0)');
+  ctx.fillStyle = inner;
+  ctx.fillRect(x - innerR, y - innerR, innerR * 2, innerR * 2);
+
+  ctx.restore();
+
+  // ─ Layer 4: crisp individual LED dot — source-over so each LED stays visually distinct ─
+  const dotR = Math.max(bulbR, 1.5);  // respects bulbSize, minimum 1.5px for visibility
+  const dot = ctx.createRadialGradient(x, y, 0, x, y, dotR);
+  dot.addColorStop(0,   hexAlpha('#ffffff', alpha));
+  dot.addColorStop(0.4, hexAlpha(bulbColor, alpha));
+  dot.addColorStop(1,   hexAlpha(bulbColor, 0));
+  ctx.fillStyle = dot;
+  ctx.fillRect(x - dotR, y - dotR, dotR * 2, dotR * 2);
+}
+
+// ── Color / Alpha resolution ──────────────────────────────────
+function resolveColor(color, idx, runIdx, total, t) {
+  if (pattern === 'fire') return getFireColor(idx, total, runIdx, t);
+  if (pattern === 'rainbow') {
+    const hue = ((idx / total) * 360 + t * 30 + runIdx * 40) % 360;
+    return { bulb: hslToHex(hue, 100, 65), glow: hslToHex(hue, 100, 40) };
+  }
+  if (pattern === 'patriotic') {
+    const RWB = [
+      { bulb:'#ff2020', glow:'#cc0000' },
+      { bulb:'#ffffff', glow:'#aaaacc' },
+      { bulb:'#2255ff', glow:'#0033cc' },
+    ];
+    // Three equal segments that chase across the run
+    const pos = ((idx / Math.max(total - 1, 1)) * 3 + t * 0.6) % 3;
+    return RWB[Math.floor(pos) % 3];
+  }
+  if (color.hex === 'multi') {
+    const c = MULTI_COLORS[(runIdx+idx) % MULTI_COLORS.length];
+    return { bulb:c.hex, glow:c.glow };
+  }
+  if (color.hex === 'rainbow') {
+    const hue = ((idx/total)*360 + t*30 + runIdx*40) % 360;
+    return { bulb: hslToHex(hue,100,65), glow: hslToHex(hue,100,40) };
+  }
+  return { bulb: color.hex, glow: color.glow };
+}
+
+function getAlpha(idx, total, runIdx, t, s) {
+  if (!animating) return 1.0;
+  if (pattern === 'twinkle') {
+    // Firmware: per-LED independent sparkle fade (Twinkle effect)
+    return 0.25 + 0.75 * Math.pow(Math.abs(Math.sin(t*4.1 + idx*1.61 + runIdx*2.3)), 2);
+  }
+  if (pattern === 'comet') {
+    // Firmware: smooth moving trail — white-hot head, quadratic falloff behind it (Comet effect)
+    const headPos = (t * 0.4 + runIdx * 0.33) % 1.0;
+    const ledPos  = idx / (total - 1 || 1);
+    const trail   = (headPos - ledPos + 1.0) % 1.0;
+    if (trail < 0.04)  return 1.0;
+    if (trail < 0.28)  return Math.pow(1.0 - (trail - 0.04) / 0.24, 2.5);
+    return 0.0;
+  }
+  if (pattern === 'shimmer') {
+    // Firmware: per-LED independent brightness oscillation at varying rates (Shimmer effect)
+    const rate    = 1.8 + Math.sin(idx * 3.7 + runIdx * 1.3) * 1.2;
+    const phase   = idx * 2.4 + runIdx * 0.9;
+    const base    = Math.sin(t * rate + phase) * 0.5 + 0.5;
+    const harmonic = Math.sin(t * rate * 2.1 + phase * 1.7) * 0.15;
+    return Math.max(0.08, Math.min(1.0, base + harmonic));
+  }
+  if (pattern === 'fire') {
+    // Firmware: heat-map alpha — hotter LEDs at run base, cools toward tip (Fire effect)
+    return 0.15 + getFireHeat(idx, total, runIdx, t) * 0.85;
+  }
+  if (pattern === 'rainbow') {
+    return 1.0;
+  }
+  if (pattern === 'patriotic') {
+    return 1.0;
+  }
+  return 1.0;
+}
+
+// ── Fire helpers (from firmware Fire effect) ─────────────────
+function getFireHeat(idx, total, runIdx, t) {
+  // Base of run (idx=0) is hottest; tip cools progressively
+  const posNorm    = idx / (total - 1 || 1);
+  const baseCooling = posNorm * 0.38;
+  // Three sin waves at different frequencies for organic heat fluctuation
+  const h1 = Math.sin(t * 3.2 + idx * 0.9  + runIdx * 1.1) * 0.25;
+  const h2 = Math.sin(t * 7.1 - idx * 1.4  + runIdx * 0.7) * 0.15;
+  const h3 = Math.sin(t * 1.8 + idx * 0.3  + runIdx * 2.3) * 0.10;
+  return Math.max(0, Math.min(1, 0.68 - baseCooling + h1 + h2 + h3));
+}
+
+function getFireColor(idx, total, runIdx, t) {
+  const heat = getFireHeat(idx, total, runIdx, t);
+  const toHex = n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
+  let r, g, b;
+  if (heat < 0.33) {
+    // Black → dark red
+    const f = heat / 0.33;
+    r = 180 * f; g = 0; b = 0;
+  } else if (heat < 0.66) {
+    // Dark red → orange
+    const f = (heat - 0.33) / 0.33;
+    r = 180 + 60 * f; g = 55 * f; b = 0;
+  } else {
+    // Orange → yellow-white
+    const f = (heat - 0.66) / 0.34;
+    r = 240; g = 55 + 180 * f; b = 80 * f;
+  }
+  return {
+    bulb: `#${toHex(r)}${toHex(g)}${toHex(b)}`,
+    glow: `#${toHex(r * 0.8)}${toHex(g * 0.4)}00`
+  };
+}
+
+// ════════════════════════════════════════════════════════════
+//  NIGHT OVERLAY
+// ════════════════════════════════════════════════════════════
+function updateNightOverlay() {
+  const o = document.getElementById('nightOverlay');
+  if (previewMode==='night') o.style.background = 'rgba(3,8,20,0.78)';
+  else if (previewMode==='dusk') o.style.background = 'rgba(8,16,45,0.42)';
+  else o.style.background = 'rgba(0,0,0,0)';
+}
+
+// ════════════════════════════════════════════════════════════
+//  ANIMATION
+// ════════════════════════════════════════════════════════════
+function toggleAnim() {
+  animToggleOn = !animToggleOn;
+  document.getElementById('animToggle').classList.toggle('on', animToggleOn);
+  animating = animToggleOn;
+  if (animating) startLoop(); else stopLoop();
+}
+function startLoop() {
+  function frame() { if (!animating) return; renderLights(); animFrame=requestAnimationFrame(frame); }
+  animFrame = requestAnimationFrame(frame);
+}
+function stopLoop() { if (animFrame) cancelAnimationFrame(animFrame); renderLights(); }
+
+// ════════════════════════════════════════════════════════════
+//  TOOLS & SETTINGS
+// ════════════════════════════════════════════════════════════
+const TIPS = {
+  dot:    'Click to place a single LED bulb · Erase tool to remove',
+  spline: 'Click to add nodes along your roofline · Double-click to finish · Right-click removes last node',
+  erase:  'Click near any run to delete it',
+  move:   'Drag the orange handles to reshape your light runs'
+};
+
+function setTool(t) {
+  tool = t;
+  activeNodes = [];
+  document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn-'+t).classList.add('active');
+  updateTip();
+  if (img) renderLights();
+}
+
+function updateTip() {
+  const el = document.getElementById('toolHint');
+  if (tool==='spline' && activeNodes.length > 0) {
+    el.textContent = `${activeNodes.length} node${activeNodes.length>1?'s':''} placed — double-click to finish, right-click to undo last`;
+  } else {
+    el.textContent = TIPS[tool];
+  }
+}
+
+function setPattern(p, btn) {
+  setTheme(p, null, null, btn);
+}
+
+function setPreviewMode(m, btn) {
+  previewMode = m;
+  document.querySelectorAll('#previewTabs .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateNightOverlay();
+  renderLights();
+}
+
+function updateSettings() {
+  settings.brightness = +document.getElementById('brightness').value;
+  settings.ledCount   = +document.getElementById('ledCount').value;
+  document.getElementById('brightnessVal').textContent = settings.brightness+'%';
+  document.getElementById('ledCountVal').textContent = settings.ledCount;
+  // Sync all existing runs so slider changes take effect immediately
+  runs.forEach(r => Object.assign(r.settings, settings));
+  renderLights();
+  updateStats();
+}
+
+function clearAll() { runs=[]; activeNodes=[]; updateStats(); if(img) renderLights(); }
+function undoLastRun() { if(activeNodes.length>0){activeNodes=[];renderLights();}else if(runs.length>0){runs.pop();updateStats();renderLights();} }
+
+function updateStats() {
+  const totalLEDs = runs.reduce((s,r) => s + r.settings.ledCount, 0);
+  // 5 LEDs/meter → 1 LED = 1/5 m = 3.28084/5 ft ≈ 0.6562 ft
+  const feet = totalLEDs * (3.28084 / 5);
+  document.getElementById('statLights').textContent = totalLEDs;
+  document.getElementById('statRuns').textContent = runs.length;
+  if (runs.length > 0) {
+    const cost = Math.round(feet * 25);
+    document.getElementById('statFeet').innerHTML = `${Math.round(feet)}<sub style="font-size:0.9rem">ft</sub>`;
+    document.getElementById('statCost').textContent =
+      '$' + Math.max(0, cost - 500).toLocaleString() + ' – $' + (cost + 500).toLocaleString();
+  } else {
+    document.getElementById('statFeet').innerHTML = `—<sub style="font-size:0.9rem">ft</sub>`;
+    document.getElementById('statCost').textContent = '$—';
+  }
+}
+
+// ════════════════════════════════════════════════════════════
+//  DOWNLOAD
+// ════════════════════════════════════════════════════════════
+function downloadImage() {
+  if (!img) { alert('Please upload a photo first.'); return; }
+  const out = document.createElement('canvas');
+  out.width = canvasW; out.height = canvasH;
+  const ctx = out.getContext('2d');
+  ctx.drawImage(img,0,0,canvasW,canvasH);
+  if (previewMode==='night') { ctx.fillStyle='rgba(3,8,20,0.78)'; ctx.fillRect(0,0,canvasW,canvasH); }
+  else if (previewMode==='dusk') { ctx.fillStyle='rgba(8,16,45,0.42)'; ctx.fillRect(0,0,canvasW,canvasH); }
+  ctx.drawImage(document.getElementById('overlayCanvas'),0,0);
+  // Watermark
+  ctx.font='700 13px Outfit,sans-serif';
+  ctx.fillStyle='rgba(200,146,30,0.75)';
+  ctx.textAlign='right';
+  ctx.fillText('AFTERGLO', canvasW-12, canvasH-12);
+  out.toBlob(blob => {
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='afterglo-preview.png';
+    a.click();
+  });
+}
+
+// ════════════════════════════════════════════════════════════
+//  LEAD FORM
+// ════════════════════════════════════════════════════════════
+function openLeadForm() { document.getElementById('leadModal').style.display='flex'; }
+function closeLeadForm() { document.getElementById('leadModal').style.display='none'; }
+function submitLead(e) { e.preventDefault(); closeLeadForm(); alert("Thanks! We'll reach out within 24 hours with your free quote 🎉"); }
+
+// ════════════════════════════════════════════════════════════
+//  HELPERS
+// ════════════════════════════════════════════════════════════
+function hexAlpha(hex, alpha) {
+  if (!hex||!hex.startsWith('#')) return 'rgba(0,0,0,0)';
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${Math.max(0,Math.min(1,alpha)).toFixed(3)})`;
+}
+function hslToHex(h,s,l){
+  l/=100;s/=100;const a=s*Math.min(l,1-l);
+  const f=n=>{const k=(n+h/30)%12;const c=l-a*Math.max(Math.min(k-3,9-k,1),-1);return Math.round(255*c).toString(16).padStart(2,'0');};
+  return `#${f(0)}${f(8)}${f(4)}`;
+}
+
+// Escape commits run if ≥2 nodes (same as double-click), otherwise just clears
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && tool === 'spline' && activeNodes.length > 0) {
+    if (activeNodes.length >= 2) {
+      runs.push({ nodes:[...activeNodes], color:{...currentColor}, settings:{...settings} });
+      updateStats();
+    }
+    activeNodes = [];
+    if (img) renderLights();
+    updateTip();
+  }
+});
+
+// Boot
+init();
+</script>
+</body>
+</html>
