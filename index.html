@@ -377,13 +377,13 @@
       font-weight: 800;
       color: rgba(255,255,255,0.1);
       display: block;
-      padding: 2px 0 18px;
-      transition: color 0.45s ease;
+      padding: 2px 0 18px 48px;
+      transition: color 0.3s ease;
       position: relative;
       z-index: 1;
       user-select: none;
     }
-    .pain-item.struck { color: rgba(255,255,255,0.38); }
+
     .pain-snake {
       position: absolute;
       top: 0; left: 0;
@@ -1691,7 +1691,20 @@
           painHead.setAttribute('opacity', '0');
         }
 
-        painEls.forEach((el, i) => el.classList.toggle('struck', p > midpoints[i]));
+        const peak = 0.09; // fraction of path = the "bright window" around each midpoint
+        painEls.forEach((el, i) => {
+          const dist = p - midpoints[i];
+          let alpha;
+          if (dist < -peak) {
+            alpha = 0.1;                                       // upcoming: dim
+          } else if (dist < peak) {
+            const t = 1 - Math.abs(dist) / peak;              // 0→1→0 as snake crosses
+            alpha = 0.1 + t * 0.9;                            // ramps to 1.0 at midpoint
+          } else {
+            alpha = 0.32;                                      // struck: slightly visible
+          }
+          el.style.color = `rgba(255,255,255,${alpha.toFixed(2)})`;
+        });
       }
 
       // Wait for fonts so Outfit is loaded before measuring word positions
