@@ -4,27 +4,30 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AFTERGLO – Light Visualizer</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --navy: #08121c;
-    --navy-light: #0d1a28;
-    --navy-mid: #122030;
-    --accent: #c8921e;
-    --accent-bright: #f0b233;
+    --bg:       #080808;
+    --bg2:      #0e0e0e;
+    --bg3:      #141414;
+    --accent:   #c8921e;
+    --accent2:  #d4a843;
     --accent-dim: #7a5510;
-    --white: #eeeae2;
-    --gray: #6a7f96;
-    --panel-bg: rgba(8,18,28,0.96);
-    --border: rgba(200,146,30,0.12);
+    --text:     #e2e8f0;
+    --muted:    #94a3b8;
+    --panel-bg: rgba(14,14,14,0.96);
+    --border:   #222222;
+    --radius:   12px;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: var(--navy);
-    color: var(--white);
-    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
@@ -37,7 +40,7 @@
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid var(--border);
-    background: rgba(8,18,28,0.97);
+    background: rgba(8,8,8,0.97);
     backdrop-filter: blur(16px);
     position: sticky;
     top: 0;
@@ -72,7 +75,7 @@
 
   .header-cta {
     background: var(--accent);
-    color: #08121c;
+    color: var(--bg);
     border: none;
     padding: 8px 20px;
     border-radius: 7px;
@@ -85,7 +88,7 @@
     text-transform: uppercase;
   }
   .header-cta:hover {
-    background: var(--accent-bright);
+    background: var(--accent2);
     box-shadow: 0 0 20px rgba(200,146,30,0.4);
   }
 
@@ -164,7 +167,7 @@
     background: rgba(200,146,30,0.07);
   }
   .upload-zone svg { margin: 0 auto 8px; display: block; opacity: 0.45; }
-  .upload-zone p { font-size: 0.78rem; color: var(--gray); line-height: 1.55; }
+  .upload-zone p { font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
   .upload-zone p strong { color: var(--accent); }
   #fileInput { display: none; }
 
@@ -176,8 +179,8 @@
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: 8px;
     padding: 9px 6px;
-    color: var(--gray);
-    font-family: 'DM Sans', sans-serif;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
     font-size: 0.72rem;
     cursor: pointer;
     text-align: center;
@@ -188,7 +191,7 @@
     gap: 4px;
   }
   .tool-btn svg { width: 16px; height: 16px; }
-  .tool-btn:hover { border-color: rgba(200,146,30,0.35); color: var(--white); }
+  .tool-btn:hover { border-color: rgba(200,146,30,0.35); color: var(--text); }
   .tool-btn.active {
     background: rgba(200,146,30,0.12);
     border-color: rgba(200,146,30,0.5);
@@ -202,7 +205,7 @@
     font-size: 0.55rem;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: var(--gray);
+    color: var(--muted);
     margin: 0 0 6px;
   }
   .theme-grid {
@@ -220,11 +223,11 @@
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.07);
     border-radius: 8px;
-    color: var(--gray);
+    color: var(--muted);
     font-size: 0.66rem;
     cursor: pointer;
     transition: all 0.15s;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     line-height: 1.2;
     text-align: center;
   }
@@ -245,9 +248,9 @@
     border: 1px solid rgba(255,255,255,0.1);
     border-radius: 8px;
     cursor: pointer;
-    color: var(--gray);
+    color: var(--muted);
     font-size: 0.8rem;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     transition: all 0.15s;
     user-select: none;
   }
@@ -267,10 +270,10 @@
     display: flex;
     justify-content: space-between;
     font-size: 0.74rem;
-    color: var(--gray);
+    color: var(--muted);
     margin-bottom: 5px;
   }
-  .slider-row label span { color: var(--white); font-weight: 500; }
+  .slider-row label span { color: var(--text); font-weight: 500; }
   input[type="range"] {
     width: 100%;
     -webkit-appearance: none;
@@ -305,15 +308,15 @@
     border-radius: 5px;
     border: none;
     background: none;
-    color: var(--gray);
-    font-family: 'DM Sans', sans-serif;
+    color: var(--muted);
+    font-family: 'Inter', sans-serif;
     font-size: 0.7rem;
     cursor: pointer;
     transition: all 0.18s;
     text-align: center;
   }
   .tab-btn.active { background: rgba(200,146,30,0.18); color: var(--accent); font-weight: 600; }
-  .tab-btn:hover:not(.active) { color: var(--white); }
+  .tab-btn:hover:not(.active) { color: var(--text); }
 
 
   /* Toggle */
@@ -321,7 +324,7 @@
     display: flex; align-items: center;
     justify-content: space-between;
     font-size: 0.78rem;
-    color: var(--gray);
+    color: var(--muted);
     margin-top: 10px;
   }
   .toggle {
@@ -348,7 +351,7 @@
   .action-btn {
     width: 100%; padding: 10px;
     border-radius: 8px; border: none;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-weight: 600; font-size: 0.82rem;
     cursor: pointer;
     transition: all 0.18s;
@@ -356,10 +359,10 @@
     letter-spacing: 0.02em;
   }
   .action-btn:last-child { margin-bottom: 0; }
-  .action-btn.primary { background: var(--accent); color: #08121c; }
-  .action-btn.primary:hover { background: var(--accent-bright); box-shadow: 0 0 16px rgba(200,146,30,0.35); }
-  .action-btn.secondary { background: rgba(255,255,255,0.05); color: var(--gray); border: 1px solid rgba(255,255,255,0.07); }
-  .action-btn.secondary:hover { color: var(--white); background: rgba(255,255,255,0.09); }
+  .action-btn.primary { background: var(--accent); color: var(--bg); }
+  .action-btn.primary:hover { background: var(--accent2); box-shadow: 0 0 16px rgba(200,146,30,0.35); }
+  .action-btn.secondary { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid rgba(255,255,255,0.07); }
+  .action-btn.secondary:hover { color: var(--text); background: rgba(255,255,255,0.09); }
   .action-btn.danger { background: rgba(239,68,68,0.08); color: #f87171; border: 1px solid rgba(239,68,68,0.18); }
   .action-btn.danger:hover { background: rgba(239,68,68,0.16); }
 
@@ -370,7 +373,7 @@
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    background: var(--navy);
+    background: var(--bg);
     position: relative;
     overflow: hidden;
   }
@@ -403,7 +406,7 @@
     gap: 14px;
   }
   .placeholder h3 { font-family: 'Outfit', sans-serif; font-size: 1.4rem; }
-  .placeholder p { font-size: 0.82rem; color: var(--gray); }
+  .placeholder p { font-size: 0.82rem; color: var(--muted); }
 
   .canvas-tip {
     position: fixed;
@@ -412,7 +415,7 @@
     transform: translateX(-50%);
     background: rgba(0,0,0,0.75);
     border: 1px solid rgba(200,146,30,0.2);
-    color: var(--gray);
+    color: var(--muted);
     font-size: 0.72rem;
     padding: 6px 16px;
     border-radius: 16px;
@@ -473,9 +476,9 @@
     margin-bottom: 3px;
   }
   .stat-card .val sub { font-size: 0.9rem; }
-  .stat-card .lbl { font-size: 0.68rem; color: var(--gray); }
+  .stat-card .lbl { font-size: 0.68rem; color: var(--muted); }
 
-  .benefit-list { font-size: 0.72rem; color: var(--gray); line-height: 1.8; }
+  .benefit-list { font-size: 0.72rem; color: var(--muted); line-height: 1.8; }
   .benefit-list div::before { content: '✓ '; color: var(--accent); }
 
   .cta-box {
@@ -485,7 +488,7 @@
     text-align: center;
   }
   .cta-box h4 { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 6px; }
-  .cta-box p { font-size: 0.72rem; color: var(--gray); margin-bottom: 12px; line-height: 1.55; }
+  .cta-box p { font-size: 0.72rem; color: var(--muted); margin-bottom: 12px; line-height: 1.55; }
   .cta-phone { color: var(--accent); font-weight: 700; font-size: 0.88rem; display: block; margin-bottom: 10px; }
 
   /* ── LEAD MODAL ── */
@@ -498,7 +501,7 @@
     justify-content: center;
   }
   .modal-inner {
-    background: #0d1a28;
+    background: var(--bg2);
     border: 1px solid rgba(200,146,30,0.3);
     border-radius: 14px;
     padding: 36px 32px;
@@ -508,19 +511,19 @@
   }
   .modal-inner h2 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 4px; }
   .modal-inner h2 span { color: var(--accent); text-shadow: 0 0 20px rgba(200,146,30,0.6); }
-  .modal-inner p { color: var(--gray); font-size: 0.82rem; margin-bottom: 22px; line-height: 1.55; }
+  .modal-inner p { color: var(--muted); font-size: 0.82rem; margin-bottom: 22px; line-height: 1.55; }
   .modal-inner input, .modal-inner select {
     width: 100%; padding: 11px 14px;
     background: rgba(255,255,255,0.04);
     border: 1px solid rgba(255,255,255,0.09);
     border-radius: 8px;
     color: white;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     font-size: 0.88rem;
     margin-bottom: 9px;
   }
   .modal-inner input:focus { outline: none; border-color: rgba(200,146,30,0.5); }
-  .close-btn { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--gray); font-size: 1.2rem; cursor: pointer; }
+  .close-btn { position: absolute; top: 14px; right: 16px; background: none; border: none; color: var(--muted); font-size: 1.2rem; cursor: pointer; }
   .close-btn:hover { color: white; }
 
   /* Spline node dots on interact canvas are drawn by JS */
@@ -593,7 +596,7 @@
             Move Node
           </button>
         </div>
-        <div style="margin-top:8px; padding:8px; background:rgba(200,146,30,0.06); border-radius:7px; font-size:0.7rem; color:var(--gray); line-height:1.6;" id="toolHint">
+        <div style="margin-top:8px; padding:8px; background:rgba(200,146,30,0.06); border-radius:7px; font-size:0.7rem; color:var(--muted); line-height:1.6;" id="toolHint">
           Click to add nodes · Double-click to finish run · Right-click to cancel
         </div>
       </div>
@@ -750,7 +753,7 @@
     <div class="cta-box">
       <h4>Love your preview?</h4>
       <p>Get a professional installation quote — Salt Lake, Davis & Weber counties.</p>
-      <a class="cta-phone" href="tel:+18015551234">📞 (801) 555-1234</a>
+      <a class="cta-phone" href="tel:+13853374144">📞 (385) 337-4144</a>
       <button class="action-btn primary" style="margin-bottom:0;" onclick="openLeadForm()">Get Free Quote</button>
     </div>
 
