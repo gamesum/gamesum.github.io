@@ -360,64 +360,38 @@
     .why-header { text-align: center; margin-bottom: 64px; }
     .why-header .section-sub { margin: 0 auto; text-align: center; }
 
-    /* Pain list — snaking line */
+    /* Pain list — scroll-driven SVG snake */
     .pain-list-wrap {
-      max-width: 560px;
+      max-width: 640px;
       margin: 0 auto;
-      display: flex;
-      gap: 36px;
-      align-items: flex-start;
     }
-    .pain-line-track {
-      position: relative;
-      width: 2px;
-      flex-shrink: 0;
-      align-self: stretch;
-      background: rgba(255,255,255,0.06);
-      border-radius: 2px;
-      margin-top: 6px;
-    }
-    .pain-line {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 0%;
-      background: linear-gradient(to bottom, var(--accent), var(--accent2));
-      border-radius: 2px;
-      transition: height 2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .pain-line.go { height: 100%; }
-    .pain-dot {
-      position: absolute;
-      left: 50%; top: 0%;
-      width: 12px; height: 12px;
-      background: var(--accent);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      box-shadow: 0 0 12px rgba(200,146,30,0.9), 0 0 28px rgba(200,146,30,0.4);
-      transition: top 2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .pain-dot.go { top: 100%; }
     .pain-items {
-      flex: 1;
+      position: relative;
       display: flex;
       flex-direction: column;
     }
     .pain-item {
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(1.6rem, 3.5vw, 2.2rem);
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
       font-weight: 800;
       color: rgba(255,255,255,0.1);
-      padding: 14px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      transition: color 0.5s ease, text-decoration-color 0.5s ease;
-      text-decoration: line-through;
-      text-decoration-color: transparent;
-      text-decoration-thickness: 2px;
-      cursor: default;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      transition: color 0.45s ease;
+      position: relative;
+      z-index: 1;
+      user-select: none;
     }
-    .pain-item.struck {
-      color: var(--muted);
-      text-decoration-color: rgba(200,146,30,0.55);
+    .pain-item.struck { color: rgba(255,255,255,0.38); }
+    .pain-snake {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 2;
+      overflow: visible;
+      filter: drop-shadow(0 0 5px rgba(200,146,30,0.7));
     }
 
     /* ─── HOW IT WORKS ─────────────────────────────────────────────── */
@@ -1208,17 +1182,30 @@
         <h2 class="section-title">Never Again.</h2>
       </div>
       <div class="pain-list-wrap">
-        <div class="pain-line-track">
-          <div class="pain-line" id="painLine"></div>
-          <div class="pain-dot" id="painDot"></div>
-        </div>
-        <div class="pain-items">
+        <div class="pain-items" id="painItems">
           <div class="pain-item">Frozen fingers</div>
           <div class="pain-item">Tangled wires</div>
           <div class="pain-item">Roof climbs</div>
           <div class="pain-item">Blown bulbs</div>
           <div class="pain-item">Yearly spend</div>
           <div class="pain-item">Same look</div>
+          <!-- SVG snake: zigzags L→R across word 1, down, R→L word 2, down… -->
+          <!-- viewBox 0 0 100 540 maps to 100%×540px (6 rows × 90px) -->
+          <!-- Path length: 6×100 + 5×90 = 1050 units -->
+          <svg class="pain-snake" viewBox="0 0 100 540" preserveAspectRatio="none" aria-hidden="true">
+            <path id="painPath"
+              d="M 0,45 L 100,45
+                 L 100,135 L 0,135
+                 L 0,225 L 100,225
+                 L 100,315 L 0,315
+                 L 0,405 L 100,405
+                 L 100,495 L 0,495"
+              fill="none" stroke="#c8921e" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"
+              vector-effect="non-scaling-stroke"/>
+            <circle id="painHead" cx="0" cy="45" r="4"
+              fill="#f0b233" vector-effect="non-scaling-stroke" opacity="0"/>
+          </svg>
         </div>
       </div>
     </div>
@@ -1649,23 +1636,49 @@
     }, { threshold: 0.12 });
     fadeEls.forEach(el => observer.observe(el));
 
-    // Snaking pain-list animation
-    const painLine = document.getElementById('painLine');
-    const painDot  = document.getElementById('painDot');
-    const painItems = document.querySelectorAll('.pain-item');
-    const painObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          painLine.classList.add('go');
-          painDot.classList.add('go');
-          painItems.forEach((item, i) => {
-            setTimeout(() => item.classList.add('struck'), 220 + i * 290);
-          });
-          painObserver.unobserve(entry.target);
+    // Scroll-driven snake — draws as you scroll through #why
+    (function() {
+      const whySect  = document.getElementById('why');
+      const painPath = document.getElementById('painPath');
+      const painHead = document.getElementById('painHead');
+      const painEls  = document.querySelectorAll('.pain-item');
+      // Total path length: 6 horizontal (×100) + 5 vertical (×90) = 1050 units
+      const TOTAL = 1050;
+      // Cumulative path length at the midpoint of each word's horizontal run
+      // Word i horizontal starts after i×190 units (100 horiz + 90 vert per row)
+      const midpoints = [50, 240, 430, 620, 810, 1000].map(v => v / TOTAL);
+
+      painPath.style.strokeDasharray  = TOTAL;
+      painPath.style.strokeDashoffset = TOTAL;
+
+      function update() {
+        const rect = whySect.getBoundingClientRect();
+        const winH = window.innerHeight;
+        // Start drawing when section top hits 75% of viewport
+        // Finish when section bottom clears 20% of viewport
+        const start = winH * 0.75;
+        const range = rect.height + winH * 0.55;
+        const p = Math.max(0, Math.min(1, (start - rect.top) / range));
+
+        painPath.style.strokeDashoffset = TOTAL * (1 - p);
+
+        // Move glowing head dot along path
+        if (p > 0 && p < 1) {
+          const pt = painPath.getPointAtLength(TOTAL * p);
+          painHead.setAttribute('cx', pt.x);
+          painHead.setAttribute('cy', pt.y);
+          painHead.setAttribute('opacity', '1');
+        } else {
+          painHead.setAttribute('opacity', '0');
         }
-      });
-    }, { threshold: 0.3 });
-    painObserver.observe(document.getElementById('why'));
+
+        // Strike through each word as snake crosses its midpoint
+        painEls.forEach((el, i) => el.classList.toggle('struck', p > midpoints[i]));
+      }
+
+      window.addEventListener('scroll', update, { passive: true });
+      update();
+    })();
 
     // Active nav link highlight on scroll
     const sections = document.querySelectorAll('section[id]');
