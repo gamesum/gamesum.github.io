@@ -1676,8 +1676,9 @@
         if (!TOTAL) return;
         const rect = whySect.getBoundingClientRect();
         const winH = window.innerHeight;
-        const start = winH * 1.3;
-        const range = rect.height + winH * 0.3;
+        // Snake starts as section bottom enters viewport, finishes when section top clears center
+        const start = winH;
+        const range = rect.height;
         const p = Math.max(0, Math.min(1, (start - rect.top) / range));
 
         painPath.style.strokeDashoffset = TOTAL * (1 - p);
@@ -1694,10 +1695,13 @@
         painEls.forEach((el, i) => el.classList.toggle('struck', p > midpoints[i]));
       }
 
-      // Build after fonts + layout are ready, then keep updated
-      window.addEventListener('load',   () => { build(); update(); });
+      // Wait for fonts so Outfit is loaded before measuring word positions
+      document.fonts.ready.then(() => { build(); update(); });
       window.addEventListener('resize', () => { build(); update(); });
-      window.addEventListener('scroll', update, { passive: true });
+      window.addEventListener('scroll', () => {
+        if (!TOTAL) build(); // lazy init if fonts were slow
+        update();
+      }, { passive: true });
     })();
 
     // Active nav link highlight on scroll
