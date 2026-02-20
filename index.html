@@ -1691,17 +1691,23 @@
           painHead.setAttribute('opacity', '0');
         }
 
-        const peak = 0.09; // fraction of path = the "bright window" around each midpoint
+        const ramp = 0.08;  // how quickly it fades in/out
+        const hold = 0.14;  // how long it stays white either side of midpoint
         painEls.forEach((el, i) => {
           const dist = p - midpoints[i];
           let alpha;
-          if (dist < -peak) {
-            alpha = 0.1;                                       // upcoming: dim
-          } else if (dist < peak) {
-            const t = 1 - Math.abs(dist) / peak;              // 0→1→0 as snake crosses
-            alpha = 0.1 + t * 0.9;                            // ramps to 1.0 at midpoint
+          if (dist < -(hold + ramp)) {
+            alpha = 0.1;                                            // upcoming: dim
+          } else if (dist < -hold) {
+            const t = (dist + hold + ramp) / ramp;                 // ramp up
+            alpha = 0.1 + t * 0.9;
+          } else if (dist < hold) {
+            alpha = 1.0;                                            // hold at white
+          } else if (dist < hold + ramp) {
+            const t = 1 - (dist - hold) / ramp;                    // ramp down
+            alpha = 0.1 + t * 0.9;
           } else {
-            alpha = 0.32;                                      // struck: slightly visible
+            alpha = 0.32;                                           // struck: slightly visible
           }
           el.style.color = `rgba(255,255,255,${alpha.toFixed(2)})`;
         });
