@@ -1703,34 +1703,18 @@
       function frame() {
         ctx.clearRect(0, 0, 320, 210);
 
-        // PEX tube — white semi-transparent arch, drawn before LEDs
-        ctx.save();
-        ctx.strokeStyle = 'rgba(220,225,240,0.52)';
-        ctx.lineWidth = 12;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.arc(cx, cy, r, Math.PI, 0, true);
-        ctx.stroke();
-        ctx.restore();
-
-        // LEDs (screen blend for realistic glow)
+        // 1. LED glow halos (screen blend — radiate outward, visible around tube)
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
         pts.forEach((p, i) => {
           const c = getLED(i);
           const s = alpha(i);
-
-          // Wide glow
-          const og = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 10);
-          og.addColorStop(0,    ha(c.g, 0.55*s));
-          og.addColorStop(0.45, ha(c.g, 0.18*s));
+          const og = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 14);
+          og.addColorStop(0,    ha(c.g, 0.6*s));
+          og.addColorStop(0.4,  ha(c.g, 0.22*s));
           og.addColorStop(1,    'rgba(0,0,0,0)');
           ctx.fillStyle = og;
-          ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI*2); ctx.fill();
-
-          // LED dot
-          ctx.fillStyle = ha(c.b, s);
-          ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI*2); ctx.fill();
         });
 
         // Ground glow from arch base
@@ -1741,6 +1725,27 @@
         gg.addColorStop(1,   'rgba(0,0,0,0)');
         ctx.fillStyle = gg;
         ctx.beginPath(); ctx.ellipse(cx, cy, 110, 8, 0, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+
+        // 2. PEX tube — white semi-transparent, sits ON TOP of the glow halos
+        ctx.save();
+        ctx.strokeStyle = 'rgba(215,220,235,0.55)';
+        ctx.lineWidth = 11;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, Math.PI, 0, false); // false = clockwise = upper semicircle
+        ctx.stroke();
+        ctx.restore();
+
+        // 3. LED dots — bright points on top of tube (screen blend)
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        pts.forEach((p, i) => {
+          const c = getLED(i);
+          const s = alpha(i);
+          ctx.fillStyle = ha(c.b, s);
+          ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill();
+        });
         ctx.restore();
 
         animT += 0.016;
