@@ -1183,7 +1183,7 @@
                         <div class="pm-name">Rainbow Flow</div>
                       </div>
                       <div class="pm-card" data-preset="1">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(90deg,#bb1111 33%,#e8eeff 33%,#e8eeff 67%,#1133cc 67%);">🎆</div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#dd2222 28%,#f0f4ff 28%,#f0f4ff 72%,#1133cc 72%,#0022aa);"></div>
                         <div class="pm-name">Patriotic Chase</div>
                       </div>
                       <div class="pm-card" data-preset="2">
@@ -1660,11 +1660,12 @@
 
       function getLED(i) {
         if (cfg.type === 'rainbow') {
-          const h = (i/N*360 + animT*28) % 360;
+          const h = (i/N*360 + animT*60) % 360;   // fast flow
           return { b: hslHex(h,100,65), g: hslHex(h,100,40) };
         }
         if (cfg.type === 'chase') {
-          const pos = ((i / N * cfg.pal.length) - animT * cfg.speed % cfg.pal.length + cfg.pal.length * 10) % cfg.pal.length;
+          // mirrors visualizer patriotic formula: bands shift forward with time
+          const pos = ((i / (N-1) * cfg.pal.length) + animT * cfg.speed + 1000) % cfg.pal.length;
           return cfg.pal[Math.floor(pos) % cfg.pal.length];
         }
         const leds = cfg.leds || [];
@@ -1741,25 +1742,32 @@
       const PRESETS = [
         // Rainbow Flow
         () => ({ type: 'rainbow' }),
-        // Patriotic Chase: red / white / blue bands
-        () => ({ type: 'chase', speed: 1.4, pal: [
-          {b:'#ff2020',g:'#aa0000'}, {b:'#ff2020',g:'#aa0000'},
-          {b:'#e0e8ff',g:'#8888bb'}, {b:'#e0e8ff',g:'#8888bb'},
-          {b:'#1a4fff',g:'#0033cc'}, {b:'#1a4fff',g:'#0033cc'},
+        // Patriotic Chase: red / white / blue — 3 equal bands, matches visualizer
+        () => ({ type: 'chase', speed: 0.8, pal: [
+          {b:'#ff2020',g:'#cc0000'},
+          {b:'#e8f0ff',g:'#aaaacc'},
+          {b:'#2255ff',g:'#0033cc'},
         ]}),
         // Fall: orange / amber / red static shimmer
         () => ({ type: 'static', leds: Array.from({length:N}, (_,i) =>
           [{b:'#ff6600',g:'#aa3300'},{b:'#ffaa00',g:'#886600'},{b:'#ff2200',g:'#881100'}][i%3]) }),
-        // St. Patrick's Chase: green shades
-        () => ({ type: 'chase', speed: 1.2, pal: [
-          {b:'#00cc44',g:'#007a28'}, {b:'#00ee66',g:'#009940'},
-          {b:'#88ff44',g:'#44aa00'}, {b:'#00aa33',g:'#006622'},
+        // St. Patrick's Chase: green / white alternating
+        () => ({ type: 'chase', speed: 1.1, pal: [
+          {b:'#00cc44',g:'#007a28'},
+          {b:'#00ee66',g:'#009940'},
+          {b:'#e8fff0',g:'#aaccbb'},   // white
+          {b:'#00cc44',g:'#007a28'},
+          {b:'#88ff44',g:'#44aa00'},
+          {b:'#e8fff0',g:'#aaccbb'},   // white
         ]}),
-        // Halloween Chase: orange / purple
+        // Halloween Chase: orange / purple / deep red / magenta
         () => ({ type: 'chase', speed: 1.0, pal: [
-          {b:'#ff6600',g:'#aa3300'}, {b:'#ff6600',g:'#aa3300'},
-          {b:'#9900cc',g:'#550077'}, {b:'#9900cc',g:'#550077'},
+          {b:'#ff6600',g:'#aa3300'},
+          {b:'#9900cc',g:'#550077'},
           {b:'#ff2200',g:'#881100'},
+          {b:'#cc00aa',g:'#770066'},
+          {b:'#ffaa00',g:'#885500'},
+          {b:'#7700cc',g:'#440077'},
         ]}),
         // Valentine Shimmer: red / pink deep pulse
         () => ({ type: 'shimmer', rate: 3.2, leds: Array.from({length:N}, (_,i) =>
