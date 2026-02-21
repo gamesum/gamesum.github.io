@@ -1183,7 +1183,7 @@
                         <div class="pm-name">Rainbow Flow</div>
                       </div>
                       <div class="pm-card" data-preset="1">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#dd2222 28%,#f0f4ff 28%,#f0f4ff 72%,#1133cc 72%,#0022aa);"></div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#ee4444,#f8f8ff,#f0f4ff,#3355ee,#0022aa);"></div>
                         <div class="pm-name">Patriotic Chase</div>
                       </div>
                       <div class="pm-card" data-preset="2">
@@ -1751,13 +1751,13 @@
         // Fall: orange / amber / red static shimmer
         () => ({ type: 'static', leds: Array.from({length:N}, (_,i) =>
           [{b:'#ff6600',g:'#aa3300'},{b:'#ffaa00',g:'#886600'},{b:'#ff2200',g:'#881100'}][i%3]) }),
-        // St. Patrick's Chase: green / white alternating
+        // St. Patrick's Chase: green / white (no light green)
         () => ({ type: 'chase', speed: 1.1, pal: [
           {b:'#00cc44',g:'#007a28'},
           {b:'#00ee66',g:'#009940'},
           {b:'#e8fff0',g:'#aaccbb'},   // white
           {b:'#00cc44',g:'#007a28'},
-          {b:'#88ff44',g:'#44aa00'},
+          {b:'#00aa33',g:'#006622'},
           {b:'#e8fff0',g:'#aaccbb'},   // white
         ]}),
         // Halloween Chase: orange / purple / deep red / magenta
