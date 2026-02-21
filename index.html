@@ -1762,14 +1762,14 @@
     (function() {
       const N = 50;
       const PRESETS = [
-        // 0: Christmas Chase — red / green / white equal thirds (firmware: 10×red, 10×green + warm white)
+        // 0: Christmas Chase — red / green / 6000K white equal thirds
         () => ({ type: 'chase', speed: 0.9, pal: [
           {b:'#ff1a1a',g:'#aa0000'},
           {b:'#ff1a1a',g:'#aa0000'},
           {b:'#00cc44',g:'#00882a'},
           {b:'#00cc44',g:'#00882a'},
-          {b:'#ffe8c0',g:'#cc9944'},
-          {b:'#ffe8c0',g:'#cc9944'},
+          {b:'#f0f4ff',g:'#8899cc'},
+          {b:'#f0f4ff',g:'#8899cc'},
         ]}),
         // 1: Patriotic Chase — red / white / blue
         () => ({ type: 'chase', speed: 0.8, pal: [
@@ -1783,8 +1783,8 @@
         () => ({ type: 'chase', speed: 1.1, pal: [
           {b:'#00c800',g:'#006620'},
           {b:'#00c800',g:'#006620'},
-          {b:'#f0fff4',g:'#aaccbb'},
-          {b:'#f0fff4',g:'#aaccbb'},
+          {b:'#f0f4ff',g:'#8899cc'},
+          {b:'#f0f4ff',g:'#8899cc'},
         ]}),
         // 4: Halloween Chase — green / orange / purple equal thirds (firmware: 10×green, 10×orange, 10×purple)
         () => ({ type: 'chase', speed: 1.0, pal: [
