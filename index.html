@@ -932,108 +932,45 @@
       overflow: hidden;
       padding: 0 0 12px;
     }
-    .app-topbar {
-      background: #111;
-      padding: 10px 16px 8px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #222;
+    /* Firmware preset screen */
+    .fw-screen { display: flex; flex-direction: column; height: 100%; }
+    .fw-bar {
+      background: #111; padding: 9px 12px 8px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid #1f1f1f;
     }
-    .app-topbar-logo {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.9rem;
-      font-weight: 900;
-      letter-spacing: 0.08em;
-      color: #fff;
+    .fw-bar-title { font-family:'Outfit',sans-serif; font-size:0.72rem; font-weight:900; letter-spacing:0.08em; color:#fff; }
+    .fw-bar-title span { color: var(--accent); }
+    .fw-bar-status { font-size:0.48rem; color:#22c55e; font-family:monospace; letter-spacing:0.05em; }
+    .fw-section-hdr {
+      padding: 5px 12px 4px;
+      font-size: 0.46rem; letter-spacing: 0.18em; text-transform: uppercase;
+      color: #444; font-family: monospace; border-bottom: 1px solid #181818;
     }
-    .app-topbar-logo span { color: var(--accent); }
-    .app-status { display: flex; gap: 4px; align-items: center; }
-    .app-dot { width: 6px; height: 6px; border-radius: 50%; background: #22c55e; }
-
-    .app-body { padding: 14px 14px 0; }
-
-    .app-scene-label {
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
+    .fw-presets { flex: 1; }
+    .fw-row {
+      display: flex; align-items: center; gap: 7px;
+      padding: 8px 10px 8px 8px;
+      border-bottom: 1px solid #141414;
+      border-left: 2px solid transparent;
+      cursor: pointer; user-select: none;
+      transition: background 0.12s, border-color 0.12s;
     }
-    .app-scenes {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 6px;
-      margin-bottom: 14px;
+    .fw-row:hover:not(.active) { background: rgba(255,255,255,0.03); }
+    .fw-row.active { background: rgba(200,146,30,0.11); border-left-color: var(--accent); }
+    .fw-arrow { font-size: 0.45rem; color: var(--accent); width: 7px; flex-shrink: 0; opacity: 0; }
+    .fw-row.active .fw-arrow { opacity: 1; }
+    .fw-num { font-family:'Courier New',monospace; font-size:0.52rem; color:#444; width:14px; flex-shrink:0; }
+    .fw-row.active .fw-num { color: var(--accent); }
+    .fw-name { font-size:0.6rem; font-weight:600; color:var(--muted); flex:1; font-family:'Outfit',sans-serif; }
+    .fw-row.active .fw-name { color:#fff; }
+    .fw-swatches { display:flex; gap:3px; flex-shrink:0; }
+    .fw-swatch { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .fw-footer {
+      padding: 5px 12px; display:flex; justify-content:space-between;
+      border-top: 1px solid #181818;
+      font-family: monospace; font-size: 0.44rem; color: #2a2a2a;
     }
-    .app-scene-btn {
-      border-radius: 8px;
-      padding: 7px 6px;
-      font-size: 0.58rem;
-      font-weight: 600;
-      text-align: center;
-      border: 1px solid transparent;
-      cursor: pointer;
-    }
-    .app-scene-btn.active { border-color: var(--accent); background: rgba(200,146,30,0.15); color: var(--accent); }
-    .app-scene-btn:not(.active) { background: #1a1a1a; color: var(--muted); border-color: #2a2a2a; }
-
-    .app-color-wheel {
-      width: 80px; height: 80px;
-      border-radius: 50%;
-      background: conic-gradient(red, yellow, lime, cyan, blue, magenta, red);
-      margin: 0 auto 14px;
-      position: relative;
-      box-shadow: 0 0 16px rgba(200,146,30,0.2);
-    }
-    .app-color-wheel::after {
-      content: '';
-      position: absolute;
-      inset: 20px;
-      border-radius: 50%;
-      background: #0a0a0a;
-    }
-
-    .app-brightness {
-      margin: 0 4px 10px;
-    }
-    .app-brightness-label {
-      font-size: 0.58rem;
-      color: var(--muted);
-      margin-bottom: 5px;
-      display: flex;
-      justify-content: space-between;
-    }
-    .app-brightness-bar {
-      height: 6px;
-      background: #222;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .app-brightness-fill {
-      height: 100%;
-      width: 72%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      border-radius: 3px;
-    }
-
-    .app-on-off {
-      display: flex;
-      gap: 6px;
-      margin: 0 4px;
-    }
-    .app-btn {
-      flex: 1;
-      padding: 7px 0;
-      border-radius: 8px;
-      font-size: 0.6rem;
-      font-weight: 700;
-      text-align: center;
-      letter-spacing: 0.05em;
-    }
-    .app-btn-on  { background: var(--accent); color: #000; }
-    .app-btn-off { background: #1a1a1a; color: var(--muted); border: 1px solid #2a2a2a; }
 
     .app-features-list {
       list-style: none;
@@ -1250,19 +1187,19 @@
               <path d="M32 160 Q160 20 288 160" stroke="#1a1a1a" stroke-width="10" fill="none" stroke-linecap="round"/>
               <path d="M32 160 Q160 20 288 160" stroke="#2a2a2a" stroke-width="6" fill="none" stroke-linecap="round"/>
               <!-- LED dots along arch -->
-              <circle class="led-dot" cx="32"  cy="160" r="5"/>
-              <circle class="led-dot" cx="57"  cy="121" r="5"/>
-              <circle class="led-dot" cx="88"  cy="88"  r="5"/>
-              <circle class="led-dot" cx="122" cy="63"  r="5"/>
-              <circle class="led-dot" cx="160" cy="53"  r="5"/>
-              <circle class="led-dot" cx="198" cy="63"  r="5"/>
-              <circle class="led-dot" cx="232" cy="88"  r="5"/>
-              <circle class="led-dot" cx="263" cy="121" r="5"/>
-              <circle class="led-dot" cx="288" cy="160" r="5"/>
+              <circle id="led0" class="led-dot" cx="32"  cy="160" r="5"/>
+              <circle id="led1" class="led-dot" cx="57"  cy="121" r="5"/>
+              <circle id="led2" class="led-dot" cx="88"  cy="88"  r="5"/>
+              <circle id="led3" class="led-dot" cx="122" cy="63"  r="5"/>
+              <circle id="led4" class="led-dot" cx="160" cy="53"  r="5"/>
+              <circle id="led5" class="led-dot" cx="198" cy="63"  r="5"/>
+              <circle id="led6" class="led-dot" cx="232" cy="88"  r="5"/>
+              <circle id="led7" class="led-dot" cx="263" cy="121" r="5"/>
+              <circle id="led8" class="led-dot" cx="288" cy="160" r="5"/>
               <!-- Ground glow line -->
               <line x1="10" y1="195" x2="310" y2="195" stroke="#1a1a1a" stroke-width="2"/>
               <!-- Glow reflection on ground -->
-              <ellipse cx="160" cy="195" rx="100" ry="4" fill="rgba(200,146,30,0.06)"/>
+              <ellipse id="archGlow" cx="160" cy="195" rx="100" ry="4" fill="rgba(200,146,30,0.06)"/>
             </svg>
             <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch,same app, same controller</div>
           </div>
@@ -1290,30 +1227,56 @@
         <!-- Right: app mockup + feature list -->
         <div class="app-side fade-in fade-delay-1">
           <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;">
-            <!-- Phone mockup -->
+            <!-- Phone mockup — firmware preset screen -->
             <div class="phone-mockup">
               <div class="phone-notch"></div>
               <div class="phone-screen">
-                <div class="app-topbar">
-                  <div class="app-topbar-logo">AFTER<span>GLO</span></div>
-                  <div class="app-status"><div class="app-dot"></div></div>
-                </div>
-                <div class="app-body">
-                  <div class="app-scene-label">Quick Scenes</div>
-                  <div class="app-scenes">
-                    <div class="app-scene-btn active">🎄 Christmas</div>
-                    <div class="app-scene-btn">🇺🇸 Patriotic</div>
-                    <div class="app-scene-btn">🎃 Halloween</div>
-                    <div class="app-scene-btn">🏈 Game Day</div>
+                <div class="fw-screen">
+                  <div class="fw-bar">
+                    <div class="fw-bar-title">AFTER<span>GLO</span></div>
+                    <div class="fw-bar-status">● WiFi</div>
                   </div>
-                  <div class="app-color-wheel"></div>
-                  <div class="app-brightness">
-                    <div class="app-brightness-label"><span>Brightness</span><span style="color:var(--accent)">72%</span></div>
-                    <div class="app-brightness-bar"><div class="app-brightness-fill"></div></div>
+                  <div class="fw-section-hdr">Presets</div>
+                  <div class="fw-presets" id="fwPresets">
+                    <div class="fw-row active" data-preset="0">
+                      <span class="fw-arrow">▶</span>
+                      <span class="fw-num">01</span>
+                      <span class="fw-name">Christmas</span>
+                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff1a1a"></i><i class="fw-swatch" style="background:#00c44a"></i></span>
+                    </div>
+                    <div class="fw-row" data-preset="1">
+                      <span class="fw-arrow">▶</span>
+                      <span class="fw-num">02</span>
+                      <span class="fw-name">4th of July</span>
+                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff2020"></i><i class="fw-swatch" style="background:#ddeeff;opacity:0.8"></i><i class="fw-swatch" style="background:#1a4fff"></i></span>
+                    </div>
+                    <div class="fw-row" data-preset="2">
+                      <span class="fw-arrow">▶</span>
+                      <span class="fw-num">03</span>
+                      <span class="fw-name">Halloween</span>
+                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff6600"></i><i class="fw-swatch" style="background:#9900cc"></i></span>
+                    </div>
+                    <div class="fw-row" data-preset="3">
+                      <span class="fw-arrow">▶</span>
+                      <span class="fw-num">04</span>
+                      <span class="fw-name">Warm White</span>
+                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ffcc77"></i><i class="fw-swatch" style="background:#ffe8b0"></i></span>
+                    </div>
+                    <div class="fw-row" data-preset="4">
+                      <span class="fw-arrow">▶</span>
+                      <span class="fw-num">05</span>
+                      <span class="fw-name">Party Mode</span>
+                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff0000"></i><i class="fw-swatch" style="background:#00ee00"></i><i class="fw-swatch" style="background:#0055ff"></i></span>
+                    </div>
+                    <div class="fw-row" data-preset="5">
+                      <span class="fw-arrow">▶</span>
+                      <span class="fw-num">06</span>
+                      <span class="fw-name">Game Day</span>
+                      <span class="fw-swatches"><i class="fw-swatch" style="background:#c8921e"></i><i class="fw-swatch" style="background:#0a0a0a;border:1px solid #333"></i></span>
+                    </div>
                   </div>
-                  <div class="app-on-off">
-                    <div class="app-btn app-btn-on">ALL ON</div>
-                    <div class="app-btn app-btn-off">ALL OFF</div>
+                  <div class="fw-footer">
+                    <span>AFTERGLO CTRL</span><span>v2.1</span>
                   </div>
                 </div>
               </div>
@@ -1735,6 +1698,36 @@
       });
     };
     window.addEventListener('scroll', activateNav, { passive: true });
+
+    // Firmware preset interactivity
+    (function() {
+      const presets = [
+        { colors: ['#ff1a1a','#00c44a','#ff1a1a','#00c44a','#ff1a1a','#00c44a','#ff1a1a','#00c44a','#ff1a1a'], glow: 'rgba(200,30,30,0.15)' },
+        { colors: ['#ff2020','#ddeeff','#1a4fff','#ff2020','#ddeeff','#1a4fff','#ff2020','#ddeeff','#1a4fff'], glow: 'rgba(30,60,200,0.15)' },
+        { colors: ['#ff6600','#9900cc','#ff6600','#9900cc','#ff6600','#9900cc','#ff6600','#9900cc','#ff6600'], glow: 'rgba(180,60,0,0.15)'  },
+        { colors: ['#ffcc77','#ffe8b0','#ffcc77','#ffe8b0','#ffcc77','#ffe8b0','#ffcc77','#ffe8b0','#ffcc77'], glow: 'rgba(200,160,60,0.15)' },
+        { colors: ['#ff0000','#ff8800','#ffff00','#00ee00','#00ccee','#0055ff','#aa00ff','#ff00ff','#ff4400'], glow: 'rgba(120,0,200,0.15)'  },
+        { colors: ['#c8921e','#c8921e','#0a0a0a','#c8921e','#c8921e','#0a0a0a','#c8921e','#c8921e','#c8921e'], glow: 'rgba(200,146,30,0.15)' },
+      ];
+      const dots = [0,1,2,3,4,5,6,7,8].map(i => document.getElementById('led' + i));
+      const glow = document.getElementById('archGlow');
+      const rows = document.querySelectorAll('#fwPresets .fw-row');
+
+      function applyPreset(idx) {
+        const p = presets[idx];
+        dots.forEach((d, i) => {
+          const c = p.colors[i];
+          d.style.animation = 'none';
+          d.style.fill = c;
+          d.style.filter = 'drop-shadow(0 0 6px ' + c + ')';
+        });
+        if (glow) glow.setAttribute('fill', p.glow);
+        rows.forEach((r, i) => r.classList.toggle('active', i === idx));
+      }
+
+      rows.forEach((row, i) => row.addEventListener('click', () => applyPreset(i)));
+      applyPreset(0);
+    })();
   </script>
 </body>
 </html>
