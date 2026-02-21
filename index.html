@@ -943,7 +943,7 @@
     .pm-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
     .pm-card { border-radius:10px; overflow:hidden; cursor:pointer; border:2.5px solid transparent; transition:border-color 0.15s; user-select:none; background:#fff; }
     .pm-card.active { border-color:#e07a10; }
-    .pm-icon-wrap { width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:1.5rem; line-height:1; }
+    .pm-icon-wrap { width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:2.4rem; line-height:1; }
     .pm-name { text-align:center; padding:3px 2px 5px; font-size:0.48rem; font-weight:500; color:#111; font-family:'Inter',sans-serif; }
     .pm-tabs { display:flex; border-top:1px solid #e5e5ea; background:#fff; flex-shrink:0; }
     .pm-tab { flex:1; text-align:center; padding:5px 0 4px; font-size:0.46rem; font-weight:600; color:#999; font-family:'Inter',sans-serif; border-top:2px solid transparent; }
@@ -1168,7 +1168,7 @@
                 <div class="pm-screen">
                   <div class="pm-header">
                     <div class="pm-header-top">
-                      <div class="pm-title">Roof Lights</div>
+                      <div class="pm-title">Arches</div>
                       <div class="pm-actions">↺ ✏</div>
                     </div>
                     <div class="pm-sub">
@@ -1179,28 +1179,28 @@
                   <div class="pm-body">
                     <div class="pm-grid" id="pmPresets">
                       <div class="pm-card active" data-preset="0">
-                        <div class="pm-icon-wrap" style="background:#6fbc6f;">🌷</div>
-                        <div class="pm-name">Spring</div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#ff2200,#ff9900,#ffff00,#00cc44,#0055ff,#cc00ff);">🌈</div>
+                        <div class="pm-name">Rainbow Flow</div>
                       </div>
                       <div class="pm-card" data-preset="1">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(180deg,#5ab8e8 55%,#d4a86a 100%);">☀️</div>
-                        <div class="pm-name">Summer</div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(90deg,#bb1111 33%,#e8eeff 33%,#e8eeff 67%,#1133cc 67%);">🎆</div>
+                        <div class="pm-name">Patriotic Chase</div>
                       </div>
                       <div class="pm-card" data-preset="2">
-                        <div class="pm-icon-wrap" style="background:#e07a18;">🎃</div>
+                        <div class="pm-icon-wrap" style="background:#c87018;">🍂</div>
                         <div class="pm-name">Fall</div>
                       </div>
                       <div class="pm-card" data-preset="3">
-                        <div class="pm-icon-wrap" style="background:#1e1e8c;">🎉</div>
-                        <div class="pm-name">Party Mode</div>
+                        <div class="pm-icon-wrap" style="background:#1a6e1a;">🍀</div>
+                        <div class="pm-name">St. Patrick's</div>
                       </div>
                       <div class="pm-card" data-preset="4">
-                        <div class="pm-icon-wrap" style="background:#1a0e06;">🕯️</div>
-                        <div class="pm-name">Candlelight</div>
+                        <div class="pm-icon-wrap" style="background:#5a1a7a;">🎃</div>
+                        <div class="pm-name">Halloween</div>
                       </div>
                       <div class="pm-card" data-preset="5">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#38d8a8,#6838d8);">✨</div>
-                        <div class="pm-name">Aurora</div>
+                        <div class="pm-icon-wrap" style="background:#7a0a2a;">❤️</div>
+                        <div class="pm-name">Valentine</div>
                       </div>
                     </div>
                   </div>
@@ -1653,16 +1653,30 @@
         return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
       }
 
-      let ledColors = null, isRainbow = false, animT = 0;
+      let cfg = { type: 'rainbow' }, animT = 0;
 
-      window._archSet = function(colors, rainbow) { ledColors = colors; isRainbow = !!rainbow; };
+      // cfg types: 'rainbow' | 'chase' {pal, speed} | 'shimmer' {leds, rate} | 'static' {leds}
+      window._archSet = function(config) { cfg = config; };
 
       function getLED(i) {
-        if (isRainbow || !ledColors) {
+        if (cfg.type === 'rainbow') {
           const h = (i/N*360 + animT*28) % 360;
           return { b: hslHex(h,100,65), g: hslHex(h,100,40) };
         }
-        return ledColors[i] || {b:'#c8921e', g:'#7a5510'};
+        if (cfg.type === 'chase') {
+          const pos = ((i / N * cfg.pal.length) - animT * cfg.speed % cfg.pal.length + cfg.pal.length * 10) % cfg.pal.length;
+          return cfg.pal[Math.floor(pos) % cfg.pal.length];
+        }
+        const leds = cfg.leds || [];
+        return leds[i] || {b:'#c8921e', g:'#7a5510'};
+      }
+
+      function alpha(i) {
+        if (cfg.type === 'shimmer') {
+          // deep pulsing shimmer — each LED on its own phase
+          return 0.2 + 0.8 * Math.pow(Math.abs(Math.sin(animT * (cfg.rate||3.5) + i * 0.65)), 2);
+        }
+        return 0.65 + 0.35 * (0.5 + 0.5 * Math.sin(animT*2.2 + i*0.38));
       }
 
       function frame() {
@@ -1689,7 +1703,7 @@
         ctx.globalCompositeOperation = 'screen';
         pts.forEach((p, i) => {
           const c = getLED(i);
-          const s = 0.65 + 0.35 * (0.5 + 0.5 * Math.sin(animT*2.2 + i*0.38));
+          const s = alpha(i);
 
           // Wide glow
           const og = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 10);
@@ -1718,38 +1732,43 @@
         requestAnimationFrame(frame);
       }
 
-      // Default to Spring (Christmas colors until preset JS runs)
-      window._archSet(Array.from({length:N}, (_,i) => i%2 ? {b:'#ff1a1a',g:'#aa0000'} : {b:'#00c44a',g:'#00882a'}), false);
-      frame();
+      frame(); // starts as rainbow until preset JS applies preset 0
     })();
 
     // App preset interactivity
     (function() {
-      function hslHex(h, s, l) {
-        h=((h%360)+360)%360; s/=100; l/=100;
-        const a=s*Math.min(l,1-l), f=n=>{const k=(n+h/30)%12; return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
-        return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
-      }
       const N = 50;
       const PRESETS = [
-        // Spring: alternating pink / green
-        () => ({ c: Array.from({length:N}, (_,i) => i%2 ? {b:'#ff88aa',g:'#cc2255'} : {b:'#55cc77',g:'#228844'}), r: false }),
-        // Summer: warm gold
-        () => ({ c: Array.from({length:N}, () => ({b:'#ffdd44',g:'#cc9900'})), r: false }),
-        // Fall: orange / amber / red
-        () => ({ c: Array.from({length:N}, (_,i) => [{b:'#ff6600',g:'#aa3300'},{b:'#ffaa00',g:'#886600'},{b:'#ff2200',g:'#881100'}][i%3]), r: false }),
-        // Party Mode: rainbow animation
-        () => ({ c: null, r: true }),
-        // Candlelight: warm amber
-        () => ({ c: Array.from({length:N}, () => ({b:'#ffaa44',g:'#cc6600'})), r: false }),
-        // Aurora: teal → purple gradient
-        () => ({ c: Array.from({length:N}, (_,i) => { const h=160+i/49*100; return {b:hslHex(h,90,65),g:hslHex(h,90,40)}; }), r: false }),
+        // Rainbow Flow
+        () => ({ type: 'rainbow' }),
+        // Patriotic Chase: red / white / blue bands
+        () => ({ type: 'chase', speed: 1.4, pal: [
+          {b:'#ff2020',g:'#aa0000'}, {b:'#ff2020',g:'#aa0000'},
+          {b:'#e0e8ff',g:'#8888bb'}, {b:'#e0e8ff',g:'#8888bb'},
+          {b:'#1a4fff',g:'#0033cc'}, {b:'#1a4fff',g:'#0033cc'},
+        ]}),
+        // Fall: orange / amber / red static shimmer
+        () => ({ type: 'static', leds: Array.from({length:N}, (_,i) =>
+          [{b:'#ff6600',g:'#aa3300'},{b:'#ffaa00',g:'#886600'},{b:'#ff2200',g:'#881100'}][i%3]) }),
+        // St. Patrick's Chase: green shades
+        () => ({ type: 'chase', speed: 1.2, pal: [
+          {b:'#00cc44',g:'#007a28'}, {b:'#00ee66',g:'#009940'},
+          {b:'#88ff44',g:'#44aa00'}, {b:'#00aa33',g:'#006622'},
+        ]}),
+        // Halloween Chase: orange / purple
+        () => ({ type: 'chase', speed: 1.0, pal: [
+          {b:'#ff6600',g:'#aa3300'}, {b:'#ff6600',g:'#aa3300'},
+          {b:'#9900cc',g:'#550077'}, {b:'#9900cc',g:'#550077'},
+          {b:'#ff2200',g:'#881100'},
+        ]}),
+        // Valentine Shimmer: red / pink deep pulse
+        () => ({ type: 'shimmer', rate: 3.2, leds: Array.from({length:N}, (_,i) =>
+          i%2 ? {b:'#ff1144',g:'#aa0033'} : {b:'#ff88aa',g:'#cc2255'}) }),
       ];
 
       const cards = document.querySelectorAll('#pmPresets .pm-card');
       function apply(idx) {
-        const p = PRESETS[idx]();
-        if (window._archSet) window._archSet(p.c, p.r);
+        if (window._archSet) window._archSet(PRESETS[idx]());
         cards.forEach((c, i) => c.classList.toggle('active', i === idx));
       }
       cards.forEach((card, i) => card.addEventListener('click', () => apply(i)));
