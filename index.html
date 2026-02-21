@@ -1638,10 +1638,11 @@
       const ctx = canvas.getContext('2d');
       const N = 50;
 
-      // 50 points along quadratic bezier P0=(32,160) P1=(160,20) P2=(288,160)
+      // 50 points along a true semicircle — matches real PEX arch shape
+      const cx = 160, cy = 185, r = 135;
       const pts = Array.from({length: N}, (_, i) => {
-        const t = i / (N - 1), u = 1 - t;
-        return { x: u*u*32 + 2*u*t*160 + t*t*288, y: u*u*160 + 2*u*t*20 + t*t*160 };
+        const angle = Math.PI - (i / (N - 1)) * Math.PI;
+        return { x: cx + r * Math.cos(angle), y: cy - r * Math.sin(angle) };
       });
 
       function ha(hex, a) {
@@ -1702,21 +1703,15 @@
       function frame() {
         ctx.clearRect(0, 0, 320, 210);
 
-        // Posts
-        ctx.fillStyle = '#222';
-        ctx.beginPath(); ctx.roundRect(28,140,8,65,3); ctx.fill();
-        ctx.beginPath(); ctx.roundRect(284,140,8,65,3); ctx.fill();
-
-        // Arch tube
+        // PEX tube — white semi-transparent arch, drawn before LEDs
+        ctx.save();
+        ctx.strokeStyle = 'rgba(220,225,240,0.52)';
+        ctx.lineWidth = 12;
         ctx.lineCap = 'round';
-        ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 10;
-        ctx.beginPath(); ctx.moveTo(32,160); ctx.quadraticCurveTo(160,20,288,160); ctx.stroke();
-        ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 6;
-        ctx.beginPath(); ctx.moveTo(32,160); ctx.quadraticCurveTo(160,20,288,160); ctx.stroke();
-
-        // Ground line
-        ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2;
-        ctx.beginPath(); ctx.moveTo(10,205); ctx.lineTo(310,205); ctx.stroke();
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, Math.PI, 0, true);
+        ctx.stroke();
+        ctx.restore();
 
         // LEDs (screen blend for realistic glow)
         ctx.save();
@@ -1738,14 +1733,14 @@
           ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI*2); ctx.fill();
         });
 
-        // Ground glow from center LED
+        // Ground glow from arch base
         const mid = getLED(25);
-        const gg = ctx.createRadialGradient(160,205,0,160,205,100);
-        gg.addColorStop(0,   ha(mid.g, 0.14));
+        const gg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 110);
+        gg.addColorStop(0,   ha(mid.g, 0.12));
         gg.addColorStop(0.5, ha(mid.g, 0.04));
         gg.addColorStop(1,   'rgba(0,0,0,0)');
         ctx.fillStyle = gg;
-        ctx.beginPath(); ctx.ellipse(160,205,100,5,0,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx, cy, 110, 8, 0, 0, Math.PI*2); ctx.fill();
         ctx.restore();
 
         animT += 0.016;
