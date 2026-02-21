@@ -187,34 +187,37 @@
       filter: blur(60px);
     }
 
-    @keyframes colorCycle {
-      0%   { fill: #c8921e; filter: drop-shadow(0 0 6px #c8921e); }
-      14%  { fill: #ef4444; filter: drop-shadow(0 0 6px #ef4444); }
-      28%  { fill: #a855f7; filter: drop-shadow(0 0 6px #a855f7); }
-      42%  { fill: #3b82f6; filter: drop-shadow(0 0 6px #3b82f6); }
-      57%  { fill: #10b981; filter: drop-shadow(0 0 6px #10b981); }
-      71%  { fill: #f59e0b; filter: drop-shadow(0 0 6px #f59e0b); }
-      85%  { fill: #ec4899; filter: drop-shadow(0 0 6px #ec4899); }
-      100% { fill: #c8921e; filter: drop-shadow(0 0 6px #c8921e); }
+    @keyframes ledSnake {
+      0%   { opacity: 0; fill: #c8921e; filter: drop-shadow(0 0 0px #c8921e); }
+      8%   { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 8px #c8921e); }
+      24%  { fill: #ef4444; filter: drop-shadow(0 0 8px #ef4444); }
+      40%  { fill: #a855f7; filter: drop-shadow(0 0 8px #a855f7); }
+      56%  { fill: #3b82f6; filter: drop-shadow(0 0 8px #3b82f6); }
+      72%  { fill: #10b981; filter: drop-shadow(0 0 8px #10b981); }
+      84%  { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 8px #c8921e); }
+      100% { opacity: 0; fill: #c8921e; filter: drop-shadow(0 0 0px #c8921e); }
     }
-    .led-dot { animation: colorCycle 4s ease-in-out infinite; }
-    .led-dot:nth-child(2)  { animation-delay: 0.25s; }
-    .led-dot:nth-child(3)  { animation-delay: 0.5s; }
-    .led-dot:nth-child(4)  { animation-delay: 0.75s; }
-    .led-dot:nth-child(5)  { animation-delay: 1.0s; }
-    .led-dot:nth-child(6)  { animation-delay: 1.25s; }
-    .led-dot:nth-child(7)  { animation-delay: 1.5s; }
-    .led-dot:nth-child(8)  { animation-delay: 1.75s; }
-    .led-dot:nth-child(9)  { animation-delay: 2.0s; }
-    .led-dot:nth-child(10) { animation-delay: 2.25s; }
-    .led-dot:nth-child(11) { animation-delay: 2.5s; }
-    .led-dot:nth-child(12) { animation-delay: 2.75s; }
-    .led-dot:nth-child(13) { animation-delay: 3.0s; }
-    .led-dot:nth-child(14) { animation-delay: 3.25s; }
-    .led-dot:nth-child(15) { animation-delay: 3.5s; }
-    .led-dot:nth-child(16) { animation-delay: 3.75s; }
-    .led-dot:nth-child(17) { animation-delay: 0.15s; }
-    .led-dot:nth-child(18) { animation-delay: 0.45s; }
+    .led-dot {
+      animation: ledSnake 7s ease-in-out infinite;
+      animation-fill-mode: backwards;
+    }
+    .led-dot:nth-child(2)  { animation-delay: 0.4s; }
+    .led-dot:nth-child(3)  { animation-delay: 0.8s; }
+    .led-dot:nth-child(4)  { animation-delay: 1.2s; }
+    .led-dot:nth-child(5)  { animation-delay: 1.6s; }
+    .led-dot:nth-child(6)  { animation-delay: 2.0s; }
+    .led-dot:nth-child(7)  { animation-delay: 2.4s; }
+    .led-dot:nth-child(8)  { animation-delay: 2.8s; }
+    .led-dot:nth-child(9)  { animation-delay: 3.2s; }
+    .led-dot:nth-child(10) { animation-delay: 3.6s; }
+    .led-dot:nth-child(11) { animation-delay: 4.0s; }
+    .led-dot:nth-child(12) { animation-delay: 4.4s; }
+    .led-dot:nth-child(13) { animation-delay: 4.8s; }
+    .led-dot:nth-child(14) { animation-delay: 0.5s; }
+    .led-dot:nth-child(15) { animation-delay: 1.0s; }
+    .led-dot:nth-child(16) { animation-delay: 1.5s; }
+    .led-dot:nth-child(17) { animation-delay: 2.0s; }
+    .led-dot:nth-child(18) { animation-delay: 2.5s; }
 
     .hero-text-col .hero-headline {
       font-size: clamp(2.5rem, 5vw, 4rem);
