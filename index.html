@@ -1179,23 +1179,23 @@
                   <div class="pm-body">
                     <div class="pm-grid" id="pmPresets">
                       <div class="pm-card active" data-preset="0">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#ff2200,#ff9900,#ffff00,#00cc44,#0055ff,#cc00ff);">🌈</div>
-                        <div class="pm-name">Rainbow Flow</div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#cc1111 40%,#006622 40%,#006622 70%,#cc1111 70%);">🎄</div>
+                        <div class="pm-name">Christmas Chase</div>
                       </div>
                       <div class="pm-card" data-preset="1">
                         <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#ee4444,#f8f8ff,#f0f4ff,#3355ee,#0022aa);"></div>
                         <div class="pm-name">Patriotic Chase</div>
                       </div>
                       <div class="pm-card" data-preset="2">
-                        <div class="pm-icon-wrap" style="background:#c87018;">🍂</div>
-                        <div class="pm-name">Fall</div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#ff2200,#ff9900,#ffff00,#00cc44,#0055ff,#cc00ff);">🌈</div>
+                        <div class="pm-name">Rainbow Flow</div>
                       </div>
                       <div class="pm-card" data-preset="3">
                         <div class="pm-icon-wrap" style="background:#1a6e1a;">🍀</div>
                         <div class="pm-name">St. Patrick's</div>
                       </div>
                       <div class="pm-card" data-preset="4">
-                        <div class="pm-icon-wrap" style="background:#5a1a7a;">🎃</div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#ff6600,#6600aa);">🎃</div>
                         <div class="pm-name">Halloween</div>
                       </div>
                       <div class="pm-card" data-preset="5">
@@ -1655,28 +1655,46 @@
 
       let cfg = { type: 'rainbow' }, animT = 0;
 
-      // cfg types: 'rainbow' | 'chase' {pal, speed} | 'shimmer' {leds, rate} | 'static' {leds}
       window._archSet = function(config) { cfg = config; };
+
+      // Fire helpers — ported directly from afterglo-visualizer.html
+      function fireHeat(i) {
+        const p = i / (N - 1);
+        return Math.max(0, Math.min(1,
+          0.68 - p * 0.38
+          + Math.sin(animT * 3.2 + i * 0.9)  * 0.25
+          + Math.sin(animT * 7.1 - i * 1.4)  * 0.15
+          + Math.sin(animT * 1.8 + i * 0.3)  * 0.10
+        ));
+      }
+      function fireColor(i) {
+        const h = fireHeat(i);
+        const x = n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2,'0');
+        let r, g, b;
+        if      (h < 0.33) { const f=h/0.33;           r=180*f;       g=0;          b=0; }
+        else if (h < 0.66) { const f=(h-0.33)/0.33;    r=180+60*f;    g=55*f;       b=0; }
+        else               { const f=(h-0.66)/0.34;    r=240;         g=55+180*f;   b=80*f; }
+        return { b:`#${x(r)}${x(g)}${x(b)}`, g:`#${x(r*0.8)}${x(g*0.4)}00` };
+      }
 
       function getLED(i) {
         if (cfg.type === 'rainbow') {
-          const h = (i/N*360 + animT*60) % 360;   // fast flow
+          const h = (i/N*360 + animT*60) % 360;
           return { b: hslHex(h,100,65), g: hslHex(h,100,40) };
         }
         if (cfg.type === 'chase') {
-          // mirrors visualizer patriotic formula: bands shift forward with time
           const pos = ((i / (N-1) * cfg.pal.length) + animT * cfg.speed + 1000) % cfg.pal.length;
           return cfg.pal[Math.floor(pos) % cfg.pal.length];
         }
-        const leds = cfg.leds || [];
-        return leds[i] || {b:'#c8921e', g:'#7a5510'};
+        if (cfg.type === 'fire') return fireColor(i);
+        return (cfg.leds || [])[i] || {b:'#c8921e', g:'#7a5510'};
       }
 
       function alpha(i) {
-        if (cfg.type === 'shimmer') {
-          // deep pulsing shimmer — each LED on its own phase
+        if (cfg.type === 'shimmer')
           return 0.2 + 0.8 * Math.pow(Math.abs(Math.sin(animT * (cfg.rate||3.5) + i * 0.65)), 2);
-        }
+        if (cfg.type === 'fire')
+          return 0.15 + fireHeat(i) * 0.85;
         return 0.65 + 0.35 * (0.5 + 0.5 * Math.sin(animT*2.2 + i*0.38));
       }
 
@@ -1740,36 +1758,34 @@
     (function() {
       const N = 50;
       const PRESETS = [
-        // Rainbow Flow
-        () => ({ type: 'rainbow' }),
-        // Patriotic Chase: red / white / blue — 3 equal bands, matches visualizer
+        // 0: Christmas Chase — red / green / warm-white bands
+        () => ({ type: 'chase', speed: 0.9, pal: [
+          {b:'#ff1a1a',g:'#aa0000'},
+          {b:'#ff1a1a',g:'#aa0000'},
+          {b:'#00cc44',g:'#00882a'},
+          {b:'#00cc44',g:'#00882a'},
+          {b:'#ffe8c0',g:'#cc9944'},
+        ]}),
+        // 1: Patriotic Chase — red / white / blue (matches visualizer formula)
         () => ({ type: 'chase', speed: 0.8, pal: [
           {b:'#ff2020',g:'#cc0000'},
           {b:'#e8f0ff',g:'#aaaacc'},
           {b:'#2255ff',g:'#0033cc'},
         ]}),
-        // Fall: orange / amber / red static shimmer
-        () => ({ type: 'static', leds: Array.from({length:N}, (_,i) =>
-          [{b:'#ff6600',g:'#aa3300'},{b:'#ffaa00',g:'#886600'},{b:'#ff2200',g:'#881100'}][i%3]) }),
-        // St. Patrick's Chase: green / white (no light green)
+        // 2: Rainbow Flow (moved from slot 0)
+        () => ({ type: 'rainbow' }),
+        // 3: St. Patrick's Chase — green / white
         () => ({ type: 'chase', speed: 1.1, pal: [
           {b:'#00cc44',g:'#007a28'},
           {b:'#00ee66',g:'#009940'},
-          {b:'#e8fff0',g:'#aaccbb'},   // white
+          {b:'#e8fff0',g:'#aaccbb'},
           {b:'#00cc44',g:'#007a28'},
           {b:'#00aa33',g:'#006622'},
-          {b:'#e8fff0',g:'#aaccbb'},   // white
+          {b:'#e8fff0',g:'#aaccbb'},
         ]}),
-        // Halloween Chase: orange / purple / deep red / magenta
-        () => ({ type: 'chase', speed: 1.0, pal: [
-          {b:'#ff6600',g:'#aa3300'},
-          {b:'#9900cc',g:'#550077'},
-          {b:'#ff2200',g:'#881100'},
-          {b:'#cc00aa',g:'#770066'},
-          {b:'#ffaa00',g:'#885500'},
-          {b:'#7700cc',g:'#440077'},
-        ]}),
-        // Valentine Shimmer: red / pink deep pulse
+        // 4: Halloween — fire pattern ported from visualizer (dark-red → orange → yellow-white)
+        () => ({ type: 'fire' }),
+        // 5: Valentine Shimmer — red / pink deep pulse
         () => ({ type: 'shimmer', rate: 3.2, leds: Array.from({length:N}, (_,i) =>
           i%2 ? {b:'#ff1144',g:'#aa0033'} : {b:'#ff88aa',g:'#cc2255'}) }),
       ];
