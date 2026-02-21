@@ -882,8 +882,7 @@
       pointer-events: none;
     }
 
-    /* SVG arch with LED dots */
-    .arch-svg { width: 100%; max-width: 320px; }
+    .arch-canvas { width: 100%; max-width: 320px; display: block; }
 
     .arch-props-row {
       display: flex;
@@ -932,45 +931,23 @@
       overflow: hidden;
       padding: 0 0 12px;
     }
-    /* Firmware preset screen */
-    .fw-screen { display: flex; flex-direction: column; height: 100%; }
-    .fw-bar {
-      background: #111; padding: 9px 12px 8px;
-      display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid #1f1f1f;
-    }
-    .fw-bar-title { font-family:'Outfit',sans-serif; font-size:0.72rem; font-weight:900; letter-spacing:0.08em; color:#fff; }
-    .fw-bar-title span { color: var(--accent); }
-    .fw-bar-status { font-size:0.48rem; color:#22c55e; font-family:monospace; letter-spacing:0.05em; }
-    .fw-section-hdr {
-      padding: 5px 12px 4px;
-      font-size: 0.46rem; letter-spacing: 0.18em; text-transform: uppercase;
-      color: #444; font-family: monospace; border-bottom: 1px solid #181818;
-    }
-    .fw-presets { flex: 1; }
-    .fw-row {
-      display: flex; align-items: center; gap: 7px;
-      padding: 8px 10px 8px 8px;
-      border-bottom: 1px solid #141414;
-      border-left: 2px solid transparent;
-      cursor: pointer; user-select: none;
-      transition: background 0.12s, border-color 0.12s;
-    }
-    .fw-row:hover:not(.active) { background: rgba(255,255,255,0.03); }
-    .fw-row.active { background: rgba(200,146,30,0.11); border-left-color: var(--accent); }
-    .fw-arrow { font-size: 0.45rem; color: var(--accent); width: 7px; flex-shrink: 0; opacity: 0; }
-    .fw-row.active .fw-arrow { opacity: 1; }
-    .fw-num { font-family:'Courier New',monospace; font-size:0.52rem; color:#444; width:14px; flex-shrink:0; }
-    .fw-row.active .fw-num { color: var(--accent); }
-    .fw-name { font-size:0.6rem; font-weight:600; color:var(--muted); flex:1; font-family:'Outfit',sans-serif; }
-    .fw-row.active .fw-name { color:#fff; }
-    .fw-swatches { display:flex; gap:3px; flex-shrink:0; }
-    .fw-swatch { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-    .fw-footer {
-      padding: 5px 12px; display:flex; justify-content:space-between;
-      border-top: 1px solid #181818;
-      font-family: monospace; font-size: 0.44rem; color: #2a2a2a;
-    }
+    /* App preset screen — light mode */
+    .pm-screen { display:flex; flex-direction:column; height:100%; background:#fff; }
+    .pm-header { background:#f5f5f8; padding:8px 10px 5px; border-bottom:1px solid #e5e5ea; }
+    .pm-header-top { display:flex; align-items:center; justify-content:space-between; }
+    .pm-title { font-family:'Outfit',sans-serif; font-size:0.72rem; font-weight:700; color:#111; }
+    .pm-actions { font-size:0.65rem; color:#888; display:flex; gap:7px; }
+    .pm-sub { display:flex; align-items:center; gap:3px; margin-top:1px; font-size:0.43rem; color:#555; font-family:'Inter',sans-serif; }
+    .pm-dot { width:5px; height:5px; border-radius:50%; background:#2563eb; flex-shrink:0; }
+    .pm-body { flex:1; overflow:hidden; padding:7px; }
+    .pm-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .pm-card { border-radius:10px; overflow:hidden; cursor:pointer; border:2.5px solid transparent; transition:border-color 0.15s; user-select:none; background:#fff; }
+    .pm-card.active { border-color:#e07a10; }
+    .pm-icon-wrap { width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:1.5rem; line-height:1; }
+    .pm-name { text-align:center; padding:3px 2px 5px; font-size:0.48rem; font-weight:500; color:#111; font-family:'Inter',sans-serif; }
+    .pm-tabs { display:flex; border-top:1px solid #e5e5ea; background:#fff; flex-shrink:0; }
+    .pm-tab { flex:1; text-align:center; padding:5px 0 4px; font-size:0.46rem; font-weight:600; color:#999; font-family:'Inter',sans-serif; border-top:2px solid transparent; }
+    .pm-tab.active { color:#e07a10; border-top-color:#e07a10; }
 
     .app-features-list {
       list-style: none;
@@ -1017,28 +994,6 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
-    @keyframes colorCycle {
-      0%   { fill: #c8921e; filter: drop-shadow(0 0 4px #c8921e); }
-      16%  { fill: #ef4444; filter: drop-shadow(0 0 4px #ef4444); }
-      33%  { fill: #a855f7; filter: drop-shadow(0 0 4px #a855f7); }
-      50%  { fill: #3b82f6; filter: drop-shadow(0 0 4px #3b82f6); }
-      66%  { fill: #10b981; filter: drop-shadow(0 0 4px #10b981); }
-      83%  { fill: #f59e0b; filter: drop-shadow(0 0 4px #f59e0b); }
-      100% { fill: #c8921e; filter: drop-shadow(0 0 4px #c8921e); }
-    }
-    .led-dot { animation: colorCycle 4s ease-in-out infinite; }
-    .led-dot:nth-child(2)  { animation-delay: 0.3s; }
-    .led-dot:nth-child(3)  { animation-delay: 0.6s; }
-    .led-dot:nth-child(4)  { animation-delay: 0.9s; }
-    .led-dot:nth-child(5)  { animation-delay: 1.2s; }
-    .led-dot:nth-child(6)  { animation-delay: 1.5s; }
-    .led-dot:nth-child(7)  { animation-delay: 1.8s; }
-    .led-dot:nth-child(8)  { animation-delay: 2.1s; }
-    .led-dot:nth-child(9)  { animation-delay: 2.4s; }
-    .led-dot:nth-child(10) { animation-delay: 2.7s; }
-    .led-dot:nth-child(11) { animation-delay: 3.0s; }
-    .led-dot:nth-child(12) { animation-delay: 3.3s; }
-    .led-dot:nth-child(13) { animation-delay: 3.6s; }
   </style>
 </head>
 <body>
@@ -1178,30 +1133,9 @@
         <!-- Left: arch visual + prop cards -->
         <div class="arch-visual fade-in">
           <div class="arch-scene">
-            <!-- Animated SVG arch -->
-            <svg class="arch-svg" viewBox="0 0 320 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <!-- Ground posts -->
-              <rect x="28" y="140" width="8" height="55" rx="3" fill="#222"/>
-              <rect x="284" y="140" width="8" height="55" rx="3" fill="#222"/>
-              <!-- Arch tube -->
-              <path d="M32 160 Q160 20 288 160" stroke="#1a1a1a" stroke-width="10" fill="none" stroke-linecap="round"/>
-              <path d="M32 160 Q160 20 288 160" stroke="#2a2a2a" stroke-width="6" fill="none" stroke-linecap="round"/>
-              <!-- LED dots along arch -->
-              <circle id="led0" class="led-dot" cx="32"  cy="160" r="5"/>
-              <circle id="led1" class="led-dot" cx="57"  cy="121" r="5"/>
-              <circle id="led2" class="led-dot" cx="88"  cy="88"  r="5"/>
-              <circle id="led3" class="led-dot" cx="122" cy="63"  r="5"/>
-              <circle id="led4" class="led-dot" cx="160" cy="53"  r="5"/>
-              <circle id="led5" class="led-dot" cx="198" cy="63"  r="5"/>
-              <circle id="led6" class="led-dot" cx="232" cy="88"  r="5"/>
-              <circle id="led7" class="led-dot" cx="263" cy="121" r="5"/>
-              <circle id="led8" class="led-dot" cx="288" cy="160" r="5"/>
-              <!-- Ground glow line -->
-              <line x1="10" y1="195" x2="310" y2="195" stroke="#1a1a1a" stroke-width="2"/>
-              <!-- Glow reflection on ground -->
-              <ellipse id="archGlow" cx="160" cy="195" rx="100" ry="4" fill="rgba(200,146,30,0.06)"/>
-            </svg>
-            <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch,same app, same controller</div>
+            <!-- Canvas arch — 50 LEDs rendered via JS (mirrors visualizer rendering) -->
+            <canvas id="archCanvas" class="arch-canvas" width="320" height="210"></canvas>
+            <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch — same app, same controller</div>
           </div>
 
           <!-- Prop cards -->
@@ -1227,56 +1161,53 @@
         <!-- Right: app mockup + feature list -->
         <div class="app-side fade-in fade-delay-1">
           <div style="display:flex;gap:40px;align-items:flex-start;flex-wrap:wrap;">
-            <!-- Phone mockup — firmware preset screen -->
+            <!-- Phone mockup — app preset screen (light mode) -->
             <div class="phone-mockup">
               <div class="phone-notch"></div>
-              <div class="phone-screen">
-                <div class="fw-screen">
-                  <div class="fw-bar">
-                    <div class="fw-bar-title">AFTER<span>GLO</span></div>
-                    <div class="fw-bar-status">● WiFi</div>
-                  </div>
-                  <div class="fw-section-hdr">Presets</div>
-                  <div class="fw-presets" id="fwPresets">
-                    <div class="fw-row active" data-preset="0">
-                      <span class="fw-arrow">▶</span>
-                      <span class="fw-num">01</span>
-                      <span class="fw-name">Christmas</span>
-                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff1a1a"></i><i class="fw-swatch" style="background:#00c44a"></i></span>
+              <div class="phone-screen" style="background:#f5f5f8;padding:0;">
+                <div class="pm-screen">
+                  <div class="pm-header">
+                    <div class="pm-header-top">
+                      <div class="pm-title">Roof Lights</div>
+                      <div class="pm-actions">↺ ✏</div>
                     </div>
-                    <div class="fw-row" data-preset="1">
-                      <span class="fw-arrow">▶</span>
-                      <span class="fw-num">02</span>
-                      <span class="fw-name">4th of July</span>
-                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff2020"></i><i class="fw-swatch" style="background:#ddeeff;opacity:0.8"></i><i class="fw-swatch" style="background:#1a4fff"></i></span>
-                    </div>
-                    <div class="fw-row" data-preset="2">
-                      <span class="fw-arrow">▶</span>
-                      <span class="fw-num">03</span>
-                      <span class="fw-name">Halloween</span>
-                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff6600"></i><i class="fw-swatch" style="background:#9900cc"></i></span>
-                    </div>
-                    <div class="fw-row" data-preset="3">
-                      <span class="fw-arrow">▶</span>
-                      <span class="fw-num">04</span>
-                      <span class="fw-name">Warm White</span>
-                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ffcc77"></i><i class="fw-swatch" style="background:#ffe8b0"></i></span>
-                    </div>
-                    <div class="fw-row" data-preset="4">
-                      <span class="fw-arrow">▶</span>
-                      <span class="fw-num">05</span>
-                      <span class="fw-name">Party Mode</span>
-                      <span class="fw-swatches"><i class="fw-swatch" style="background:#ff0000"></i><i class="fw-swatch" style="background:#00ee00"></i><i class="fw-swatch" style="background:#0055ff"></i></span>
-                    </div>
-                    <div class="fw-row" data-preset="5">
-                      <span class="fw-arrow">▶</span>
-                      <span class="fw-num">06</span>
-                      <span class="fw-name">Game Day</span>
-                      <span class="fw-swatches"><i class="fw-swatch" style="background:#c8921e"></i><i class="fw-swatch" style="background:#0a0a0a;border:1px solid #333"></i></span>
+                    <div class="pm-sub">
+                      <div class="pm-dot"></div>
+                      <span>10.0.0.51 ▾</span>
                     </div>
                   </div>
-                  <div class="fw-footer">
-                    <span>AFTERGLO CTRL</span><span>v2.1</span>
+                  <div class="pm-body">
+                    <div class="pm-grid" id="pmPresets">
+                      <div class="pm-card active" data-preset="0">
+                        <div class="pm-icon-wrap" style="background:#6fbc6f;">🌷</div>
+                        <div class="pm-name">Spring</div>
+                      </div>
+                      <div class="pm-card" data-preset="1">
+                        <div class="pm-icon-wrap" style="background:linear-gradient(180deg,#5ab8e8 55%,#d4a86a 100%);">☀️</div>
+                        <div class="pm-name">Summer</div>
+                      </div>
+                      <div class="pm-card" data-preset="2">
+                        <div class="pm-icon-wrap" style="background:#e07a18;">🎃</div>
+                        <div class="pm-name">Fall</div>
+                      </div>
+                      <div class="pm-card" data-preset="3">
+                        <div class="pm-icon-wrap" style="background:#1e1e8c;">🎉</div>
+                        <div class="pm-name">Party Mode</div>
+                      </div>
+                      <div class="pm-card" data-preset="4">
+                        <div class="pm-icon-wrap" style="background:#1a0e06;">🕯️</div>
+                        <div class="pm-name">Candlelight</div>
+                      </div>
+                      <div class="pm-card" data-preset="5">
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#38d8a8,#6838d8);">✨</div>
+                        <div class="pm-name">Aurora</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="pm-tabs">
+                    <div class="pm-tab active">Presets</div>
+                    <div class="pm-tab">Pattern</div>
+                    <div class="pm-tab">Timer</div>
                   </div>
                 </div>
               </div>
@@ -1699,34 +1630,130 @@
     };
     window.addEventListener('scroll', activateNav, { passive: true });
 
-    // Firmware preset interactivity
+    // ── Arch canvas renderer (50 LEDs, mirrors visualizer glow logic) ──
     (function() {
-      const presets = [
-        { colors: ['#ff1a1a','#00c44a','#ff1a1a','#00c44a','#ff1a1a','#00c44a','#ff1a1a','#00c44a','#ff1a1a'], glow: 'rgba(200,30,30,0.15)' },
-        { colors: ['#ff2020','#ddeeff','#1a4fff','#ff2020','#ddeeff','#1a4fff','#ff2020','#ddeeff','#1a4fff'], glow: 'rgba(30,60,200,0.15)' },
-        { colors: ['#ff6600','#9900cc','#ff6600','#9900cc','#ff6600','#9900cc','#ff6600','#9900cc','#ff6600'], glow: 'rgba(180,60,0,0.15)'  },
-        { colors: ['#ffcc77','#ffe8b0','#ffcc77','#ffe8b0','#ffcc77','#ffe8b0','#ffcc77','#ffe8b0','#ffcc77'], glow: 'rgba(200,160,60,0.15)' },
-        { colors: ['#ff0000','#ff8800','#ffff00','#00ee00','#00ccee','#0055ff','#aa00ff','#ff00ff','#ff4400'], glow: 'rgba(120,0,200,0.15)'  },
-        { colors: ['#c8921e','#c8921e','#0a0a0a','#c8921e','#c8921e','#0a0a0a','#c8921e','#c8921e','#c8921e'], glow: 'rgba(200,146,30,0.15)' },
-      ];
-      const dots = [0,1,2,3,4,5,6,7,8].map(i => document.getElementById('led' + i));
-      const glow = document.getElementById('archGlow');
-      const rows = document.querySelectorAll('#fwPresets .fw-row');
+      const canvas = document.getElementById('archCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const N = 50;
 
-      function applyPreset(idx) {
-        const p = presets[idx];
-        dots.forEach((d, i) => {
-          const c = p.colors[i];
-          d.style.animation = 'none';
-          d.style.fill = c;
-          d.style.filter = 'drop-shadow(0 0 6px ' + c + ')';
-        });
-        if (glow) glow.setAttribute('fill', p.glow);
-        rows.forEach((r, i) => r.classList.toggle('active', i === idx));
+      // 50 points along quadratic bezier P0=(32,160) P1=(160,20) P2=(288,160)
+      const pts = Array.from({length: N}, (_, i) => {
+        const t = i / (N - 1), u = 1 - t;
+        return { x: u*u*32 + 2*u*t*160 + t*t*288, y: u*u*160 + 2*u*t*20 + t*t*160 };
+      });
+
+      function ha(hex, a) {
+        const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+        return 'rgba('+r+','+g+','+b+','+a.toFixed(3)+')';
+      }
+      function hslHex(h, s, l) {
+        h=((h%360)+360)%360; s/=100; l/=100;
+        const a=s*Math.min(l,1-l), f=n=>{const k=(n+h/30)%12; return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
+        return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
       }
 
-      rows.forEach((row, i) => row.addEventListener('click', () => applyPreset(i)));
-      applyPreset(0);
+      let ledColors = null, isRainbow = false, animT = 0;
+
+      window._archSet = function(colors, rainbow) { ledColors = colors; isRainbow = !!rainbow; };
+
+      function getLED(i) {
+        if (isRainbow || !ledColors) {
+          const h = (i/N*360 + animT*28) % 360;
+          return { b: hslHex(h,100,65), g: hslHex(h,100,40) };
+        }
+        return ledColors[i] || {b:'#c8921e', g:'#7a5510'};
+      }
+
+      function frame() {
+        ctx.clearRect(0, 0, 320, 210);
+
+        // Posts
+        ctx.fillStyle = '#222';
+        ctx.beginPath(); ctx.roundRect(28,140,8,65,3); ctx.fill();
+        ctx.beginPath(); ctx.roundRect(284,140,8,65,3); ctx.fill();
+
+        // Arch tube
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 10;
+        ctx.beginPath(); ctx.moveTo(32,160); ctx.quadraticCurveTo(160,20,288,160); ctx.stroke();
+        ctx.strokeStyle = '#2a2a2a'; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.moveTo(32,160); ctx.quadraticCurveTo(160,20,288,160); ctx.stroke();
+
+        // Ground line
+        ctx.strokeStyle = '#1a1a1a'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(10,205); ctx.lineTo(310,205); ctx.stroke();
+
+        // LEDs (screen blend for realistic glow)
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        pts.forEach((p, i) => {
+          const c = getLED(i);
+          const s = 0.65 + 0.35 * (0.5 + 0.5 * Math.sin(animT*2.2 + i*0.38));
+
+          // Wide glow
+          const og = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 10);
+          og.addColorStop(0,    ha(c.g, 0.55*s));
+          og.addColorStop(0.45, ha(c.g, 0.18*s));
+          og.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.fillStyle = og;
+          ctx.beginPath(); ctx.arc(p.x, p.y, 10, 0, Math.PI*2); ctx.fill();
+
+          // LED dot
+          ctx.fillStyle = ha(c.b, s);
+          ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, Math.PI*2); ctx.fill();
+        });
+
+        // Ground glow from center LED
+        const mid = getLED(25);
+        const gg = ctx.createRadialGradient(160,205,0,160,205,100);
+        gg.addColorStop(0,   ha(mid.g, 0.14));
+        gg.addColorStop(0.5, ha(mid.g, 0.04));
+        gg.addColorStop(1,   'rgba(0,0,0,0)');
+        ctx.fillStyle = gg;
+        ctx.beginPath(); ctx.ellipse(160,205,100,5,0,0,Math.PI*2); ctx.fill();
+        ctx.restore();
+
+        animT += 0.016;
+        requestAnimationFrame(frame);
+      }
+
+      // Default to Spring (Christmas colors until preset JS runs)
+      window._archSet(Array.from({length:N}, (_,i) => i%2 ? {b:'#ff1a1a',g:'#aa0000'} : {b:'#00c44a',g:'#00882a'}), false);
+      frame();
+    })();
+
+    // App preset interactivity
+    (function() {
+      function hslHex(h, s, l) {
+        h=((h%360)+360)%360; s/=100; l/=100;
+        const a=s*Math.min(l,1-l), f=n=>{const k=(n+h/30)%12; return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
+        return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
+      }
+      const N = 50;
+      const PRESETS = [
+        // Spring: alternating pink / green
+        () => ({ c: Array.from({length:N}, (_,i) => i%2 ? {b:'#ff88aa',g:'#cc2255'} : {b:'#55cc77',g:'#228844'}), r: false }),
+        // Summer: warm gold
+        () => ({ c: Array.from({length:N}, () => ({b:'#ffdd44',g:'#cc9900'})), r: false }),
+        // Fall: orange / amber / red
+        () => ({ c: Array.from({length:N}, (_,i) => [{b:'#ff6600',g:'#aa3300'},{b:'#ffaa00',g:'#886600'},{b:'#ff2200',g:'#881100'}][i%3]), r: false }),
+        // Party Mode: rainbow animation
+        () => ({ c: null, r: true }),
+        // Candlelight: warm amber
+        () => ({ c: Array.from({length:N}, () => ({b:'#ffaa44',g:'#cc6600'})), r: false }),
+        // Aurora: teal → purple gradient
+        () => ({ c: Array.from({length:N}, (_,i) => { const h=160+i/49*100; return {b:hslHex(h,90,65),g:hslHex(h,90,40)}; }), r: false }),
+      ];
+
+      const cards = document.querySelectorAll('#pmPresets .pm-card');
+      function apply(idx) {
+        const p = PRESETS[idx]();
+        if (window._archSet) window._archSet(p.c, p.r);
+        cards.forEach((c, i) => c.classList.toggle('active', i === idx));
+      }
+      cards.forEach((card, i) => card.addEventListener('click', () => apply(i)));
+      apply(0);
     })();
   </script>
 </body>
