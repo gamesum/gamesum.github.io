@@ -943,7 +943,8 @@
     .pm-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
     .pm-card { border-radius:10px; overflow:hidden; cursor:pointer; border:2.5px solid transparent; transition:border-color 0.15s; user-select:none; background:#fff; }
     .pm-card.active { border-color:#e07a10; }
-    .pm-icon-wrap { width:100%; aspect-ratio:1/1; display:flex; align-items:center; justify-content:center; font-size:2.4rem; line-height:1; }
+    .pm-icon-wrap { width:100%; aspect-ratio:1/1; overflow:hidden; display:block; }
+    .pm-icon-wrap svg { width:100%; height:100%; display:block; }
     .pm-name { text-align:center; padding:3px 2px 5px; font-size:0.48rem; font-weight:500; color:#111; font-family:'Inter',sans-serif; }
     .pm-tabs { display:flex; border-top:1px solid #e5e5ea; background:#fff; flex-shrink:0; }
     .pm-tab { flex:1; text-align:center; padding:5px 0 4px; font-size:0.46rem; font-weight:600; color:#999; font-family:'Inter',sans-serif; border-top:2px solid transparent; }
@@ -1179,27 +1180,27 @@
                   <div class="pm-body">
                     <div class="pm-grid" id="pmPresets">
                       <div class="pm-card active" data-preset="0">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#cc1111 40%,#006622 40%,#006622 70%,#cc1111 70%);">🎄</div>
+                        <div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-christmas"/></svg></div>
                         <div class="pm-name">Christmas Chase</div>
                       </div>
                       <div class="pm-card" data-preset="1">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#ee4444,#f8f8ff,#f0f4ff,#3355ee,#0022aa);"></div>
+                        <div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-patriotic"/></svg></div>
                         <div class="pm-name">Patriotic Chase</div>
                       </div>
                       <div class="pm-card" data-preset="2">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#ff2200,#ff9900,#ffff00,#00cc44,#0055ff,#cc00ff);">🌈</div>
+                        <div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-rainbow"/></svg></div>
                         <div class="pm-name">Rainbow Flow</div>
                       </div>
                       <div class="pm-card" data-preset="3">
-                        <div class="pm-icon-wrap" style="background:#1a6e1a;">🍀</div>
+                        <div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-stpatrick"/></svg></div>
                         <div class="pm-name">St. Patrick's</div>
                       </div>
                       <div class="pm-card" data-preset="4">
-                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#ff6600,#6600aa);">🎃</div>
+                        <div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-halloween"/></svg></div>
                         <div class="pm-name">Halloween</div>
                       </div>
                       <div class="pm-card" data-preset="5">
-                        <div class="pm-icon-wrap" style="background:#7a0a2a;">❤️</div>
+                        <div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-valentine"/></svg></div>
                         <div class="pm-name">Valentine</div>
                       </div>
                     </div>
@@ -1799,5 +1800,128 @@
       apply(0);
     })();
   </script>
+
+  <!-- SVG preset icons from firmware -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="icon-christmas" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#0D2137"/>
+      <circle cx="12" cy="15" r="1.5" fill="#FFF" opacity="0.8"/>
+      <circle cx="30" cy="8" r="1" fill="#FFF" opacity="0.6"/>
+      <circle cx="75" cy="12" r="1.5" fill="#FFF" opacity="0.7"/>
+      <circle cx="90" cy="20" r="1" fill="#FFF" opacity="0.5"/>
+      <circle cx="8" cy="35" r="1" fill="#FFF" opacity="0.6"/>
+      <circle cx="95" cy="45" r="1.5" fill="#FFF" opacity="0.7"/>
+      <circle cx="18" cy="55" r="1" fill="#FFF" opacity="0.5"/>
+      <ellipse cx="50" cy="92" rx="48" ry="10" fill="#E3F2FD"/>
+      <ellipse cx="20" cy="88" rx="15" ry="5" fill="#FFF" opacity="0.5"/>
+      <ellipse cx="80" cy="88" rx="12" ry="4" fill="#FFF" opacity="0.4"/>
+      <polygon points="50,10 32,32 68,32" fill="#2E7D32"/>
+      <polygon points="34,32 66,32 64,34 36,34" fill="#E8F5E9" opacity="0.7"/>
+      <polygon points="50,22 28,48 72,48" fill="#388E3C"/>
+      <polygon points="30,48 70,48 68,51 32,51" fill="#E8F5E9" opacity="0.7"/>
+      <polygon points="50,36 24,68 76,68" fill="#43A047"/>
+      <polygon points="26,68 74,68 72,71 28,71" fill="#E8F5E9" opacity="0.7"/>
+      <rect x="44" y="68" width="12" height="12" fill="#5D4037"/>
+      <polygon points="50,6 52,12 58,12 53,16 55,22 50,18 45,22 47,16 42,12 48,12" fill="#FFD700"/>
+      <circle cx="50" cy="14" r="8" fill="#FFEB3B" opacity="0.3"/>
+      <circle cx="42" cy="28" r="4" fill="#E53935"/>
+      <circle cx="40" cy="26" r="1" fill="#FFF" opacity="0.5"/>
+      <circle cx="58" cy="28" r="3" fill="#2196F3"/>
+      <circle cx="57" cy="26" r="0.8" fill="#FFF" opacity="0.5"/>
+      <circle cx="36" cy="42" r="4" fill="#FFD700"/>
+      <circle cx="34" cy="40" r="1" fill="#FFF" opacity="0.5"/>
+      <circle cx="64" cy="44" r="3.5" fill="#E53935"/>
+      <circle cx="62" cy="42" r="0.9" fill="#FFF" opacity="0.5"/>
+      <circle cx="40" cy="58" r="3.5" fill="#2196F3"/>
+      <circle cx="60" cy="56" r="4" fill="#FFD700"/>
+      <circle cx="50" cy="62" r="3" fill="#E53935"/>
+      <circle cx="48" cy="35" r="2" fill="#FFEB3B"/>
+      <circle cx="52" cy="50" r="2" fill="#4FC3F7"/>
+      <circle cx="45" cy="48" r="2" fill="#E91E63"/>
+      <circle cx="55" cy="64" r="2" fill="#FFEB3B"/>
+      <circle cx="33" cy="55" r="2" fill="#4FC3F7"/>
+      <circle cx="67" cy="60" r="2" fill="#E91E63"/>
+      <rect x="10" y="76" width="14" height="11" rx="2" fill="#E53935"/>
+      <rect x="16" y="76" width="2" height="11" fill="#FFD700"/>
+      <rect x="10" y="80" width="14" height="2" fill="#FFD700"/>
+      <ellipse cx="17" cy="76" rx="3" ry="2" fill="#FFD700"/>
+      <rect x="76" y="78" width="12" height="9" rx="2" fill="#2196F3"/>
+      <rect x="81" y="78" width="2" height="9" fill="#FFF"/>
+      <rect x="76" y="81" width="12" height="2" fill="#FFF"/>
+      <ellipse cx="82" cy="78" rx="2.5" ry="1.5" fill="#FFF"/>
+    </symbol>
+    <symbol id="icon-patriotic" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1A237E"/>
+      <rect x="15" y="20" width="70" height="10" fill="#E53935"/>
+      <rect x="15" y="35" width="70" height="10" fill="#FFFFFF"/>
+      <rect x="15" y="50" width="70" height="10" fill="#E53935"/>
+      <rect x="15" y="65" width="70" height="10" fill="#FFFFFF"/>
+      <circle cx="30" cy="42" r="3" fill="#FFFFFF"/>
+      <circle cx="40" cy="42" r="3" fill="#FFFFFF"/>
+    </symbol>
+    <symbol id="icon-rainbow" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#303F9F"/>
+      <path d="M15 70 Q50 10 85 70" stroke="#E53935" stroke-width="6" fill="none"/>
+      <path d="M20 70 Q50 18 80 70" stroke="#FB8C00" stroke-width="6" fill="none"/>
+      <path d="M25 70 Q50 26 75 70" stroke="#FDD835" stroke-width="6" fill="none"/>
+      <path d="M30 70 Q50 34 70 70" stroke="#43A047" stroke-width="6" fill="none"/>
+      <path d="M35 70 Q50 42 65 70" stroke="#1E88E5" stroke-width="6" fill="none"/>
+      <path d="M40 70 Q50 50 60 70" stroke="#8E24AA" stroke-width="6" fill="none"/>
+    </symbol>
+    <symbol id="icon-stpatrick" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1B5E20"/>
+      <path d="M5 85 Q50 30 95 85" stroke="#E53935" stroke-width="4" fill="none" opacity="0.6"/>
+      <path d="M10 85 Q50 38 90 85" stroke="#FF9800" stroke-width="4" fill="none" opacity="0.6"/>
+      <path d="M15 85 Q50 46 85 85" stroke="#FFEB3B" stroke-width="4" fill="none" opacity="0.6"/>
+      <circle cx="40" cy="38" r="14" fill="#4CAF50"/>
+      <circle cx="60" cy="38" r="14" fill="#4CAF50"/>
+      <circle cx="50" cy="25" r="14" fill="#4CAF50"/>
+      <path d="M50 45 Q52 60 48 75" stroke="#2E7D32" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="38" r="6" fill="#388E3C"/>
+      <ellipse cx="78" cy="78" rx="14" ry="10" fill="#5D4037"/>
+      <ellipse cx="78" cy="72" rx="12" ry="6" fill="#4E342E"/>
+      <circle cx="73" cy="72" r="4" fill="#FFD700"/>
+      <circle cx="78" cy="70" r="4" fill="#FFC107"/>
+      <circle cx="83" cy="72" r="4" fill="#FFD700"/>
+      <circle cx="78" cy="75" r="3" fill="#FFEB3B"/>
+      <circle cx="25" cy="70" r="2" fill="#FFF" opacity="0.8"/>
+      <circle cx="18" cy="55" r="1.5" fill="#FFF" opacity="0.6"/>
+    </symbol>
+    <symbol id="icon-halloween" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1A1A2E"/>
+      <circle cx="78" cy="22" r="16" fill="#F5F5DC" opacity="0.3"/>
+      <circle cx="78" cy="22" r="12" fill="#FFFDE7"/>
+      <circle cx="74" cy="19" r="2" fill="#E0E0E0" opacity="0.5"/>
+      <circle cx="81" cy="25" r="1.5" fill="#E0E0E0" opacity="0.4"/>
+      <path d="M18 25 Q15 22 12 25 L15 23 L18 25 Q21 22 24 25 L21 23 Z" fill="#1A1A2E" stroke="#2D2D44" stroke-width="0.5"/>
+      <path d="M35 15 Q32 12 29 15 L32 13 L35 15 Q38 12 41 15 L38 13 Z" fill="#1A1A2E" stroke="#2D2D44" stroke-width="0.5"/>
+      <path d="M55 20 Q53 18 51 20 L53 19 L55 20 Q57 18 59 20 L57 19 Z" fill="#1A1A2E" stroke="#2D2D44" stroke-width="0.5"/>
+      <rect y="80" width="100" height="20" fill="#1B5E20" opacity="0.6"/>
+      <ellipse cx="50" cy="62" rx="28" ry="22" fill="#E65100"/>
+      <ellipse cx="38" cy="62" rx="12" ry="20" fill="#EF6C00"/>
+      <ellipse cx="62" cy="62" rx="12" ry="20" fill="#EF6C00"/>
+      <ellipse cx="50" cy="62" rx="10" ry="18" fill="#FF8F00"/>
+      <path d="M50 40 Q50 62 50 84" stroke="#E65100" stroke-width="1" opacity="0.5"/>
+      <path d="M35 42 Q32 62 35 82" stroke="#E65100" stroke-width="1" opacity="0.4"/>
+      <path d="M65 42 Q68 62 65 82" stroke="#E65100" stroke-width="1" opacity="0.4"/>
+      <path d="M50 40 Q55 35 52 30" stroke="#2E7D32" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <polygon points="38,55 44,55 41,48" fill="#FFEB3B"/>
+      <polygon points="38,55 44,55 41,48" fill="#FFF" opacity="0.3"/>
+      <polygon points="56,55 62,55 59,48" fill="#FFEB3B"/>
+      <polygon points="56,55 62,55 59,48" fill="#FFF" opacity="0.3"/>
+      <polygon points="50,58 53,64 47,64" fill="#FFEB3B"/>
+      <path d="M35 70 L40 66 L45 72 L50 66 L55 72 L60 66 L65 70" stroke="#FFEB3B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <ellipse cx="50" cy="60" rx="18" ry="14" fill="#FFEB3B" opacity="0.15"/>
+      <circle cx="10" cy="15" r="1" fill="#FFF" opacity="0.7"/>
+      <circle cx="92" cy="40" r="1" fill="#FFF" opacity="0.6"/>
+      <circle cx="8" cy="55" r="0.8" fill="#FFF" opacity="0.5"/>
+    </symbol>
+    <symbol id="icon-valentine" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#FADADD"/>
+      <path d="M50 74 C20 52 22 30 40 30 C46 30 50 36 50 36 C50 36 54 30 60 30 C78 30 80 52 50 74 Z" fill="#E63946"/>
+      <circle cx="36" cy="38" r="2" fill="#FFF"/>
+      <circle cx="64" cy="42" r="2" fill="#FFF"/>
+    </symbol>
+  </svg>
 </body>
 </html>
