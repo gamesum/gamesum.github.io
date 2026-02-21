@@ -1184,7 +1184,7 @@
                         <div class="pm-name">Christmas Chase</div>
                       </div>
                       <div class="pm-card" data-preset="1">
-                        <div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-patriotic"/></svg></div>
+                        <div class="pm-icon-wrap" style="background:linear-gradient(135deg,#cc1111,#ee4444,#f8f8ff,#f0f4ff,#3355ee,#0022aa);"></div>
                         <div class="pm-name">Patriotic Chase</div>
                       </div>
                       <div class="pm-card" data-preset="2">
@@ -1759,33 +1759,39 @@
     (function() {
       const N = 50;
       const PRESETS = [
-        // 0: Christmas Chase — red / green / warm-white bands
+        // 0: Christmas Chase — red / green / white equal thirds (firmware: 10×red, 10×green + warm white)
         () => ({ type: 'chase', speed: 0.9, pal: [
           {b:'#ff1a1a',g:'#aa0000'},
           {b:'#ff1a1a',g:'#aa0000'},
           {b:'#00cc44',g:'#00882a'},
           {b:'#00cc44',g:'#00882a'},
           {b:'#ffe8c0',g:'#cc9944'},
+          {b:'#ffe8c0',g:'#cc9944'},
         ]}),
-        // 1: Patriotic Chase — red / white / blue (matches visualizer formula)
+        // 1: Patriotic Chase — red / white / blue
         () => ({ type: 'chase', speed: 0.8, pal: [
           {b:'#ff2020',g:'#cc0000'},
           {b:'#e8f0ff',g:'#aaaacc'},
           {b:'#2255ff',g:'#0033cc'},
         ]}),
-        // 2: Rainbow Flow (moved from slot 0)
+        // 2: Rainbow Flow
         () => ({ type: 'rainbow' }),
-        // 3: St. Patrick's Chase — green / white
+        // 3: St. Patrick's Chase — green / white equal halves (firmware: 10×green, 10×white)
         () => ({ type: 'chase', speed: 1.1, pal: [
-          {b:'#00cc44',g:'#007a28'},
-          {b:'#00ee66',g:'#009940'},
-          {b:'#e8fff0',g:'#aaccbb'},
-          {b:'#00cc44',g:'#007a28'},
-          {b:'#00aa33',g:'#006622'},
-          {b:'#e8fff0',g:'#aaccbb'},
+          {b:'#00c800',g:'#006620'},
+          {b:'#00c800',g:'#006620'},
+          {b:'#f0fff4',g:'#aaccbb'},
+          {b:'#f0fff4',g:'#aaccbb'},
         ]}),
-        // 4: Halloween — fire pattern ported from visualizer (dark-red → orange → yellow-white)
-        () => ({ type: 'fire' }),
+        // 4: Halloween Chase — green / orange / purple equal thirds (firmware: 10×green, 10×orange, 10×purple)
+        () => ({ type: 'chase', speed: 1.0, pal: [
+          {b:'#00c800',g:'#006600'},
+          {b:'#00c800',g:'#006600'},
+          {b:'#ff6400',g:'#cc3300'},
+          {b:'#ff6400',g:'#cc3300'},
+          {b:'#800080',g:'#440044'},
+          {b:'#800080',g:'#440044'},
+        ]}),
         // 5: Valentine Shimmer — red / pink deep pulse
         () => ({ type: 'shimmer', rate: 3.2, leds: Array.from({length:N}, (_,i) =>
           i%2 ? {b:'#ff1144',g:'#aa0033'} : {b:'#ff88aa',g:'#cc2255'}) }),
