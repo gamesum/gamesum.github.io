@@ -587,15 +587,15 @@
     #app-demo { padding: 96px 0; }
     .demo-header { text-align: center; margin-bottom: 56px; }
     .demo-header .section-sub { margin: 0 auto; text-align: center; }
-    .demo-split { display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: start; }
-    .demo-arch-col { min-width: 0; }
+    .demo-split { display: grid; grid-template-columns: minmax(0, 380px) auto; gap: 48px; align-items: start; justify-content: center; }
+    .demo-arch-col { min-width: 0; max-width: 380px; }
     .demo-arch-bg { background: #08080f; border-radius: 16px; border: 1px solid #1e1e2e; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
     #archCanvas { width: 100%; max-width: 100%; display: block; border-radius: 8px; }
     .demo-arch-caption { text-align: center; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
     /* Phone shell */
     .pm-phone { width: 255px; background: #1a1a1a; border-radius: 36px; border: 2px solid #2a2a2a; padding: 10px; box-shadow: 0 0 0 1px #333, 0 24px 64px rgba(0,0,0,0.7); flex-shrink: 0; }
     .pm-notch { width: 70px; height: 18px; background: #1a1a1a; border-radius: 0 0 12px 12px; margin: 0 auto 6px; border: 1.5px solid #2a2a2a; border-top: none; }
-    .pm-screen { background: #fff; border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; height: 450px; }
+    .pm-screen { background: #fff; border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; height: 410px; }
     /* Header */
     .pm-header { background: #f5f5f8; padding: 8px 12px 5px; border-bottom: 1px solid #e5e5ea; flex-shrink: 0; }
     .pm-header-top { display: flex; justify-content: space-between; align-items: center; }
