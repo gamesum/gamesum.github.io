@@ -593,9 +593,9 @@
     #archCanvas { width: 100%; max-width: 100%; display: block; border-radius: 8px; }
     .demo-arch-caption { text-align: center; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
     /* Phone shell */
-    .pm-phone { width: 280px; background: #1a1a1a; border-radius: 40px; border: 2px solid #2a2a2a; padding: 12px; box-shadow: 0 0 0 1px #333, 0 24px 64px rgba(0,0,0,0.7); flex-shrink: 0; }
-    .pm-notch { width: 80px; height: 22px; background: #1a1a1a; border-radius: 0 0 14px 14px; margin: 0 auto 8px; border: 1.5px solid #2a2a2a; border-top: none; }
-    .pm-screen { background: #fff; border-radius: 30px; overflow: hidden; display: flex; flex-direction: column; height: 520px; }
+    .pm-phone { width: 255px; background: #1a1a1a; border-radius: 36px; border: 2px solid #2a2a2a; padding: 10px; box-shadow: 0 0 0 1px #333, 0 24px 64px rgba(0,0,0,0.7); flex-shrink: 0; }
+    .pm-notch { width: 70px; height: 18px; background: #1a1a1a; border-radius: 0 0 12px 12px; margin: 0 auto 6px; border: 1.5px solid #2a2a2a; border-top: none; }
+    .pm-screen { background: #fff; border-radius: 26px; overflow: hidden; display: flex; flex-direction: column; height: 450px; }
     /* Header */
     .pm-header { background: #f5f5f8; padding: 8px 12px 5px; border-bottom: 1px solid #e5e5ea; flex-shrink: 0; }
     .pm-header-top { display: flex; justify-content: space-between; align-items: center; }
@@ -681,17 +681,21 @@
         <!-- Left: big animated arch -->
         <div class="hero-arch-wrap fade-in">
           <svg viewBox="0 0 420 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;">
-            <!-- PEX tube — white semi-transparent semicircle -->
-            <path d="M 30,290 A 180,180 0 0,0 390,290" stroke="rgba(220,225,240,0.22)" stroke-width="16" fill="none" stroke-linecap="round"/>
-            <!-- LED dots along semicircle (cx=210 cy=290 r=180) -->
+            <!-- PEX tube — upper semicircle (sweep=1 = clockwise = upper arc in SVG y-down) -->
+            <path d="M 30,290 A 180,180 0 0,1 390,290" stroke="rgba(220,225,240,0.22)" stroke-width="16" fill="none" stroke-linecap="round"/>
+            <!-- 13 LED dots evenly spaced along upper semicircle (cx=210 cy=290 r=180) -->
             <circle class="led-dot" cx="30"  cy="290" r="7"/>
-            <circle class="led-dot" cx="44"  cy="221" r="7"/>
+            <circle class="led-dot" cx="36"  cy="243" r="7"/>
+            <circle class="led-dot" cx="54"  cy="200" r="7"/>
             <circle class="led-dot" cx="83"  cy="163" r="7"/>
-            <circle class="led-dot" cx="141" cy="124" r="7"/>
+            <circle class="led-dot" cx="120" cy="134" r="7"/>
+            <circle class="led-dot" cx="163" cy="116" r="7"/>
             <circle class="led-dot" cx="210" cy="110" r="7"/>
-            <circle class="led-dot" cx="279" cy="124" r="7"/>
+            <circle class="led-dot" cx="257" cy="116" r="7"/>
+            <circle class="led-dot" cx="300" cy="134" r="7"/>
             <circle class="led-dot" cx="337" cy="163" r="7"/>
-            <circle class="led-dot" cx="376" cy="221" r="7"/>
+            <circle class="led-dot" cx="366" cy="200" r="7"/>
+            <circle class="led-dot" cx="384" cy="243" r="7"/>
             <circle class="led-dot" cx="390" cy="290" r="7"/>
             <!-- Ground glow -->
             <ellipse cx="210" cy="290" rx="180" ry="7" fill="rgba(200,146,30,0.05)"/>
@@ -735,7 +739,7 @@
             <div class="product-badge">Most Popular</div>
             <svg viewBox="0 0 300 200" fill="none" style="width:80%;max-width:280px;">
               <!-- PEX tube — semicircle (cx=150 cy=165 r=130) -->
-              <path d="M 20,165 A 130,130 0 0,0 280,165" stroke="rgba(220,225,240,0.22)" stroke-width="12" fill="none" stroke-linecap="round"/>
+              <path d="M 20,165 A 130,130 0 0,1 280,165" stroke="rgba(220,225,240,0.22)" stroke-width="12" fill="none" stroke-linecap="round"/>
               <!-- LED dots along semicircle -->
               <circle class="led-dot" cx="20"  cy="165" r="5"/>
               <circle class="led-dot" cx="30"  cy="115" r="5"/>
@@ -1078,6 +1082,8 @@
           return 0.2 + 0.8 * Math.pow(Math.abs(Math.sin(animT * (cfg.rate||3.5) + i * 0.65)), 2);
         if (cfg.type === 'fire')
           return 0.15 + fireHeat(i) * 0.85;
+        if (cfg.type === 'solid')
+          return 0.78;
         return 0.65 + 0.35 * (0.5 + 0.5 * Math.sin(animT*2.2 + i*0.38));
       }
 
@@ -1170,26 +1176,21 @@
         ]})},
         { name: 'Rainbow',       icon: 'rainbow',      cfg: () => ({ type:'rainbow' }) },
         { name: 'Fire',          icon: 'fire',         cfg: () => ({ type:'fire' }) },
-        { name: 'Ocean',         icon: 'ocean',        cfg: () => ({ type:'chase', speed:0.5, pal:[
-          {b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},
-          {b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},
-          {b:'#00bfff',g:'#006699'},{b:'#00bfff',g:'#006699'},{b:'#4fc3f7',g:'#0099bb'},
-          {b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},
+        { name: 'Ocean',         icon: 'ocean',        cfg: () => ({ type:'shimmer', rate:1.2, leds:Array.from({length:N},(_,i)=>[{b:'#0077cc',g:'#003366'},{b:'#0099dd',g:'#004477'},{b:'#00bbee',g:'#006688'},{b:'#44ddff',g:'#008899'}][i%4]) })},
+        { name: 'Aurora',        icon: 'aurora',       cfg: () => ({ type:'shimmer', rate:1.4, leds:Array.from({length:N},(_,i)=>[{b:'#00e676',g:'#006633'},{b:'#00e5cc',g:'#005544'},{b:'#4466ff',g:'#1122aa'},{b:'#9955ff',g:'#4400aa'}][i%4]) })},
+        { name: 'Candlelight',   icon: 'candlelight',  cfg: () => ({ type:'shimmer', rate:2.5, leds:Array.from({length:N},(_,i)=>[{b:'#ff9329',g:'#993300'},{b:'#ffa500',g:'#aa4400'},{b:'#ffb84d',g:'#885500'},{b:'#ffd080',g:'#aa7700'}][i%4]) })},
+        { name: 'Sunset',        icon: 'sunset',       cfg: () => ({ type:'chase', speed:0.35, pal:[
+          {b:'#ff6600',g:'#aa2200'},{b:'#ff6600',g:'#aa2200'},{b:'#ff6600',g:'#aa2200'},
+          {b:'#ff6600',g:'#aa2200'},{b:'#ff6600',g:'#aa2200'},
+          {b:'#ff9900',g:'#cc4400'},{b:'#ff9900',g:'#cc4400'},{b:'#ff9900',g:'#cc4400'},
+          {b:'#ff9900',g:'#cc4400'},{b:'#ff9900',g:'#cc4400'},
+          {b:'#ee3366',g:'#880033'},{b:'#ee3366',g:'#880033'},{b:'#ee3366',g:'#880033'},
+          {b:'#ee3366',g:'#880033'},{b:'#ee3366',g:'#880033'},
+          {b:'#882299',g:'#440055'},{b:'#882299',g:'#440055'},{b:'#882299',g:'#440055'},
+          {b:'#882299',g:'#440055'},{b:'#882299',g:'#440055'},
         ]})},
-        { name: 'Aurora',        icon: 'aurora',       cfg: () => ({ type:'shimmer', rate:1.5, leds:Array.from({length:N},(_,i)=>[{b:'#00e676',g:'#006633'},{b:'#00bfa5',g:'#005544'},{b:'#1a237e',g:'#080f44'},{b:'#7c4dff',g:'#3300aa'}][i%4]) })},
-        { name: 'Candlelight',   icon: 'candlelight',  cfg: () => ({ type:'shimmer', rate:4.0, leds:Array.from({length:N},(_,i)=>[{b:'#ff9329',g:'#993300'},{b:'#ffa500',g:'#aa4400'},{b:'#ffc864',g:'#aa6600'},{b:'#ffdca0',g:'#aa8844'}][i%4]) })},
-        { name: 'Sunset',        icon: 'sunset',       cfg: () => ({ type:'chase', speed:0.4, pal:[
-          {b:'#ff4500',g:'#aa1100'},{b:'#ff4500',g:'#aa1100'},{b:'#ff4500',g:'#aa1100'},
-          {b:'#ff4500',g:'#aa1100'},{b:'#ff4500',g:'#aa1100'},
-          {b:'#ff8c00',g:'#aa4400'},{b:'#ff8c00',g:'#aa4400'},{b:'#ff8c00',g:'#aa4400'},
-          {b:'#ff8c00',g:'#aa4400'},{b:'#ff8c00',g:'#aa4400'},
-          {b:'#ff1493',g:'#880044'},{b:'#ff1493',g:'#880044'},{b:'#ff1493',g:'#880044'},
-          {b:'#ff1493',g:'#880044'},{b:'#ff1493',g:'#880044'},
-          {b:'#8a2be2',g:'#440077'},{b:'#8a2be2',g:'#440077'},{b:'#8a2be2',g:'#440077'},
-          {b:'#8a2be2',g:'#440077'},{b:'#8a2be2',g:'#440077'},
-        ]})},
-        { name: 'Warm White',    icon: 'warm-white',   cfg: () => ({ type:'shimmer', rate:0.8, leds:Array.from({length:N},()=>({b:'#ffb464',g:'#884422'})) })},
-        { name: 'Solid White',   icon: 'solid-white',  cfg: () => ({ type:'shimmer', rate:0.3, leds:Array.from({length:N},()=>({b:'#f0f4ff',g:'#8899cc'})) })},
+        { name: 'Warm White',    icon: 'warm-white',   cfg: () => ({ type:'solid', leds:Array.from({length:N},()=>({b:'#ffb464',g:'#884422'})) })},
+        { name: 'Solid White',   icon: 'solid-white',  cfg: () => ({ type:'solid', leds:Array.from({length:N},()=>({b:'#f0f4ff',g:'#8899cc'})) })},
       ];
 
       // Build preset cards
