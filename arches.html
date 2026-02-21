@@ -569,11 +569,12 @@
     @media (max-width: 900px) {
       .page-hero-inner { grid-template-columns: 1fr; gap: 40px; padding: 60px 0; }
       .hero-arch-wrap { order: -1; }
-      .app-deep-inner { grid-template-columns: 1fr; gap: 48px; }
       .arch-gallery-grid { grid-template-columns: 1fr 1fr; }
       .arch-gallery-grid .ag-item:first-child { grid-column: span 2; }
       .hamburger { display: flex; }
       .nav-cta-hide { display: none; }
+      .demo-split { grid-template-columns: 1fr; gap: 32px; }
+      .pm-phone { margin: 0 auto; }
     }
     @media (max-width: 600px) {
       .arch-gallery-grid { grid-template-columns: 1fr; }
@@ -581,6 +582,67 @@
       .arch-cta-inner { padding: 48px 24px; }
       .footer-simple { flex-direction: column; text-align: center; }
     }
+
+    /* ─── FIRMWARE APP DEMO ──────────────────────────────── */
+    #app-demo { padding: 96px 0; }
+    .demo-header { text-align: center; margin-bottom: 56px; }
+    .demo-header .section-sub { margin: 0 auto; text-align: center; }
+    .demo-split { display: grid; grid-template-columns: 1fr auto; gap: 48px; align-items: start; }
+    .demo-arch-col { min-width: 0; }
+    .demo-arch-bg { background: #08080f; border-radius: 16px; border: 1px solid #1e1e2e; padding: 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+    #archCanvas { width: 100%; max-width: 100%; display: block; border-radius: 8px; }
+    .demo-arch-caption { text-align: center; font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-top: 12px; }
+    /* Phone shell */
+    .pm-phone { width: 280px; background: #1a1a1a; border-radius: 40px; border: 2px solid #2a2a2a; padding: 12px; box-shadow: 0 0 0 1px #333, 0 24px 64px rgba(0,0,0,0.7); flex-shrink: 0; }
+    .pm-notch { width: 80px; height: 22px; background: #1a1a1a; border-radius: 0 0 14px 14px; margin: 0 auto 8px; border: 1.5px solid #2a2a2a; border-top: none; }
+    .pm-screen { background: #fff; border-radius: 30px; overflow: hidden; display: flex; flex-direction: column; height: 520px; }
+    /* Header */
+    .pm-header { background: #f5f5f8; padding: 8px 12px 5px; border-bottom: 1px solid #e5e5ea; flex-shrink: 0; }
+    .pm-header-top { display: flex; justify-content: space-between; align-items: center; }
+    .pm-title { font-family: 'Outfit',sans-serif; font-size: 0.85rem; font-weight: 800; color: #111; }
+    .pm-actions { font-size: 0.65rem; color: #888; }
+    .pm-sub { display: flex; align-items: center; gap: 4px; margin-top: 2px; font-size: 0.5rem; color: #555; }
+    .pm-dot { width: 5px; height: 5px; border-radius: 50%; background: #2563eb; flex-shrink: 0; }
+    /* Tabs */
+    .pm-tabs-bar { display: flex; border-bottom: 1px solid #e5e5ea; background: #f5f5f8; flex-shrink: 0; }
+    .pm-tab { flex: 1; text-align: center; padding: 7px 0 5px; font-size: 0.52rem; font-weight: 600; color: #888; font-family: 'Inter',sans-serif; border-bottom: 2px solid transparent; cursor: pointer; user-select: none; }
+    .pm-tab.active { color: #e07a10; border-bottom-color: #e07a10; }
+    /* Body / panels */
+    .pm-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+    .pm-panel { display: none; }
+    .pm-panel.active { display: block; }
+    /* Preset grid */
+    .pm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
+    .pm-card { border-radius: 10px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; user-select: none; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .pm-card.active { border-color: #e07a10; }
+    .pm-card:hover { border-color: rgba(224,122,16,0.4); }
+    .pm-icon-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; display: block; }
+    .pm-icon-wrap svg { width: 100%; height: 100%; display: block; }
+    .pm-name { text-align: center; padding: 3px 3px 6px; font-size: 0.5rem; font-weight: 600; color: #111; font-family: 'Inter',sans-serif; line-height: 1.2; }
+    /* Pattern tab */
+    .pat-section { padding: 12px 12px 10px; border-bottom: 1px solid #f0f0f5; }
+    .pat-label { font-size: 0.52rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin-bottom: 6px; }
+    .pat-effects { display: flex; flex-wrap: wrap; gap: 5px; }
+    .pat-btn { padding: 5px 9px; border-radius: 6px; font-size: 0.52rem; font-weight: 600; background: #f5f5f8; border: 1.5px solid transparent; color: #444; cursor: pointer; font-family: 'Inter',sans-serif; transition: all 0.15s; }
+    .pat-btn.active { border-color: #e07a10; color: #e07a10; background: #fff8f0; }
+    .pat-colors { display: flex; gap: 7px; flex-wrap: wrap; }
+    .pat-swatch { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: all 0.15s; }
+    .pat-swatch.active { border-color: #e07a10; transform: scale(1.15); box-shadow: 0 0 0 2px #fff, 0 0 0 4px #e07a10; }
+    .pat-slider-row { display: flex; align-items: center; gap: 8px; }
+    .pat-slider-row label { font-size: 0.5rem; color: #888; font-family: 'Inter',sans-serif; }
+    .pat-slider-row input[type=range] { flex: 1; accent-color: #e07a10; }
+    /* Timer tab (static display) */
+    .tmr-schedule-card { margin: 10px 10px 8px; background: #f5f5f8; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #e07a10; }
+    .tmr-card-name { font-family: 'Outfit',sans-serif; font-size: 0.65rem; font-weight: 800; color: #111; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+    .tmr-toggle { width: 30px; height: 17px; background: #e07a10; border-radius: 9px; position: relative; flex-shrink: 0; }
+    .tmr-toggle::after { content: ''; position: absolute; top: 2.5px; right: 2.5px; width: 12px; height: 12px; background: #fff; border-radius: 50%; }
+    .tmr-time-chips { display: flex; gap: 5px; margin-bottom: 7px; flex-wrap: wrap; }
+    .tmr-chip { font-size: 0.48rem; font-weight: 700; padding: 3px 7px; border-radius: 5px; font-family: 'Inter',sans-serif; }
+    .tmr-chip.on  { background: rgba(224,122,16,0.1); color: #e07a10; border: 1px solid rgba(224,122,16,0.3); }
+    .tmr-chip.off { background: rgba(30,58,138,0.08); color: #1e3a8a; border: 1px solid rgba(30,58,138,0.25); }
+    .tmr-days-row { display: flex; gap: 4px; }
+    .tmr-day-dot { width: 22px; height: 22px; border-radius: 50%; background: #e07a10; color: #fff; font-size: 0.42rem; font-weight: 700; display: flex; align-items: center; justify-content: center; font-family: 'Inter',sans-serif; }
+    .tmr-add-btn { margin: 4px 10px 12px; background: #f5f5f8; border-radius: 8px; padding: 9px; text-align: center; font-size: 0.55rem; font-weight: 600; color: #aaa; border: 1.5px dashed #ddd; font-family: 'Inter',sans-serif; }
   </style>
 </head>
 <body>
@@ -619,38 +681,20 @@
         <!-- Left: big animated arch -->
         <div class="hero-arch-wrap fade-in">
           <svg viewBox="0 0 420 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px;">
-            <!-- Posts -->
-            <rect x="36" y="240" width="12" height="90" rx="4" fill="#1a1a1a"/>
-            <rect x="372" y="240" width="12" height="90" rx="4" fill="#1a1a1a"/>
-            <!-- Second arch (inner) -->
-            <path d="M60 270 Q210 60 360 270" stroke="#111" stroke-width="8" fill="none" stroke-linecap="round"/>
-            <!-- Main arch tube -->
-            <path d="M42 260 Q210 20 378 260" stroke="#1c1c1c" stroke-width="14" fill="none" stroke-linecap="round"/>
-            <path d="M42 260 Q210 20 378 260" stroke="#252525" stroke-width="8"  fill="none" stroke-linecap="round"/>
-            <!-- LED dots outer arch -->
-            <circle class="led-dot" cx="42"  cy="260" r="7"/>
-            <circle class="led-dot" cx="72"  cy="204" r="7"/>
-            <circle class="led-dot" cx="110" cy="154" r="7"/>
-            <circle class="led-dot" cx="155" cy="112" r="7"/>
-            <circle class="led-dot" cx="210" cy="90"  r="7"/>
-            <circle class="led-dot" cx="265" cy="112" r="7"/>
-            <circle class="led-dot" cx="310" cy="154" r="7"/>
-            <circle class="led-dot" cx="348" cy="204" r="7"/>
-            <circle class="led-dot" cx="378" cy="260" r="7"/>
-            <!-- LED dots inner arch -->
-            <circle class="led-dot" cx="60"  cy="270" r="5"/>
-            <circle class="led-dot" cx="90"  cy="216" r="5"/>
-            <circle class="led-dot" cx="128" cy="168" r="5"/>
-            <circle class="led-dot" cx="168" cy="130" r="5"/>
-            <circle class="led-dot" cx="210" cy="114" r="5"/>
-            <circle class="led-dot" cx="252" cy="130" r="5"/>
-            <circle class="led-dot" cx="292" cy="168" r="5"/>
-            <circle class="led-dot" cx="330" cy="216" r="5"/>
-            <circle class="led-dot" cx="360" cy="270" r="5"/>
-            <!-- Ground line -->
-            <line x1="0" y1="330" x2="420" y2="330" stroke="#1a1a1a" stroke-width="2"/>
+            <!-- PEX tube — white semi-transparent semicircle -->
+            <path d="M 30,290 A 180,180 0 0,0 390,290" stroke="rgba(220,225,240,0.22)" stroke-width="16" fill="none" stroke-linecap="round"/>
+            <!-- LED dots along semicircle (cx=210 cy=290 r=180) -->
+            <circle class="led-dot" cx="30"  cy="290" r="7"/>
+            <circle class="led-dot" cx="44"  cy="221" r="7"/>
+            <circle class="led-dot" cx="83"  cy="163" r="7"/>
+            <circle class="led-dot" cx="141" cy="124" r="7"/>
+            <circle class="led-dot" cx="210" cy="110" r="7"/>
+            <circle class="led-dot" cx="279" cy="124" r="7"/>
+            <circle class="led-dot" cx="337" cy="163" r="7"/>
+            <circle class="led-dot" cx="376" cy="221" r="7"/>
+            <circle class="led-dot" cx="390" cy="290" r="7"/>
             <!-- Ground glow -->
-            <ellipse cx="210" cy="330" rx="160" ry="6" fill="rgba(200,146,30,0.05)"/>
+            <ellipse cx="210" cy="290" rx="180" ry="7" fill="rgba(200,146,30,0.05)"/>
           </svg>
         </div>
 
@@ -690,20 +734,19 @@
           <div class="product-visual">
             <div class="product-badge">Most Popular</div>
             <svg viewBox="0 0 300 200" fill="none" style="width:80%;max-width:280px;">
-              <rect x="28" y="130" width="8" height="65" rx="3" fill="#222"/>
-              <rect x="264" y="130" width="8" height="65" rx="3" fill="#222"/>
-              <path d="M32 148 Q150 20 268 148" stroke="#1c1c1c" stroke-width="10" fill="none" stroke-linecap="round"/>
-              <path d="M32 148 Q150 20 268 148" stroke="#252525" stroke-width="6"  fill="none" stroke-linecap="round"/>
-              <circle class="led-dot" cx="32"  cy="148" r="5"/>
-              <circle class="led-dot" cx="57"  cy="112" r="5"/>
-              <circle class="led-dot" cx="88"  cy="80"  r="5"/>
-              <circle class="led-dot" cx="118" cy="56"  r="5"/>
-              <circle class="led-dot" cx="150" cy="46"  r="5"/>
-              <circle class="led-dot" cx="182" cy="56"  r="5"/>
-              <circle class="led-dot" cx="212" cy="80"  r="5"/>
-              <circle class="led-dot" cx="243" cy="112" r="5"/>
-              <circle class="led-dot" cx="268" cy="148" r="5"/>
-              <ellipse cx="150" cy="195" rx="90" ry="4" fill="rgba(200,146,30,0.05)"/>
+              <!-- PEX tube — semicircle (cx=150 cy=165 r=130) -->
+              <path d="M 20,165 A 130,130 0 0,0 280,165" stroke="rgba(220,225,240,0.22)" stroke-width="12" fill="none" stroke-linecap="round"/>
+              <!-- LED dots along semicircle -->
+              <circle class="led-dot" cx="20"  cy="165" r="5"/>
+              <circle class="led-dot" cx="30"  cy="115" r="5"/>
+              <circle class="led-dot" cx="58"  cy="73"  r="5"/>
+              <circle class="led-dot" cx="100" cy="45"  r="5"/>
+              <circle class="led-dot" cx="150" cy="35"  r="5"/>
+              <circle class="led-dot" cx="200" cy="45"  r="5"/>
+              <circle class="led-dot" cx="242" cy="73"  r="5"/>
+              <circle class="led-dot" cx="270" cy="115" r="5"/>
+              <circle class="led-dot" cx="280" cy="165" r="5"/>
+              <ellipse cx="150" cy="165" rx="130" ry="5" fill="rgba(200,146,30,0.05)"/>
             </svg>
           </div>
           <div class="product-info">
@@ -778,137 +821,106 @@
     </div>
   </section>
 
-  <!-- ─── APP DEEP DIVE ─────────────────────────────────── -->
-  <section id="app-deep">
+  <!-- ─── FIRMWARE APP DEMO ────────────────────────────── -->
+  <section id="app-demo">
     <div class="container">
-      <div class="app-deep-inner">
-
-        <!-- Left: large phone mockup -->
-        <div class="fade-in" style="display:flex;justify-content:center;">
-          <div class="phone-large">
-            <div class="phone-notch"></div>
-            <div class="phone-screen">
-              <div class="app-topbar">
-                <div class="app-topbar-logo">AFTER<span>GLO</span></div>
-                <div class="app-status"><div class="app-dot"></div><span style="font-size:0.6rem;color:#94a3b8;margin-left:4px">Connected</span></div>
+      <div class="demo-header fade-in">
+        <div class="section-label">Try It Live</div>
+        <h2 class="section-title">The Actual Controller App</h2>
+        <p class="section-sub">This is a working simulation of the real firmware. Tap presets, customize patterns, and set schedules — exactly like the real app your lights run on.</p>
+      </div>
+      <div class="demo-split fade-in fade-delay-1">
+        <div class="demo-arch-col">
+          <div class="demo-arch-bg">
+            <canvas id="archCanvas" width="320" height="210"></canvas>
+          </div>
+          <p class="demo-arch-caption">Live preview — reacts to your selection</p>
+        </div>
+        <div id="fwPhone" class="pm-phone">
+          <div class="pm-notch"></div>
+          <div class="pm-screen">
+            <div class="pm-header">
+              <div class="pm-header-top">
+                <div class="pm-title">Arches</div>
+                <div class="pm-actions">↺ ✏</div>
               </div>
-              <div class="app-body-lg">
+              <div class="pm-sub"><div class="pm-dot"></div><span>10.0.0.51 ▾</span></div>
+            </div>
+            <div class="pm-tabs-bar">
+              <div class="pm-tab active" data-tab="presets">Presets</div>
+              <div class="pm-tab" data-tab="pattern">Pattern</div>
+              <div class="pm-tab" data-tab="timer">Timer</div>
+            </div>
+            <div class="pm-body">
 
-                <div class="app-section-title">Control Zones</div>
-                <div class="app-zones">
-                  <div class="app-zone zone-active">
-                    <div class="app-zone-icon">🏠</div>
-                    <div class="app-zone-name">Roofline</div>
-                  </div>
-                  <div class="app-zone zone-active">
-                    <div class="app-zone-icon">🌈</div>
-                    <div class="app-zone-name">Arches</div>
-                  </div>
-                  <div class="app-zone">
-                    <div class="app-zone-icon">⭐</div>
-                    <div class="app-zone-name">Props</div>
-                  </div>
-                </div>
-
-                <div class="app-section-title">Scenes</div>
-                <div class="app-scene-row">
-                  <div class="app-scene-pill active">🎄 Xmas</div>
-                  <div class="app-scene-pill">🇺🇸 July 4th</div>
-                  <div class="app-scene-pill">🎃 Halloween</div>
-                  <div class="app-scene-pill">🏈 Game Day</div>
-                  <div class="app-scene-pill">🌈 Rainbow</div>
-                  <div class="app-scene-pill">🤍 Warm White</div>
-                </div>
-
-                <div class="app-section-title">Color</div>
-                <div class="app-color-strip">
-                  <div class="app-color-cursor"></div>
-                </div>
-
-                <div class="app-section-title">Schedules</div>
-                <div class="app-schedule-row">
-                  <div class="app-schedule-info">
-                    <strong>Sunset Auto-On</strong>
-                    Daily · All Zones
-                  </div>
-                  <div class="app-toggle"></div>
-                </div>
-                <div class="app-schedule-row">
-                  <div class="app-schedule-info">
-                    <strong>Midnight Off</strong>
-                    Daily · All Zones
-                  </div>
-                  <div class="app-toggle"></div>
-                </div>
-                <div class="app-schedule-row">
-                  <div class="app-schedule-info">
-                    <strong>Christmas Mode</strong>
-                    Dec 1 – Jan 2
-                  </div>
-                  <div class="app-toggle off"></div>
-                </div>
-
+              <!-- Presets panel -->
+              <div class="pm-panel active" id="panel-presets">
+                <div class="pm-grid" id="archPresets"></div>
               </div>
-              <div class="app-bottom-bar">
-                <div class="app-tab active">
-                  <span>🏠</span><span style="font-size:0.5rem">Home</span>
-                  <div class="app-tab-dot"></div>
+
+              <!-- Pattern panel -->
+              <div class="pm-panel" id="panel-pattern">
+                <div class="pat-section">
+                  <div class="pat-label">Effect</div>
+                  <div class="pat-effects">
+                    <button class="pat-btn active" data-effect="chase">Chase</button>
+                    <button class="pat-btn" data-effect="shimmer">Shimmer</button>
+                    <button class="pat-btn" data-effect="fire">Fire</button>
+                    <button class="pat-btn" data-effect="rainbow">Rainbow</button>
+                    <button class="pat-btn" data-effect="static">Static</button>
+                    <button class="pat-btn" data-effect="twinkle">Twinkle</button>
+                  </div>
                 </div>
-                <div class="app-tab">
-                  <span>🎨</span><span style="font-size:0.5rem">Scenes</span>
+                <div class="pat-section">
+                  <div class="pat-label">Color</div>
+                  <div class="pat-colors" id="patColors"></div>
                 </div>
-                <div class="app-tab">
-                  <span>🗓️</span><span style="font-size:0.5rem">Schedule</span>
+                <div class="pat-section">
+                  <div class="pat-label">Speed</div>
+                  <div class="pat-slider-row">
+                    <label>Slow</label>
+                    <input type="range" min="1" max="10" value="5" id="patSpeed">
+                    <label>Fast</label>
+                  </div>
                 </div>
-                <div class="app-tab">
-                  <span>⚙️</span><span style="font-size:0.5rem">Settings</span>
+                <div class="pat-section" style="border:none">
+                  <div class="pat-label">Brightness</div>
+                  <div class="pat-slider-row">
+                    <label>Dim</label>
+                    <input type="range" min="1" max="10" value="8" id="patBright">
+                    <label>Full</label>
+                  </div>
                 </div>
               </div>
+
+              <!-- Timer panel — static schedule display -->
+              <div class="pm-panel" id="panel-timer">
+                <div class="tmr-schedule-card">
+                  <div class="tmr-card-name">Sunset Auto-On <div class="tmr-toggle"></div></div>
+                  <div class="tmr-time-chips">
+                    <span class="tmr-chip on">ON  7:00 PM</span>
+                    <span class="tmr-chip off">OFF 11:30 PM</span>
+                  </div>
+                  <div class="tmr-days-row">
+                    <div class="tmr-day-dot">M</div>
+                    <div class="tmr-day-dot">T</div>
+                    <div class="tmr-day-dot">W</div>
+                    <div class="tmr-day-dot">T</div>
+                    <div class="tmr-day-dot">F</div>
+                    <div class="tmr-day-dot">S</div>
+                    <div class="tmr-day-dot">S</div>
+                  </div>
+                </div>
+                <div class="tmr-add-btn">+ Add Schedule</div>
+              </div>
+
             </div>
           </div>
         </div>
-
-        <!-- Right: feature breakdown -->
-        <div class="fade-in fade-delay-1">
-          <div class="section-label">The Control App</div>
-          <h2 class="section-title">One App for Your Entire Light System</h2>
-          <p class="section-sub" style="margin-bottom:40px;">Your roofline, arches, and yard props all live in one place. No juggling multiple apps or controllers — everything is unified.</p>
-
-          <div class="feature-breakdown">
-            <div class="feat-row">
-              <div class="feat-num">01</div>
-              <div class="feat-body">
-                <h4>Zone-Based Control</h4>
-                <p>Control your roofline, arches, and props independently or all at once. Set different colors or scenes per zone without any extra equipment.</p>
-              </div>
-            </div>
-            <div class="feat-row">
-              <div class="feat-num">02</div>
-              <div class="feat-body">
-                <h4>Pre-Built Holiday Scenes</h4>
-                <p>Christmas, Halloween, 4th of July, Game Day — one tap and every light in your system switches instantly. No manual adjustments.</p>
-              </div>
-            </div>
-            <div class="feat-row">
-              <div class="feat-num">03</div>
-              <div class="feat-body">
-                <h4>Smart Scheduling</h4>
-                <p>Set lights to turn on at sunset and off at midnight automatically. Program seasonal schedules weeks in advance so you never have to think about it.</p>
-              </div>
-            </div>
-            <div class="feat-row">
-              <div class="feat-num">04</div>
-              <div class="feat-body">
-                <h4>16 Million Colors</h4>
-                <p>Full RGBW color wheel with warm white. Dial in any color for any occasion — your home exactly how you imagine it.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   </section>
+
 
   <!-- ─── GALLERY ───────────────────────────────────────── -->
   <section id="arch-gallery">
@@ -1002,5 +1014,554 @@
     }, { threshold: 0.12 });
     fadeEls.forEach(el => observer.observe(el));
   </script>
+
+  <script>
+    // ── Arch canvas renderer (50 LEDs, semicircle, PEX tube) ──
+    (function() {
+      const canvas = document.getElementById('archCanvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const N = 50;
+      const cx = 160, cy = 185, r = 135;
+      const pts = Array.from({length: N}, (_, i) => {
+        const angle = Math.PI - (i / (N - 1)) * Math.PI;
+        return { x: cx + r * Math.cos(angle), y: cy - r * Math.sin(angle) };
+      });
+
+      function ha(hex, a) {
+        const r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+        return 'rgba('+r+','+g+','+b+','+a.toFixed(3)+')';
+      }
+      function hslHex(h, s, l) {
+        h=((h%360)+360)%360; s/=100; l/=100;
+        const a=s*Math.min(l,1-l), f=n=>{const k=(n+h/30)%12; return l-a*Math.max(-1,Math.min(k-3,9-k,1));};
+        return '#'+[f(0),f(8),f(4)].map(v=>Math.round(v*255).toString(16).padStart(2,'0')).join('');
+      }
+
+      let cfg = { type: 'rainbow' }, animT = 0;
+      window._archSet = function(config) { cfg = config; };
+
+      function fireHeat(i) {
+        const p = i / (N - 1);
+        return Math.max(0, Math.min(1,
+          0.68 - p * 0.38
+          + Math.sin(animT * 3.2 + i * 0.9)  * 0.25
+          + Math.sin(animT * 7.1 - i * 1.4)  * 0.15
+          + Math.sin(animT * 1.8 + i * 0.3)  * 0.10
+        ));
+      }
+      function fireColor(i) {
+        const h = fireHeat(i);
+        const x = n => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2,'0');
+        let r, g, b;
+        if      (h < 0.33) { const f=h/0.33;           r=180*f;       g=0;          b=0; }
+        else if (h < 0.66) { const f=(h-0.33)/0.33;    r=180+60*f;    g=55*f;       b=0; }
+        else               { const f=(h-0.66)/0.34;    r=240;         g=55+180*f;   b=80*f; }
+        return { b:`#${x(r)}${x(g)}${x(b)}`, g:`#${x(r*0.8)}${x(g*0.4)}00` };
+      }
+
+      function getLED(i) {
+        if (cfg.type === 'rainbow') {
+          const h = (i/N*360 + animT*60) % 360;
+          return { b: hslHex(h,100,65), g: hslHex(h,100,40) };
+        }
+        if (cfg.type === 'chase') {
+          const pos = ((i / (N-1) * cfg.pal.length) + animT * cfg.speed + 1000) % cfg.pal.length;
+          return cfg.pal[Math.floor(pos) % cfg.pal.length];
+        }
+        if (cfg.type === 'fire') return fireColor(i);
+        return (cfg.leds || [])[i] || {b:'#c8921e', g:'#7a5510'};
+      }
+
+      function alpha(i) {
+        if (cfg.type === 'shimmer')
+          return 0.2 + 0.8 * Math.pow(Math.abs(Math.sin(animT * (cfg.rate||3.5) + i * 0.65)), 2);
+        if (cfg.type === 'fire')
+          return 0.15 + fireHeat(i) * 0.85;
+        return 0.65 + 0.35 * (0.5 + 0.5 * Math.sin(animT*2.2 + i*0.38));
+      }
+
+      function frame() {
+        ctx.clearRect(0, 0, 320, 210);
+        // 1. LED glow halos (screen blend)
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        pts.forEach((p, i) => {
+          const c = getLED(i);
+          const s = alpha(i);
+          const og = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 14);
+          og.addColorStop(0,    ha(c.g, 0.6*s));
+          og.addColorStop(0.4,  ha(c.g, 0.22*s));
+          og.addColorStop(1,    'rgba(0,0,0,0)');
+          ctx.fillStyle = og;
+          ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI*2); ctx.fill();
+        });
+        const mid = getLED(25);
+        const gg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 110);
+        gg.addColorStop(0,   ha(mid.g, 0.12));
+        gg.addColorStop(0.5, ha(mid.g, 0.04));
+        gg.addColorStop(1,   'rgba(0,0,0,0)');
+        ctx.fillStyle = gg;
+        ctx.beginPath(); ctx.ellipse(cx, cy, 110, 8, 0, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+        // 2. PEX tube (normal blend, on top of halos)
+        ctx.save();
+        ctx.lineCap = 'round';
+        ctx.strokeStyle = 'rgba(220,228,255,0.10)';
+        ctx.lineWidth = 22;
+        ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 0, false); ctx.stroke();
+        ctx.strokeStyle = 'rgba(215,220,235,0.15)';
+        ctx.lineWidth = 11;
+        ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 0, false); ctx.stroke();
+        ctx.restore();
+        // 3. LED dots (screen blend, on top of tube)
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        pts.forEach((p, i) => {
+          const c = getLED(i);
+          const s = alpha(i);
+          ctx.fillStyle = ha(c.b, s);
+          ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill();
+        });
+        ctx.restore();
+        animT += 0.016;
+        requestAnimationFrame(frame);
+      }
+      frame();
+    })();
+
+    // ── Firmware UI (18 presets, tabs, pattern) ──
+    (function() {
+      const N = 50;
+
+      const PRESETS = [
+        { name: 'Christmas',     icon: 'christmas',    cfg: () => ({ type:'chase', speed:0.9, pal:[
+          {b:'#ff1a1a',g:'#aa0000'},{b:'#ff1a1a',g:'#aa0000'},
+          {b:'#00cc44',g:'#00882a'},{b:'#00cc44',g:'#00882a'},
+          {b:'#f0f4ff',g:'#8899cc'},{b:'#f0f4ff',g:'#8899cc'},
+        ]})},
+        { name: 'Halloween',     icon: 'halloween',    cfg: () => ({ type:'chase', speed:1.0, pal:[
+          {b:'#00c800',g:'#006600'},{b:'#00c800',g:'#006600'},
+          {b:'#ff6400',g:'#cc3300'},{b:'#ff6400',g:'#cc3300'},
+          {b:'#800080',g:'#440044'},{b:'#800080',g:'#440044'},
+        ]})},
+        { name: 'Valentine',     icon: 'valentine',    cfg: () => ({ type:'shimmer', rate:3.2, leds:Array.from({length:N},(_,i)=>i%2?{b:'#ff1144',g:'#aa0033'}:{b:'#ff88aa',g:'#cc2255'}) })},
+        { name: "St. Patrick's", icon: 'stpatrick',    cfg: () => ({ type:'chase', speed:1.1, pal:[
+          {b:'#00c800',g:'#006620'},{b:'#00c800',g:'#006620'},
+          {b:'#f0f4ff',g:'#8899cc'},{b:'#f0f4ff',g:'#8899cc'},
+        ]})},
+        { name: 'Patriotic',     icon: 'patriotic',    cfg: () => ({ type:'chase', speed:0.8, pal:[
+          {b:'#ff2020',g:'#cc0000'},{b:'#e8f0ff',g:'#aaaacc'},{b:'#2255ff',g:'#0033cc'},
+        ]})},
+        { name: 'Easter',        icon: 'easter',       cfg: () => ({ type:'chase', speed:0.7, pal:[
+          {b:'#ff6496',g:'#aa2255'},{b:'#64b4ff',g:'#2266aa'},
+          {b:'#ffff64',g:'#aaaa00'},{b:'#c882dc',g:'#883299'},
+        ]})},
+        { name: 'Thanksgiving',  icon: 'thanksgiving', cfg: () => ({ type:'chase', speed:0.8, pal:[
+          {b:'#8b4513',g:'#4a2008'},{b:'#ff8c00',g:'#aa5500'},
+          {b:'#ffd700',g:'#aa8800'},{b:'#f0f4ff',g:'#8899cc'},
+        ]})},
+        { name: 'New Year',      icon: 'newyear',      cfg: () => ({ type:'shimmer', rate:2.5, leds:Array.from({length:N},(_,i)=>i%2?{b:'#ffd700',g:'#aa8800'}:{b:'#f0f4ff',g:'#8899cc'}) })},
+        { name: 'Hanukkah',      icon: 'hanukkah',     cfg: () => ({ type:'shimmer', rate:2.0, leds:Array.from({length:N},(_,i)=>[{b:'#0046c8',g:'#001a88'},{b:'#f0f4ff',g:'#8899cc'},{b:'#6495ed',g:'#2244aa'},{b:'#c0c0c0',g:'#666688'}][i%4]) })},
+        { name: 'Mardi Gras',    icon: 'mardigras',    cfg: () => ({ type:'chase', speed:1.0, pal:[
+          {b:'#800080',g:'#440044'},{b:'#800080',g:'#440044'},
+          {b:'#ffd700',g:'#aa8800'},{b:'#ffd700',g:'#aa8800'},
+          {b:'#00c800',g:'#006600'},{b:'#00c800',g:'#006600'},
+        ]})},
+        { name: 'Rainbow',       icon: 'rainbow',      cfg: () => ({ type:'rainbow' }) },
+        { name: 'Fire',          icon: 'fire',         cfg: () => ({ type:'fire' }) },
+        { name: 'Ocean',         icon: 'ocean',        cfg: () => ({ type:'chase', speed:0.5, pal:[
+          {b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},
+          {b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},
+          {b:'#00bfff',g:'#006699'},{b:'#00bfff',g:'#006699'},{b:'#4fc3f7',g:'#0099bb'},
+          {b:'#00008b',g:'#000044'},{b:'#00008b',g:'#000044'},
+        ]})},
+        { name: 'Aurora',        icon: 'aurora',       cfg: () => ({ type:'shimmer', rate:1.5, leds:Array.from({length:N},(_,i)=>[{b:'#00e676',g:'#006633'},{b:'#00bfa5',g:'#005544'},{b:'#1a237e',g:'#080f44'},{b:'#7c4dff',g:'#3300aa'}][i%4]) })},
+        { name: 'Candlelight',   icon: 'candlelight',  cfg: () => ({ type:'shimmer', rate:4.0, leds:Array.from({length:N},(_,i)=>[{b:'#ff9329',g:'#993300'},{b:'#ffa500',g:'#aa4400'},{b:'#ffc864',g:'#aa6600'},{b:'#ffdca0',g:'#aa8844'}][i%4]) })},
+        { name: 'Sunset',        icon: 'sunset',       cfg: () => ({ type:'chase', speed:0.4, pal:[
+          {b:'#ff4500',g:'#aa1100'},{b:'#ff4500',g:'#aa1100'},{b:'#ff4500',g:'#aa1100'},
+          {b:'#ff4500',g:'#aa1100'},{b:'#ff4500',g:'#aa1100'},
+          {b:'#ff8c00',g:'#aa4400'},{b:'#ff8c00',g:'#aa4400'},{b:'#ff8c00',g:'#aa4400'},
+          {b:'#ff8c00',g:'#aa4400'},{b:'#ff8c00',g:'#aa4400'},
+          {b:'#ff1493',g:'#880044'},{b:'#ff1493',g:'#880044'},{b:'#ff1493',g:'#880044'},
+          {b:'#ff1493',g:'#880044'},{b:'#ff1493',g:'#880044'},
+          {b:'#8a2be2',g:'#440077'},{b:'#8a2be2',g:'#440077'},{b:'#8a2be2',g:'#440077'},
+          {b:'#8a2be2',g:'#440077'},{b:'#8a2be2',g:'#440077'},
+        ]})},
+        { name: 'Warm White',    icon: 'warm-white',   cfg: () => ({ type:'shimmer', rate:0.8, leds:Array.from({length:N},()=>({b:'#ffb464',g:'#884422'})) })},
+        { name: 'Solid White',   icon: 'solid-white',  cfg: () => ({ type:'shimmer', rate:0.3, leds:Array.from({length:N},()=>({b:'#f0f4ff',g:'#8899cc'})) })},
+      ];
+
+      // Build preset cards
+      const grid = document.getElementById('archPresets');
+      if (grid) {
+        PRESETS.forEach((p, idx) => {
+          const card = document.createElement('div');
+          card.className = 'pm-card';
+          card.dataset.preset = idx;
+          card.innerHTML = `<div class="pm-icon-wrap"><svg viewBox="0 0 100 100"><use href="#icon-${p.icon}"/></svg></div><div class="pm-name">${p.name}</div>`;
+          card.addEventListener('click', () => apply(idx));
+          grid.appendChild(card);
+        });
+      }
+
+      function apply(idx) {
+        if (window._archSet) window._archSet(PRESETS[idx].cfg());
+        document.querySelectorAll('#archPresets .pm-card').forEach((c,i) => c.classList.toggle('active', i===idx));
+      }
+      apply(0);
+
+      // Tab switching
+      const tabs = document.querySelectorAll('#fwPhone .pm-tab');
+      const panels = document.querySelectorAll('#fwPhone .pm-panel');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          panels.forEach(p => p.classList.remove('active'));
+          tab.classList.add('active');
+          const panel = document.getElementById('panel-' + tab.dataset.tab);
+          if (panel) panel.classList.add('active');
+        });
+      });
+
+      // Pattern tab — color swatches
+      const PAT_COLORS = ['#ff2020','#ff8c00','#ffd700','#22cc44','#2255ff','#aa00ff','#ff1199','#f0f4ff'];
+      const patColorsEl = document.getElementById('patColors');
+      if (patColorsEl) {
+        PAT_COLORS.forEach(color => {
+          const slot = document.createElement('div');
+          slot.className = 'pat-swatch';
+          slot.style.background = color;
+          patColorsEl.appendChild(slot);
+        });
+      }
+
+      function hexDarken(hex) {
+        return '#'+[1,3,5].map(o=>Math.round(parseInt(hex.slice(o,o+2),16)*0.55).toString(16).padStart(2,'0')).join('');
+      }
+
+      function applyPattern() {
+        const eff = (document.querySelector('.pat-btn.active')||{}).dataset?.effect || 'chase';
+        const spd = (parseInt(document.getElementById('patSpeed')?.value)||5) * 0.2;
+        const pal = PAT_COLORS.slice(0,6).map(c=>({b:c,g:hexDarken(c)}));
+        let pcfg;
+        if (eff==='rainbow') pcfg = {type:'rainbow'};
+        else if (eff==='fire') pcfg = {type:'fire'};
+        else if (eff==='shimmer') pcfg = {type:'shimmer', rate:3.0, leds:Array.from({length:N},(_,i)=>pal[i%pal.length])};
+        else if (eff==='twinkle') pcfg = {type:'shimmer', rate:8.0, leds:Array.from({length:N},(_,i)=>pal[i%pal.length])};
+        else pcfg = {type:'chase', speed:spd, pal};
+        if (window._archSet) window._archSet(pcfg);
+      }
+
+      document.querySelectorAll('.pat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.pat-btn').forEach(b=>b.classList.remove('active'));
+          btn.classList.add('active');
+          applyPattern();
+        });
+      });
+      document.getElementById('patSpeed')?.addEventListener('input', applyPattern);
+    })();
+  </script>
+
+  <!-- SVG preset icons (18 firmware presets) -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+    <symbol id="icon-christmas" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#0D2137"/>
+      <circle cx="12" cy="15" r="1.5" fill="#FFF" opacity="0.8"/>
+      <circle cx="30" cy="8" r="1" fill="#FFF" opacity="0.6"/>
+      <circle cx="75" cy="12" r="1.5" fill="#FFF" opacity="0.7"/>
+      <circle cx="90" cy="20" r="1" fill="#FFF" opacity="0.5"/>
+      <circle cx="8" cy="35" r="1" fill="#FFF" opacity="0.6"/>
+      <circle cx="95" cy="45" r="1.5" fill="#FFF" opacity="0.7"/>
+      <circle cx="18" cy="55" r="1" fill="#FFF" opacity="0.5"/>
+      <ellipse cx="50" cy="92" rx="48" ry="10" fill="#E3F2FD"/>
+      <ellipse cx="20" cy="88" rx="15" ry="5" fill="#FFF" opacity="0.5"/>
+      <ellipse cx="80" cy="88" rx="12" ry="4" fill="#FFF" opacity="0.4"/>
+      <polygon points="50,10 32,32 68,32" fill="#2E7D32"/>
+      <polygon points="34,32 66,32 64,34 36,34" fill="#E8F5E9" opacity="0.7"/>
+      <polygon points="50,22 28,48 72,48" fill="#388E3C"/>
+      <polygon points="30,48 70,48 68,51 32,51" fill="#E8F5E9" opacity="0.7"/>
+      <polygon points="50,36 24,68 76,68" fill="#43A047"/>
+      <polygon points="26,68 74,68 72,71 28,71" fill="#E8F5E9" opacity="0.7"/>
+      <rect x="44" y="68" width="12" height="12" fill="#5D4037"/>
+      <polygon points="50,6 52,12 58,12 53,16 55,22 50,18 45,22 47,16 42,12 48,12" fill="#FFD700"/>
+      <circle cx="50" cy="14" r="8" fill="#FFEB3B" opacity="0.3"/>
+      <circle cx="42" cy="28" r="4" fill="#E53935"/>
+      <circle cx="40" cy="26" r="1" fill="#FFF" opacity="0.5"/>
+      <circle cx="58" cy="28" r="3" fill="#2196F3"/>
+      <circle cx="57" cy="26" r="0.8" fill="#FFF" opacity="0.5"/>
+      <circle cx="36" cy="42" r="4" fill="#FFD700"/>
+      <circle cx="34" cy="40" r="1" fill="#FFF" opacity="0.5"/>
+      <circle cx="64" cy="44" r="3.5" fill="#E53935"/>
+      <circle cx="62" cy="42" r="0.9" fill="#FFF" opacity="0.5"/>
+      <circle cx="40" cy="58" r="3.5" fill="#2196F3"/>
+      <circle cx="60" cy="56" r="4" fill="#FFD700"/>
+      <circle cx="50" cy="62" r="3" fill="#E53935"/>
+      <circle cx="48" cy="35" r="2" fill="#FFEB3B"/>
+      <circle cx="52" cy="50" r="2" fill="#4FC3F7"/>
+      <circle cx="45" cy="48" r="2" fill="#E91E63"/>
+      <circle cx="55" cy="64" r="2" fill="#FFEB3B"/>
+      <circle cx="33" cy="55" r="2" fill="#4FC3F7"/>
+      <circle cx="67" cy="60" r="2" fill="#E91E63"/>
+      <rect x="10" y="76" width="14" height="11" rx="2" fill="#E53935"/>
+      <rect x="16" y="76" width="2" height="11" fill="#FFD700"/>
+      <rect x="10" y="80" width="14" height="2" fill="#FFD700"/>
+      <ellipse cx="17" cy="76" rx="3" ry="2" fill="#FFD700"/>
+      <rect x="76" y="78" width="12" height="9" rx="2" fill="#2196F3"/>
+      <rect x="81" y="78" width="2" height="9" fill="#FFF"/>
+      <rect x="76" y="81" width="12" height="2" fill="#FFF"/>
+      <ellipse cx="82" cy="78" rx="2.5" ry="1.5" fill="#FFF"/>
+    </symbol>
+    <symbol id="icon-halloween" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1A1A2E"/>
+      <circle cx="78" cy="22" r="16" fill="#F5F5DC" opacity="0.3"/>
+      <circle cx="78" cy="22" r="12" fill="#FFFDE7"/>
+      <circle cx="74" cy="19" r="2" fill="#E0E0E0" opacity="0.5"/>
+      <circle cx="81" cy="25" r="1.5" fill="#E0E0E0" opacity="0.4"/>
+      <path d="M18 25 Q15 22 12 25 L15 23 L18 25 Q21 22 24 25 L21 23 Z" fill="#1A1A2E" stroke="#2D2D44" stroke-width="0.5"/>
+      <path d="M35 15 Q32 12 29 15 L32 13 L35 15 Q38 12 41 15 L38 13 Z" fill="#1A1A2E" stroke="#2D2D44" stroke-width="0.5"/>
+      <path d="M55 20 Q53 18 51 20 L53 19 L55 20 Q57 18 59 20 L57 19 Z" fill="#1A1A2E" stroke="#2D2D44" stroke-width="0.5"/>
+      <rect y="80" width="100" height="20" fill="#1B5E20" opacity="0.6"/>
+      <ellipse cx="50" cy="62" rx="28" ry="22" fill="#E65100"/>
+      <ellipse cx="38" cy="62" rx="12" ry="20" fill="#EF6C00"/>
+      <ellipse cx="62" cy="62" rx="12" ry="20" fill="#EF6C00"/>
+      <ellipse cx="50" cy="62" rx="10" ry="18" fill="#FF8F00"/>
+      <path d="M50 40 Q50 62 50 84" stroke="#E65100" stroke-width="1" opacity="0.5"/>
+      <path d="M35 42 Q32 62 35 82" stroke="#E65100" stroke-width="1" opacity="0.4"/>
+      <path d="M65 42 Q68 62 65 82" stroke="#E65100" stroke-width="1" opacity="0.4"/>
+      <path d="M50 40 Q55 35 52 30" stroke="#2E7D32" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <polygon points="38,55 44,55 41,48" fill="#FFEB3B"/>
+      <polygon points="38,55 44,55 41,48" fill="#FFF" opacity="0.3"/>
+      <polygon points="56,55 62,55 59,48" fill="#FFEB3B"/>
+      <polygon points="56,55 62,55 59,48" fill="#FFF" opacity="0.3"/>
+      <polygon points="50,58 53,64 47,64" fill="#FFEB3B"/>
+      <path d="M35 70 L40 66 L45 72 L50 66 L55 72 L60 66 L65 70" stroke="#FFEB3B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      <ellipse cx="50" cy="60" rx="18" ry="14" fill="#FFEB3B" opacity="0.15"/>
+      <circle cx="10" cy="15" r="1" fill="#FFF" opacity="0.7"/>
+      <circle cx="92" cy="40" r="1" fill="#FFF" opacity="0.6"/>
+      <circle cx="8" cy="55" r="0.8" fill="#FFF" opacity="0.5"/>
+    </symbol>
+    <symbol id="icon-valentine" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#FADADD"/>
+      <path d="M50 74 C20 52 22 30 40 30 C46 30 50 36 50 36 C50 36 54 30 60 30 C78 30 80 52 50 74 Z" fill="#E63946"/>
+      <circle cx="36" cy="38" r="2" fill="#FFF"/>
+      <circle cx="64" cy="42" r="2" fill="#FFF"/>
+    </symbol>
+    <symbol id="icon-stpatrick" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1B5E20"/>
+      <path d="M5 85 Q50 30 95 85" stroke="#E53935" stroke-width="4" fill="none" opacity="0.6"/>
+      <path d="M10 85 Q50 38 90 85" stroke="#FF9800" stroke-width="4" fill="none" opacity="0.6"/>
+      <path d="M15 85 Q50 46 85 85" stroke="#FFEB3B" stroke-width="4" fill="none" opacity="0.6"/>
+      <circle cx="40" cy="38" r="14" fill="#4CAF50"/>
+      <circle cx="60" cy="38" r="14" fill="#4CAF50"/>
+      <circle cx="50" cy="25" r="14" fill="#4CAF50"/>
+      <path d="M50 45 Q52 60 48 75" stroke="#2E7D32" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="38" r="6" fill="#388E3C"/>
+      <ellipse cx="78" cy="78" rx="14" ry="10" fill="#5D4037"/>
+      <ellipse cx="78" cy="72" rx="12" ry="6" fill="#4E342E"/>
+      <circle cx="73" cy="72" r="4" fill="#FFD700"/>
+      <circle cx="78" cy="70" r="4" fill="#FFC107"/>
+      <circle cx="83" cy="72" r="4" fill="#FFD700"/>
+      <circle cx="78" cy="75" r="3" fill="#FFEB3B"/>
+      <circle cx="25" cy="70" r="2" fill="#FFF" opacity="0.8"/>
+      <circle cx="18" cy="55" r="1.5" fill="#FFF" opacity="0.6"/>
+    </symbol>
+    <symbol id="icon-patriotic" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1A237E"/>
+      <rect x="15" y="20" width="70" height="10" fill="#E53935"/>
+      <rect x="15" y="35" width="70" height="10" fill="#FFFFFF"/>
+      <rect x="15" y="50" width="70" height="10" fill="#E53935"/>
+      <rect x="15" y="65" width="70" height="10" fill="#FFFFFF"/>
+      <circle cx="30" cy="42" r="3" fill="#FFFFFF"/>
+      <circle cx="40" cy="42" r="3" fill="#FFFFFF"/>
+    </symbol>
+    <symbol id="icon-easter" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#E8F6F3"/>
+      <ellipse cx="50" cy="54" rx="18" ry="24" fill="#FADADD"/>
+      <path d="M38 50 H62" stroke="#B39DDB" stroke-width="3"/>
+      <path d="M50 38 V70" stroke="#81C784" stroke-width="3"/>
+    </symbol>
+    <symbol id="icon-thanksgiving" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#FF8F00"/>
+      <ellipse cx="50" cy="28" rx="8" ry="22" fill="#E53935"/>
+      <ellipse cx="35" cy="32" rx="8" ry="20" fill="#FF9800" transform="rotate(-20 35 32)"/>
+      <ellipse cx="65" cy="32" rx="8" ry="20" fill="#FF9800" transform="rotate(20 65 32)"/>
+      <ellipse cx="22" cy="40" rx="7" ry="18" fill="#FFC107" transform="rotate(-40 22 40)"/>
+      <ellipse cx="78" cy="40" rx="7" ry="18" fill="#FFC107" transform="rotate(40 78 40)"/>
+      <ellipse cx="14" cy="50" rx="6" ry="15" fill="#8D6E63" transform="rotate(-55 14 50)"/>
+      <ellipse cx="86" cy="50" rx="6" ry="15" fill="#8D6E63" transform="rotate(55 86 50)"/>
+      <ellipse cx="50" cy="62" rx="22" ry="18" fill="#6D4C41"/>
+      <ellipse cx="50" cy="62" rx="18" ry="14" fill="#8D6E63"/>
+      <circle cx="50" cy="48" r="12" fill="#6D4C41"/>
+      <circle cx="45" cy="46" r="4" fill="#FFF"/>
+      <circle cx="55" cy="46" r="4" fill="#FFF"/>
+      <circle cx="46" cy="46" r="2" fill="#000"/>
+      <circle cx="56" cy="46" r="2" fill="#000"/>
+      <polygon points="50,50 45,55 55,55" fill="#FF9800"/>
+      <ellipse cx="50" cy="58" rx="3" ry="5" fill="#E53935"/>
+      <path d="M40 78 L36 88 M40 78 L40 90 M40 78 L44 88" stroke="#FF9800" stroke-width="3" stroke-linecap="round"/>
+      <path d="M60 78 L56 88 M60 78 L60 90 M60 78 L64 88" stroke="#FF9800" stroke-width="3" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="icon-newyear" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#0A1128"/>
+      <circle cx="50" cy="40" r="6" fill="#FFD700"/>
+      <line x1="50" y1="40" x2="50" y2="15" stroke="#FFD700" stroke-width="2"/>
+      <line x1="50" y1="40" x2="70" y2="25" stroke="#FFD700" stroke-width="2"/>
+      <line x1="50" y1="40" x2="75" y2="40" stroke="#FFD700" stroke-width="2"/>
+      <line x1="50" y1="40" x2="70" y2="55" stroke="#FFD700" stroke-width="2"/>
+      <line x1="50" y1="40" x2="30" y2="25" stroke="#FFD700" stroke-width="2"/>
+      <line x1="50" y1="40" x2="25" y2="40" stroke="#FFD700" stroke-width="2"/>
+      <line x1="50" y1="40" x2="30" y2="55" stroke="#FFD700" stroke-width="2"/>
+      <circle cx="50" cy="15" r="3" fill="#FFF59D"/>
+      <circle cx="70" cy="25" r="2" fill="#FFF59D"/>
+      <circle cx="75" cy="40" r="2" fill="#FFF59D"/>
+      <circle cx="70" cy="55" r="2" fill="#FFF59D"/>
+      <circle cx="30" cy="25" r="2" fill="#FFF59D"/>
+      <circle cx="25" cy="40" r="2" fill="#FFF59D"/>
+      <circle cx="30" cy="55" r="2" fill="#FFF59D"/>
+      <circle cx="20" cy="70" r="3" fill="#FF4081"/>
+      <line x1="20" y1="70" x2="10" y2="60" stroke="#FF80AB" stroke-width="1.5"/>
+      <line x1="20" y1="70" x2="30" y2="60" stroke="#FF80AB" stroke-width="1.5"/>
+      <line x1="20" y1="70" x2="20" y2="58" stroke="#FF80AB" stroke-width="1.5"/>
+      <circle cx="80" cy="75" r="3" fill="#29B6F6"/>
+      <line x1="80" y1="75" x2="70" y2="68" stroke="#81D4FA" stroke-width="1.5"/>
+      <line x1="80" y1="75" x2="90" y2="68" stroke="#81D4FA" stroke-width="1.5"/>
+      <line x1="80" y1="75" x2="80" y2="63" stroke="#81D4FA" stroke-width="1.5"/>
+      <rect x="15" y="45" width="4" height="4" fill="#E91E63" transform="rotate(30 17 47)"/>
+      <rect x="85" y="50" width="3" height="3" fill="#4CAF50" transform="rotate(-20 86 51)"/>
+      <rect x="60" y="80" width="4" height="4" fill="#FFEB3B" transform="rotate(45 62 82)"/>
+    </symbol>
+    <symbol id="icon-hanukkah" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1A237E"/>
+      <rect x="40" y="80" width="20" height="6" rx="2" fill="#FFD700"/>
+      <rect x="47" y="72" width="6" height="10" fill="#FFD700"/>
+      <rect x="48" y="35" width="4" height="37" fill="#FFD700"/>
+      <rect x="46" y="45" width="8" height="27" rx="1" fill="#FFF8E1"/>
+      <ellipse cx="50" cy="38" rx="4" ry="7" fill="#FF9800"/>
+      <ellipse cx="50" cy="36" rx="2" ry="4" fill="#FFEB3B"/>
+      <rect x="22" y="50" width="4" height="22" fill="#FFD700"/>
+      <rect x="20" y="55" width="8" height="17" rx="1" fill="#E3F2FD"/>
+      <ellipse cx="24" cy="50" rx="3" ry="5" fill="#FF9800"/>
+      <ellipse cx="24" cy="48" rx="1.5" ry="3" fill="#FFEB3B"/>
+      <rect x="32" y="50" width="4" height="22" fill="#FFD700"/>
+      <rect x="30" y="55" width="8" height="17" rx="1" fill="#E3F2FD"/>
+      <ellipse cx="34" cy="50" rx="3" ry="5" fill="#FF9800"/>
+      <ellipse cx="34" cy="48" rx="1.5" ry="3" fill="#FFEB3B"/>
+      <rect x="64" y="50" width="4" height="22" fill="#FFD700"/>
+      <rect x="62" y="55" width="8" height="17" rx="1" fill="#E3F2FD"/>
+      <ellipse cx="66" cy="50" rx="3" ry="5" fill="#FF9800"/>
+      <ellipse cx="66" cy="48" rx="1.5" ry="3" fill="#FFEB3B"/>
+      <rect x="74" y="50" width="4" height="22" fill="#FFD700"/>
+      <rect x="72" y="55" width="8" height="17" rx="1" fill="#E3F2FD"/>
+      <ellipse cx="76" cy="50" rx="3" ry="5" fill="#FF9800"/>
+      <ellipse cx="76" cy="48" rx="1.5" ry="3" fill="#FFEB3B"/>
+      <polygon points="15,20 18,26 24,26 19,30 21,36 15,32 9,36 11,30 6,26 12,26" fill="#64B5F6" opacity="0.8"/>
+    </symbol>
+    <symbol id="icon-mardigras" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1A1A2E"/>
+      <circle cx="15" cy="25" r="1.5" fill="#FFD700" opacity="0.6"/>
+      <circle cx="88" cy="20" r="1" fill="#FFD700" opacity="0.5"/>
+      <path d="M15 50 Q10 25 25 12 Q30 25 28 45 Z" fill="#7B1FA2"/>
+      <circle cx="25" cy="10" r="5" fill="#FFD700"/>
+      <path d="M35 50 Q45 15 50 8 Q55 15 65 50 Z" fill="#FFD700"/>
+      <circle cx="50" cy="6" r="5" fill="#9C27B0"/>
+      <path d="M72 45 Q70 25 75 12 Q90 25 85 50 Z" fill="#2E7D32"/>
+      <circle cx="75" cy="10" r="5" fill="#FFD700"/>
+      <ellipse cx="50" cy="52" rx="40" ry="10" fill="#9C27B0"/>
+      <ellipse cx="50" cy="50" rx="38" ry="8" fill="#7B1FA2"/>
+      <path d="M50 42 L50 35 M50 38 Q45 35 43 40 M50 38 Q55 35 57 40" stroke="#FFD700" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="50" cy="34" r="2" fill="#FFD700"/>
+      <circle cx="18" cy="68" r="3" fill="#FFD700"/>
+      <circle cx="28" cy="72" r="3" fill="#FFD700"/>
+      <circle cx="38" cy="74" r="3" fill="#FFD700"/>
+      <circle cx="50" cy="75" r="3" fill="#FFD700"/>
+      <circle cx="62" cy="74" r="3" fill="#FFD700"/>
+      <circle cx="72" cy="72" r="3" fill="#FFD700"/>
+      <circle cx="82" cy="68" r="3" fill="#FFD700"/>
+      <circle cx="22" cy="80" r="2.5" fill="#9C27B0"/>
+      <circle cx="32" cy="84" r="2.5" fill="#9C27B0"/>
+      <circle cx="44" cy="86" r="2.5" fill="#9C27B0"/>
+      <circle cx="56" cy="86" r="2.5" fill="#9C27B0"/>
+      <circle cx="68" cy="84" r="2.5" fill="#9C27B0"/>
+      <circle cx="78" cy="80" r="2.5" fill="#9C27B0"/>
+      <circle cx="26" cy="92" r="2" fill="#2E7D32"/>
+      <circle cx="38" cy="94" r="2" fill="#2E7D32"/>
+      <circle cx="50" cy="95" r="2" fill="#2E7D32"/>
+      <circle cx="62" cy="94" r="2" fill="#2E7D32"/>
+      <circle cx="74" cy="92" r="2" fill="#2E7D32"/>
+    </symbol>
+    <symbol id="icon-rainbow" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#303F9F"/>
+      <path d="M15 70 Q50 10 85 70" stroke="#E53935" stroke-width="6" fill="none"/>
+      <path d="M20 70 Q50 18 80 70" stroke="#FB8C00" stroke-width="6" fill="none"/>
+      <path d="M25 70 Q50 26 75 70" stroke="#FDD835" stroke-width="6" fill="none"/>
+      <path d="M30 70 Q50 34 70 70" stroke="#43A047" stroke-width="6" fill="none"/>
+      <path d="M35 70 Q50 42 65 70" stroke="#1E88E5" stroke-width="6" fill="none"/>
+      <path d="M40 70 Q50 50 60 70" stroke="#8E24AA" stroke-width="6" fill="none"/>
+    </symbol>
+    <symbol id="icon-fire" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#BF360C"/>
+      <path d="M50 20 Q30 45 35 65 Q40 80 50 80 Q60 80 65 65 Q70 45 50 20" fill="#FF5722"/>
+      <path d="M50 35 Q40 50 45 65 Q47 75 50 75 Q53 75 55 65 Q60 50 50 35" fill="#FFEB3B"/>
+    </symbol>
+    <symbol id="icon-ocean" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#01579B"/>
+      <rect y="65" width="100" height="35" fill="#002171"/>
+      <path d="M40 100 L50 60" stroke="#4FC3F7" stroke-width="8" opacity="0.15"/>
+      <path d="M50 100 L50 65" stroke="#4FC3F7" stroke-width="6" opacity="0.12"/>
+      <path d="M60 100 L50 70" stroke="#4FC3F7" stroke-width="7" opacity="0.1"/>
+      <path d="M0 40 Q12 30 25 40 Q38 50 50 40 Q62 30 75 40 Q88 50 100 40 L100 55 L0 55 Z" fill="#0288D1" opacity="0.7"/>
+      <path d="M0 48 Q15 38 30 48 Q45 58 50 48 Q55 38 70 48 Q85 58 100 48 L100 65 L0 65 Z" fill="#039BE5" opacity="0.8"/>
+      <path d="M0 55 Q18 45 35 55 Q50 65 65 55 Q82 45 100 55 L100 75 L0 75 Z" fill="#03A9F4"/>
+      <path d="M20 48 Q27 44 34 48" stroke="#E1F5FE" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M44 45 Q50 41 56 45" stroke="#E1F5FE" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M66 48 Q73 44 80 48" stroke="#FFF" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.8"/>
+      <circle cx="30" cy="42" r="1.5" fill="#FFF" opacity="0.9"/>
+      <circle cx="50" cy="38" r="2" fill="#FFF" opacity="0.8"/>
+      <circle cx="70" cy="42" r="1.5" fill="#FFF" opacity="0.7"/>
+      <circle cx="40" cy="52" r="1" fill="#E1F5FE" opacity="0.8"/>
+      <circle cx="60" cy="52" r="1" fill="#E1F5FE" opacity="0.7"/>
+    </symbol>
+    <symbol id="icon-aurora" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#1A237E"/>
+      <path d="M10 80 Q25 40 40 70 Q55 30 70 60 Q85 20 100 50" stroke="#00E676" stroke-width="8" fill="none" opacity="0.7"/>
+      <path d="M0 70 Q20 35 45 65 Q70 25 100 45" stroke="#00BFA5" stroke-width="6" fill="none" opacity="0.5"/>
+      <circle cx="75" cy="25" r="2" fill="#FFF"/>
+      <circle cx="25" cy="35" r="1.5" fill="#FFF"/>
+    </symbol>
+    <symbol id="icon-candlelight" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#3E2723"/>
+      <rect x="40" y="50" width="20" height="35" rx="2" fill="#FFF8E1"/>
+      <ellipse cx="50" cy="35" rx="10" ry="18" fill="#FF9800"/>
+      <ellipse cx="50" cy="32" rx="5" ry="10" fill="#FFEB3B"/>
+    </symbol>
+    <symbol id="icon-sunset" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#FF6F00"/>
+      <rect width="100" height="35" rx="8" fill="#E65100"/>
+      <rect y="35" width="100" height="25" fill="#FF8F00" opacity="0.8"/>
+      <rect y="62" width="100" height="38" fill="#BF360C" opacity="0.6"/>
+      <rect y="75" width="100" height="25" fill="#8D6E63" opacity="0.4"/>
+      <circle cx="50" cy="52" r="24" fill="#FFEB3B" opacity="0.25"/>
+      <circle cx="50" cy="52" r="18" fill="#FFC107"/>
+      <circle cx="50" cy="52" r="14" fill="#FFD54F"/>
+      <circle cx="50" cy="52" r="9" fill="#FFECB3"/>
+      <path d="M50 22 L50 30" stroke="#FFD54F" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+      <path d="M28 38 L34 43" stroke="#FFD54F" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+      <path d="M72 38 L66 43" stroke="#FFD54F" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+      <path d="M35 70 L48 70" stroke="#FFD54F" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+      <path d="M52 70 L65 70" stroke="#FFA726" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+      <ellipse cx="20" cy="30" rx="14" ry="6" fill="#FF8F00" opacity="0.5"/>
+      <ellipse cx="80" cy="25" rx="12" ry="5" fill="#FFB300" opacity="0.4"/>
+    </symbol>
+    <symbol id="icon-warm-white" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#FFF8E1"/>
+      <circle cx="50" cy="50" r="25" fill="#FFE0B2"/>
+    </symbol>
+    <symbol id="icon-solid-white" viewBox="0 0 100 100">
+      <rect width="100" height="100" rx="8" fill="#EEEEEE"/>
+      <circle cx="50" cy="50" r="25" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2"/>
+    </symbol>
+  </svg>
 </body>
 </html>
