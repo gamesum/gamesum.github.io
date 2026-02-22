@@ -187,38 +187,13 @@
       filter: blur(60px);
     }
 
-    @keyframes ledSnake {
-      0%   { opacity: 0; fill: #c8921e; filter: drop-shadow(0 0 0px #c8921e); }
-      7%   { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 10px #c8921e); }
-      17%  { fill: #ef4444; filter: drop-shadow(0 0 10px #ef4444); }
-      27%  { fill: #a855f7; filter: drop-shadow(0 0 10px #a855f7); }
-      37%  { fill: #3b82f6; filter: drop-shadow(0 0 10px #3b82f6); }
-      47%  { fill: #10b981; filter: drop-shadow(0 0 10px #10b981); }
-      55%  { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 10px #c8921e); }
-      64%  { opacity: 0; fill: #c8921e; filter: drop-shadow(0 0 0px transparent); }
-      100% { opacity: 0; }
-    }
     .led-dot {
-      animation: ledSnake 14s ease-in-out infinite;
-      animation-fill-mode: backwards;
+      fill: #c8921e;
+      filter: drop-shadow(0 0 5px rgba(200,146,30,0.8));
     }
-    .led-dot:nth-child(2)  { animation-delay: 0.4s; }
-    .led-dot:nth-child(3)  { animation-delay: 0.8s; }
-    .led-dot:nth-child(4)  { animation-delay: 1.2s; }
-    .led-dot:nth-child(5)  { animation-delay: 1.6s; }
-    .led-dot:nth-child(6)  { animation-delay: 2.0s; }
-    .led-dot:nth-child(7)  { animation-delay: 2.4s; }
-    .led-dot:nth-child(8)  { animation-delay: 2.8s; }
-    .led-dot:nth-child(9)  { animation-delay: 3.2s; }
-    .led-dot:nth-child(10) { animation-delay: 3.6s; }
-    .led-dot:nth-child(11) { animation-delay: 4.0s; }
-    .led-dot:nth-child(12) { animation-delay: 4.4s; }
-    .led-dot:nth-child(13) { animation-delay: 4.8s; }
-    .led-dot:nth-child(14) { animation-delay: 0.5s; }
-    .led-dot:nth-child(15) { animation-delay: 1.0s; }
-    .led-dot:nth-child(16) { animation-delay: 1.5s; }
-    .led-dot:nth-child(17) { animation-delay: 2.0s; }
-    .led-dot:nth-child(18) { animation-delay: 2.5s; }
+    .hero-led {
+      opacity: 0;
+    }
 
     .hero-text-col .hero-headline {
       font-size: clamp(2.5rem, 5vw, 4rem);
@@ -688,19 +663,19 @@
             <!-- PEX tube — upper semicircle (sweep=1 = clockwise = upper arc in SVG y-down) -->
             <path d="M 30,290 A 180,180 0 0,1 390,290" stroke="rgba(220,225,240,0.22)" stroke-width="16" fill="none" stroke-linecap="round"/>
             <!-- 13 LED dots evenly spaced along upper semicircle (cx=210 cy=290 r=180) -->
-            <circle class="led-dot" cx="30"  cy="290" r="7"/>
-            <circle class="led-dot" cx="36"  cy="243" r="7"/>
-            <circle class="led-dot" cx="54"  cy="200" r="7"/>
-            <circle class="led-dot" cx="83"  cy="163" r="7"/>
-            <circle class="led-dot" cx="120" cy="134" r="7"/>
-            <circle class="led-dot" cx="163" cy="116" r="7"/>
-            <circle class="led-dot" cx="210" cy="110" r="7"/>
-            <circle class="led-dot" cx="257" cy="116" r="7"/>
-            <circle class="led-dot" cx="300" cy="134" r="7"/>
-            <circle class="led-dot" cx="337" cy="163" r="7"/>
-            <circle class="led-dot" cx="366" cy="200" r="7"/>
-            <circle class="led-dot" cx="384" cy="243" r="7"/>
-            <circle class="led-dot" cx="390" cy="290" r="7"/>
+            <circle class="led-dot hero-led" cx="30"  cy="290" r="7"/>
+            <circle class="led-dot hero-led" cx="36"  cy="243" r="7"/>
+            <circle class="led-dot hero-led" cx="54"  cy="200" r="7"/>
+            <circle class="led-dot hero-led" cx="83"  cy="163" r="7"/>
+            <circle class="led-dot hero-led" cx="120" cy="134" r="7"/>
+            <circle class="led-dot hero-led" cx="163" cy="116" r="7"/>
+            <circle class="led-dot hero-led" cx="210" cy="110" r="7"/>
+            <circle class="led-dot hero-led" cx="257" cy="116" r="7"/>
+            <circle class="led-dot hero-led" cx="300" cy="134" r="7"/>
+            <circle class="led-dot hero-led" cx="337" cy="163" r="7"/>
+            <circle class="led-dot hero-led" cx="366" cy="200" r="7"/>
+            <circle class="led-dot hero-led" cx="384" cy="243" r="7"/>
+            <circle class="led-dot hero-led" cx="390" cy="290" r="7"/>
             <!-- Ground glow -->
             <ellipse cx="210" cy="290" rx="180" ry="7" fill="rgba(200,146,30,0.05)"/>
           </svg>
@@ -1568,5 +1543,47 @@
       <circle cx="50" cy="50" r="25" fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2"/>
     </symbol>
   </svg>
+
+  <script>
+    // Hero arch fill-then-empty animation (JS-driven for precise sync)
+    (function() {
+      var wrap = document.querySelector('.hero-arch-wrap');
+      if (!wrap) return;
+      var leds = Array.from(wrap.querySelectorAll('.hero-led'));
+      var N = leds.length;
+      var COLORS = ['#c8921e','#ef4444','#a855f7','#3b82f6','#10b981'];
+      var ci = 0;
+
+      function run() {
+        var color = COLORS[ci % COLORS.length];
+        ci++;
+        var STAGGER = 380, FADE = 480, HOLD = 2000, DARK = 1400;
+
+        // Fill left to right
+        leds.forEach(function(led, i) {
+          setTimeout(function() {
+            led.style.transition = 'opacity ' + FADE + 'ms ease, filter ' + FADE + 'ms ease';
+            led.style.fill = color;
+            led.style.filter = 'drop-shadow(0 0 10px ' + color + ')';
+            led.style.opacity = '1';
+          }, i * STAGGER);
+        });
+
+        // Empty right to left (reverse of fill)
+        var emptyAt = (N - 1) * STAGGER + FADE + HOLD;
+        leds.forEach(function(led, i) {
+          setTimeout(function() {
+            led.style.transition = 'opacity ' + FADE + 'ms ease';
+            led.style.opacity = '0';
+          }, emptyAt + (N - 1 - i) * STAGGER);
+        });
+
+        // Next cycle after all LEDs are dark
+        setTimeout(run, emptyAt + (N - 1) * STAGGER + FADE + DARK);
+      }
+
+      run();
+    })();
+  </script>
 </body>
 </html>
