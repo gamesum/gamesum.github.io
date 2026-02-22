@@ -582,14 +582,8 @@
     .pm-actions { font-size: 0.65rem; color: #888; }
     .pm-sub { display: flex; align-items: center; gap: 4px; margin-top: 2px; font-size: 0.5rem; color: #555; }
     .pm-dot { width: 5px; height: 5px; border-radius: 50%; background: #2563eb; flex-shrink: 0; }
-    /* Tabs */
-    .pm-tabs-bar { display: flex; border-bottom: 1px solid #e5e5ea; background: #f5f5f8; flex-shrink: 0; }
-    .pm-tab { flex: 1; text-align: center; padding: 7px 0 5px; font-size: 0.52rem; font-weight: 600; color: #888; font-family: 'Inter',sans-serif; border-bottom: 2px solid transparent; cursor: pointer; user-select: none; }
-    .pm-tab.active { color: #e07a10; border-bottom-color: #e07a10; }
-    /* Body / panels */
+    /* Body */
     .pm-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-    .pm-panel { display: none; }
-    .pm-panel.active { display: block; }
     /* Preset grid */
     .pm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 8px; }
     .pm-card { border-radius: 10px; overflow: hidden; cursor: pointer; border: 2px solid transparent; transition: border-color 0.15s; user-select: none; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
@@ -598,30 +592,6 @@
     .pm-icon-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; display: block; }
     .pm-icon-wrap svg { width: 100%; height: 100%; display: block; }
     .pm-name { text-align: center; padding: 3px 3px 6px; font-size: 0.5rem; font-weight: 600; color: #111; font-family: 'Inter',sans-serif; line-height: 1.2; }
-    /* Pattern tab */
-    .pat-section { padding: 12px 12px 10px; border-bottom: 1px solid #f0f0f5; }
-    .pat-label { font-size: 0.52rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #666; margin-bottom: 6px; }
-    .pat-effects { display: flex; flex-wrap: wrap; gap: 5px; }
-    .pat-btn { padding: 5px 9px; border-radius: 6px; font-size: 0.52rem; font-weight: 600; background: #f5f5f8; border: 1.5px solid transparent; color: #444; cursor: pointer; font-family: 'Inter',sans-serif; transition: all 0.15s; }
-    .pat-btn.active { border-color: #e07a10; color: #e07a10; background: #fff8f0; }
-    .pat-colors { display: flex; gap: 7px; flex-wrap: wrap; }
-    .pat-swatch { width: 22px; height: 22px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: all 0.15s; }
-    .pat-swatch.active { border-color: #e07a10; transform: scale(1.15); box-shadow: 0 0 0 2px #fff, 0 0 0 4px #e07a10; }
-    .pat-slider-row { display: flex; align-items: center; gap: 8px; }
-    .pat-slider-row label { font-size: 0.5rem; color: #888; font-family: 'Inter',sans-serif; }
-    .pat-slider-row input[type=range] { flex: 1; accent-color: #e07a10; }
-    /* Timer tab (static display) */
-    .tmr-schedule-card { margin: 10px 10px 8px; background: #f5f5f8; border-radius: 10px; padding: 10px 12px; border-left: 3px solid #e07a10; }
-    .tmr-card-name { font-family: 'Outfit',sans-serif; font-size: 0.65rem; font-weight: 800; color: #111; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-    .tmr-toggle { width: 30px; height: 17px; background: #e07a10; border-radius: 9px; position: relative; flex-shrink: 0; }
-    .tmr-toggle::after { content: ''; position: absolute; top: 2.5px; right: 2.5px; width: 12px; height: 12px; background: #fff; border-radius: 50%; }
-    .tmr-time-chips { display: flex; gap: 5px; margin-bottom: 7px; flex-wrap: wrap; }
-    .tmr-chip { font-size: 0.48rem; font-weight: 700; padding: 3px 7px; border-radius: 5px; font-family: 'Inter',sans-serif; }
-    .tmr-chip.on  { background: rgba(224,122,16,0.1); color: #e07a10; border: 1px solid rgba(224,122,16,0.3); }
-    .tmr-chip.off { background: rgba(30,58,138,0.08); color: #1e3a8a; border: 1px solid rgba(30,58,138,0.25); }
-    .tmr-days-row { display: flex; gap: 4px; }
-    .tmr-day-dot { width: 22px; height: 22px; border-radius: 50%; background: #e07a10; color: #fff; font-size: 0.42rem; font-weight: 700; display: flex; align-items: center; justify-content: center; font-family: 'Inter',sans-serif; }
-    .tmr-add-btn { margin: 4px 10px 12px; background: #f5f5f8; border-radius: 8px; padding: 9px; text-align: center; font-size: 0.55rem; font-weight: 600; color: #aaa; border: 1.5px dashed #ddd; font-family: 'Inter',sans-serif; }
   </style>
 </head>
 <body>
@@ -810,7 +780,7 @@
       <div class="demo-header fade-in">
         <div class="section-label">Try It Live</div>
         <h2 class="section-title">The Actual Controller App</h2>
-        <p class="section-sub">This is a working simulation of the real firmware. Tap presets, customize patterns, and set schedules — exactly like the real app your lights run on.</p>
+        <p class="section-sub">This is a live preview of the 18 built-in holiday presets. Every effect shown here is the same one running on your arch — tap any card to see it animate.</p>
       </div>
       <div class="demo-split fade-in fade-delay-1">
         <div class="demo-arch-col">
@@ -829,74 +799,8 @@
               </div>
               <div class="pm-sub"><div class="pm-dot"></div><span>10.0.0.51 ▾</span></div>
             </div>
-            <div class="pm-tabs-bar">
-              <div class="pm-tab active" data-tab="presets">Presets</div>
-              <div class="pm-tab" data-tab="pattern">Pattern</div>
-              <div class="pm-tab" data-tab="timer">Timer</div>
-            </div>
             <div class="pm-body">
-
-              <!-- Presets panel -->
-              <div class="pm-panel active" id="panel-presets">
-                <div class="pm-grid" id="archPresets"></div>
-              </div>
-
-              <!-- Pattern panel -->
-              <div class="pm-panel" id="panel-pattern">
-                <div class="pat-section">
-                  <div class="pat-label">Effect</div>
-                  <div class="pat-effects">
-                    <button class="pat-btn active" data-effect="chase">Chase</button>
-                    <button class="pat-btn" data-effect="shimmer">Shimmer</button>
-                    <button class="pat-btn" data-effect="fire">Fire</button>
-                    <button class="pat-btn" data-effect="rainbow">Rainbow</button>
-                    <button class="pat-btn" data-effect="static">Static</button>
-                    <button class="pat-btn" data-effect="twinkle">Twinkle</button>
-                  </div>
-                </div>
-                <div class="pat-section">
-                  <div class="pat-label">Color</div>
-                  <div class="pat-colors" id="patColors"></div>
-                </div>
-                <div class="pat-section">
-                  <div class="pat-label">Speed</div>
-                  <div class="pat-slider-row">
-                    <label>Slow</label>
-                    <input type="range" min="1" max="10" value="5" id="patSpeed">
-                    <label>Fast</label>
-                  </div>
-                </div>
-                <div class="pat-section" style="border:none">
-                  <div class="pat-label">Brightness</div>
-                  <div class="pat-slider-row">
-                    <label>Dim</label>
-                    <input type="range" min="1" max="10" value="8" id="patBright">
-                    <label>Full</label>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Timer panel — static schedule display -->
-              <div class="pm-panel" id="panel-timer">
-                <div class="tmr-schedule-card">
-                  <div class="tmr-card-name">Sunset Auto-On <div class="tmr-toggle"></div></div>
-                  <div class="tmr-time-chips">
-                    <span class="tmr-chip on">ON  7:00 PM</span>
-                    <span class="tmr-chip off">OFF 11:30 PM</span>
-                  </div>
-                  <div class="tmr-days-row">
-                    <div class="tmr-day-dot">M</div>
-                    <div class="tmr-day-dot">T</div>
-                    <div class="tmr-day-dot">W</div>
-                    <div class="tmr-day-dot">T</div>
-                    <div class="tmr-day-dot">F</div>
-                    <div class="tmr-day-dot">S</div>
-                    <div class="tmr-day-dot">S</div>
-                  </div>
-                </div>
-                <div class="tmr-add-btn">+ Add Schedule</div>
-              </div>
-
+              <div class="pm-grid" id="archPresets"></div>
             </div>
           </div>
         </div>
@@ -1191,56 +1095,6 @@
       }
       apply(0);
 
-      // Tab switching
-      const tabs = document.querySelectorAll('#fwPhone .pm-tab');
-      const panels = document.querySelectorAll('#fwPhone .pm-panel');
-      tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          tabs.forEach(t => t.classList.remove('active'));
-          panels.forEach(p => p.classList.remove('active'));
-          tab.classList.add('active');
-          const panel = document.getElementById('panel-' + tab.dataset.tab);
-          if (panel) panel.classList.add('active');
-        });
-      });
-
-      // Pattern tab — color swatches
-      const PAT_COLORS = ['#ff2020','#ff8c00','#ffd700','#22cc44','#2255ff','#aa00ff','#ff1199','#f0f4ff'];
-      const patColorsEl = document.getElementById('patColors');
-      if (patColorsEl) {
-        PAT_COLORS.forEach(color => {
-          const slot = document.createElement('div');
-          slot.className = 'pat-swatch';
-          slot.style.background = color;
-          patColorsEl.appendChild(slot);
-        });
-      }
-
-      function hexDarken(hex) {
-        return '#'+[1,3,5].map(o=>Math.round(parseInt(hex.slice(o,o+2),16)*0.55).toString(16).padStart(2,'0')).join('');
-      }
-
-      function applyPattern() {
-        const eff = (document.querySelector('.pat-btn.active')||{}).dataset?.effect || 'chase';
-        const spd = (parseInt(document.getElementById('patSpeed')?.value)||5) * 0.2;
-        const pal = PAT_COLORS.slice(0,6).map(c=>({b:c,g:hexDarken(c)}));
-        let pcfg;
-        if (eff==='rainbow') pcfg = {type:'rainbow'};
-        else if (eff==='fire') pcfg = {type:'fire'};
-        else if (eff==='shimmer') pcfg = {type:'shimmer', rate:3.0, leds:Array.from({length:N},(_,i)=>pal[i%pal.length])};
-        else if (eff==='twinkle') pcfg = {type:'shimmer', rate:8.0, leds:Array.from({length:N},(_,i)=>pal[i%pal.length])};
-        else pcfg = {type:'chase', speed:spd, pal};
-        if (window._archSet) window._archSet(pcfg);
-      }
-
-      document.querySelectorAll('.pat-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          document.querySelectorAll('.pat-btn').forEach(b=>b.classList.remove('active'));
-          btn.classList.add('active');
-          applyPattern();
-        });
-      });
-      document.getElementById('patSpeed')?.addEventListener('input', applyPattern);
     })();
   </script>
 
