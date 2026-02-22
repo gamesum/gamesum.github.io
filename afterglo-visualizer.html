@@ -544,7 +544,7 @@
   <!-- ══ LEFT PANEL ══ -->
   <div class="panel">
 
-    <details class="panel-section" open>
+    <details class="panel-section" open id="sec-upload">
       <summary><h3>📷 Upload Home Photo</h3></summary>
       <div class="panel-section-body">
         <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
@@ -655,7 +655,7 @@
       </div>
     </details>
 
-    <details class="panel-section">
+    <details class="panel-section" id="sec-led">
       <summary><h3>⚙️ Light Settings</h3></summary>
       <div class="panel-section-body">
         <div class="slider-row">
@@ -669,7 +669,7 @@
       </div>
     </details>
 
-    <details class="panel-section">
+    <details class="panel-section" id="sec-scene">
       <summary><h3>🌙 Scene</h3></summary>
       <div class="panel-section-body">
         <div class="tab-group" id="previewTabs">
@@ -875,6 +875,9 @@ function loadImage(e) {
       document.getElementById('canvasTip').style.display = 'block';
       drawBase();
       renderLights();
+      document.getElementById('sec-upload').removeAttribute('open');
+      document.getElementById('sec-led').setAttribute('open', '');
+      document.getElementById('sec-scene').setAttribute('open', '');
     };
     img.src = ev.target.result;
   };
