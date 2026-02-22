@@ -663,8 +663,8 @@
           <input type="range" id="brightness" min="20" max="100" value="90" oninput="updateSettings()">
         </div>
         <div class="slider-row">
-          <label>LEDs per run <span id="ledCountVal">24</span></label>
-          <input type="range" id="ledCount" min="4" max="500" value="24" oninput="updateSettings()">
+          <label>LEDs per run <span id="ledCountVal">100</span></label>
+          <input type="range" id="ledCount" min="4" max="500" value="100" oninput="updateSettings()">
         </div>
       </div>
     </details>
@@ -799,7 +799,7 @@ let animFrame = null;
 let dragRunIdx = null, dragNodeIdx = null;
 let isDragging = false;
 
-let settings = { brightness: 90, glow: 7, bulbSize: 0, ledCount: 24, droop: 60 };
+let settings = { brightness: 90, glow: 7, bulbSize: 0, ledCount: 100, droop: 60 };
 let _offCanvas = null, _offCtx = null; // reusable offscreen canvas for soft edge masking
 
 const COLOR_PRESETS = [
