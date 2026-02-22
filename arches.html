@@ -189,16 +189,17 @@
 
     @keyframes ledSnake {
       0%   { opacity: 0; fill: #c8921e; filter: drop-shadow(0 0 0px #c8921e); }
-      8%   { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 8px #c8921e); }
-      24%  { fill: #ef4444; filter: drop-shadow(0 0 8px #ef4444); }
-      40%  { fill: #a855f7; filter: drop-shadow(0 0 8px #a855f7); }
-      56%  { fill: #3b82f6; filter: drop-shadow(0 0 8px #3b82f6); }
-      72%  { fill: #10b981; filter: drop-shadow(0 0 8px #10b981); }
-      84%  { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 8px #c8921e); }
-      100% { opacity: 0; fill: #c8921e; filter: drop-shadow(0 0 0px #c8921e); }
+      7%   { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 10px #c8921e); }
+      17%  { fill: #ef4444; filter: drop-shadow(0 0 10px #ef4444); }
+      27%  { fill: #a855f7; filter: drop-shadow(0 0 10px #a855f7); }
+      37%  { fill: #3b82f6; filter: drop-shadow(0 0 10px #3b82f6); }
+      47%  { fill: #10b981; filter: drop-shadow(0 0 10px #10b981); }
+      55%  { opacity: 1; fill: #c8921e; filter: drop-shadow(0 0 10px #c8921e); }
+      64%  { opacity: 0; fill: #c8921e; filter: drop-shadow(0 0 0px transparent); }
+      100% { opacity: 0; }
     }
     .led-dot {
-      animation: ledSnake 7s ease-in-out infinite;
+      animation: ledSnake 14s ease-in-out infinite;
       animation-fill-mode: backwards;
     }
     .led-dot:nth-child(2)  { animation-delay: 0.4s; }
