@@ -673,8 +673,8 @@
       <summary><h3>🌙 Scene</h3></summary>
       <div class="panel-section-body">
         <div class="tab-group" id="previewTabs">
-          <button class="tab-btn active" onclick="setPreviewMode('day',this)">Day</button>
-          <button class="tab-btn" onclick="setPreviewMode('dusk',this)">Dusk</button>
+          <button class="tab-btn" onclick="setPreviewMode('day',this)">Day</button>
+          <button class="tab-btn active" onclick="setPreviewMode('dusk',this)">Dusk</button>
           <button class="tab-btn" onclick="setPreviewMode('night',this)">Night</button>
         </div>
       </div>
@@ -791,7 +791,7 @@ let activeNodes = []; // [{x,y} normalized] - in progress
 let hoveredPos = null; // mouse position during draw
 
 let tool = 'spline';
-let previewMode = 'day';
+let previewMode = 'dusk';
 let pattern = 'solid';
 let animating = false;
 let animToggleOn = false;
