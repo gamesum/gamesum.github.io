@@ -524,16 +524,9 @@
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      grid-template-rows: auto auto;
       gap: 16px;
     }
-    .gallery-grid .g-item:first-child {
-      grid-column: span 2;
-      grid-row: span 1;
-    }
-    .gallery-grid .g-item:nth-child(4) {
-      grid-column: span 2;
-    }
+    .gallery-grid .g-item:first-child { grid-column: span 2; }
 
     .g-item {
       border-radius: var(--radius);
@@ -544,53 +537,17 @@
       border: 1px solid var(--border);
       cursor: pointer;
     }
-    .g-item:first-child  { aspect-ratio: 16/9; }
-    .g-item:nth-child(4) { aspect-ratio: 16/9; }
-
-    /* SVG placeholder scenes */
-    .g-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      background: var(--bg3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .g-house {
-      font-size: 4rem;
-      filter: drop-shadow(0 0 20px rgba(200,146,30,0.6));
-    }
-
-    .g-glow-bar {
-      height: 3px;
-      border-radius: 2px;
-      background: linear-gradient(90deg, transparent, var(--accent), transparent);
-      opacity: 0.7;
-    }
-
-    .g-item:nth-child(1) .g-house { font-size: 6rem; }
-    .g-item:nth-child(2) .g-glow-bar { width: 80%; background: linear-gradient(90deg, transparent, #3b82f6, transparent); }
-    .g-item:nth-child(3) .g-glow-bar { width: 70%; background: linear-gradient(90deg, transparent, #10b981, transparent); }
-    .g-item:nth-child(4) .g-house { font-size: 5rem; }
-    .g-item:nth-child(5) .g-glow-bar { width: 75%; background: linear-gradient(90deg, transparent, #ef4444, transparent); }
-
-    .g-item:hover .g-placeholder { background: var(--bg2); }
+    .g-item:first-child { aspect-ratio: 16/9; }
+    .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .g-item:hover img { transform: scale(1.04); }
     .g-caption {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      background: linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 100%);
-      padding: 20px 16px 16px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%);
+      padding: 24px 16px 14px;
       font-size: 0.8rem;
-      color: var(--muted);
-      transform: translateY(100%);
-      transition: transform 0.3s;
+      color: #fff;
     }
-    .g-item:hover .g-caption { transform: translateY(0); }
 
     /* ─── TESTIMONIALS ─────────────────────────────────────────────── */
     #testimonials {
@@ -816,13 +773,8 @@
         grid-column: span 2;
       }
 
-      .gallery-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-      .gallery-grid .g-item:first-child,
-      .gallery-grid .g-item:nth-child(4) {
-        grid-column: span 2;
-      }
+      .gallery-grid { grid-template-columns: 1fr 1fr; }
+      .gallery-grid .g-item:first-child { grid-column: span 2; }
     }
 
     @media (max-width: 600px) {
@@ -833,10 +785,7 @@
       .footer-grid > div:first-child { grid-column: auto; }
       .cta-inner { padding: 48px 24px; }
       .gallery-grid { grid-template-columns: 1fr; }
-      .gallery-grid .g-item:first-child,
-      .gallery-grid .g-item:nth-child(4) {
-        grid-column: auto;
-      }
+      .gallery-grid .g-item:first-child { grid-column: auto; }
     }
 
     /* ─── ARCHES & APP SECTION ──────────────────────────────── */
@@ -1296,40 +1245,24 @@
       </div>
       <div class="gallery-grid">
         <div class="g-item fade-in">
-          <div class="g-placeholder">
-            <div class="g-house">🏡</div>
-            <div class="g-glow-bar" style="width:90%"></div>
-            <div class="g-glow-bar" style="width:75%; opacity:0.5"></div>
-          </div>
-          <div class="g-caption">South Jordan,Warm White Roofline</div>
+          <img src="Resources/House%20Images/20251226_224806(0).jpg" alt="Warm white RGBW roofline on brick home at night">
+          <div class="g-caption">Warm White Roofline — Brick Two-Story</div>
         </div>
         <div class="g-item fade-in fade-delay-1">
-          <div class="g-placeholder">
-            <div class="g-house">🏘️</div>
-            <div class="g-glow-bar" style="width:80%;background:linear-gradient(90deg,transparent,#3b82f6,transparent)"></div>
-          </div>
-          <div class="g-caption">Draper,Blue Holiday Display</div>
+          <img src="Resources/House%20Images/20260130_223252.jpg" alt="Custom red and blue LED roofline at night">
+          <div class="g-caption">Custom Color Scene — Full Roofline</div>
+        </div>
+        <div class="g-item fade-in fade-delay-1">
+          <img src="Resources/House%20Images/20260131_233040.jpg" alt="Full warm white roofline install at night">
+          <div class="g-caption">Full Roofline Install — Warm White</div>
         </div>
         <div class="g-item fade-in fade-delay-2">
-          <div class="g-placeholder">
-            <div class="g-house">🏠</div>
-            <div class="g-glow-bar" style="width:70%;background:linear-gradient(90deg,transparent,#10b981,transparent)"></div>
-          </div>
-          <div class="g-caption">Sandy,Custom Color Scene</div>
+          <img src="Resources/House%20Images/20260131_164616.jpg" alt="Close-up of RGBW LED channel mounted on fascia">
+          <div class="g-caption">RGBW LED Channel — Fascia Mount</div>
         </div>
-        <div class="g-item fade-in fade-delay-1">
-          <div class="g-placeholder">
-            <div class="g-house" style="font-size:5rem">🏡</div>
-            <div class="g-glow-bar" style="width:85%;background:linear-gradient(90deg,transparent,#f59e0b,#ef4444,transparent)"></div>
-          </div>
-          <div class="g-caption">West Jordan,Patriotic 4th of July</div>
-        </div>
-        <div class="g-item fade-in fade-delay-3">
-          <div class="g-placeholder">
-            <div class="g-house">🏰</div>
-            <div class="g-glow-bar" style="width:75%;background:linear-gradient(90deg,transparent,#ef4444,transparent)"></div>
-          </div>
-          <div class="g-caption">Murray,Christmas Red &amp; Green</div>
+        <div class="g-item fade-in fade-delay-2">
+          <img src="Resources/House%20Images/20251227_072523.jpg" alt="LED roofline install detail">
+          <div class="g-caption">Roofline Install — Detail Shot</div>
         </div>
       </div>
     </div>

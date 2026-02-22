@@ -471,28 +471,19 @@
       background: var(--bg3);
       border: 1px solid var(--border);
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 12px;
+      cursor: pointer;
     }
     .ag-item:first-child { aspect-ratio: 16/9; }
-
-    .ag-icon { font-size: 3rem; filter: drop-shadow(0 0 16px rgba(200,146,30,0.5)); }
-    .ag-item:first-child .ag-icon { font-size: 5rem; }
+    .ag-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
+    .ag-item:hover img { transform: scale(1.04); }
     .ag-label {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
-      padding: 20px 16px 14px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%);
+      padding: 24px 16px 14px;
       font-size: 0.8rem;
-      color: var(--muted);
-      transform: translateY(100%);
-      transition: transform 0.3s;
+      color: #fff;
     }
-    .ag-item:hover .ag-label { transform: translateY(0); }
-    .ag-glow { height: 3px; border-radius: 2px; width: 70%; opacity: 0.6; }
 
     /* ─── FINAL CTA ──────────────────────────────────────── */
     #arch-cta { padding: 80px 0; }
@@ -818,29 +809,24 @@
       </div>
       <div class="arch-gallery-grid">
         <div class="ag-item fade-in">
-          <div class="ag-icon">🌈</div>
-          <div style="height:3px;width:85%;border-radius:2px;background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#3b82f6,#a855f7);opacity:0.7;"></div>
-          <div class="ag-label">Double LED Arch — Rainbow Scene</div>
+          <img src="Resources/House%20Images/20260130_223252.jpg" alt="Custom red and blue LED roofline at night">
+          <div class="ag-label">Custom Color Scene — Full Roofline</div>
         </div>
         <div class="ag-item fade-in fade-delay-1">
-          <div class="ag-icon">⭐</div>
-          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#c8921e,transparent);opacity:0.7;"></div>
-          <div class="ag-label">Star Props — Warm Gold</div>
+          <img src="Resources/House%20Images/20251226_224806(0).jpg" alt="Warm white RGBW roofline on brick home at night">
+          <div class="ag-label">Warm White Roofline — Brick Home</div>
         </div>
         <div class="ag-item fade-in fade-delay-2">
-          <div class="ag-icon">🎄</div>
-          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#22c55e,transparent);opacity:0.7;"></div>
-          <div class="ag-label">Arch — Christmas Scene</div>
+          <img src="Resources/House%20Images/20260131_233040.jpg" alt="Full warm white roofline install at night">
+          <div class="ag-label">Full Roofline Install — Warm White</div>
         </div>
         <div class="ag-item fade-in fade-delay-1">
-          <div class="ag-icon">🏈</div>
-          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#3b82f6,transparent);opacity:0.7;"></div>
-          <div class="ag-label">Arch + Pillars — Game Day Blue</div>
+          <img src="Resources/House%20Images/20260131_164616.jpg" alt="Close-up of RGBW LED channel mounted on fascia">
+          <div class="ag-label">RGBW LED Channel — Fascia Mount</div>
         </div>
         <div class="ag-item fade-in fade-delay-2">
-          <div class="ag-icon">🎃</div>
-          <div style="height:3px;width:70%;border-radius:2px;background:linear-gradient(90deg,transparent,#f97316,transparent);opacity:0.7;"></div>
-          <div class="ag-label">Star Props — Halloween Orange</div>
+          <img src="Resources/House%20Images/20251227_072523.jpg" alt="LED roofline install detail">
+          <div class="ag-label">Roofline Install — Detail Shot</div>
         </div>
       </div>
     </div>
