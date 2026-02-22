@@ -472,17 +472,24 @@
       border: 1px solid var(--border);
       position: relative;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .ag-item:first-child { aspect-ratio: 16/9; }
-    .ag-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
-    .ag-item:hover img { transform: scale(1.04); }
+    .ag-placeholder {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 60%, rgba(200,146,30,0.08) 0%, transparent 70%);
+    }
     .ag-label {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%);
-      padding: 24px 16px 14px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+      padding: 20px 16px 12px;
       font-size: 0.8rem;
-      color: #fff;
+      color: var(--muted);
+      text-align: center;
     }
 
     /* ─── FINAL CTA ──────────────────────────────────────── */
@@ -649,7 +656,7 @@
             Custom LED Arches<br>&amp; <span>Yard Props</span>
           </h1>
           <p class="hero-sub">
-            Pixel-addressable LED arches, star props, pillars, and custom yard displays — all running on the same controller as your roofline lights. One app. One system. Infinite possibilities.
+            Pixel-addressable LED arches, massive Christmas trees, and custom yard props — all running on the same controller as your roofline lights. One app. One system. Infinite possibilities.
           </p>
           <div class="hero-actions">
             <a href="index.html#cta" class="btn btn-primary">
@@ -707,56 +714,70 @@
 
         <div class="product-card fade-in fade-delay-1">
           <div class="product-visual">
-            <svg viewBox="0 0 240 220" fill="none" style="width:60%;max-width:180px;">
-              <!-- Star shape -->
-              <polygon points="120,20 132,85 195,85 144,124 163,190 120,152 77,190 96,124 45,85 108,85"
-                fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
-              <!-- LED dots on star points -->
-              <circle class="led-dot" cx="120" cy="22"  r="6"/>
-              <circle class="led-dot" cx="192" cy="87"  r="6"/>
-              <circle class="led-dot" cx="162" cy="188" r="6"/>
-              <circle class="led-dot" cx="78"  cy="188" r="6"/>
-              <circle class="led-dot" cx="48"  cy="87"  r="6"/>
-              <!-- Center glow -->
-              <circle cx="120" cy="110" r="20" fill="rgba(200,146,30,0.05)"/>
-              <ellipse cx="120" cy="215" rx="70" ry="4" fill="rgba(200,146,30,0.04)"/>
+            <div class="product-badge">Coming Soon</div>
+            <svg viewBox="0 0 200 240" fill="none" style="width:55%;max-width:160px;">
+              <!-- Tree tier 1 -->
+              <polygon points="100,15 155,90 45,90" fill="#0a1a0a" stroke="#1e3a1e" stroke-width="2"/>
+              <!-- Tree tier 2 -->
+              <polygon points="100,55 165,145 35,145" fill="#0d1f0d" stroke="#1e3a1e" stroke-width="2"/>
+              <!-- Tree tier 3 -->
+              <polygon points="100,100 175,200 25,200" fill="#102510" stroke="#1e3a1e" stroke-width="2"/>
+              <!-- Trunk -->
+              <rect x="87" y="200" width="26" height="22" rx="3" fill="#3d2006" stroke="#5a3010" stroke-width="1"/>
+              <!-- LED dots -->
+              <circle class="led-dot" cx="100" cy="22"  r="5"/>
+              <circle class="led-dot" cx="72"  cy="76"  r="4"/>
+              <circle class="led-dot" cx="130" cy="79"  r="4"/>
+              <circle class="led-dot" cx="52"  cy="130" r="4"/>
+              <circle class="led-dot" cx="100" cy="122" r="4"/>
+              <circle class="led-dot" cx="148" cy="133" r="4"/>
+              <circle class="led-dot" cx="38"  cy="180" r="4"/>
+              <circle class="led-dot" cx="78"  cy="175" r="4"/>
+              <circle class="led-dot" cx="122" cy="178" r="4"/>
+              <circle class="led-dot" cx="162" cy="183" r="4"/>
+              <ellipse cx="100" cy="228" rx="55" ry="4" fill="rgba(200,146,30,0.04)"/>
             </svg>
           </div>
           <div class="product-info">
-            <div class="product-name">Star Props</div>
-            <p class="product-desc">Large illuminated star displays with LED-outlined points. Stake them in your yard, line your driveway, or mount them on your home for a stunning seasonal display.</p>
+            <div class="product-name">LED Christmas Trees</div>
+            <p class="product-desc">Massive pixel-addressable outdoor Christmas trees with individually controlled LED branches. Choose any color, any pattern — all from the same app as your roofline.</p>
             <div class="product-specs">
-              <span class="spec-chip">Stake mount</span>
-              <span class="spec-chip">RGBW</span>
               <span class="spec-chip">Multiple sizes</span>
+              <span class="spec-chip">RGBW</span>
+              <span class="spec-chip">Weatherproof</span>
             </div>
           </div>
         </div>
 
         <div class="product-card fade-in fade-delay-2">
           <div class="product-visual">
-            <svg viewBox="0 0 200 220" fill="none" style="width:55%;max-width:160px;">
-              <!-- Pillar -->
-              <rect x="75" y="30" width="50" height="160" rx="6" fill="#1a1a1a" stroke="#2a2a2a" stroke-width="2"/>
-              <!-- Cap -->
-              <rect x="65" y="20" width="70" height="18" rx="4" fill="#222"/>
-              <rect x="65" y="188" width="70" height="18" rx="4" fill="#222"/>
-              <!-- LED rings -->
-              <circle class="led-dot" cx="100" cy="55"  r="5"/>
-              <circle class="led-dot" cx="100" cy="85"  r="5"/>
-              <circle class="led-dot" cx="100" cy="115" r="5"/>
-              <circle class="led-dot" cx="100" cy="145" r="5"/>
-              <circle class="led-dot" cx="100" cy="175" r="5"/>
-              <ellipse cx="100" cy="215" rx="50" ry="4" fill="rgba(200,146,30,0.05)"/>
+            <div class="product-badge">Coming Soon</div>
+            <svg viewBox="0 0 200 240" fill="none" style="width:55%;max-width:160px;">
+              <!-- Sphere top -->
+              <circle cx="100" cy="38" r="30" fill="#111" stroke="#222" stroke-width="2"/>
+              <!-- Pole -->
+              <rect x="92" y="65" width="16" height="148" rx="3" fill="#111" stroke="#222" stroke-width="2"/>
+              <!-- Stake point -->
+              <polygon points="92,208 108,208 100,232" fill="#111" stroke="#222" stroke-width="1"/>
+              <!-- LED dots on sphere -->
+              <circle class="led-dot" cx="100" cy="20"  r="5"/>
+              <circle class="led-dot" cx="74"  cy="34"  r="4"/>
+              <circle class="led-dot" cx="126" cy="34"  r="4"/>
+              <circle class="led-dot" cx="100" cy="56"  r="4"/>
+              <!-- LED dots on pole -->
+              <circle class="led-dot" cx="100" cy="95"  r="4"/>
+              <circle class="led-dot" cx="100" cy="135" r="4"/>
+              <circle class="led-dot" cx="100" cy="175" r="4"/>
+              <ellipse cx="100" cy="230" rx="40" ry="4" fill="rgba(200,146,30,0.04)"/>
             </svg>
           </div>
           <div class="product-info">
-            <div class="product-name">Illuminated Pillars</div>
-            <p class="product-desc">Tall LED pillars with color-ringed accents. Line your driveway entrance, flank your front door, or create a grand pathway effect for holidays and events.</p>
+            <div class="product-name">LED Yard Props</div>
+            <p class="product-desc">Custom pixel-addressable yard displays built to complement your roofline setup. Same app, same controller — a complete light show from roofline to lawn.</p>
             <div class="product-specs">
-              <span class="spec-chip">Driveway</span>
-              <span class="spec-chip">Pathway</span>
-              <span class="spec-chip">RGBW rings</span>
+              <span class="spec-chip">Yard stake</span>
+              <span class="spec-chip">RGBW</span>
+              <span class="spec-chip">App-controlled</span>
             </div>
           </div>
         </div>
@@ -809,24 +830,24 @@
       </div>
       <div class="arch-gallery-grid">
         <div class="ag-item fade-in">
-          <img src="Resources/House%20Images/20260130_223252.jpg" alt="Custom red and blue LED roofline at night">
-          <div class="ag-label">Custom Color Scene — Full Roofline</div>
+          <div class="ag-placeholder"></div>
+          <div class="ag-label">Custom Color Scene — Full Arch</div>
         </div>
         <div class="ag-item fade-in fade-delay-1">
-          <img src="Resources/House%20Images/20251226_224806(0).jpg" alt="Warm white RGBW roofline on brick home at night">
-          <div class="ag-label">Warm White Roofline — Brick Home</div>
+          <div class="ag-placeholder"></div>
+          <div class="ag-label">Warm White — Front Yard Display</div>
         </div>
         <div class="ag-item fade-in fade-delay-2">
-          <img src="Resources/House%20Images/20260131_233040.jpg" alt="Full warm white roofline install at night">
-          <div class="ag-label">Full Roofline Install — Warm White</div>
+          <div class="ag-placeholder"></div>
+          <div class="ag-label">Holiday Preset — Christmas</div>
         </div>
         <div class="ag-item fade-in fade-delay-1">
-          <img src="Resources/House%20Images/20260131_164616.jpg" alt="Close-up of RGBW LED channel mounted on fascia">
-          <div class="ag-label">RGBW LED Channel — Fascia Mount</div>
+          <div class="ag-placeholder"></div>
+          <div class="ag-label">RGB Color Chase — Arch Detail</div>
         </div>
         <div class="ag-item fade-in fade-delay-2">
-          <img src="Resources/House%20Images/20251227_072523.jpg" alt="LED roofline install detail">
-          <div class="ag-label">Roofline Install — Detail Shot</div>
+          <div class="ag-placeholder"></div>
+          <div class="ag-label">Patriotic Scene — Full Setup</div>
         </div>
       </div>
     </div>
