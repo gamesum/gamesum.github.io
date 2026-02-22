@@ -522,25 +522,63 @@
     #footer {
       background: #070b10;
       border-top: 1px solid var(--border);
-      padding: 40px 0;
+      padding: 64px 0 40px;
     }
-    .footer-simple {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 16px;
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
     }
     .footer-logo {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.2rem;
+      font-size: 1.5rem;
       font-weight: 900;
       color: #fff;
       letter-spacing: 0.06em;
       text-transform: uppercase;
+      margin-bottom: 16px;
     }
-    .footer-logo span { color: var(--accent); text-shadow: 0 0 16px rgba(200,146,30,0.6); }
+    .footer-logo span { color: var(--accent); text-shadow: 0 0 20px rgba(200,146,30,0.7), 0 0 40px rgba(200,146,30,0.3); }
+    .footer-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.8; margin-bottom: 24px; max-width: 280px; }
+    .social-links { display: flex; gap: 12px; }
+    .social-link {
+      width: 38px; height: 38px;
+      border-radius: 8px;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted);
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+    .social-link:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,146,30,0.08); }
+    .footer-col-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-links a { font-size: 0.875rem; color: var(--muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-contact { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-contact li { font-size: 0.875rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+    .footer-contact a { color: var(--muted); transition: color 0.2s; }
+    .footer-contact a:hover { color: var(--accent); }
+    .footer-bottom {
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex; flex-wrap: wrap; gap: 16px;
+      justify-content: space-between; align-items: center;
+    }
     .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 0.8rem; color: var(--muted); transition: color 0.2s; }
+    .footer-legal a:hover { color: var(--accent); }
 
     /* ─── RESPONSIVE ─────────────────────────────────────── */
     @media (max-width: 900px) {
@@ -552,12 +590,16 @@
       .nav-cta-hide { display: none; }
       .demo-split { grid-template-columns: 1fr; gap: 32px; }
       .pm-phone { margin: 0 auto; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .footer-grid > div:first-child { grid-column: span 2; }
     }
     @media (max-width: 600px) {
       .arch-gallery-grid { grid-template-columns: 1fr; }
       .arch-gallery-grid .ag-item:first-child { grid-column: auto; }
       .arch-cta-inner { padding: 48px 24px; }
-      .footer-simple { flex-direction: column; text-align: center; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-grid > div:first-child { grid-column: auto; }
+      .hero-arch-wrap svg { width: 85vw !important; max-width: none !important; }
     }
 
     /* ─── FIRMWARE APP DEMO ──────────────────────────────── */
@@ -792,7 +834,7 @@
       <div class="demo-header fade-in">
         <div class="section-label">Try It Live</div>
         <h2 class="section-title">The Actual Controller App</h2>
-        <p class="section-sub">This is a live preview of the 18 built-in holiday presets. Every effect shown here is the same one running on your arch — tap any card to see it animate.</p>
+        <p class="section-sub">This live preview includes some of the holiday and day-to-day presets you'll be able to use with your lights at home! These effect presets are used just like our easy-to-use app!</p>
       </div>
       <div class="demo-split fade-in fade-delay-1">
         <div class="demo-arch-col">
@@ -874,9 +916,70 @@
   <!-- ─── FOOTER ────────────────────────────────────────── -->
   <footer id="footer">
     <div class="container">
-      <div class="footer-simple">
-        <div class="footer-logo">AFTER<span>GLO</span></div>
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">AFTER<span>GLO</span></div>
+          <p class="footer-desc">South Jordan's premier permanent roofline LED lighting company. We design, install, and support smart lighting systems built to last a decade.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Google">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Products</h4>
+          <ul class="footer-links">
+            <li><a href="index.html#why">Permanent Roofline Lighting</a></li>
+            <li><a href="#products">LED Arches</a></li>
+            <li><a href="#products">LED Christmas Trees</a></li>
+            <li><a href="#products">LED Yard Props</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Service Areas</h4>
+          <ul class="footer-links">
+            <li><a href="index.html#cta">Salt Lake County</a></li>
+            <li><a href="index.html#cta">Davis County</a></li>
+            <li><a href="index.html#cta">Weber County</a></li>
+            <li><a href="index.html#cta">South Jordan</a></li>
+            <li><a href="index.html#cta">Draper &amp; Sandy</a></li>
+            <li><a href="index.html#cta">West Jordan &amp; Riverton</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Contact</h4>
+          <ul class="footer-contact">
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <a href="tel:+13853374144">(385) 337-4144</a>
+            </li>
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:wardlegacygroup@gmail.com">wardlegacygroup@gmail.com</a>
+            </li>
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              South Jordan, Utah 84095
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
         <p class="footer-copy">© 2026 Ward Legacy Group LLC. Afterglo is a division of Ward Legacy Group LLC. Licensed &amp; Insured in Utah.</p>
+        <div class="footer-legal">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
       </div>
     </div>
   </footer>
