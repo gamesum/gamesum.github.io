@@ -10,12 +10,14 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #444;
+    background: #2a2a2a;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    padding: 40px;
+    height: 100vh;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
   }
 
   .sign {
@@ -26,8 +28,10 @@
     position: relative;
     overflow: hidden;
     display: flex;
-    flex-direction: row;
-    align-items: stretch;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
   }
 
   /* ── background glow ── */
@@ -36,159 +40,135 @@
     inset: 0;
     pointer-events: none;
   }
-  .bg-glow-left {
+  .bg-glow-center {
     position: absolute;
-    top: 50%; left: 25%;
+    top: 42%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 10in; height: 10in;
-    background: radial-gradient(ellipse, rgba(200,146,30,0.09) 0%, transparent 60%);
-  }
-  .bg-glow-right {
-    position: absolute;
-    top: 50%; left: 72%;
-    transform: translate(-50%, -50%);
-    width: 9in; height: 9in;
-    background: radial-gradient(ellipse, rgba(200,146,30,0.055) 0%, transparent 60%);
+    width: 16in; height: 10in;
+    background: radial-gradient(ellipse, rgba(200,146,30,0.10) 0%, transparent 55%);
   }
 
-  /* ── corner marks ── */
-  .sign::before, .sign::after,
-  .corner-br, .corner-bl {
+  /* ── gold border ── */
+  .sign::before {
     content: '';
     position: absolute;
-    width: 0.28in;
-    height: 0.28in;
-    border-color: rgba(200,146,30,0.3);
-    border-style: solid;
-    z-index: 10;
+    inset: 0.18in;
+    border: 2px solid rgba(200,146,30,0.30);
+    pointer-events: none;
+    z-index: 5;
   }
-  .sign::before { top: 0.2in;    left: 0.2in;   border-width: 1.5px 0 0 1.5px; }
-  .sign::after  { top: 0.2in;    right: 0.2in;  border-width: 1.5px 1.5px 0 0; }
-  .corner-br    { bottom: 0.2in; right: 0.2in;  border-width: 0 1.5px 1.5px 0; }
-  .corner-bl    { bottom: 0.2in; left: 0.2in;   border-width: 0 0 1.5px 1.5px; }
 
-  /* ── LEFT PANEL — brand ── */
-  .left {
-    width: 7.8in;
-    flex-shrink: 0;
+  /* ── main layout stack ── */
+  .content {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.7in 0.75in 0.7in 0.8in;
-    position: relative;
-    z-index: 1;
-    gap: 0.22in;
+    width: 100%;
+    height: 100%;
+    padding: 0.55in 0.75in;
+    gap: 0;
   }
 
+  /* ── top tagline ── */
   .tagline-top {
-    font-size: 0.2in;
+    font-size: 0.26in;
     font-weight: 700;
-    letter-spacing: 0.32em;
+    letter-spacing: 0.38em;
     text-transform: uppercase;
-    color: rgba(200,146,30,0.7);
+    color: rgba(200,146,30,0.75);
+    margin-bottom: 0.15in;
   }
 
+  /* ── logo ── */
   .logo {
-    font-size: 2.05in;
+    font-size: 2.7in;
     font-weight: 900;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: #fff;
-    line-height: 1;
+    line-height: 0.88;
+    white-space: nowrap;
   }
   .logo span {
     color: #c8921e;
     text-shadow:
-      0 0 0.18in rgba(200,146,30,1),
-      0 0 0.38in rgba(200,146,30,0.6),
-      0 0 0.65in rgba(200,146,30,0.3);
+      0 0 0.15in rgba(200,146,30,1),
+      0 0 0.35in rgba(200,146,30,0.55),
+      0 0 0.6in rgba(200,146,30,0.25);
   }
 
+  /* ── decorative rule under logo ── */
   .logo-rule {
-    width: 100%;
-    height: 1.5px;
-    background: linear-gradient(90deg, transparent 0%, #c8921e 25%, #c8921e 75%, transparent 100%);
-    opacity: 0.5;
+    width: 14in;
+    height: 2px;
+    background: linear-gradient(90deg, transparent 0%, rgba(200,146,30,0.5) 15%, #c8921e 40%, #c8921e 60%, rgba(200,146,30,0.5) 85%, transparent 100%);
+    margin-top: 0.22in;
+    margin-bottom: 0.18in;
   }
 
+  /* ── three-word tagline ── */
   .sub-text {
-    font-size: 0.18in;
+    font-size: 0.24in;
     font-weight: 700;
-    letter-spacing: 0.22em;
+    letter-spacing: 0.30em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.4);
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 0.42in;
   }
 
-  /* ── DIVIDER ── */
-  .divider {
-    width: 1.5px;
-    margin: 0.55in 0;
-    background: linear-gradient(180deg, transparent 0%, rgba(200,146,30,0.45) 20%, rgba(200,146,30,0.45) 80%, transparent 100%);
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ── RIGHT PANEL — call to action ── */
-  .right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 0.7in 0.8in 0.7in 0.75in;
-    position: relative;
-    z-index: 1;
-    gap: 0.3in;
-  }
-
+  /* ── headline slogan ── */
   .headline {
-    font-size: 0.98in;
+    font-size: 0.72in;
     font-weight: 900;
-    line-height: 1.05;
+    line-height: 1;
     color: #fff;
     text-transform: uppercase;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.03em;
     text-align: center;
+    margin-bottom: 0.28in;
   }
   .headline em {
-    display: block;
     color: #c8921e;
     font-style: normal;
     text-shadow:
-      0 0 0.14in rgba(200,146,30,0.9),
-      0 0 0.3in  rgba(200,146,30,0.45);
+      0 0 0.08in rgba(200,146,30,0.9),
+      0 0 0.22in rgba(200,146,30,0.4);
   }
 
-  .phone-block {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.1in;
+  /* ── bottom CTA ── */
+  .cta-rule {
+    width: 10in;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(200,146,30,0.30) 20%, rgba(200,146,30,0.30) 80%, transparent 100%);
+    margin-bottom: 0.22in;
   }
 
   .call-label {
-    font-size: 0.165in;
+    font-size: 0.20in;
     font-weight: 700;
-    letter-spacing: 0.28em;
+    letter-spacing: 0.30em;
     text-transform: uppercase;
-    color: rgba(255,255,255,0.35);
+    color: rgba(255,255,255,0.38);
+    margin-bottom: 0.08in;
   }
 
   .phone {
-    font-size: 0.72in;
+    font-size: 0.88in;
     font-weight: 900;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     color: #c8921e;
+    line-height: 1;
     text-shadow:
       0 0 0.1in rgba(200,146,30,0.8),
-      0 0 0.25in rgba(200,146,30,0.4);
+      0 0 0.28in rgba(200,146,30,0.35);
   }
 
   @media print {
-    body { background: none; padding: 0; display: block; }
-    .sign { box-shadow: none; }
+    body { background: none; padding: 0; display: block; height: auto; overflow: visible; }
+    .sign { box-shadow: none; zoom: 1 !important; transform: none !important; }
   }
 
   @page {
@@ -200,37 +180,42 @@
 <body>
 
 <div class="sign">
-  <!-- corner marks -->
-  <div class="corner-br"></div>
-  <div class="corner-bl"></div>
-
-  <!-- background glows -->
+  <!-- background glow -->
   <div class="bg-glow">
-    <div class="bg-glow-left"></div>
-    <div class="bg-glow-right"></div>
+    <div class="bg-glow-center"></div>
   </div>
 
-  <!-- LEFT: brand -->
-  <div class="left">
+  <!-- all content in a single flex column -->
+  <div class="content">
     <div class="tagline-top">Permanent LED Lighting</div>
     <div class="logo">AFTER<span>GLO</span></div>
     <div class="logo-rule"></div>
     <div class="sub-text">Permanent · Programmable · Professional</div>
+
+    <div class="headline">Your Home, <em>Your Way.</em></div>
+
+    <div class="cta-rule"></div>
+    <div class="call-label">Call or Text for a Free Quote</div>
+    <div class="phone">(385) 337-4144</div>
   </div>
-
-  <!-- divider -->
-  <div class="divider"></div>
-
-  <!-- RIGHT: headline + phone -->
-  <div class="right">
-    <div class="headline">Your Home,<br><em>Your Way.</em></div>
-    <div class="phone-block">
-      <div class="call-label">Call or Text for a Free Quote</div>
-      <div class="phone">(385) 337-4144</div>
-    </div>
-  </div>
-
 </div>
 
+<script>
+  (function() {
+    var GAP = 32;
+    var SW  = 18 * 96;
+    var SH  = 12 * 96;
+    function fit() {
+      var sign = document.querySelector('.sign');
+      var s = Math.min(
+        (window.innerWidth  - GAP) / SW,
+        (window.innerHeight - GAP) / SH
+      );
+      sign.style.zoom = String(Math.min(s, 1));
+    }
+    fit();
+    window.addEventListener('resize', fit);
+  })();
+</script>
 </body>
 </html>

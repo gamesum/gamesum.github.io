@@ -897,7 +897,7 @@
       pointer-events: none;
     }
 
-    .arch-canvas { width: 100%; max-width: 320px; display: block; }
+    .arch-canvas { width: 100%; aspect-ratio: 480 / 315; display: block; }
 
     .arch-props-row {
       display: flex;
@@ -1150,28 +1150,10 @@
         <div class="arch-visual fade-in">
           <div class="arch-scene">
             <!-- Canvas arch — 50 LEDs rendered via JS (mirrors visualizer rendering) -->
-            <canvas id="archCanvas" class="arch-canvas" width="320" height="210"></canvas>
+            <canvas id="archCanvas" class="arch-canvas" width="480" height="315"></canvas>
             <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch — same app, same controller</div>
           </div>
 
-          <!-- Prop cards -->
-          <div class="arch-props-row">
-            <div class="arch-prop-card">
-              <div class="arch-prop-icon">🌈</div>
-              <div class="arch-prop-name">Programmable Light Arches</div>
-              <div class="arch-prop-sub">Controlled from the same app</div>
-            </div>
-            <div class="arch-prop-card">
-              <div class="arch-prop-icon">🌲</div>
-              <div class="arch-prop-name">Massive Light Trees</div>
-              <div class="arch-prop-sub">Wow the neighbors</div>
-            </div>
-            <div class="arch-prop-card">
-              <div class="arch-prop-icon">🎵</div>
-              <div class="arch-prop-name">Music Light Shows</div>
-              <div class="arch-prop-sub">Set your lights to music</div>
-            </div>
-          </div>
         </div>
 
         <!-- Right: app mockup + feature list -->
@@ -1651,7 +1633,7 @@
       const N = 50;
 
       // 50 points along a true semicircle — matches real PEX arch shape
-      const cx = 160, cy = 185, r = 135;
+      const cx = 240, cy = 278, r = 203;
       const pts = Array.from({length: N}, (_, i) => {
         const angle = Math.PI - (i / (N - 1)) * Math.PI;
         return { x: cx + r * Math.cos(angle), y: cy - r * Math.sin(angle) };
@@ -1713,7 +1695,7 @@
       }
 
       function frame() {
-        ctx.clearRect(0, 0, 320, 210);
+        ctx.clearRect(0, 0, 480, 315);
 
         // 1. LED glow halos (screen blend — radiate outward, visible around tube)
         ctx.save();
@@ -1721,22 +1703,22 @@
         pts.forEach((p, i) => {
           const c = getLED(i);
           const s = alpha(i);
-          const og = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 14);
+          const og = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 21);
           og.addColorStop(0,    ha(c.g, 0.6*s));
           og.addColorStop(0.4,  ha(c.g, 0.22*s));
           og.addColorStop(1,    'rgba(0,0,0,0)');
           ctx.fillStyle = og;
-          ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 21, 0, Math.PI*2); ctx.fill();
         });
 
         // Ground glow from arch base
         const mid = getLED(25);
-        const gg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 110);
+        const gg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 165);
         gg.addColorStop(0,   ha(mid.g, 0.12));
         gg.addColorStop(0.5, ha(mid.g, 0.04));
         gg.addColorStop(1,   'rgba(0,0,0,0)');
         ctx.fillStyle = gg;
-        ctx.beginPath(); ctx.ellipse(cx, cy, 110, 8, 0, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(cx, cy, 165, 12, 0, 0, Math.PI*2); ctx.fill();
         ctx.restore();
 
         // 2. PEX tube — white semi-transparent, sits ON TOP of the glow halos
@@ -1744,11 +1726,11 @@
         ctx.lineCap = 'round';
         // Soft radiance around tube
         ctx.strokeStyle = 'rgba(220,228,255,0.10)';
-        ctx.lineWidth = 22;
+        ctx.lineWidth = 33;
         ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 0, false); ctx.stroke();
         // Tube core
         ctx.strokeStyle = 'rgba(215,220,235,0.15)';
-        ctx.lineWidth = 11;
+        ctx.lineWidth = 17;
         ctx.beginPath(); ctx.arc(cx, cy, r, Math.PI, 0, false); ctx.stroke();
         ctx.restore();
 
@@ -1759,7 +1741,7 @@
           const c = getLED(i);
           const s = alpha(i);
           ctx.fillStyle = ha(c.b, s);
-          ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI*2); ctx.fill();
+          ctx.beginPath(); ctx.arc(p.x, p.y, 3.75, 0, Math.PI*2); ctx.fill();
         });
         ctx.restore();
 
