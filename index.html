@@ -758,6 +758,68 @@
     .footer-legal a { font-size: 0.8rem; color: var(--muted); transition: color 0.2s; }
     .footer-legal a:hover { color: var(--accent); }
 
+    /* ─── LIGHTBOX ─────────────────────────────────────────────────── */
+    .lightbox-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+      padding: 24px;
+    }
+    .lightbox-overlay.open { display: flex; }
+    .lightbox-box {
+      position: relative;
+      max-width: min(90vw, 1100px);
+      max-height: 90vh;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: default;
+      box-shadow: 0 40px 120px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,146,30,0.2);
+      animation: lbIn 0.25s ease;
+    }
+    @keyframes lbIn {
+      from { opacity: 0; transform: scale(0.93); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .lightbox-box img {
+      display: block;
+      max-width: min(90vw, 1100px);
+      max-height: 85vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+    }
+    .lightbox-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(0deg, rgba(0,0,0,0.88) 0%, transparent 100%);
+      padding: 32px 20px 18px;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      width: 38px; height: 38px;
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 50%;
+      color: #fff;
+      font-size: 1.1rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .lightbox-close:hover { background: rgba(200,146,30,0.5); border-color: rgba(200,146,30,0.4); }
+
     /* ─── RESPONSIVE ───────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .nav-links, .nav-cta { display: none; }
@@ -1415,6 +1477,15 @@
     </div>
   </footer>
 
+  <!-- ─── LIGHTBOX ────────────────────────────────────────── -->
+  <div class="lightbox-overlay" id="lightboxOverlay">
+    <div class="lightbox-box" id="lightboxBox">
+      <img id="lightboxImg" src="" alt="">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+      <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+    </div>
+  </div>
+
   <!-- ─── JAVASCRIPT ───────────────────────────────────────── -->
   <script>
     // Navbar scroll effect
@@ -1873,5 +1944,36 @@
       <circle cx="64" cy="42" r="2" fill="#FFF"/>
     </symbol>
   </svg>
+
+  <script>
+    // ── Lightbox ──────────────────────────────────────────────────────
+    const lbOverlay = document.getElementById('lightboxOverlay');
+    const lbImg     = document.getElementById('lightboxImg');
+    const lbCaption = document.getElementById('lightboxCaption');
+    const lbBox     = document.getElementById('lightboxBox');
+
+    document.querySelectorAll('.g-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const img     = item.querySelector('img');
+        const caption = item.querySelector('.g-caption');
+        if (!img) return;
+        lbImg.src = img.src;
+        lbImg.alt = img.alt;
+        lbCaption.textContent = caption ? caption.textContent.trim() : '';
+        lbOverlay.classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+    });
+
+    lbOverlay.addEventListener('click', e => { if (e.target === lbOverlay) closeLB(); });
+    document.getElementById('lightboxClose').addEventListener('click', closeLB);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLB(); });
+    lbBox.addEventListener('click', e => e.stopPropagation());
+
+    function closeLB() {
+      lbOverlay.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+  </script>
 </body>
 </html>
