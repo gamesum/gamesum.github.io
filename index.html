@@ -1511,7 +1511,7 @@
           observer.unobserve(e.target);
         }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.05, rootMargin: '0px 0px 50px 0px' });
     fadeEls.forEach(el => observer.observe(el));
 
     // Scroll-driven snake — path built from real DOM measurements

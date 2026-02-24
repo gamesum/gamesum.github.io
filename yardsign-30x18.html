@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AFTERGLO — Yard Sign 18×12</title>
+<title>AFTERGLO — Yard Sign 30×18</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet" />
@@ -20,9 +20,14 @@
     overflow: hidden;
   }
 
+  .sign-wrap {
+    background: #000;
+    padding: 0.5in;
+  }
+
   .sign {
-    width: 18in;
-    height: 12in;
+    width: 30in;
+    height: 18in;
     background: #060a0f;
     font-family: 'Outfit', sans-serif;
     position: relative;
@@ -44,7 +49,7 @@
     position: absolute;
     top: 42%; left: 50%;
     transform: translate(-50%, -50%);
-    width: 16in; height: 10in;
+    width: 28in; height: 16in;
     background: radial-gradient(ellipse, rgba(200,146,30,0.10) 0%, transparent 55%);
   }
 
@@ -52,7 +57,7 @@
   .sign::before {
     content: '';
     position: absolute;
-    inset: 0.18in;
+    inset: 0.27in;
     border: 2px solid rgba(200,146,30,0.30);
     pointer-events: none;
     z-index: 5;
@@ -68,13 +73,35 @@
     justify-content: center;
     width: 100%;
     height: 100%;
-    padding: 0.55in 0.75in;
-    gap: 0;
+    padding: 0.75in 1in 5.25in;
+  }
+
+  /* ── group wrappers ── */
+  .top-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .brand-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bottom-group {
+    position: absolute;
+    bottom: 1.1in;
+    left: 0; right: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
   }
 
   /* ── top tagline ── */
   .tagline-top {
-    font-size: 0.26in;
+    font-size: 0.54in;
     font-weight: 700;
     letter-spacing: 0.38em;
     text-transform: uppercase;
@@ -84,7 +111,7 @@
 
   /* ── logo ── */
   .logo {
-    font-size: 2.7in;
+    font-size: 4.0in;
     font-weight: 900;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -95,59 +122,51 @@
   .logo span {
     color: #c8921e;
     text-shadow:
-      0 0 0.15in rgba(200,146,30,1),
-      0 0 0.35in rgba(200,146,30,0.55),
-      0 0 0.6in rgba(200,146,30,0.25);
+      0 0 0.22in rgba(200,146,30,1),
+      0 0 0.5in rgba(200,146,30,0.55),
+      0 0 0.9in rgba(200,146,30,0.25);
   }
 
   /* ── decorative rule under logo ── */
   .logo-rule {
-    width: 14in;
-    height: 2px;
+    width: 22in;
+    height: 3px;
     background: linear-gradient(90deg, transparent 0%, rgba(200,146,30,0.5) 15%, #c8921e 40%, #c8921e 60%, rgba(200,146,30,0.5) 85%, transparent 100%);
-    margin-top: 0.22in;
-    margin-bottom: 0.18in;
+    margin-top: 0.3in;
+    margin-bottom: 0.24in;
   }
 
   /* ── three-word tagline ── */
   .sub-text {
-    font-size: 0.24in;
+    font-size: 0.5in;
     font-weight: 700;
     letter-spacing: 0.30em;
     text-transform: uppercase;
     color: rgba(255,255,255,0.45);
-    margin-bottom: 0.42in;
   }
 
   /* ── headline slogan ── */
   .headline {
-    font-size: 0.72in;
+    font-size: 1.5in;
     font-weight: 900;
     line-height: 1;
     color: #fff;
     text-transform: uppercase;
     letter-spacing: 0.03em;
     text-align: center;
-    margin-bottom: 0.28in;
+    margin-top: 0.45in;
   }
   .headline em {
     color: #c8921e;
     font-style: normal;
     text-shadow:
-      0 0 0.08in rgba(200,146,30,0.9),
-      0 0 0.22in rgba(200,146,30,0.4);
+      0 0 0.12in rgba(200,146,30,0.9),
+      0 0 0.33in rgba(200,146,30,0.4);
   }
 
-  /* ── bottom CTA ── */
-  .cta-rule {
-    width: 10in;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(200,146,30,0.30) 20%, rgba(200,146,30,0.30) 80%, transparent 100%);
-    margin-bottom: 0.22in;
-  }
-
+  /* ── CTA ── */
   .call-label {
-    font-size: 0.20in;
+    font-size: 0.42in;
     font-weight: 700;
     letter-spacing: 0.30em;
     text-transform: uppercase;
@@ -156,14 +175,14 @@
   }
 
   .phone {
-    font-size: 0.88in;
+    font-size: 2.25in;
     font-weight: 900;
-    letter-spacing: 0.05em;
-    color: #c8921e;
+    letter-spacing: 0.22em;
+    color: #fff;
     line-height: 1;
-    text-shadow:
-      0 0 0.1in rgba(200,146,30,0.8),
-      0 0 0.28in rgba(200,146,30,0.35);
+    text-align: center;
+    width: 100%;
+    text-shadow: none;
   }
 
   @media print {
@@ -172,46 +191,53 @@
   }
 
   @page {
-    size: 18in 12in landscape;
+    size: 30in 18in landscape;
     margin: 0;
   }
 </style>
 </head>
 <body>
 
+<div class="sign-wrap">
 <div class="sign">
   <!-- background glow -->
   <div class="bg-glow">
     <div class="bg-glow-center"></div>
   </div>
 
-  <!-- all content in a single flex column -->
   <div class="content">
-    <div class="tagline-top">Permanent LED Lighting</div>
-    <div class="logo">AFTER<span>GLO</span></div>
-    <div class="logo-rule"></div>
-    <div class="sub-text">Permanent · Programmable · Professional</div>
+    <!-- CENTER — brand -->
+    <div class="brand-group">
+      <div class="tagline-top">Permanent LED Lighting</div>
+      <div class="logo">AFTER<span>GLO</span></div>
+      <div class="logo-rule"></div>
+      <div class="sub-text">Permanent · Programmable · Professional</div>
+    </div>
 
+    <!-- MIDDLE — slogan -->
     <div class="headline">Your Home, <em>Your Way.</em></div>
 
-    <div class="cta-rule"></div>
-    <div class="call-label">Call or Text for a Free Quote</div>
-    <div class="phone">(385) 337-4144</div>
+    <!-- BOTTOM — CTA -->
+    <div class="bottom-group">
+      <div class="call-label">Call or Text for a Free Quote</div>
+      <div class="phone">(385) 337-4144</div>
+    </div>
   </div>
+</div>
 </div>
 
 <script>
   (function() {
     var GAP = 32;
-    var SW  = 18 * 96;
-    var SH  = 12 * 96;
+    var SW  = 30 * 96;
+    var SH  = 18 * 96;
     function fit() {
-      var sign = document.querySelector('.sign');
+      var wrap = document.querySelector('.sign-wrap');
       var s = Math.min(
-        (window.innerWidth  - GAP) / SW,
-        (window.innerHeight - GAP) / SH
+        (window.innerWidth  - GAP) / (SW + 96),
+        (window.innerHeight - GAP) / (SH + 96)
       );
-      sign.style.zoom = String(Math.min(s, 1));
+      wrap.style.zoom = String(Math.min(s, 1));
     }
     fit();
     window.addEventListener('resize', fit);
