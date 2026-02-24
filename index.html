@@ -1293,27 +1293,27 @@
       </div>
       <div class="gallery-grid">
         <div class="g-item fade-in">
-          <img src="Resources/House%20Images/20251226_224806(0).jpg" alt="Warm white RGBW roofline on brick home at night">
+          <img src="Resources/House%20Images/thumbs/20251226_224806(0).jpg" data-full="Resources/House%20Images/20251226_224806(0).jpg" alt="Warm white RGBW roofline on brick home at night">
           <div class="g-caption">Warm White Roofline — Brick Two-Story</div>
         </div>
         <div class="g-item g-vertical fade-in fade-delay-1">
-          <img src="Resources/House%20Images/20260131_164616.jpg" alt="Close-up of RGBW LED channel mounted on fascia">
+          <img src="Resources/House%20Images/thumbs/20260131_164616.jpg" data-full="Resources/House%20Images/20260131_164616.jpg" alt="Close-up of RGBW LED channel mounted on fascia">
           <div class="g-caption">RGBW LED Channel — Fascia Mount</div>
         </div>
         <div class="g-item fade-in fade-delay-1">
-          <img src="Resources/House%20Images/20260131_233040.jpg" alt="Full warm white roofline install at night">
+          <img src="Resources/House%20Images/thumbs/20260131_233040.jpg" data-full="Resources/House%20Images/20260131_233040.jpg" alt="Full warm white roofline install at night">
           <div class="g-caption">Full Roofline Install — Warm White</div>
         </div>
         <div class="g-item fade-in fade-delay-2">
-          <img src="Resources/House%20Images/20260130_223252.jpg" alt="Custom red and blue LED roofline at night">
+          <img src="Resources/House%20Images/thumbs/20260130_223252.jpg" data-full="Resources/House%20Images/20260130_223252.jpg" alt="Custom red and blue LED roofline at night">
           <div class="g-caption">Custom Color Scene — Full Roofline</div>
         </div>
         <div class="g-item fade-in fade-delay-2">
-          <img src="Resources/House%20Images/20251227_072523.jpg" alt="LED roofline install detail" style="object-position: center 35%;">
+          <img src="Resources/House%20Images/thumbs/20251227_072523.jpg" data-full="Resources/House%20Images/20251227_072523.jpg" alt="LED roofline install detail" style="object-position: center 35%;">
           <div class="g-caption">Roofline Install — Detail Shot</div>
         </div>
         <div class="g-item g-vertical fade-in fade-delay-3">
-          <img src="Resources/House%20Images/20260203_150434.jpg" alt="Daytime roofline LED channel install" style="object-position: center 35%;">
+          <img src="Resources/House%20Images/thumbs/20260203_150434.jpg" data-full="Resources/House%20Images/20260203_150434.jpg" alt="Daytime roofline LED channel install" style="object-position: center 35%;">
           <div class="g-caption">Clean Daytime Install — Eave Detail</div>
         </div>
       </div>
@@ -1939,7 +1939,7 @@
         const img     = item.querySelector('img');
         const caption = item.querySelector('.g-caption');
         if (!img) return;
-        lbImg.src = img.src;
+        lbImg.src = img.dataset.full || img.src;
         lbImg.alt = img.alt;
         lbCaption.textContent = caption ? caption.textContent.trim() : '';
         lbOverlay.classList.add('open');
