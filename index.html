@@ -238,6 +238,16 @@
       padding-top: var(--nav-h);
     }
 
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.15;
+      z-index: 0;
+    }
+
     .hero-bg {
       position: absolute;
       inset: 0;
@@ -245,7 +255,7 @@
         radial-gradient(ellipse 80% 60% at 50% 110%, rgba(200,146,30,0.18) 0%, transparent 65%),
         radial-gradient(ellipse 60% 50% at 20% 80%,  rgba(200,146,30,0.08) 0%, transparent 60%),
         linear-gradient(180deg, #080808 0%, #050508 100%);
-      z-index: 0;
+      z-index: 1;
     }
 
     /* Animated ambient orbs */
@@ -276,7 +286,7 @@
 
     .hero-content {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       text-align: center;
       max-width: 860px;
       padding: 48px 24px 0;
@@ -1052,6 +1062,9 @@
 
   <!-- ─── HERO ────────────────────────────────────────────── -->
   <section id="hero">
+    <video class="hero-video" autoplay muted loop playsinline>
+      <source src="Resources/House%20Images/housevid.mp4" type="video/mp4">
+    </video>
     <div class="hero-bg"></div>
     <div class="hero-content">
       <h1 class="hero-headline">
@@ -1323,6 +1336,18 @@
         <div class="g-item g-vertical fade-in fade-delay-3">
           <img src="Resources/House%20Images/thumbs/20260203_150434.jpg" data-full="Resources/House%20Images/20260203_150434.jpg" alt="Daytime roofline LED channel install" style="object-position: center 35%;">
           <div class="g-caption">Clean Daytime Install — Eave Detail</div>
+        </div>
+        <div class="g-item fade-in fade-delay-3">
+          <img src="Resources/House%20Images/thumbs/20260306_184759.jpg" data-full="Resources/House%20Images/20260306_184759.jpg" alt="LED roofline lighting at dusk">
+          <div class="g-caption">Roofline Lighting — Dusk View</div>
+        </div>
+        <div class="g-item g-vertical fade-in fade-delay-3">
+          <img src="Resources/House%20Images/thumbs/20260227_214611~2.jpg" data-full="Resources/House%20Images/20260227_214611~2.jpg" alt="LED roofline night shot">
+          <div class="g-caption">Night Roofline — Close Up</div>
+        </div>
+        <div class="g-item g-vertical fade-in fade-delay-3">
+          <img src="Resources/House%20Images/thumbs/20260227_220200~2.jpg" data-full="Resources/House%20Images/20260227_220200~2.jpg" alt="LED roofline detail night">
+          <div class="g-caption">Roofline Detail — Night</div>
         </div>
       </div>
     </div>
