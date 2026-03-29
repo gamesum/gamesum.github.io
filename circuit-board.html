@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Circuit Board — Design Schematics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #080808;
+      --bg2:     #0e0e0e;
+      --bg3:     #141414;
+      --accent:  #c8921e;
+      --accent2: #d4a843;
+      --silver:  #b8b8b8;
+      --text:    #e2e8f0;
+      --muted:   #94a3b8;
+      --border:  #222222;
+      --green:   #22c55e;
+      --radius:  12px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+
+    /* ── GRID OVERLAY ──────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(200,146,30,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,146,30,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── HERO ──────────────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      padding: 100px 24px 64px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      z-index: 1;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid rgba(200,146,30,0.35);
+      border-radius: 100px;
+      padding: 6px 16px;
+      margin-bottom: 28px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span { color: var(--accent); }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 48px;
+    }
+
+    /* ── STATUS BAR ────────────────────────────────────────────── */
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      flex-wrap: wrap;
+      padding: 20px 24px;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      z-index: 1;
+    }
+
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px var(--green);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── CONTAINER ─────────────────────────────────────────────── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── SECTION HEADER ────────────────────────────────────────── */
+    .section-header {
+      padding: 64px 0 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      font-size: 0.95rem;
+      color: var(--muted);
+      max-width: 560px;
+    }
+
+    /* ── DIAGRAMS GRID ─────────────────────────────────────────── */
+    .diagrams-section {
+      position: relative;
+      z-index: 1;
+      padding-bottom: 80px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .diagrams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .diagram-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .diagram-card:hover {
+      border-color: rgba(200,146,30,0.4);
+      transform: translateY(-2px);
+    }
+
+    .diagram-card img {
+      width: 100%;
+      display: block;
+      background: #111;
+    }
+
+    .diagram-card-body {
+      padding: 18px 20px;
+    }
+
+    .diagram-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .diagram-card-meta {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .diagram-badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+      margin-bottom: 10px;
+    }
+
+    .badge-schematic { background: rgba(200,146,30,0.15); color: var(--accent); border: 1px solid rgba(200,146,30,0.3); }
+    .badge-layout    { background: rgba(34,197,94,0.12);  color: var(--green);  border: 1px solid rgba(34,197,94,0.3); }
+    .badge-bom       { background: rgba(99,102,241,0.12); color: #818cf8;       border: 1px solid rgba(99,102,241,0.3); }
+    .badge-render    { background: rgba(56,189,248,0.12); color: #38bdf8;       border: 1px solid rgba(56,189,248,0.3); }
+
+    /* ── PLACEHOLDER CARD ──────────────────────────────────────── */
+    .diagram-placeholder {
+      background: var(--bg2);
+      border: 1px dashed #2a2a2a;
+      border-radius: var(--radius);
+      aspect-ratio: 4/3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      color: #333;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .diagram-placeholder:hover {
+      border-color: rgba(200,146,30,0.25);
+      color: #555;
+    }
+
+    .diagram-placeholder svg { opacity: 0.4; }
+    .diagram-placeholder span { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
+
+    /* ── QR SECTION ────────────────────────────────────────────── */
+    .qr-section {
+      position: relative;
+      z-index: 1;
+      padding: 80px 0;
+    }
+
+    .qr-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+
+    .qr-box {
+      background: #fff;
+      border-radius: 16px;
+      padding: 20px;
+      flex-shrink: 0;
+      box-shadow: 0 0 60px rgba(200,146,30,0.15);
+    }
+
+    #qrcode canvas, #qrcode img {
+      display: block;
+    }
+
+    .qr-info { flex: 1; min-width: 260px; }
+
+    .qr-info h3 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .qr-info p {
+      font-size: 0.95rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .qr-url {
+      font-family: 'Inter', monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+      background: rgba(200,146,30,0.08);
+      border: 1px solid rgba(200,146,30,0.2);
+      border-radius: 8px;
+      padding: 12px 16px;
+      word-break: break-all;
+      letter-spacing: 0.02em;
+    }
+
+    .qr-note {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: #444;
+    }
+
+    /* ── FOOTER ────────────────────────────────────────────────── */
+    footer {
+      position: relative;
+      z-index: 1;
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .footer-brand {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+
+    .footer-brand span { color: var(--accent); }
+
+    .footer-note {
+      font-size: 0.78rem;
+      color: #333;
+    }
+
+    @media (max-width: 640px) {
+      .qr-wrapper { flex-direction: column; align-items: flex-start; }
+      .status-bar { gap: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-tag">RIDGELINE — Internal Design Docs</div>
+    <h1>Circuit Board<br /><span>Schematics &amp; Diagrams</span></h1>
+    <p class="hero-sub">Wiring diagrams, PCB layouts, BOMs, and render references for the current board revision.</p>
+  </section>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-item">
+      <span class="status-dot"></span>
+      Active Development
+    </div>
+    <div class="status-item" style="color:#555">·</div>
+    <div class="status-item">Rev 1 — Circuit Board</div>
+    <div class="status-item" style="color:#555">·</div>
+    <div class="status-item">gamesum.github.io / circuit-board</div>
+  </div>
+
+  <!-- DIAGRAMS -->
+  <section class="diagrams-section">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-label">Design Files</div>
+        <h2 class="section-title">Diagrams &amp; Schematics</h2>
+        <p class="section-desc">Upload diagrams below. Add <code style="color:var(--accent);background:rgba(200,146,30,0.08);padding:2px 6px;border-radius:4px;font-size:0.85em;">&lt;img&gt;</code> tags inside the grid to populate.</p>
+      </div>
+
+      <div class="diagrams-grid">
+
+        <!-- ── UPLOAD YOUR DIAGRAMS HERE ── -->
+        <!-- Example card (uncomment and fill in):
+        <div class="diagram-card">
+          <img src="your-schematic.png" alt="Main Schematic" />
+          <div class="diagram-card-body">
+            <div class="diagram-badge badge-schematic">Schematic</div>
+            <div class="diagram-card-title">Main Schematic</div>
+            <div class="diagram-card-meta">Rev 1 · Added March 2026</div>
+          </div>
+        </div>
+        -->
+
+        <!-- Placeholder slots -->
+        <div class="diagram-placeholder">
+          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
+          </svg>
+          <span>Schematic</span>
+        </div>
+
+        <div class="diagram-placeholder">
+          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <rect x="2" y="2" width="20" height="20" rx="2"/>
+            <path d="M7 7h.01M7 12h.01M7 17h.01M12 7h5M12 12h5M12 17h5"/>
+          </svg>
+          <span>PCB Layout</span>
+        </div>
+
+        <div class="diagram-placeholder">
+          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+          </svg>
+          <span>BOM</span>
+        </div>
+
+        <div class="diagram-placeholder">
+          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 8v4l3 3"/>
+          </svg>
+          <span>Render / 3D</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- QR CODE -->
+  <section class="qr-section">
+    <div class="container">
+      <div class="qr-wrapper">
+
+        <div class="qr-box">
+          <div id="qrcode"></div>
+        </div>
+
+        <div class="qr-info">
+          <div class="section-label">Direct Access</div>
+          <h3>Scan to Open This Page</h3>
+          <p>This QR code points directly to the URL — no redirect service, no expiration. It will work as long as the page is live.</p>
+          <div class="qr-url">https://gamesum.github.io/circuit-board.html</div>
+          <p class="qr-note">Print this code and attach it to the board, notebook, or enclosure for quick reference.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">RIDGELINE <span>/ AFTERGLO</span></div>
+    <div class="footer-note">Internal design reference — not publicly linked</div>
+  </footer>
+
+  <script>
+    new QRCode(document.getElementById("qrcode"), {
+      text: "https://gamesum.github.io/circuit-board.html",
+      width: 220,
+      height: 220,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.H
+    });
+  </script>
+
+</body>
+</html>
