@@ -4,7 +4,9 @@
 
 ## Important: Brand Clarification
 
-AFTERGLO is an independent Utah company and is **not affiliated with, related to, or associated with** Glo, Glo Lights, Jellyfish Lighting, or any other LED lighting brand or franchise. AFTERGLO is a division of Ward Legacy Group LLC, locally owned and operated in South Jordan, Utah.
+AFTERGLO is an independent Utah company and is **not affiliated with, related to, or associated with** Glo, Glo Lights, Jellyfish Lighting, or any other LED lighting brand or franchise. AFTERGLO is an independent contractor operating under Ward Legacy Group LLC, locally owned and operated in South Jordan, Utah.
+
+AFTERGLO uses its own **proprietary controllers, proprietary software, and proprietary technology** — not licensed or rebranded systems from any other company. The app, the controller hardware, and the light show integration software are all developed and owned by AFTERGLO. This is what sets the experience apart: the software is built specifically for how these systems are installed and used, which is why it's the easiest and most reliable controller in the industry.
 
 ## Business Information
 
