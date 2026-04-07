@@ -775,7 +775,8 @@
         Generate My Preview →
       </button>
     </form>
-    <p style="font-size:0.75rem;color:#4a5568;margin-top:14px;text-align:center;">No spam. Just your preview and an optional quote.</p>
+    <p style="font-size:0.7rem;color:#374151;margin-top:14px;text-align:center;">By submitting you agree to receive marketing communications from AFTERGLO. Unsubscribe at any time.</p>
+    <p style="text-align:center;margin-top:10px;"><a onclick="skipEmailGate()" style="font-size:0.8rem;color:#4a5568;cursor:pointer;text-decoration:underline;">No thanks, just show my preview</a></p>
   </div>
 </div>
 
@@ -1512,6 +1513,10 @@ function gateDownload() {
 }
 function closeEmailGate() {
   document.getElementById('emailGateModal').style.display = 'none';
+}
+function skipEmailGate() {
+  closeEmailGate();
+  downloadImage();
 }
 function submitEmailGate(e) {
   e.preventDefault();
