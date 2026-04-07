@@ -763,7 +763,6 @@
 <!-- ══ EMAIL GATE MODAL ══ -->
 <div id="emailGateModal" style="display:none;position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:24px;">
   <div style="background:#111;border:1px solid #2a2a2a;border-radius:20px;padding:40px 36px;max-width:420px;width:100%;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.8),0 0 0 1px rgba(200,146,30,0.15);">
-    <button onclick="closeEmailGate()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
     <div style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:900;color:#fff;margin-bottom:6px;">AFTER<span style="color:#c8921e;">GLO</span></div>
     <p style="font-size:0.95rem;color:#94a3b8;margin-bottom:28px;line-height:1.6;">Enter your email to unlock your live preview — and we'll send you a free quote based on what you design.</p>
     <form id="emailGateForm" onsubmit="submitEmailGate(event)" style="display:flex;flex-direction:column;gap:12px;">
@@ -776,7 +775,6 @@
       </button>
     </form>
     <p style="font-size:0.7rem;color:#374151;margin-top:14px;text-align:center;">By submitting you agree to receive marketing communications from AFTERGLO. Unsubscribe at any time.</p>
-    <p style="text-align:center;margin-top:10px;"><a onclick="skipEmailGate()" style="font-size:0.8rem;color:#4a5568;cursor:pointer;text-decoration:underline;">No thanks, just show my preview</a></p>
   </div>
 </div>
 
@@ -1513,10 +1511,6 @@ function gateDownload() {
 }
 function closeEmailGate() {
   document.getElementById('emailGateModal').style.display = 'none';
-}
-function skipEmailGate() {
-  closeEmailGate();
-  downloadImage();
 }
 function submitEmailGate(e) {
   e.preventDefault();
