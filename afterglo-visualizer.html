@@ -1517,8 +1517,32 @@ function submitEmailGate(e) {
   e.preventDefault();
   const email = document.getElementById('gateEmailInput').value.trim();
   if (!email) return;
-  // TODO: replace action with Mailchimp form action URL
-  // fetch(MAILCHIMP_URL, { method:'POST', body: new FormData(e.target) });
+
+  // Submit to Mailchimp via hidden iframe (avoids CORS, static-site safe)
+  const form = document.createElement('form');
+  form.action = 'https://afterglolighting.us16.list-manage.com/subscribe/post?u=67579948a42d6aaff8a733456&id=60e6851304&f_id=00f4c2e1f0';
+  form.method = 'POST';
+  form.target = 'mc_iframe';
+  form.style.display = 'none';
+
+  const emailInput = document.createElement('input');
+  emailInput.type = 'email';
+  emailInput.name = 'EMAIL';
+  emailInput.value = email;
+  form.appendChild(emailInput);
+
+  // Bot trap field (required by Mailchimp)
+  const trap = document.createElement('input');
+  trap.type = 'text';
+  trap.name = 'b_67579948a42d6aaff8a733456_60e6851304';
+  trap.tabIndex = -1;
+  trap.value = '';
+  form.appendChild(trap);
+
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+
   sessionStorage.setItem('ag_email_captured', '1');
   closeEmailGate();
   downloadImage();
@@ -1554,5 +1578,6 @@ document.addEventListener('keydown', e => {
 // Boot
 init();
 </script>
+<iframe name="mc_iframe" style="display:none;" title="mc"></iframe>
 </body>
 </html>
