@@ -255,8 +255,16 @@
       background:
         radial-gradient(ellipse 80% 60% at 50% 110%, rgba(200,146,30,0.18) 0%, transparent 65%),
         radial-gradient(ellipse 60% 50% at 20% 80%,  rgba(200,146,30,0.08) 0%, transparent 60%),
-        linear-gradient(180deg, rgba(8,8,8,0.75) 0%, rgba(5,5,8,0.75) 100%);
+        linear-gradient(180deg, rgba(8,8,8,0.55) 0%, rgba(5,5,8,0.55) 100%);
       z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+      .hero-bg {
+        background:
+          radial-gradient(ellipse 80% 60% at 50% 110%, rgba(200,146,30,0.12) 0%, transparent 65%),
+          linear-gradient(180deg, rgba(8,8,8,0.30) 0%, rgba(5,5,8,0.30) 100%);
+      }
     }
 
     /* Animated ambient orbs */
