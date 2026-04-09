@@ -1468,45 +1468,15 @@
           </div>
         </div>
 
-        <!-- Right: mock visualizer preview card -->
+        <!-- Right: visualizer preview images -->
         <div class="fade-in fade-delay-1" style="position:relative;">
-          <div style="border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg2);box-shadow:0 0 60px rgba(200,146,30,0.12);">
-            <!-- Fake toolbar -->
-            <div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
-              <span style="font-family:'Outfit',sans-serif;font-size:0.8rem;font-weight:700;color:var(--accent);letter-spacing:0.1em;text-transform:uppercase;">Light Visualizer</span>
-              <div style="display:flex;gap:6px;">
-                <div style="width:10px;height:10px;border-radius:50%;background:#ef4444;opacity:0.6;"></div>
-                <div style="width:10px;height:10px;border-radius:50%;background:#f59e0b;opacity:0.6;"></div>
-                <div style="width:10px;height:10px;border-radius:50%;background:#10b981;opacity:0.6;"></div>
-              </div>
-            </div>
-            <!-- Fake canvas area -->
-            <div style="position:relative;aspect-ratio:16/10;background:#0a0a14;display:flex;align-items:center;justify-content:center;overflow:hidden;">
-              <!-- Glow orbs to suggest lights on a house -->
-              <div style="position:absolute;top:28%;left:10%;width:80%;height:4px;background:linear-gradient(90deg,transparent 0%,rgba(255,228,160,0.9) 8%,rgba(255,228,160,0.9) 92%,transparent 100%);filter:blur(2px);box-shadow:0 0 18px 6px rgba(255,200,80,0.45);border-radius:4px;"></div>
-              <div style="position:absolute;top:28%;left:10%;width:80%;height:2px;background:linear-gradient(90deg,transparent,#ffe4a0,transparent);border-radius:2px;"></div>
-              <!-- Simulated house silhouette -->
-              <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:0.18;" viewBox="0 0 400 250" fill="none">
-                <polygon points="200,40 320,120 80,120" fill="#ffffff"/>
-                <rect x="120" y="120" width="160" height="100" fill="#ffffff"/>
-                <rect x="165" y="150" width="40" height="70" fill="#080808"/>
-                <rect x="130" y="135" width="30" height="25" fill="#080808"/>
-                <rect x="240" y="135" width="30" height="25" fill="#080808"/>
-              </svg>
-              <div style="position:relative;z-index:2;text-align:center;">
-                <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;color:rgba(255,228,160,0.7);margin-bottom:8px;text-shadow:0 0 20px rgba(255,200,80,0.8);">Your Home Here</div>
-                <div style="font-size:0.75rem;color:var(--muted);">Upload a photo to get started</div>
-              </div>
-            </div>
-            <!-- Fake bottom bar -->
-            <div style="padding:12px 18px;display:flex;gap:8px;justify-content:center;border-top:1px solid var(--border);">
-              <div style="padding:5px 12px;border-radius:6px;background:rgba(200,146,30,0.12);border:1px solid rgba(200,146,30,0.3);font-size:0.7rem;color:var(--accent);font-weight:600;">Warm White</div>
-              <div style="padding:5px 12px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:0.7rem;color:var(--muted);">Christmas</div>
-              <div style="padding:5px 12px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:0.7rem;color:var(--muted);">Rainbow</div>
-              <div style="padding:5px 12px;border-radius:6px;background:rgba(255,255,255,0.04);border:1px solid var(--border);font-size:0.7rem;color:var(--muted);">Custom</div>
+          <div style="border-radius:16px;overflow:hidden;border:1px solid var(--border);background:var(--bg2);box-shadow:0 0 60px rgba(200,146,30,0.12);aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;">
+            <div style="text-align:center;padding:40px;">
+              <div style="font-size:2.5rem;margin-bottom:16px;">💡</div>
+              <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;color:var(--text);margin-bottom:8px;">See It Live</div>
+              <div style="font-size:0.85rem;color:var(--muted);">Preview photos coming soon</div>
             </div>
           </div>
-          <!-- Floating badge -->
           <div style="position:absolute;top:-14px;right:-14px;background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;box-shadow:0 4px 20px rgba(200,146,30,0.5);">Free Tool</div>
         </div>
 
@@ -1619,17 +1589,17 @@
 
         <!-- Email signup -->
         <div style="margin-top:36px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.07);">
-          <p style="font-size:0.85rem;color:#64748b;margin-bottom:14px;letter-spacing:0.02em;">Get notified when we release new products, light show packages, and seasonal deals.</p>
+          <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:14px;letter-spacing:0.02em;">Get notified when we release new products, light show packages, and seasonal deals.</p>
           <form id="ctaEmailForm" onsubmit="submitCtaEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
             <input id="ctaEmailInput" type="email" placeholder="Your email address" required
-              style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:220px;transition:border-color 0.2s;"
-              onfocus="this.style.borderColor='rgba(200,146,30,0.5)'" onblur="this.style.borderColor='#2a2a2a'">
+              style="background:#1a1a1a;border:1px solid #555;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:220px;transition:border-color 0.2s;"
+              onfocus="this.style.borderColor='rgba(200,146,30,0.8)'" onblur="this.style.borderColor='#555'">
             <button type="submit" style="background:rgba(200,146,30,0.15);color:#c8921e;border:1px solid rgba(200,146,30,0.3);border-radius:8px;padding:12px 22px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;">
               Keep Me Posted
             </button>
           </form>
           <p id="ctaEmailThanks" style="display:none;font-size:0.85rem;color:#c8921e;margin-top:10px;">You're in! We'll be in touch.</p>
-          <p style="font-size:0.7rem;color:#374151;margin-top:10px;">By submitting your email you agree to receive marketing communications from AFTERGLO. We will never sell your information. Unsubscribe at any time.</p>
+          <p style="font-size:0.7rem;color:#64748b;margin-top:10px;">By submitting your email you agree to receive marketing communications from AFTERGLO. We will never sell your information. Unsubscribe at any time.</p>
         </div>
       </div>
     </div>
