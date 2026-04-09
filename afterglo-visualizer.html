@@ -625,20 +625,32 @@
           <button class="theme-btn" onclick="setTheme('rainbow',null,null,this)">
             <div class="theme-dot" style="background:linear-gradient(135deg,#f00,#f80,#ff0,#0f0,#00f,#80f)"></div>Rainbow
           </button>
+          <button class="theme-btn" onclick="setTheme('meteor',null,null,this)">
+            <div class="theme-dot" style="background:radial-gradient(circle at 30% 50%,#fff 0%,#0050c0 40%,#001040 100%)"></div>Meteor
+          </button>
+          <button class="theme-btn" onclick="setTheme('goldenglow',null,null,this)">
+            <div class="theme-dot" style="background:#0a0a0a;box-shadow:inset 0 0 8px #ffe4a0;border:1.5px solid #ffe4a088"></div>Golden Glow
+          </button>
         </div>
         <p class="theme-label" style="margin-top:10px">Holidays</p>
         <div class="theme-grid">
-          <button class="theme-btn" onclick="setTheme('twinkle','#ff3366','#cc0040',this)">
-            <div class="theme-dot" style="background:linear-gradient(135deg,#ff3366,#ff80aa)"></div>Valentine's
+          <button class="theme-btn" onclick="setTheme('christmas',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#ff0000 40%,#ffffff 40%,#ffffff 60%,#00aa00 60%)"></div>Christmas
           </button>
-          <button class="theme-btn" onclick="setTheme('fire','#ff6600','#882200',this)">
-            <div class="theme-dot" style="background:linear-gradient(135deg,#ff6600,#6600aa)"></div>Halloween
+          <button class="theme-btn" onclick="setTheme('valentinechase',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#ff0020 50%,#ff14d4 50%)"></div>Valentine's
+          </button>
+          <button class="theme-btn" onclick="setTheme('halloweenchase',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#00c800 33%,#ff8c00 33%,#ff8c00 66%,#800080 66%)"></div>Halloween
           </button>
           <button class="theme-btn" onclick="setTheme('patriotic',null,null,this)">
             <div class="theme-dot" style="background:linear-gradient(135deg,#ff2020 33%,#fff 33%,#fff 66%,#2255ff 66%)"></div>Patriotic
           </button>
-          <button class="theme-btn" onclick="setTheme('shimmer','#22d45e','#0a8a30',this)">
-            <div class="theme-dot" style="background:linear-gradient(135deg,#22d45e,#115e28)"></div>St. Patrick's
+          <button class="theme-btn" onclick="setTheme('stpatrickchase',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#00c800 50%,#ffffff 50%)"></div>St. Patrick's
+          </button>
+          <button class="theme-btn" onclick="setTheme('spring',null,null,this)">
+            <div class="theme-dot" style="background:linear-gradient(135deg,#00a028,#c80078,#7800c8,#0028c8)"></div>Spring
           </button>
         </div>
         <div class="color-picker-wrap">
@@ -699,7 +711,7 @@
         <button class="action-btn primary" onclick="startNewSpline()" id="btn-new-spline">+ New Spline</button>
         <button class="action-btn primary" onclick="gateDownload()" style="margin-top:4px;">✦ Generate Live Preview</button>
         <button class="action-btn secondary" onclick="undoLastRun()">↩ Undo Last Run</button>
-        <button class="action-btn danger" onclick="clearAll()">✕ Clear All</button>
+        <button class="action-btn danger" onclick="clearAll()">✕ Erase All Lights</button>
       </div>
     </details>
 
@@ -857,6 +869,39 @@ const MULTI_COLORS = [
   {hex:'#3b82f6',glow:'#1a40cc'},{hex:'#b44fff',glow:'#7a20cc'},
 ];
 
+// Spring chase palette — 52 entries matching firmware exactly
+// (10x dark-green → 3-step transition → 10x magenta → 10x purple → 10x blue, cycling)
+const SPRING_PALETTE = [
+  // 10 × dark green (0,160,40)
+  {bulb:'#00a028',glow:'#005014'},{bulb:'#00a028',glow:'#005014'},{bulb:'#00a028',glow:'#005014'},
+  {bulb:'#00a028',glow:'#005014'},{bulb:'#00a028',glow:'#005014'},{bulb:'#00a028',glow:'#005014'},
+  {bulb:'#00a028',glow:'#005014'},{bulb:'#00a028',glow:'#005014'},{bulb:'#00a028',glow:'#005014'},
+  {bulb:'#00a028',glow:'#005014'},
+  // 3-step transition green→magenta: (50,120,60),(100,80,80),(150,40,100)
+  {bulb:'#32783c',glow:'#193e1e'},{bulb:'#645050',glow:'#322828'},{bulb:'#962864',glow:'#4b1432'},
+  // 10 × dark magenta (200,0,120)
+  {bulb:'#c80078',glow:'#64003c'},{bulb:'#c80078',glow:'#64003c'},{bulb:'#c80078',glow:'#64003c'},
+  {bulb:'#c80078',glow:'#64003c'},{bulb:'#c80078',glow:'#64003c'},{bulb:'#c80078',glow:'#64003c'},
+  {bulb:'#c80078',glow:'#64003c'},{bulb:'#c80078',glow:'#64003c'},{bulb:'#c80078',glow:'#64003c'},
+  {bulb:'#c80078',glow:'#64003c'},
+  // 3-step transition magenta→purple: (180,0,140),(160,0,160),(140,0,180)
+  {bulb:'#b4008c',glow:'#5a0046'},{bulb:'#a000a0',glow:'#500050'},{bulb:'#8c00b4',glow:'#46005a'},
+  // 10 × dark purple (120,0,200)
+  {bulb:'#7800c8',glow:'#3c0064'},{bulb:'#7800c8',glow:'#3c0064'},{bulb:'#7800c8',glow:'#3c0064'},
+  {bulb:'#7800c8',glow:'#3c0064'},{bulb:'#7800c8',glow:'#3c0064'},{bulb:'#7800c8',glow:'#3c0064'},
+  {bulb:'#7800c8',glow:'#3c0064'},{bulb:'#7800c8',glow:'#3c0064'},{bulb:'#7800c8',glow:'#3c0064'},
+  {bulb:'#7800c8',glow:'#3c0064'},
+  // 3-step transition purple→blue: (90,10,200),(60,20,200),(30,30,200)
+  {bulb:'#5a0ac8',glow:'#2d0564'},{bulb:'#3c14c8',glow:'#1e0a64'},{bulb:'#1e1ec8',glow:'#0f0f64'},
+  // 10 × dark blue (0,40,200)
+  {bulb:'#0028c8',glow:'#001464'},{bulb:'#0028c8',glow:'#001464'},{bulb:'#0028c8',glow:'#001464'},
+  {bulb:'#0028c8',glow:'#001464'},{bulb:'#0028c8',glow:'#001464'},{bulb:'#0028c8',glow:'#001464'},
+  {bulb:'#0028c8',glow:'#001464'},{bulb:'#0028c8',glow:'#001464'},{bulb:'#0028c8',glow:'#001464'},
+  {bulb:'#0028c8',glow:'#001464'},
+  // 3-step transition blue→green: (0,70,160),(0,100,120),(0,130,80)
+  {bulb:'#0046a0',glow:'#002350'},{bulb:'#006478',glow:'#00323c'},{bulb:'#008250',glow:'#004128'},
+];
+
 // ════════════════════════════════════════════════════════════
 //  INIT
 // ════════════════════════════════════════════════════════════
@@ -882,7 +927,9 @@ function setTheme(pat, hex, glow, btn) {
     document.getElementById('colorPickerPreview').style.background = hex;
     runs.forEach(r => r.color = {...currentColor});
   }
-  if (pat !== 'solid' && !animating) {
+  const STATIC_PATTERNS = ['solid', 'goldenglow'];
+  const needsAnim = !STATIC_PATTERNS.includes(pat);
+  if (needsAnim && !animating) {
     animating = true;
     animToggleOn = true;
     document.getElementById('animToggle').classList.add('on');
@@ -1352,10 +1399,95 @@ function resolveColor(color, idx, runIdx, total, t) {
       { bulb:'#ffffff', glow:'#aaaacc' },
       { bulb:'#2255ff', glow:'#0033cc' },
     ];
-    // Three equal segments that chase across the run
     const pos = ((idx / Math.max(total - 1, 1)) * 3 + t * 0.6) % 3;
     return RWB[Math.floor(pos) % 3];
   }
+
+  // ── New firmware-matched effects ──────────────────────────────
+  if (pattern === 'goldenglow') {
+    // Static: repeating group of 6 — pos1 = bright warm white, pos0/2 = 5% warm white, rest dark
+    const pos = idx % 6;
+    if (pos === 1) return { bulb: '#ffffff', glow: '#ffe4a0' };
+    if (pos === 0 || pos === 2) return { bulb: '#ffe4a0', glow: '#ffb347' };
+    return { bulb: '#000000', glow: '#000000' };
+  }
+  if (pattern === 'christmas') {
+    // Firmware "Christmas Chase": Red×6+Red×4, White×2, Green×6+Green×4, White×2 = 20-LED period
+    // Simplified: Red×10, White×2, Green×6, White×2 repeating, chasing
+    const period = 20;
+    const offset = Math.floor(t * 18) % period;
+    const pos = (idx + offset) % period;
+    if (pos < 10) return { bulb: '#ff0000', glow: '#880000' };    // Red block
+    if (pos < 12) return { bulb: '#ffffff', glow: '#aaccff' };    // White gap
+    if (pos < 18) return { bulb: '#00aa00', glow: '#005500' };    // Green block
+    return { bulb: '#ffffff', glow: '#aaccff' };                  // White gap
+  }
+  if (pattern === 'valentinechase') {
+    // Firmware: Red×10 + DeepPink(255,20,147)×10 + LightPink(255,182,193)×10 = 30-LED period
+    const period = 30;
+    const offset = Math.floor(t * 18) % period;
+    const pos = (idx + offset) % period;
+    if (pos < 10) return { bulb: '#ff0000', glow: '#880000' };
+    if (pos < 20) return { bulb: '#ff1493', glow: '#8800a0' };
+    return { bulb: '#ffb6c1', glow: '#cc6070' };
+  }
+  if (pattern === 'halloweenchase') {
+    // Firmware: Green×10 + Orange(255,140,0)×10 + Purple(128,0,128)×10 = 30-LED period
+    const period = 30;
+    const offset = Math.floor(t * 18) % period;
+    const pos = (idx + offset) % period;
+    if (pos < 10) return { bulb: '#00c800', glow: '#005500' };
+    if (pos < 20) return { bulb: '#ff8c00', glow: '#884400' };
+    return { bulb: '#800080', glow: '#400040' };
+  }
+  if (pattern === 'stpatrickchase') {
+    // Green (0,200,0) × 10 + White × 10, chasing
+    const period = 20;
+    const offset = Math.floor(t * 18) % period;
+    const pos = (idx + offset) % period;
+    if (pos < 10) return { bulb: '#00c800', glow: '#005500' };
+    return { bulb: '#ffffff', glow: '#aaccff' };
+  }
+  if (pattern === 'spring') {
+    // 52-LED palette chasing — matches firmware Spring preset exactly
+    const period = SPRING_PALETTE.length;
+    const offset = Math.floor(t * 14) % period;
+    const pos = (idx + offset) % period;
+    return SPRING_PALETTE[pos];
+  }
+  if (pattern === 'meteor') {
+    // Shooting star: white-hot head, cubic blue trail, multiple instances per run
+    const SPACING = 0.36; // fraction of run between star heads
+    const TRAIL   = 0.22;
+    const HEAD_W  = 0.025;
+    const LEAD    = 0.04;
+    const headPos = ((t * 0.22 + runIdx * 0.15) % SPACING);
+    const ledNorm = idx / Math.max(total - 1, 1);
+    let d = ((headPos - (ledNorm % SPACING)) % SPACING + SPACING) % SPACING;
+    if (d > SPACING / 2) d -= SPACING;
+    let bright = 0;
+    if      (d < -LEAD)          bright = 0;
+    else if (d < 0)              { const q = (d + LEAD) / LEAD; bright = q * q; }
+    else if (d < HEAD_W)         bright = 1.0;
+    else if (d < HEAD_W + TRAIL) { const inv = 1 - (d - HEAD_W) / TRAIL; bright = inv * inv * inv; }
+    if (bright <= 0.002) return { bulb: '#000000', glow: '#000000' };
+    // Color: white core → dark blue (0,8,80) → medium blue (20,60,160) tail
+    let r, g, b;
+    if (d < HEAD_W) {
+      const blend = Math.max(0, d) / HEAD_W;
+      r = Math.round(255 * (1 - blend));
+      g = Math.round(255 - (255 - 8) * blend);
+      b = Math.round(80 + (255 - 80) * (1 - blend));
+    } else {
+      const tf = Math.min(1, (d - HEAD_W) / TRAIL);
+      r = Math.round(0  + 20 * tf);
+      g = Math.round(8  + 52 * tf);
+      b = Math.round(80 + 80 * tf);
+    }
+    const toH = n => Math.max(0, Math.min(255, Math.round(n * bright))).toString(16).padStart(2, '0');
+    return { bulb: `#${toH(r)}${toH(g)}${toH(b)}`, glow: '#001450' };
+  }
+
   if (color.hex === 'multi') {
     const c = MULTI_COLORS[(runIdx+idx) % MULTI_COLORS.length];
     return { bulb:c.hex, glow:c.glow };
@@ -1681,6 +1813,15 @@ function hslToHex(h,s,l){
   const f=n=>{const k=(n+h/30)%12;const c=l-a*Math.max(Math.min(k-3,9-k,1),-1);return Math.round(255*c).toString(16).padStart(2,'0');};
   return `#${f(0)}${f(8)}${f(4)}`;
 }
+
+// Ctrl+Z = undo last run (same as Undo button)
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+    e.preventDefault();
+    undoLastRun();
+    return;
+  }
+});
 
 // Escape commits run if ≥2 nodes, otherwise cancels draw
 document.addEventListener('keydown', e => {
