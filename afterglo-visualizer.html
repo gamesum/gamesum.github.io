@@ -597,7 +597,7 @@
           </button>
         </div>
         <div style="margin-top:8px; padding:8px; background:rgba(200,146,30,0.06); border-radius:7px; font-size:0.7rem; color:var(--muted); line-height:1.6;" id="toolHint">
-          Click to add nodes · Double-click to finish run · Right-click to cancel
+          Click a run to select it · Drag handles to reshape · Click "New Spline" to draw
         </div>
       </div>
     </details>
@@ -681,10 +681,23 @@
     </details>
 
 
+    <details class="panel-section" id="sec-run-edit" style="display:none;" open>
+      <summary><h3>✏️ Selected Run</h3></summary>
+      <div class="panel-section-body">
+        <div id="runEditInfo" style="font-size:0.72rem;color:var(--muted);margin-bottom:10px;"></div>
+        <div class="slider-row">
+          <label>LEDs on this run <span id="runLedCountVal">100</span></label>
+          <input type="range" id="runLedCount" min="4" max="500" value="100" oninput="updateRunLedCount()">
+        </div>
+        <button class="action-btn danger" onclick="deleteSelectedRun()">✕ Delete This Run</button>
+      </div>
+    </details>
+
     <details class="panel-section">
       <summary><h3>⚡ Actions</h3></summary>
       <div class="panel-section-body">
-        <button class="action-btn primary" onclick="gateDownload()">✦ Generate Live Preview</button>
+        <button class="action-btn primary" onclick="startNewSpline()" id="btn-new-spline">+ New Spline</button>
+        <button class="action-btn primary" onclick="gateDownload()" style="margin-top:4px;">✦ Generate Live Preview</button>
         <button class="action-btn secondary" onclick="undoLastRun()">↩ Undo Last Run</button>
         <button class="action-btn danger" onclick="clearAll()">✕ Clear All</button>
       </div>
@@ -816,6 +829,8 @@ let animToggleOn = false;
 let animFrame = null;
 let dragRunIdx = null, dragNodeIdx = null;
 let isDragging = false;
+let selectedRunIdx = null; // index of committed run currently selected, or null
+let drawingMode = false;   // true only while actively placing spline nodes
 
 let settings = { brightness: 90, glow: 7, bulbSize: 0, ledCount: 100, droop: 60 };
 let _offCanvas = null, _offCtx = null; // reusable offscreen canvas for soft edge masking
@@ -947,61 +962,101 @@ function getPos(e) {
   return { x: (e.clientX - r.left) / canvasW, y: (e.clientY - r.top) / canvasH };
 }
 
+// Minimum distance from point (px,py) to segment (ax,ay)-(bx,by), in pixels
+function distToSegment(px, py, ax, ay, bx, by) {
+  const dx = bx-ax, dy = by-ay;
+  const lenSq = dx*dx + dy*dy;
+  if (lenSq < 1e-9) return Math.hypot(px-ax, py-ay);
+  const t = Math.max(0, Math.min(1, ((px-ax)*dx + (py-ay)*dy) / lenSq));
+  return Math.hypot(px-(ax+t*dx), py-(ay+t*dy));
+}
+
+// Find nearest run index within pixelThreshold of pos (normalized), checking all segments
+function nearestRun(pos, pixelThreshold) {
+  let best = -1, bestDist = pixelThreshold;
+  const px = pos.x*canvasW, py = pos.y*canvasH;
+  runs.forEach((run, ri) => {
+    const pts = run.nodes;
+    if (pts.length === 1) {
+      const d = Math.hypot(px-pts[0].x*canvasW, py-pts[0].y*canvasH);
+      if (d < bestDist) { bestDist=d; best=ri; }
+    } else {
+      for (let i=0; i<pts.length-1; i++) {
+        const d = distToSegment(px,py, pts[i].x*canvasW,pts[i].y*canvasH, pts[i+1].x*canvasW,pts[i+1].y*canvasH);
+        if (d < bestDist) { bestDist=d; best=ri; }
+      }
+    }
+  });
+  return best;
+}
+
 let lastClickTime = 0;
 
 function onCanvasClick(e) {
   if (!img || isDragging) return;
-  // Suppress the click that fires right after dblclick
   const now = Date.now();
   if (now - lastClickTime < 350) return;
 
   const pos = getPos(e);
 
   if (tool === 'dot') {
-    // Single dot becomes a 1-node run (renders as one bulb)
-    runs.push({ nodes:[pos], color: {...currentColor}, settings: {...settings} });
+    runs.push({ nodes:[pos], color:{...currentColor}, settings:{...settings} });
     updateStats(); renderLights();
-  } else if (tool === 'spline') {
-    activeNodes.push(pos);
-    renderLights();
-    updateTip();
-  } else if (tool === 'erase') {
-    // Find nearest run and remove it
-    let best = -1, bestDist = 20/canvasW;
-    runs.forEach((run, ri) => {
-      run.nodes.forEach(n => {
-        const d = Math.hypot(n.x-pos.x, n.y-pos.y)*canvasW;
-        if (d < 20 && d < bestDist*canvasW) { bestDist=d/canvasW; best=ri; }
-      });
-    });
-    if (best>=0) { runs.splice(best,1); updateStats(); renderLights(); }
+    return;
   }
+
+  if (tool === 'erase') {
+    const best = nearestRun(pos, 25);
+    if (best >= 0) {
+      if (selectedRunIdx === best) selectedRunIdx = null;
+      else if (selectedRunIdx !== null && selectedRunIdx > best) selectedRunIdx--;
+      runs.splice(best, 1);
+      updateSelectedRunPanel(); updateStats(); renderLights();
+    }
+    return;
+  }
+
+  if (drawingMode) {
+    // Actively placing spline nodes
+    activeNodes.push(pos);
+    renderLights(); updateTip();
+    return;
+  }
+
+  // Click to select/deselect a committed run
+  const best = nearestRun(pos, 25);
+  selectedRunIdx = best >= 0 ? best : null;
+  updateSelectedRunPanel();
+  renderLights();
 }
 
 function onDblClick(e) {
   lastClickTime = Date.now();
-  if (tool !== 'spline' || activeNodes.length < 2) {
-    activeNodes = []; renderLights(); return;
+  if (!drawingMode || activeNodes.length < 2) {
+    activeNodes = []; drawingMode = false; renderLights(); updateTip(); return;
   }
-  // Commit run
+  // Commit run, auto-select it
+  const newIdx = runs.length;
   runs.push({ nodes:[...activeNodes], color:{...currentColor}, settings:{...settings} });
   activeNodes = [];
-  updateStats(); renderLights();
-  updateTip();
+  drawingMode = false;
+  selectedRunIdx = newIdx;
+  updateStats(); renderLights(); updateTip();
+  updateSelectedRunPanel();
 }
 
 function onRightClick(e) {
   e.preventDefault();
-  if (tool === 'spline' && activeNodes.length > 0) {
+  if (drawingMode && activeNodes.length > 0) {
     activeNodes.pop(); renderLights();
   }
 }
 
 function onMouseMove(e) {
   hoveredPos = getPos(e);
-  if (tool === 'spline' && activeNodes.length > 0) renderLights();
+  if (drawingMode && activeNodes.length > 0) renderLights();
 
-  // Move node drag
+  // Drag node handle (works regardless of active tool)
   if (dragRunIdx !== null) {
     isDragging = true;
     runs[dragRunIdx].nodes[dragNodeIdx] = hoveredPos;
@@ -1010,9 +1065,9 @@ function onMouseMove(e) {
 }
 
 function onMouseDown(e) {
-  if (tool !== 'move' || !img) return;
+  if (!img || drawingMode) return; // no dragging while placing nodes
   const pos = getPos(e);
-  let best = -1, bestNi = -1, bestD = 20;
+  let best = -1, bestNi = -1, bestD = 18;
   runs.forEach((run,ri) => {
     run.nodes.forEach((n,ni) => {
       const d = Math.hypot((n.x-pos.x)*canvasW, (n.y-pos.y)*canvasH);
@@ -1099,8 +1154,8 @@ function renderLights() {
     }
   });
 
-  // Draw active spline in-progress
-  if (activeNodes.length > 0) {
+  // Draw active spline in-progress (only when drawingMode)
+  if (drawingMode && activeNodes.length > 0) {
     // Draw node dots
     ictx.save();
     activeNodes.forEach((n, i) => {
@@ -1152,22 +1207,33 @@ function renderLights() {
     ictx.restore();
   }
 
-  // Move mode: show node handles on all runs
-  if (tool === 'move') {
-    ictx.save();
-    runs.forEach(run => {
-      run.nodes.forEach(n => {
-        ictx.beginPath();
-        ictx.arc(n.x*canvasW, n.y*canvasH, 5, 0, Math.PI*2);
-        ictx.fillStyle = 'rgba(200,146,30,0.5)';
-        ictx.fill();
-        ictx.strokeStyle = 'rgba(255,255,255,0.6)';
-        ictx.lineWidth = 1;
-        ictx.stroke();
-      });
+  // Always show node handles on all committed runs; highlight the selected one
+  ictx.save();
+  runs.forEach((run, ri) => {
+    const isSel = ri === selectedRunIdx;
+    // Draw dashed path outline for selected run
+    if (isSel && run.nodes.length > 1) {
+      ictx.beginPath();
+      ictx.moveTo(run.nodes[0].x*canvasW, run.nodes[0].y*canvasH);
+      for (let k=1; k<run.nodes.length; k++) ictx.lineTo(run.nodes[k].x*canvasW, run.nodes[k].y*canvasH);
+      ictx.strokeStyle = 'rgba(200,146,30,0.55)';
+      ictx.lineWidth = 2;
+      ictx.setLineDash([6,4]);
+      ictx.stroke();
+      ictx.setLineDash([]);
+    }
+    // Draw handles
+    run.nodes.forEach(n => {
+      ictx.beginPath();
+      ictx.arc(n.x*canvasW, n.y*canvasH, isSel ? 6 : 4, 0, Math.PI*2);
+      ictx.fillStyle = isSel ? 'rgba(200,146,30,0.95)' : 'rgba(200,146,30,0.45)';
+      ictx.fill();
+      ictx.strokeStyle = isSel ? 'rgba(255,255,255,0.9)' : 'rgba(255,255,255,0.45)';
+      ictx.lineWidth = 1.5;
+      ictx.stroke();
     });
-    ictx.restore();
-  }
+  });
+  ictx.restore();
 
   updateNightOverlay();
 }
@@ -1401,14 +1467,15 @@ function stopLoop() { if (animFrame) cancelAnimationFrame(animFrame); renderLigh
 //  TOOLS & SETTINGS
 // ════════════════════════════════════════════════════════════
 const TIPS = {
-  dot:    'Click to place a single LED bulb · Erase tool to remove',
-  spline: 'Click to add nodes along your roofline · Double-click to finish · Right-click removes last node',
-  erase:  'Click near any run to delete it',
+  dot:    'Click to place a single LED bulb',
+  spline: 'Click a run to select it · Drag handles to reshape · Click "New Spline" to draw',
+  erase:  'Click anywhere on a run to erase it',
   move:   'Drag the orange handles to reshape your light runs'
 };
 
 function setTool(t) {
   tool = t;
+  drawingMode = false;
   activeNodes = [];
   document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('btn-'+t).classList.add('active');
@@ -1416,10 +1483,26 @@ function setTool(t) {
   if (img) renderLights();
 }
 
+function startNewSpline() {
+  if (tool !== 'spline') {
+    tool = 'spline';
+    document.querySelectorAll('.tool-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('btn-spline').classList.add('active');
+  }
+  activeNodes = [];
+  drawingMode = true;
+  selectedRunIdx = null;
+  updateSelectedRunPanel();
+  updateTip();
+  if (img) renderLights();
+}
+
 function updateTip() {
   const el = document.getElementById('toolHint');
-  if (tool==='spline' && activeNodes.length > 0) {
+  if (drawingMode && activeNodes.length > 0) {
     el.textContent = `${activeNodes.length} node${activeNodes.length>1?'s':''} placed — double-click to finish, right-click to undo last`;
+  } else if (drawingMode) {
+    el.textContent = 'Click to place first node along your roofline';
   } else {
     el.textContent = TIPS[tool];
   }
@@ -1442,14 +1525,52 @@ function updateSettings() {
   settings.ledCount   = +document.getElementById('ledCount').value;
   document.getElementById('brightnessVal').textContent = settings.brightness+'%';
   document.getElementById('ledCountVal').textContent = settings.ledCount;
-  // Sync all existing runs so slider changes take effect immediately
-  runs.forEach(r => Object.assign(r.settings, settings));
+  // Sync brightness to all runs; ledCount is now per-run, only apply to new runs default
+  runs.forEach(r => { r.settings.brightness = settings.brightness; });
   renderLights();
   updateStats();
 }
 
-function clearAll() { runs=[]; activeNodes=[]; updateStats(); if(img) renderLights(); }
-function undoLastRun() { if(activeNodes.length>0){activeNodes=[];renderLights();}else if(runs.length>0){runs.pop();updateStats();renderLights();} }
+// Per-run panel
+function updateSelectedRunPanel() {
+  const sec = document.getElementById('sec-run-edit');
+  if (selectedRunIdx === null || selectedRunIdx >= runs.length) {
+    sec.style.display = 'none';
+    selectedRunIdx = null;
+    return;
+  }
+  sec.style.display = '';
+  const run = runs[selectedRunIdx];
+  document.getElementById('runEditInfo').textContent = `Run ${selectedRunIdx+1} of ${runs.length}`;
+  const lc = run.settings.ledCount;
+  document.getElementById('runLedCount').value = lc;
+  document.getElementById('runLedCountVal').textContent = lc;
+}
+
+function updateRunLedCount() {
+  if (selectedRunIdx === null || selectedRunIdx >= runs.length) return;
+  const val = +document.getElementById('runLedCount').value;
+  runs[selectedRunIdx].settings.ledCount = val;
+  document.getElementById('runLedCountVal').textContent = val;
+  updateStats(); renderLights();
+}
+
+function deleteSelectedRun() {
+  if (selectedRunIdx === null) return;
+  runs.splice(selectedRunIdx, 1);
+  selectedRunIdx = null;
+  updateSelectedRunPanel(); updateStats(); renderLights();
+}
+
+function clearAll() { runs=[]; activeNodes=[]; drawingMode=false; selectedRunIdx=null; updateSelectedRunPanel(); updateStats(); if(img) renderLights(); }
+function undoLastRun() {
+  if(activeNodes.length>0){activeNodes=[];drawingMode=false;renderLights();}
+  else if(runs.length>0){
+    if(selectedRunIdx===runs.length-1) selectedRunIdx=null;
+    runs.pop();
+    updateSelectedRunPanel(); updateStats(); renderLights();
+  }
+}
 
 function updateStats() {
   const totalLEDs = runs.reduce((s,r) => s + r.settings.ledCount, 0);
@@ -1502,7 +1623,7 @@ function submitLead(e) { e.preventDefault(); closeLeadForm(); alert("Thanks! We'
 
 // ── Email gate ──
 function gateDownload() {
-  if (sessionStorage.getItem('ag_email_captured')) {
+  if (sessionStorage.getItem('ag_ec_v2')) {
     downloadImage();
   } else {
     const m = document.getElementById('emailGateModal');
@@ -1542,7 +1663,7 @@ function submitEmailGate(e) {
   form.submit();
   document.body.removeChild(form);
 
-  sessionStorage.setItem('ag_email_captured', '1');
+  sessionStorage.setItem('ag_ec_v2', '1');
   closeEmailGate();
   downloadImage();
 }
@@ -1561,16 +1682,20 @@ function hslToHex(h,s,l){
   return `#${f(0)}${f(8)}${f(4)}`;
 }
 
-// Escape commits run if ≥2 nodes (same as double-click), otherwise just clears
+// Escape commits run if ≥2 nodes, otherwise cancels draw
 document.addEventListener('keydown', e => {
-  if (e.key === 'Escape' && tool === 'spline' && activeNodes.length > 0) {
+  if (e.key === 'Escape' && drawingMode) {
     if (activeNodes.length >= 2) {
+      const newIdx = runs.length;
       runs.push({ nodes:[...activeNodes], color:{...currentColor}, settings:{...settings} });
+      selectedRunIdx = newIdx;
       updateStats();
     }
     activeNodes = [];
+    drawingMode = false;
     if (img) renderLights();
     updateTip();
+    updateSelectedRunPanel();
   }
 });
 
