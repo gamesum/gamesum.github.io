@@ -1373,8 +1373,65 @@
     </div>
   </section>
 
-  <!-- ─── PRODUCTS / TECH ──────────────────────────────────── -->
-  <section id="tech">
+  <!-- ─── VISUALIZER TEASER ──────────────────────────────────── -->
+  <section id="visualizer-teaser" style="padding:96px 0;background:var(--bg);overflow:hidden;">
+    <div class="container">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;">
+
+        <!-- Left: text -->
+        <div class="fade-in">
+          <div class="section-label">Try Before You Buy</div>
+          <h2 class="section-title">See It On Your<br>Home First.</h2>
+          <p class="section-sub" style="margin-bottom:32px;">Upload a photo of your home, draw where you want the lights, and watch it come to life — warm white, full color, holiday mode. Takes 60 seconds and costs nothing.</p>
+          <a href="afterglo-visualizer.html" class="btn btn-primary" style="font-size:1rem;padding:16px 36px;">
+            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.64-6.36-1.42 1.42M5.05 18.95l-1.41 1.41M18.95 18.95l-1.41-1.41M5.05 5.05 3.64 3.64"/></svg>
+            Open the Visualizer
+          </a>
+          <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted);">
+              <svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Upload your own home photo
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted);">
+              <svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              16M+ color options &amp; holiday presets
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted);">
+              <svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              Download and share your preview
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: visualizer preview images -->
+        <div class="fade-in fade-delay-1" style="position:relative;">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(200,146,30,0.15);">
+            <div style="position:relative;overflow:hidden;border-radius:8px;">
+              <img src="visualizer-warmwhite.jpg" alt="Warm white permanent LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Warm White</div>
+            </div>
+            <div style="position:relative;overflow:hidden;border-radius:8px;">
+              <img src="visualizer-christmas.jpg" alt="Christmas red and green LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Christmas</div>
+            </div>
+            <div style="position:relative;overflow:hidden;border-radius:8px;">
+              <img src="visualizer-valentines.jpg" alt="Valentine's pink LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Valentine's</div>
+            </div>
+            <div style="position:relative;overflow:hidden;border-radius:8px;">
+              <img src="visualizer-patriotic.jpg" alt="Patriotic red white blue LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Patriotic</div>
+            </div>
+          </div>
+          <div style="position:absolute;top:-14px;right:-14px;background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;box-shadow:0 4px 20px rgba(200,146,30,0.5);">Free Tool</div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PRODUCTS / TECH (hidden) ───────────────────────────── -->
+  <section id="tech" style="display:none;">
     <div class="container">
       <div class="tech-inner">
         <div class="tech-visual fade-in">
@@ -1438,63 +1495,6 @@
     </div>
   </section>
 
-  <!-- ─── VISUALIZER TEASER ──────────────────────────────────── -->
-  <section id="visualizer-teaser" style="padding:96px 0;background:var(--bg);overflow:hidden;">
-    <div class="container">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;">
-
-        <!-- Left: text -->
-        <div class="fade-in">
-          <div class="section-label">Try Before You Buy</div>
-          <h2 class="section-title">See It On Your<br>Home First.</h2>
-          <p class="section-sub" style="margin-bottom:32px;">Upload a photo of your home, draw where you want the lights, and watch it come to life — warm white, full color, holiday mode. Takes 60 seconds and costs nothing.</p>
-          <a href="afterglo-visualizer.html" class="btn btn-primary" style="font-size:1rem;padding:16px 36px;">
-            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.64-6.36-1.42 1.42M5.05 18.95l-1.41 1.41M18.95 18.95l-1.41-1.41M5.05 5.05 3.64 3.64"/></svg>
-            Open the Visualizer
-          </a>
-          <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px;">
-            <div style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted);">
-              <svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              Upload your own home photo
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted);">
-              <svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              16M+ color options &amp; holiday presets
-            </div>
-            <div style="display:flex;align-items:center;gap:10px;font-size:0.875rem;color:var(--muted);">
-              <svg width="16" height="16" fill="none" stroke="var(--accent)" stroke-width="2" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-              Download and share your preview
-            </div>
-          </div>
-        </div>
-
-        <!-- Right: visualizer preview images -->
-        <div class="fade-in fade-delay-1" style="position:relative;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(200,146,30,0.15);">
-            <div style="position:relative;overflow:hidden;border-radius:8px;">
-              <img src="visualizer-warmwhite.jpg" alt="Warm white permanent LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Warm White</div>
-            </div>
-            <div style="position:relative;overflow:hidden;border-radius:8px;">
-              <img src="visualizer-christmas.jpg" alt="Christmas red and green LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Christmas</div>
-            </div>
-            <div style="position:relative;overflow:hidden;border-radius:8px;">
-              <img src="visualizer-valentines.jpg" alt="Valentine's pink LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Valentine's</div>
-            </div>
-            <div style="position:relative;overflow:hidden;border-radius:8px;">
-              <img src="visualizer-patriotic.jpg" alt="Patriotic red white blue LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-              <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Patriotic</div>
-            </div>
-          </div>
-          <div style="position:absolute;top:-14px;right:-14px;background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;box-shadow:0 4px 20px rgba(200,146,30,0.5);">Free Tool</div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
   <!-- ─── TESTIMONIALS ─────────────────────────────────────── -->
   <section id="testimonials">
     <div class="container">
@@ -1540,43 +1540,14 @@
     </div>
   </section>
 
-  <!-- ─── SERVICE AREAS ──────────────────────────────────────── -->
-  <section id="service-areas" style="padding:80px 0;background:var(--bg2);">
+  <!-- ─── SERVICE AREAS (compact — kept for search indexing) ──── -->
+  <div id="service-areas" style="padding:28px 0;background:var(--bg2);border-top:1px solid var(--border);">
     <div class="container">
-      <div class="fade-in" style="text-align:center;margin-bottom:48px;">
-        <div class="section-label">Where We Work</div>
-        <h2 class="section-title">Serving All of Utah — and Beyond</h2>
-        <p class="section-sub" style="margin:0 auto;text-align:center;">We're based in South Jordan but we install permanent LED lighting and Christmas light shows across the entire state. Can't find your city? Call us — we travel.</p>
-      </div>
-      <div class="fade-in" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;max-width:900px;margin:0 auto 32px;">
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">South Jordan</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Draper</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Sandy</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Riverton</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">West Jordan</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Herriman</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Bluffdale</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Salt Lake City</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Murray</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Midvale</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Cottonwood Heights</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Lehi</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Eagle Mountain</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Saratoga Springs</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">American Fork</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Provo</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Orem</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Bountiful</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Kaysville</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Layton</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Ogden</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">St. George</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Cedar City</div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;font-size:0.9rem;color:var(--text);font-weight:500;">Park City</div>
-      </div>
-      <p class="fade-in" style="text-align:center;font-size:0.9rem;color:var(--muted);">Don't see your city? <a href="tel:+13853374144" style="color:var(--accent);font-weight:600;">Call us</a> — we serve all of Utah and are willing to travel for the right project.</p>
+      <p style="text-align:center;font-size:0.78rem;color:var(--muted);line-height:1.9;max-width:780px;margin:0 auto;">
+        Serving all of Utah — <span style="color:var(--text);">South Jordan · Draper · Sandy · Riverton · West Jordan · Herriman · Bluffdale · Salt Lake City · Murray · Midvale · Cottonwood Heights · Lehi · Eagle Mountain · Saratoga Springs · American Fork · Provo · Orem · Bountiful · Kaysville · Layton · Ogden · St. George · Cedar City · Park City</span> — and beyond. <a href="tel:+13853374144" style="color:var(--accent);font-weight:600;white-space:nowrap;">Call us</a> if you don't see your city.
+      </p>
     </div>
-  </section>
+  </div>
 
   <!-- ─── PRICING / CTA BANNER ─────────────────────────────── -->
   <section id="cta">
