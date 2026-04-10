@@ -419,114 +419,6 @@
       filter: drop-shadow(0 0 6px rgba(200,146,30,0.8));
     }
 
-    /* ─── OPTION TAG ──────────────────────────────────────────────── */
-    .option-tag {
-      text-align: center;
-      font-size: 0.72rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--accent);
-      background: rgba(200,146,30,0.06);
-      border-top: 1px solid rgba(200,146,30,0.2);
-      border-bottom: 1px solid rgba(200,146,30,0.15);
-      padding: 14px;
-    }
-
-    /* ─── OPTION A: LIGHT FLASH ────────────────────────────────────── */
-    .flash-items {
-      max-width: 640px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    .flash-item {
-      font-family: 'Outfit', sans-serif;
-      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-      font-weight: 800;
-      color: rgba(255,255,255,0.08);
-      padding: 2px 0 18px 48px;
-    }
-    @keyframes lightOn {
-      0%   { color: rgba(255,255,255,0.08); text-shadow: none; }
-      12%  { color: #fff; text-shadow: 0 0 60px #fff, 0 0 120px rgba(200,146,30,0.9), 0 0 200px rgba(200,146,30,0.4); }
-      100% { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.12), 0 0 40px rgba(200,146,30,0.2); }
-    }
-    .flash-item.lit { animation: lightOn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-
-    /* ─── OPTION B: LIGHT SWEEP ────────────────────────────────────── */
-    .wipe-items {
-      max-width: 640px;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-    .wipe-item {
-      font-family: 'Outfit', sans-serif;
-      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
-      font-weight: 800;
-      padding: 2px 0 18px 48px;
-      position: relative;
-      display: block;
-    }
-    .wipe-base { color: rgba(255,255,255,0.08); }
-    .wipe-over {
-      position: absolute;
-      inset: 0;
-      padding: 2px 0 18px 48px;
-      color: #fff;
-      text-shadow: 0 0 30px rgba(200,146,30,0.5);
-      clip-path: inset(0 100% 0 0);
-      transition: clip-path 0.75s cubic-bezier(0.22, 1, 0.36, 1);
-      white-space: nowrap;
-    }
-    .wipe-item.wiped .wipe-over { clip-path: inset(0 0% 0 0); }
-
-    /* ─── OPTION C: PANEL FALL ─────────────────────────────────────── */
-    .why-fall-section { padding: 0 !important; }
-    .fall-stack { position: relative; }
-    .fall-slot { height: 50vh; position: relative; }
-    .fall-panel {
-      position: fixed;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 200;
-      transition: opacity 0.3s ease;
-    }
-    .fall-panel.fall-active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .fall-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 48px 72px;
-      text-align: center;
-      box-shadow: 0 0 80px rgba(0,0,0,0.8), 0 0 60px rgba(200,146,30,0.06);
-      transition: transform 0.55s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.4s ease;
-      transform: translateY(0);
-      width: min(580px, 88vw);
-    }
-    .fall-card span {
-      font-family: 'Outfit', sans-serif;
-      font-size: clamp(2.4rem, 7vw, 4.5rem);
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.02em;
-      display: block;
-    }
-    .fall-panel.fallen .fall-card {
-      transform: translateY(120vh) rotate(-3deg);
-      opacity: 0;
-    }
-
     /* ─── HOW IT WORKS ─────────────────────────────────────────────── */
     #how { padding: 96px 0; }
     .how-header { text-align: center; margin-bottom: 64px; }
@@ -1278,58 +1170,29 @@
     </div>
   </section>
 
-  <!-- ─── OPTION A: LIGHT FLASH ───────────────────────────── -->
-  <section id="why" class="why-section">
-    <div class="option-tag">Option A — Light Flash</div>
+  <!-- ─── WHY PERMANENT ────────────────────────────────────── -->
+  <section id="why">
     <div class="container">
       <div class="why-header fade-in">
         <div class="section-label">The Permanent Advantage</div>
         <h2 class="section-title" style="font-size: clamp(4rem, 10vw, 8rem); line-height: 1;">Never Again.</h2>
       </div>
       <div class="pain-list-wrap">
-        <div class="flash-items" id="flashItems">
-          <div class="flash-item">Frozen Fingers</div>
-          <div class="flash-item">Tangled Wires</div>
-          <div class="flash-item">Roof Climbs</div>
-          <div class="flash-item">Blown Bulbs</div>
-          <div class="flash-item">Yearly Cost</div>
-          <div class="flash-item">Same Boring Look</div>
+        <div class="pain-items" id="painItems">
+          <div class="pain-item">Frozen Fingers</div>
+          <div class="pain-item">Tangled Wires</div>
+          <div class="pain-item">Roof Climbs</div>
+          <div class="pain-item">Blown Bulbs</div>
+          <div class="pain-item">Yearly Cost</div>
+          <div class="pain-item">Same Boring Look</div>
+          <!-- Path built dynamically by JS based on real DOM measurements -->
+          <svg class="pain-snake" id="painSvg" aria-hidden="true">
+            <path id="painPath" fill="none" stroke="#c8921e" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round"/>
+            <circle id="painHead" cx="0" cy="0" r="5" fill="#f0b233" opacity="0"/>
+          </svg>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- ─── OPTION B: LIGHT SWEEP ───────────────────────────── -->
-  <section id="why-b" class="why-section">
-    <div class="option-tag">Option B — Light Sweep</div>
-    <div class="container">
-      <div class="why-header fade-in">
-        <div class="section-label">The Permanent Advantage</div>
-        <h2 class="section-title" style="font-size: clamp(4rem, 10vw, 8rem); line-height: 1;">Never Again.</h2>
-      </div>
-      <div class="pain-list-wrap">
-        <div class="wipe-items" id="wipeItems">
-          <div class="wipe-item"><span class="wipe-base">Frozen Fingers</span><span class="wipe-over">Frozen Fingers</span></div>
-          <div class="wipe-item"><span class="wipe-base">Tangled Wires</span><span class="wipe-over">Tangled Wires</span></div>
-          <div class="wipe-item"><span class="wipe-base">Roof Climbs</span><span class="wipe-over">Roof Climbs</span></div>
-          <div class="wipe-item"><span class="wipe-base">Blown Bulbs</span><span class="wipe-over">Blown Bulbs</span></div>
-          <div class="wipe-item"><span class="wipe-base">Yearly Cost</span><span class="wipe-over">Yearly Cost</span></div>
-          <div class="wipe-item"><span class="wipe-base">Same Boring Look</span><span class="wipe-over">Same Boring Look</span></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── OPTION C: PANEL FALL ────────────────────────────── -->
-  <section id="why-c" class="why-section why-fall-section">
-    <div class="option-tag" style="position:relative;z-index:10;">Option C — Panel Fall</div>
-    <div class="fall-stack" id="fallStack">
-      <div class="fall-slot"><div class="fall-panel"><div class="fall-card"><span>Frozen Fingers</span></div></div></div>
-      <div class="fall-slot"><div class="fall-panel"><div class="fall-card"><span>Tangled Wires</span></div></div></div>
-      <div class="fall-slot"><div class="fall-panel"><div class="fall-card"><span>Roof Climbs</span></div></div></div>
-      <div class="fall-slot"><div class="fall-panel"><div class="fall-card"><span>Blown Bulbs</span></div></div></div>
-      <div class="fall-slot"><div class="fall-panel"><div class="fall-card"><span>Yearly Cost</span></div></div></div>
-      <div class="fall-slot"><div class="fall-panel"><div class="fall-card"><span>Same Boring Look</span></div></div></div>
     </div>
   </section>
 
@@ -1675,6 +1538,7 @@
     </div>
   </section>
 
+
   <!-- ─── PRICING / CTA BANNER ─────────────────────────────── -->
   <section id="cta">
     <div class="container">
@@ -1840,67 +1704,101 @@
     }, { threshold: 0.05, rootMargin: '0px 0px 50px 0px' });
     fadeEls.forEach(el => observer.observe(el));
 
-    // ── OPTION A: Light Flash ─────────────────────────────────────
+    // Scroll-driven snake — path built from real DOM measurements
     (function() {
-      const container = document.getElementById('flashItems');
-      if (!container) return;
-      const items = Array.from(container.querySelectorAll('.flash-item'));
-      const n = items.length;
-      function update() {
-        const rect = container.getBoundingClientRect();
-        const winH = window.innerHeight;
-        const p = Math.max(0, Math.min(1, (winH * 0.7 - rect.top) / (rect.height + winH * 0.2)));
-        items.forEach((el, i) => {
-          if (p >= (i + 0.4) / n && !el.classList.contains('lit')) el.classList.add('lit');
+      const whySect  = document.getElementById('why');
+      const svg      = document.getElementById('painSvg');
+      const painPath = document.getElementById('painPath');
+      const painHead = document.getElementById('painHead');
+      const container= document.getElementById('painItems');
+      const painEls  = Array.from(container.querySelectorAll('.pain-item'));
+
+      let TOTAL = 0, midpoints = [];
+
+      function build() {
+        const cRect = container.getBoundingClientRect();
+        const W = cRect.width;
+        const H = cRect.height;
+
+        // Set SVG to match container in pixel space (no scaling distortion)
+        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+        svg.setAttribute('width', W);
+        svg.setAttribute('height', H);
+
+        // Measure the bottom of each word block in container-relative space
+        const ys = painEls.map(el => el.getBoundingClientRect().bottom - cRect.top);
+
+        let d = '';
+        ys.forEach((y, i) => {
+          const fromX = i % 2 === 0 ? 0 : W;
+          const toX   = i % 2 === 0 ? W : 0;
+          d += i === 0
+            ? `M ${fromX},${y} L ${toX},${y}`
+            : ` L ${fromX},${y} L ${toX},${y}`;
+        });
+
+        painPath.setAttribute('d', d);
+        TOTAL = painPath.getTotalLength();
+        painPath.style.strokeDasharray  = TOTAL;
+        painPath.style.strokeDashoffset = TOTAL;
+
+        // Compute midpoints from actual cumulative segment lengths
+        let cumLen = 0;
+        midpoints = ys.map((y, i) => {
+          if (i > 0) cumLen += Math.abs(y - ys[i - 1]); // vertical segment
+          const mid = cumLen + W / 2;                    // midpoint of horizontal run
+          cumLen += W;
+          return mid / TOTAL;
         });
       }
-      window.addEventListener('scroll', update, { passive: true });
-      document.fonts.ready.then(update);
-    })();
 
-    // ── OPTION B: Light Sweep ─────────────────────────────────────
-    (function() {
-      const container = document.getElementById('wipeItems');
-      if (!container) return;
-      const items = Array.from(container.querySelectorAll('.wipe-item'));
-      const n = items.length;
       function update() {
-        const rect = container.getBoundingClientRect();
+        if (!TOTAL) return;
+        const rect = container.getBoundingClientRect(); // measure the items, not the full section
         const winH = window.innerHeight;
-        const p = Math.max(0, Math.min(1, (winH * 0.7 - rect.top) / (rect.height + winH * 0.2)));
-        items.forEach((el, i) => {
-          if (p >= (i + 0.4) / n && !el.classList.contains('wiped')) el.classList.add('wiped');
-        });
-      }
-      window.addEventListener('scroll', update, { passive: true });
-      document.fonts.ready.then(update);
-    })();
+        // p=0 when first item top hits viewport center; p=1 when last item bottom hits viewport center
+        const p = Math.max(0, Math.min(1, (winH / 2 - rect.top) / rect.height));
 
-    // ── OPTION C: Panel Fall ──────────────────────────────────────
-    (function() {
-      const stack = document.getElementById('fallStack');
-      if (!stack) return;
-      const panels = Array.from(stack.querySelectorAll('.fall-panel'));
-      const n = panels.length;
-      function update() {
-        const rect = stack.getBoundingClientRect();
-        const winH = window.innerHeight;
-        const inSection = rect.top < 0 && rect.bottom > 0;
-        if (!inSection) {
-          panels.forEach(p => p.classList.remove('fall-active', 'fallen'));
-          return;
+        painPath.style.strokeDashoffset = TOTAL * (1 - p);
+
+        if (p > 0 && p < 1) {
+          const pt = painPath.getPointAtLength(TOTAL * p);
+          painHead.setAttribute('cx', pt.x);
+          painHead.setAttribute('cy', pt.y);
+          painHead.setAttribute('opacity', '1');
+        } else {
+          painHead.setAttribute('opacity', '0');
         }
-        const scrolled = -rect.top;
-        const slotH = winH * 0.5;
-        const idx = Math.min(n - 1, Math.max(0, Math.floor(scrolled / slotH)));
-        panels.forEach((p, i) => {
-          p.classList.remove('fall-active', 'fallen');
-          if (i < idx) p.classList.add('fallen');
-          else if (i === idx) p.classList.add('fall-active');
+
+        const ramp = 0.08;  // how quickly it fades in/out
+        const hold = 0.14;  // how long it stays white either side of midpoint
+        painEls.forEach((el, i) => {
+          const dist = p - midpoints[i];
+          let alpha;
+          if (dist < -(hold + ramp)) {
+            alpha = 0.1;                                            // upcoming: dim
+          } else if (dist < -hold) {
+            const t = (dist + hold + ramp) / ramp;                 // ramp up
+            alpha = 0.1 + t * 0.9;
+          } else if (dist < hold) {
+            alpha = 1.0;                                            // hold at white
+          } else if (dist < hold + ramp) {
+            const t = 1 - (dist - hold) / ramp;                    // ramp down
+            alpha = 0.1 + t * 0.9;
+          } else {
+            alpha = 0.32;                                           // struck: slightly visible
+          }
+          el.style.color = `rgba(255,255,255,${alpha.toFixed(2)})`;
         });
       }
-      window.addEventListener('scroll', update, { passive: true });
-      update();
+
+      // Wait for fonts so Outfit is loaded before measuring word positions
+      document.fonts.ready.then(() => { build(); update(); });
+      window.addEventListener('resize', () => { build(); update(); });
+      window.addEventListener('scroll', () => {
+        if (!TOTAL) build(); // lazy init if fonts were slow
+        update();
+      }, { passive: true });
     })();
 
     // Active nav link highlight on scroll
