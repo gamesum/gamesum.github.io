@@ -595,6 +595,8 @@
       border-radius: var(--radius);
       padding: 36px 32px;
       transition: border-color 0.3s;
+      display: flex;
+      flex-direction: column;
     }
     .testi-card:hover { border-color: rgba(200,146,30,0.25); }
 
@@ -606,6 +608,7 @@
       line-height: 1.8;
       margin-bottom: 28px;
       font-style: italic;
+      flex: 1;
     }
     .testi-quote::before { content: '"'; font-size: 3rem; color: var(--accent); line-height: 0; vertical-align: -1rem; margin-right: 4px; font-style: normal; }
 
@@ -1503,7 +1506,7 @@
       <div class="testi-grid">
         <div class="testi-card fade-in">
           <div class="stars">★★★★★</div>
-          <p class="testi-quote">So impressed with this company! Installers were professional and fun! The system installation is clean. I love how easy the interface is to use and the customization that it allows. The support they offered after installation was top notch!</p>
+          <p class="testi-quote">So impressed with this company! Installers were professional and fun! The system installation is clean. I love how easy the interface is to use and the customization that it allows. We had a small hiccup with using it but the support they offered after installation was top notch!</p>
           <div class="testi-author">
             <div class="testi-avatar">DL</div>
             <div>
@@ -1525,7 +1528,7 @@
         </div>
         <div class="testi-card fade-in fade-delay-2">
           <div class="stars">★★★★★</div>
-          <p class="testi-quote">This company did an amazing job on our lights. The app is so user friendly and the technician was really great at explaining how to use it. Very happy customer!</p>
+          <p class="testi-quote">This company did an amazing job on our lights. The app is so user friendly and the technician was really great to explain how to use it. Very happy customer!</p>
           <div class="testi-author">
             <div class="testi-avatar">MW</div>
             <div>
