@@ -419,6 +419,112 @@
       filter: drop-shadow(0 0 6px rgba(200,146,30,0.8));
     }
 
+    /* ─── OPTION TAG ──────────────────────────────────────────────── */
+    .option-tag {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: rgba(200,146,30,0.06);
+      border-top: 1px solid rgba(200,146,30,0.2);
+      border-bottom: 1px solid rgba(200,146,30,0.15);
+      padding: 14px;
+    }
+
+    /* ─── OPTION A: LIGHT FLASH ────────────────────────────────────── */
+    .flash-items {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .flash-item {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+      font-weight: 800;
+      color: rgba(255,255,255,0.08);
+      padding: 2px 0 18px 48px;
+    }
+    @keyframes lightOn {
+      0%   { color: rgba(255,255,255,0.08); text-shadow: none; }
+      12%  { color: #fff; text-shadow: 0 0 60px #fff, 0 0 120px rgba(200,146,30,0.9), 0 0 200px rgba(200,146,30,0.4); }
+      100% { color: #fff; text-shadow: 0 0 20px rgba(255,255,255,0.12), 0 0 40px rgba(200,146,30,0.2); }
+    }
+    .flash-item.lit { animation: lightOn 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+    /* ─── OPTION B: LIGHT SWEEP ────────────────────────────────────── */
+    .wipe-items {
+      max-width: 640px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .wipe-item {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.2rem, 5.5vw, 3.6rem);
+      font-weight: 800;
+      padding: 2px 0 18px 48px;
+      position: relative;
+      display: block;
+    }
+    .wipe-base { color: rgba(255,255,255,0.08); }
+    .wipe-over {
+      position: absolute;
+      inset: 0;
+      padding: 2px 0 18px 48px;
+      color: #fff;
+      text-shadow: 0 0 30px rgba(200,146,30,0.5);
+      clip-path: inset(0 100% 0 0);
+      transition: clip-path 0.75s cubic-bezier(0.22, 1, 0.36, 1);
+      white-space: nowrap;
+    }
+    .wipe-item.wiped .wipe-over { clip-path: inset(0 0% 0 0); }
+
+    /* ─── OPTION C: PANEL FALL ─────────────────────────────────────── */
+    .why-fall-section { padding: 0 !important; }
+    .fall-stack { position: relative; }
+    .fall-slot { height: 100vh; position: relative; }
+    .fall-panel {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      transition: transform 0.55s cubic-bezier(0.55, 0, 1, 0.45), opacity 0.45s ease;
+    }
+    .fall-panel::before {
+      content: 'Never Again.';
+      position: absolute;
+      top: 48px; left: 48px;
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 900;
+      color: rgba(255,255,255,0.03);
+      pointer-events: none;
+      user-select: none;
+    }
+    .fall-panel span {
+      font-family: 'Outfit', sans-serif;
+      font-size: clamp(2.8rem, 8vw, 6rem);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.02em;
+      text-align: center;
+      padding: 0 24px;
+    }
+    .fall-panel.fallen {
+      transform: translateY(110vh) rotate(-4deg);
+      opacity: 0;
+    }
+
     /* ─── HOW IT WORKS ─────────────────────────────────────────────── */
     #how { padding: 96px 0; }
     .how-header { text-align: center; margin-bottom: 64px; }
@@ -1170,29 +1276,58 @@
     </div>
   </section>
 
-  <!-- ─── WHY PERMANENT ────────────────────────────────────── -->
-  <section id="why">
+  <!-- ─── OPTION A: LIGHT FLASH ───────────────────────────── -->
+  <section id="why" class="why-section">
+    <div class="option-tag">Option A — Light Flash</div>
     <div class="container">
       <div class="why-header fade-in">
         <div class="section-label">The Permanent Advantage</div>
         <h2 class="section-title" style="font-size: clamp(4rem, 10vw, 8rem); line-height: 1;">Never Again.</h2>
       </div>
       <div class="pain-list-wrap">
-        <div class="pain-items" id="painItems">
-          <div class="pain-item">Frozen Fingers</div>
-          <div class="pain-item">Tangled Wires</div>
-          <div class="pain-item">Roof Climbs</div>
-          <div class="pain-item">Blown Bulbs</div>
-          <div class="pain-item">Yearly Cost</div>
-          <div class="pain-item">Same Boring Look</div>
-          <!-- Path built dynamically by JS based on real DOM measurements -->
-          <svg class="pain-snake" id="painSvg" aria-hidden="true">
-            <path id="painPath" fill="none" stroke="#c8921e" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round"/>
-            <circle id="painHead" cx="0" cy="0" r="5" fill="#f0b233" opacity="0"/>
-          </svg>
+        <div class="flash-items" id="flashItems">
+          <div class="flash-item">Frozen Fingers</div>
+          <div class="flash-item">Tangled Wires</div>
+          <div class="flash-item">Roof Climbs</div>
+          <div class="flash-item">Blown Bulbs</div>
+          <div class="flash-item">Yearly Cost</div>
+          <div class="flash-item">Same Boring Look</div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- ─── OPTION B: LIGHT SWEEP ───────────────────────────── -->
+  <section id="why-b" class="why-section">
+    <div class="option-tag">Option B — Light Sweep</div>
+    <div class="container">
+      <div class="why-header fade-in">
+        <div class="section-label">The Permanent Advantage</div>
+        <h2 class="section-title" style="font-size: clamp(4rem, 10vw, 8rem); line-height: 1;">Never Again.</h2>
+      </div>
+      <div class="pain-list-wrap">
+        <div class="wipe-items" id="wipeItems">
+          <div class="wipe-item"><span class="wipe-base">Frozen Fingers</span><span class="wipe-over">Frozen Fingers</span></div>
+          <div class="wipe-item"><span class="wipe-base">Tangled Wires</span><span class="wipe-over">Tangled Wires</span></div>
+          <div class="wipe-item"><span class="wipe-base">Roof Climbs</span><span class="wipe-over">Roof Climbs</span></div>
+          <div class="wipe-item"><span class="wipe-base">Blown Bulbs</span><span class="wipe-over">Blown Bulbs</span></div>
+          <div class="wipe-item"><span class="wipe-base">Yearly Cost</span><span class="wipe-over">Yearly Cost</span></div>
+          <div class="wipe-item"><span class="wipe-base">Same Boring Look</span><span class="wipe-over">Same Boring Look</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── OPTION C: PANEL FALL ────────────────────────────── -->
+  <section id="why-c" class="why-section why-fall-section">
+    <div class="option-tag" style="position:relative;z-index:10;">Option C — Panel Fall</div>
+    <div class="fall-stack" id="fallStack">
+      <div class="fall-slot"><div class="fall-panel"><span>Frozen Fingers</span></div></div>
+      <div class="fall-slot"><div class="fall-panel"><span>Tangled Wires</span></div></div>
+      <div class="fall-slot"><div class="fall-panel"><span>Roof Climbs</span></div></div>
+      <div class="fall-slot"><div class="fall-panel"><span>Blown Bulbs</span></div></div>
+      <div class="fall-slot"><div class="fall-panel"><span>Yearly Cost</span></div></div>
+      <div class="fall-slot"><div class="fall-panel"><span>Same Boring Look</span></div></div>
     </div>
   </section>
 
@@ -1538,15 +1673,6 @@
     </div>
   </section>
 
-  <!-- ─── SERVICE AREAS (compact — kept for search indexing) ──── -->
-  <div id="service-areas" style="padding:28px 0;background:var(--bg2);border-top:1px solid var(--border);">
-    <div class="container">
-      <p style="text-align:center;font-size:0.78rem;color:var(--muted);line-height:1.9;max-width:780px;margin:0 auto;">
-        Serving all of Utah — <span style="color:var(--text);">South Jordan · Draper · Sandy · Riverton · West Jordan · Herriman · Bluffdale · Salt Lake City · Murray · Midvale · Cottonwood Heights · Lehi · Eagle Mountain · Saratoga Springs · American Fork · Provo · Orem · Bountiful · Kaysville · Layton · Ogden · St. George · Cedar City · Park City</span> — and beyond. <a href="tel:+13853374144" style="color:var(--accent);font-weight:600;white-space:nowrap;">Call us</a> if you don't see your city.
-      </p>
-    </div>
-  </div>
-
   <!-- ─── PRICING / CTA BANNER ─────────────────────────────── -->
   <section id="cta">
     <div class="container">
@@ -1591,7 +1717,7 @@
       <div class="footer-grid">
         <div>
           <div class="footer-logo">AFTER<span>GLO</span></div>
-          <p class="footer-desc">Utah's premier permanent LED lighting and Christmas light show company. We design, install, and support roofline lighting, music-synchronized yard shows, arches, and props — statewide.</p>
+          <p class="footer-desc">Utah's premier permanent LED lighting and Christmas light show company. We design, install, and support roofline lighting, music-synchronized yard shows, arches, and props statewide.</p>
           <div class="social-links">
             <a href="https://www.instagram.com/afterglo_lighting_co/?utm_source=ig_web_button_share_sheet" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
               <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
@@ -1611,8 +1737,7 @@
             <li><a href="#why">Permanent Roofline Lighting</a></li>
             <li><a href="#lightshow">Christmas Light Shows</a></li>
             <li><a href="arches.html">Arches &amp; Yard Props</a></li>
-            <li><a href="#tech">Smart Controls</a></li>
-            <!-- <li><a href="#how">Installation</a></li> -->
+            <li><a href="afterglo-visualizer.html">Visualizer</a></li>
             <li><a href="#cta">Free Consultation</a></li>
           </ul>
         </div>
@@ -1620,12 +1745,12 @@
         <div>
           <h4 class="footer-col-title">Service Areas</h4>
           <ul class="footer-links">
-            <li><a href="#service-areas">All of Utah</a></li>
-            <li><a href="#service-areas">Salt Lake County</a></li>
-            <li><a href="#service-areas">Utah County</a></li>
-            <li><a href="#service-areas">Davis &amp; Weber County</a></li>
-            <li><a href="#service-areas">South Jordan &amp; Draper</a></li>
-            <li><a href="#service-areas">St. George &amp; Park City</a></li>
+            <li><a href="#cta">All of Utah</a></li>
+            <li><a href="#cta">Salt Lake County</a></li>
+            <li><a href="#cta">Utah County</a></li>
+            <li><a href="#cta">Davis &amp; Weber County</a></li>
+            <li><a href="#cta">South Jordan &amp; Draper</a></li>
+            <li><a href="#cta">St. George &amp; Park City</a></li>
           </ul>
         </div>
 
@@ -1713,101 +1838,46 @@
     }, { threshold: 0.05, rootMargin: '0px 0px 50px 0px' });
     fadeEls.forEach(el => observer.observe(el));
 
-    // Scroll-driven snake — path built from real DOM measurements
+    // ── OPTION A: Light Flash ─────────────────────────────────────
     (function() {
-      const whySect  = document.getElementById('why');
-      const svg      = document.getElementById('painSvg');
-      const painPath = document.getElementById('painPath');
-      const painHead = document.getElementById('painHead');
-      const container= document.getElementById('painItems');
-      const painEls  = Array.from(container.querySelectorAll('.pain-item'));
+      const items = document.querySelectorAll('.flash-item');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('lit'); });
+      }, { threshold: 0.4 });
+      items.forEach(el => obs.observe(el));
+    })();
 
-      let TOTAL = 0, midpoints = [];
+    // ── OPTION B: Light Sweep ─────────────────────────────────────
+    (function() {
+      const items = document.querySelectorAll('.wipe-item');
+      const obs = new IntersectionObserver((entries) => {
+        entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('wiped'); });
+      }, { threshold: 0.35, rootMargin: '0px 0px -60px 0px' });
+      items.forEach((el, i) => {
+        el.querySelector('.wipe-over').style.transitionDelay = `${i * 0.06}s`;
+        obs.observe(el);
+      });
+    })();
 
-      function build() {
-        const cRect = container.getBoundingClientRect();
-        const W = cRect.width;
-        const H = cRect.height;
-
-        // Set SVG to match container in pixel space (no scaling distortion)
-        svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-        svg.setAttribute('width', W);
-        svg.setAttribute('height', H);
-
-        // Measure the bottom of each word block in container-relative space
-        const ys = painEls.map(el => el.getBoundingClientRect().bottom - cRect.top);
-
-        let d = '';
-        ys.forEach((y, i) => {
-          const fromX = i % 2 === 0 ? 0 : W;
-          const toX   = i % 2 === 0 ? W : 0;
-          d += i === 0
-            ? `M ${fromX},${y} L ${toX},${y}`
-            : ` L ${fromX},${y} L ${toX},${y}`;
-        });
-
-        painPath.setAttribute('d', d);
-        TOTAL = painPath.getTotalLength();
-        painPath.style.strokeDasharray  = TOTAL;
-        painPath.style.strokeDashoffset = TOTAL;
-
-        // Compute midpoints from actual cumulative segment lengths
-        let cumLen = 0;
-        midpoints = ys.map((y, i) => {
-          if (i > 0) cumLen += Math.abs(y - ys[i - 1]); // vertical segment
-          const mid = cumLen + W / 2;                    // midpoint of horizontal run
-          cumLen += W;
-          return mid / TOTAL;
-        });
-      }
+    // ── OPTION C: Panel Fall ──────────────────────────────────────
+    (function() {
+      const slots  = document.querySelectorAll('#fallStack .fall-slot');
+      const panels = document.querySelectorAll('#fallStack .fall-panel');
 
       function update() {
-        if (!TOTAL) return;
-        const rect = container.getBoundingClientRect(); // measure the items, not the full section
-        const winH = window.innerHeight;
-        // p=0 when first item top hits viewport center; p=1 when last item bottom hits viewport center
-        const p = Math.max(0, Math.min(1, (winH / 2 - rect.top) / rect.height));
-
-        painPath.style.strokeDashoffset = TOTAL * (1 - p);
-
-        if (p > 0 && p < 1) {
-          const pt = painPath.getPointAtLength(TOTAL * p);
-          painHead.setAttribute('cx', pt.x);
-          painHead.setAttribute('cy', pt.y);
-          painHead.setAttribute('opacity', '1');
-        } else {
-          painHead.setAttribute('opacity', '0');
-        }
-
-        const ramp = 0.08;  // how quickly it fades in/out
-        const hold = 0.14;  // how long it stays white either side of midpoint
-        painEls.forEach((el, i) => {
-          const dist = p - midpoints[i];
-          let alpha;
-          if (dist < -(hold + ramp)) {
-            alpha = 0.1;                                            // upcoming: dim
-          } else if (dist < -hold) {
-            const t = (dist + hold + ramp) / ramp;                 // ramp up
-            alpha = 0.1 + t * 0.9;
-          } else if (dist < hold) {
-            alpha = 1.0;                                            // hold at white
-          } else if (dist < hold + ramp) {
-            const t = 1 - (dist - hold) / ramp;                    // ramp down
-            alpha = 0.1 + t * 0.9;
+        slots.forEach((slot, i) => {
+          const rect = slot.getBoundingClientRect();
+          // Panel falls when its slot has scrolled completely out the top
+          if (rect.bottom < 0) {
+            panels[i].classList.add('fallen');
           } else {
-            alpha = 0.32;                                           // struck: slightly visible
+            panels[i].classList.remove('fallen');
           }
-          el.style.color = `rgba(255,255,255,${alpha.toFixed(2)})`;
         });
       }
 
-      // Wait for fonts so Outfit is loaded before measuring word positions
-      document.fonts.ready.then(() => { build(); update(); });
-      window.addEventListener('resize', () => { build(); update(); });
-      window.addEventListener('scroll', () => {
-        if (!TOTAL) build(); // lazy init if fonts were slow
-        update();
-      }, { passive: true });
+      window.addEventListener('scroll', update, { passive: true });
+      update();
     })();
 
     // Active nav link highlight on scroll
