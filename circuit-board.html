@@ -504,29 +504,25 @@
     document.getElementById('pcbBottom').style.display = layer==='bottom' ? 'block' : 'none';
   }
 
-  // Load gerbers via pcb-stackup
+  // Load gerbers via pcb-stackup — use standard KiCad extensions so the library auto-detects each layer
   const layers = [
-    { url: './gerbers/afterglo-controller-Edge_Cuts.gbr',    side: null,     type: 'outline'    },
-    { url: './gerbers/afterglo-controller-F_Cu.gbr',         side: 'top',    type: 'copper'     },
-    { url: './gerbers/afterglo-controller-B_Cu.gbr',         side: 'bottom', type: 'copper'     },
-    { url: './gerbers/afterglo-controller-F_Mask.gbr',       side: 'top',    type: 'soldermask' },
-    { url: './gerbers/afterglo-controller-B_Mask.gbr',       side: 'bottom', type: 'soldermask' },
-    { url: './gerbers/afterglo-controller-F_Silkscreen.gbr', side: 'top',    type: 'silkscreen' },
-    { url: './gerbers/afterglo-controller-B_Silkscreen.gbr', side: 'bottom', type: 'silkscreen' },
-    { url: './gerbers/afterglo-controller-F_Paste.gbr',      side: 'top',    type: 'solderpaste'},
+    'afterglo-controller-Edge_Cuts.gm1',
+    'afterglo-controller-F_Cu.gtl',
+    'afterglo-controller-B_Cu.gbl',
+    'afterglo-controller-F_Mask.gts',
+    'afterglo-controller-B_Mask.gbs',
+    'afterglo-controller-F_Silkscreen.gto',
+    'afterglo-controller-B_Silkscreen.gbo',
   ];
 
   async function loadBoard() {
     try {
       const fetched = await Promise.all(
-        layers.map(async (l) => {
-          const r = await fetch(l.url);
-          if (!r.ok) throw new Error('Failed: ' + l.url);
+        layers.map(async (filename) => {
+          const r = await fetch('./gerbers/' + filename);
+          if (!r.ok) throw new Error('Failed: ' + filename);
           const gerber = await r.text();
-          const entry = { gerber };
-          if (l.side) entry.options = { side: l.side, type: l.type };
-          else        entry.options = { type: l.type };
-          return entry;
+          return { gerber, filename };
         })
       );
 
