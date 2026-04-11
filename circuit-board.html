@@ -3,466 +3,570 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Circuit Board — Design Schematics</title>
+  <title>AFTERGLO Controller — Board Reference</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/pcb-stackup@4.2.8/dist/pcb-stackup.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:      #080808;
-      --bg2:     #0e0e0e;
-      --bg3:     #141414;
-      --accent:  #c8921e;
-      --accent2: #d4a843;
-      --silver:  #b8b8b8;
-      --text:    #e2e8f0;
-      --muted:   #94a3b8;
-      --border:  #222222;
-      --green:   #22c55e;
-      --radius:  12px;
+      --bg:    #070707;
+      --bg2:   #0e0e0e;
+      --bg3:   #141414;
+      --acc:   #c8921e;
+      --acc2:  #e0a832;
+      --text:  #dde4ee;
+      --muted: #607080;
+      --dim:   #2a3040;
+      --border:#1c1c1c;
+      --green: #22c55e;
+      --blue:  #38bdf8;
+      --red:   #f87171;
+      --purple:#a78bfa;
+      --radius:12px;
     }
-
     html { scroll-behavior: smooth; }
-
     body {
       font-family: 'Inter', sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
       overflow-x: hidden;
-      min-height: 100vh;
     }
-
-    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    h1,h2,h3,h4 { font-family: 'Outfit', sans-serif; line-height: 1.2; }
     a { text-decoration: none; color: inherit; }
 
-    /* ── GRID OVERLAY ──────────────────────────────────────────── */
+    /* subtle grid */
     body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
       background-image:
-        linear-gradient(rgba(200,146,30,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,146,30,0.03) 1px, transparent 1px);
-      background-size: 40px 40px;
-      pointer-events: none;
-      z-index: 0;
+        linear-gradient(rgba(200,146,30,0.02) 1px, transparent 1px),
+        linear-gradient(90deg,rgba(200,146,30,0.02) 1px, transparent 1px);
+      background-size:56px 56px;
     }
 
-    /* ── HERO ──────────────────────────────────────────────────── */
+    /* ── NAV ── */
+    nav {
+      position:fixed; top:0; left:0; right:0; z-index:200;
+      height:58px; display:flex; align-items:center; justify-content:space-between;
+      padding:0 32px;
+      background:rgba(7,7,7,0.9); backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+    }
+    .nav-brand { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:900; letter-spacing:.08em; color:#fff; }
+    .nav-brand span { color:var(--acc); }
+    .nav-links { display:flex; gap:24px; font-size:.78rem; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+    .nav-links a:hover { color:var(--acc); transition:color .15s; }
+    .nav-tag {
+      font-size:.68rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
+      padding:4px 12px; border-radius:100px;
+      background:rgba(200,146,30,.1); border:1px solid rgba(200,146,30,.25); color:var(--acc);
+    }
+
+    /* ── HERO ── */
     .hero {
-      position: relative;
-      padding: 100px 24px 64px;
-      text-align: center;
-      border-bottom: 1px solid var(--border);
-      z-index: 1;
+      position:relative; z-index:1;
+      padding:120px 24px 64px;
+      text-align:center;
     }
-
-    .hero-tag {
-      display: inline-block;
-      font-family: 'Inter', sans-serif;
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-      border: 1px solid rgba(200,146,30,0.35);
-      border-radius: 100px;
-      padding: 6px 16px;
-      margin-bottom: 28px;
+    .hero-pill {
+      display:inline-flex; align-items:center; gap:8px;
+      font-size:.72rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
+      color:var(--acc); border:1px solid rgba(200,146,30,.28); border-radius:100px;
+      padding:6px 18px; margin-bottom:28px;
     }
-
+    .hero-pill-dot {
+      width:6px; height:6px; border-radius:50%;
+      background:var(--green); box-shadow:0 0 8px var(--green);
+      animation:blink 2.2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
     .hero h1 {
-      font-size: clamp(2.4rem, 6vw, 4.5rem);
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: -0.02em;
-      margin-bottom: 16px;
+      font-size:clamp(2.8rem,6vw,5.2rem); font-weight:900;
+      color:#fff; letter-spacing:-.025em; margin-bottom:14px;
+    }
+    .hero h1 em { color:var(--acc); font-style:normal; }
+    .hero-sub { font-size:1.05rem; color:var(--muted); max-width:520px; margin:0 auto 52px; }
+
+    /* ── STATS STRIP ── */
+    .stats {
+      display:flex; flex-wrap:wrap; justify-content:center; gap:0;
+      max-width:800px; margin:0 auto;
+      background:var(--bg2); border:1px solid var(--border); border-radius:14px; overflow:hidden;
+    }
+    .stat { flex:1; min-width:110px; padding:18px 16px; text-align:center; border-right:1px solid var(--border); }
+    .stat:last-child { border-right:none; }
+    .stat-v { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:900; color:var(--acc); line-height:1; margin-bottom:3px; }
+    .stat-l { font-size:.65rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--muted); }
+
+    /* ── SECTION BASE ── */
+    .section { position:relative; z-index:1; padding:80px 0; border-top:1px solid var(--border); }
+    .container { max-width:1180px; margin:0 auto; padding:0 32px; }
+    .sec-label { font-size:.68rem; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:var(--acc); margin-bottom:8px; }
+    .sec-title { font-size:clamp(1.6rem,3vw,2.4rem); font-weight:800; color:#fff; margin-bottom:10px; }
+    .sec-desc { font-size:.95rem; color:var(--muted); max-width:560px; }
+
+    /* ── PCB VIEWER ── */
+    /* Transparent-enclosure look: frosted panel, corner screws */
+    .enclosure {
+      position:relative;
+      background:linear-gradient(145deg,rgba(255,255,255,.03),rgba(255,255,255,.01));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:20px;
+      padding:28px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.06),
+        0 40px 80px rgba(0,0,0,.6),
+        0 0 0 1px rgba(0,0,0,.5);
+    }
+    /* corner screws */
+    .enclosure::before, .enclosure::after,
+    .screw-bl, .screw-br {
+      content:'';
+      position:absolute;
+      width:14px; height:14px;
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 35%, #3a3a3a, #111);
+      border:1px solid #2a2a2a;
+      box-shadow:inset 0 1px 2px rgba(255,255,255,.07), 0 1px 3px rgba(0,0,0,.5);
+    }
+    .enclosure::before { top:14px; left:14px; }
+    .enclosure::after  { top:14px; right:14px; }
+    .screw-bl { bottom:14px; left:14px; }
+    .screw-br { bottom:14px; right:14px; }
+    /* Screw slot lines */
+    .enclosure::before,
+    .enclosure::after,
+    .screw-bl,
+    .screw-br {
+      background-image:
+        radial-gradient(circle at 35% 35%, #3a3a3a, #111),
+        linear-gradient(45deg, transparent 44%, #555 44%, #555 56%, transparent 56%),
+        linear-gradient(-45deg, transparent 44%, #555 44%, #555 56%, transparent 56%);
     }
 
-    .hero h1 span { color: var(--accent); }
+    .pcb-tabs {
+      display:flex; gap:8px; margin-bottom:20px;
+    }
+    .pcb-tab {
+      padding:7px 18px; border-radius:8px; border:1px solid var(--border);
+      font-size:.78rem; font-weight:600; letter-spacing:.06em; text-transform:uppercase;
+      color:var(--muted); cursor:pointer; background:transparent;
+      transition:all .15s;
+    }
+    .pcb-tab.active { background:var(--bg3); border-color:rgba(200,146,30,.4); color:var(--acc); }
+    .pcb-tab:hover:not(.active) { color:var(--text); border-color:var(--dim); }
 
-    .hero-sub {
-      font-size: 1.05rem;
-      color: var(--muted);
-      max-width: 520px;
-      margin: 0 auto 48px;
+    .pcb-view {
+      background:#0a1a0a;
+      border:1px solid rgba(255,255,255,.04);
+      border-radius:12px;
+      min-height:360px;
+      display:flex; align-items:center; justify-content:center;
+      overflow:hidden; position:relative;
+    }
+    .pcb-view svg { display:block; width:100%; height:auto; max-height:540px; }
+    .pcb-loading {
+      display:flex; flex-direction:column; align-items:center; gap:16px;
+      color:var(--muted); font-size:.88rem;
+    }
+    .pcb-spinner {
+      width:32px; height:32px; border-radius:50%;
+      border:2px solid var(--border);
+      border-top-color:var(--acc);
+      animation:spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .pcb-error {
+      color:var(--red); font-size:.88rem; text-align:center; padding:24px; line-height:1.6;
+    }
+    .pcb-note {
+      display:flex; align-items:center; gap:8px;
+      font-size:.75rem; color:var(--muted);
+      margin-top:12px; padding:10px 14px;
+      background:rgba(200,146,30,.04); border:1px solid rgba(200,146,30,.1); border-radius:8px;
     }
 
-    /* ── STATUS BAR ────────────────────────────────────────────── */
-    .status-bar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 32px;
-      flex-wrap: wrap;
-      padding: 20px 24px;
-      background: var(--bg2);
-      border-bottom: 1px solid var(--border);
-      position: relative;
-      z-index: 1;
+    /* ── SYSTEMS GRID ── */
+    .systems-grid {
+      display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px;
+    }
+    .sys-card {
+      background:var(--bg2); border:1px solid var(--border); border-radius:16px;
+      padding:28px; transition:border-color .2s, transform .2s;
+    }
+    .sys-card:hover { border-color:rgba(200,146,30,.3); transform:translateY(-2px); }
+    .sys-icon {
+      width:44px; height:44px; border-radius:12px;
+      display:flex; align-items:center; justify-content:center;
+      margin-bottom:18px;
+    }
+    .sys-icon.power  { background:rgba(248,113,113,.1); }
+    .sys-icon.net    { background:rgba(56,189,248,.1);  }
+    .sys-icon.ctrl   { background:rgba(167,139,250,.1); }
+    .sys-icon.out    { background:rgba(200,146,30,.1);  }
+    .sys-card h4 { font-size:1.05rem; font-weight:800; color:#fff; margin-bottom:6px; }
+    .sys-card p  { font-size:.86rem; color:var(--muted); line-height:1.6; margin-bottom:16px; }
+    .sys-parts { display:flex; flex-wrap:wrap; gap:6px; }
+    .part-tag {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.68rem; padding:3px 9px; border-radius:6px;
+      background:var(--bg3); border:1px solid var(--border); color:var(--muted);
     }
 
-    .status-item {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--muted);
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
+    /* ── GPIO TABLE ── */
+    .gpio-wrap { background:var(--bg2); border:1px solid var(--border); border-radius:14px; overflow:hidden; }
+    .gpio-table { width:100%; border-collapse:collapse; }
+    .gpio-table thead tr { background:var(--bg3); border-bottom:1px solid var(--border); }
+    .gpio-table th {
+      padding:11px 16px; text-align:left;
+      font-size:.66rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--muted);
     }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 8px var(--green);
-      animation: pulse 2.4s ease-in-out infinite;
+    .gpio-table td {
+      padding:9px 16px; font-size:.82rem;
+      border-bottom:1px solid rgba(28,28,28,.9); vertical-align:middle;
     }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+    .gpio-table tr:last-child td { border-bottom:none; }
+    .gpio-table tr:hover td { background:rgba(200,146,30,.025); }
+    .gp  { font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--acc); }
+    .gf  { color:var(--text); }
+    .gd  { color:var(--muted); font-size:.78rem; }
+    .tag {
+      display:inline-block; font-size:.62rem; font-weight:600;
+      letter-spacing:.07em; text-transform:uppercase;
+      padding:2px 8px; border-radius:6px;
     }
+    .t-rmii { background:rgba(248,113,113,.12); color:var(--red);    border:1px solid rgba(248,113,113,.2); }
+    .t-out  { background:rgba(200,146,30,.12);  color:var(--acc);    border:1px solid rgba(200,146,30,.2);  }
+    .t-com  { background:rgba(56,189,248,.12);  color:var(--blue);   border:1px solid rgba(56,189,248,.2);  }
+    .t-ctl  { background:rgba(34,197,94,.1);    color:var(--green);  border:1px solid rgba(34,197,94,.2);   }
+    .t-adc  { background:rgba(167,139,250,.12); color:var(--purple); border:1px solid rgba(167,139,250,.2); }
 
-    /* ── CONTAINER ─────────────────────────────────────────────── */
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ── SECTION HEADER ────────────────────────────────────────── */
-    .section-header {
-      padding: 64px 0 40px;
-      position: relative;
-      z-index: 1;
-    }
-
-    .section-label {
-      font-size: 0.72rem;
-      font-weight: 600;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-size: clamp(1.5rem, 3vw, 2.2rem);
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 10px;
-    }
-
-    .section-desc {
-      font-size: 0.95rem;
-      color: var(--muted);
-      max-width: 560px;
-    }
-
-    /* ── DIAGRAMS GRID ─────────────────────────────────────────── */
-    .diagrams-section {
-      position: relative;
-      z-index: 1;
-      padding-bottom: 80px;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .diagrams-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .diagram-card {
-      background: var(--bg2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      overflow: hidden;
-      transition: border-color 0.2s, transform 0.2s;
-    }
-
-    .diagram-card:hover {
-      border-color: rgba(200,146,30,0.4);
-      transform: translateY(-2px);
-    }
-
-    .diagram-card img {
-      width: 100%;
-      display: block;
-      background: #111;
-    }
-
-    .diagram-card-body {
-      padding: 18px 20px;
-    }
-
-    .diagram-card-title {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 4px;
-    }
-
-    .diagram-card-meta {
-      font-size: 0.78rem;
-      color: var(--muted);
-    }
-
-    .diagram-badge {
-      display: inline-block;
-      font-size: 0.68rem;
-      font-weight: 600;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 3px 10px;
-      border-radius: 100px;
-      margin-bottom: 10px;
-    }
-
-    .badge-schematic { background: rgba(200,146,30,0.15); color: var(--accent); border: 1px solid rgba(200,146,30,0.3); }
-    .badge-layout    { background: rgba(34,197,94,0.12);  color: var(--green);  border: 1px solid rgba(34,197,94,0.3); }
-    .badge-bom       { background: rgba(99,102,241,0.12); color: #818cf8;       border: 1px solid rgba(99,102,241,0.3); }
-    .badge-render    { background: rgba(56,189,248,0.12); color: #38bdf8;       border: 1px solid rgba(56,189,248,0.3); }
-
-    /* ── PLACEHOLDER CARD ──────────────────────────────────────── */
-    .diagram-placeholder {
-      background: var(--bg2);
-      border: 1px dashed #2a2a2a;
-      border-radius: var(--radius);
-      aspect-ratio: 4/3;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      color: #333;
-      transition: border-color 0.2s, color 0.2s;
-    }
-
-    .diagram-placeholder:hover {
-      border-color: rgba(200,146,30,0.25);
-      color: #555;
-    }
-
-    .diagram-placeholder svg { opacity: 0.4; }
-    .diagram-placeholder span { font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }
-
-    /* ── QR SECTION ────────────────────────────────────────────── */
-    .qr-section {
-      position: relative;
-      z-index: 1;
-      padding: 80px 0;
-    }
-
-    .qr-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 60px;
-      flex-wrap: wrap;
-    }
-
-    .qr-box {
-      background: #000;
-      border-radius: 16px;
-      padding: 20px;
-      flex-shrink: 0;
-      box-shadow: 0 0 60px rgba(200,146,30,0.15);
-    }
-
-    #qrcode canvas, #qrcode img {
-      display: block;
-    }
-
-    .qr-info { flex: 1; min-width: 260px; }
-
-    .qr-info h3 {
-      font-size: 1.6rem;
-      font-weight: 800;
-      color: #fff;
-      margin-bottom: 12px;
-    }
-
-    .qr-info p {
-      font-size: 0.95rem;
-      color: var(--muted);
-      margin-bottom: 20px;
-    }
-
+    /* ── QR ── */
+    .qr-wrap { display:flex; align-items:center; gap:56px; flex-wrap:wrap; }
+    .qr-box { background:#000; border-radius:16px; padding:20px; flex-shrink:0; box-shadow:0 0 60px rgba(200,146,30,.1); border:1px solid rgba(200,146,30,.15); }
+    .qr-info h3 { font-size:1.7rem; font-weight:800; color:#fff; margin-bottom:10px; }
+    .qr-info p { font-size:.95rem; color:var(--muted); margin-bottom:18px; }
     .qr-url {
-      font-family: 'Inter', monospace;
-      font-size: 0.8rem;
-      color: var(--accent);
-      background: rgba(200,146,30,0.08);
-      border: 1px solid rgba(200,146,30,0.2);
-      border-radius: 8px;
-      padding: 12px 16px;
-      word-break: break-all;
-      letter-spacing: 0.02em;
+      font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--acc);
+      background:rgba(200,146,30,.06); border:1px solid rgba(200,146,30,.18);
+      border-radius:8px; padding:12px 16px; word-break:break-all;
     }
 
-    .qr-note {
-      margin-top: 12px;
-      font-size: 0.78rem;
-      color: #444;
-    }
-
-    /* ── FOOTER ────────────────────────────────────────────────── */
+    /* ── FOOTER ── */
     footer {
-      position: relative;
-      z-index: 1;
-      border-top: 1px solid var(--border);
-      padding: 32px 24px;
-      text-align: center;
+      position:relative; z-index:1;
+      border-top:1px solid var(--border); padding:40px 32px; text-align:center;
     }
+    .footer-brand { font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:900; letter-spacing:.08em; color:#fff; margin-bottom:6px; }
+    .footer-brand span { color:var(--acc); }
+    .footer-note { font-size:.78rem; color:#2a2a2a; }
 
-    .footer-brand {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 900;
-      color: #fff;
-      letter-spacing: 0.05em;
-      margin-bottom: 6px;
-    }
-
-    .footer-brand span { color: var(--accent); }
-
-    .footer-note {
-      font-size: 0.78rem;
-      color: #333;
-    }
-
-    @media (max-width: 640px) {
-      .qr-wrapper { flex-direction: column; align-items: flex-start; }
-      .status-bar { gap: 16px; }
+    @media(max-width:640px) {
+      nav .nav-links, nav .nav-tag { display:none; }
+      .qr-wrap { flex-direction:column; }
     }
   </style>
 </head>
 <body>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-tag">Internal Design Docs</div>
-    <h1>Circuit Board<br /><span>Schematics &amp; Diagrams</span></h1>
-    <p class="hero-sub">Wiring diagrams, PCB layouts, BOMs, and render references for the current board revision.</p>
-  </section>
-
-  <!-- STATUS BAR -->
-  <div class="status-bar">
-    <div class="status-item">
-      <span class="status-dot"></span>
-      Active Development
-    </div>
-    <div class="status-item" style="color:#555">·</div>
-    <div class="status-item">Rev 1 — Circuit Board</div>
-    <div class="status-item" style="color:#555">·</div>
-    <div class="status-item">gamesum.github.io / circuit-board</div>
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">AFTER<span>GLO</span></div>
+  <div class="nav-links">
+    <a href="#board">Board</a>
+    <a href="#systems">Systems</a>
+    <a href="#gpio">Pins</a>
+    <a href="#qr">Reference</a>
   </div>
+  <div class="nav-tag">Rev 1 · S3 Variant</div>
+</nav>
 
-  <!-- DIAGRAMS -->
-  <section class="diagrams-section">
-    <div class="container">
-      <div class="section-header">
-        <div class="section-label">Design Files</div>
-        <h2 class="section-title">Diagrams &amp; Schematics</h2>
-        <p class="section-desc">Upload diagrams below. Add <code style="color:var(--accent);background:rgba(200,146,30,0.08);padding:2px 6px;border-radius:4px;font-size:0.85em;">&lt;img&gt;</code> tags inside the grid to populate.</p>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-pill"><span class="hero-pill-dot"></span>Active Development</div>
+  <h1>AFTERGLO Controller <em>v1</em></h1>
+  <p class="hero-sub">Custom lighting controller board. Handles power, networking, and PWM output for up to 4 LED zones — all in one enclosure.</p>
+  <div class="stats">
+    <div class="stat"><div class="stat-v">180×120</div><div class="stat-l">Size (mm)</div></div>
+    <div class="stat"><div class="stat-v">4</div><div class="stat-l">LED Zones</div></div>
+    <div class="stat"><div class="stat-v">24V</div><div class="stat-l">Input</div></div>
+    <div class="stat"><div class="stat-v">30A</div><div class="stat-l">Max Output</div></div>
+    <div class="stat"><div class="stat-v">S3</div><div class="stat-l">Chip Variant</div></div>
+    <div class="stat"><div class="stat-v">0</div><div class="stat-l">ERC Errors</div></div>
+  </div>
+</section>
+
+<!-- PCB VIEWER -->
+<section class="section" id="board">
+  <div class="container">
+    <div class="sec-label">Actual Board</div>
+    <h2 class="sec-title">PCB Layout</h2>
+    <p class="sec-desc" style="margin-bottom:32px">Rendered from the real Gerber manufacturing files. Switch between front and back copper layers.</p>
+
+    <div class="enclosure">
+      <span class="screw-bl"></span>
+      <span class="screw-br"></span>
+
+      <div class="pcb-tabs">
+        <button class="pcb-tab active" onclick="showLayer('top',this)">Front (Top)</button>
+        <button class="pcb-tab" onclick="showLayer('bottom',this)">Back (Bottom)</button>
       </div>
 
-      <div class="diagrams-grid">
-
-        <!-- ── UPLOAD YOUR DIAGRAMS HERE ── -->
-        <!-- Example card (uncomment and fill in):
-        <div class="diagram-card">
-          <img src="your-schematic.png" alt="Main Schematic" />
-          <div class="diagram-card-body">
-            <div class="diagram-badge badge-schematic">Schematic</div>
-            <div class="diagram-card-title">Main Schematic</div>
-            <div class="diagram-card-meta">Rev 1 · Added March 2026</div>
-          </div>
+      <div class="pcb-view" id="pcbView">
+        <div class="pcb-loading" id="pcbLoading">
+          <div class="pcb-spinner"></div>
+          <span>Loading Gerber files…</span>
         </div>
-        -->
+        <div id="pcbTop" style="display:none;width:100%"></div>
+        <div id="pcbBottom" style="display:none;width:100%"></div>
+      </div>
 
-        <!-- Placeholder slots -->
-        <div class="diagram-placeholder">
-          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>
-          </svg>
-          <span>Schematic</span>
-        </div>
-
-        <div class="diagram-placeholder">
-          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <rect x="2" y="2" width="20" height="20" rx="2"/>
-            <path d="M7 7h.01M7 12h.01M7 17h.01M12 7h5M12 12h5M12 17h5"/>
-          </svg>
-          <span>PCB Layout</span>
-        </div>
-
-        <div class="diagram-placeholder">
-          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
-            <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
-          </svg>
-          <span>BOM</span>
-        </div>
-
-        <div class="diagram-placeholder">
-          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M12 8v4l3 3"/>
-          </svg>
-          <span>Render / 3D</span>
-        </div>
-
+      <div class="pcb-note">
+        <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="flex-shrink:0;color:var(--acc)">
+          <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+        </svg>
+        Rendered live from manufacturing Gerber files &mdash; this is exactly what gets sent to the fab house.
+        <span id="pcbServNote" style="margin-left:4px;color:var(--red);display:none">
+          (Gerbers require a local server — open via <code style="font-size:.72rem">npx serve</code> or VS Code Live Server)
+        </span>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- QR CODE -->
-  <section class="qr-section">
-    <div class="container">
-      <div class="qr-wrapper">
+<!-- SYSTEMS -->
+<section class="section" id="systems">
+  <div class="container">
+    <div class="sec-label">What's On The Board</div>
+    <h2 class="sec-title">Four Main Systems</h2>
+    <p class="sec-desc" style="margin-bottom:36px">Each system handles one job. They all talk to each other, but if something goes wrong it's easy to narrow down which section to look at.</p>
 
-        <div class="qr-box">
-          <div id="qrcode"></div>
+    <div class="systems-grid">
+      <!-- Power -->
+      <div class="sys-card">
+        <div class="sys-icon power">
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#f87171" stroke-width="2">
+            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+          </svg>
         </div>
-
-        <div class="qr-info">
-          <div class="section-label">Direct Access</div>
-          <h3>Scan to Open This Page</h3>
-          <p>This QR code points directly to the URL — no redirect service, no expiration. It will work as long as the page is live.</p>
-          <div class="qr-url">https://gamesum.github.io/circuit-board.html</div>
-          <p class="qr-note">Print this code and attach it to the board, notebook, or enclosure for quick reference.</p>
+        <h4>Power</h4>
+        <p>Takes in 24V from the barrel jack, steps it down to 5V and then 3.3V for the electronics. Each LED zone has its own fuse so one blown zone doesn't kill the whole board.</p>
+        <div class="sys-parts">
+          <span class="part-tag">24V Barrel Jack</span>
+          <span class="part-tag">MP2303 Buck</span>
+          <span class="part-tag">AMS1117 3.3V</span>
+          <span class="part-tag">F1–F5 Fuses</span>
         </div>
+      </div>
 
+      <!-- Connectivity -->
+      <div class="sys-card">
+        <div class="sys-icon net">
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#38bdf8" stroke-width="2">
+            <path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/>
+          </svg>
+        </div>
+        <h4>Connectivity</h4>
+        <p>Wired Ethernet via RJ45 for reliable, low-latency control — no Wi-Fi dropouts. USB-C port on the side for programming and serial debug. RS485 port for DMX or Modbus bus wiring.</p>
+        <div class="sys-parts">
+          <span class="part-tag">LAN8720A PHY</span>
+          <span class="part-tag">RJ45</span>
+          <span class="part-tag">USB-C</span>
+          <span class="part-tag">CP2102N</span>
+          <span class="part-tag">RS485</span>
+        </div>
+      </div>
+
+      <!-- Control (MCU) -->
+      <div class="sys-card">
+        <div class="sys-icon ctrl">
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#a78bfa" stroke-width="2">
+            <rect x="4" y="4" width="16" height="16" rx="2"/>
+            <path d="M4 10h16M10 4v16"/>
+          </svg>
+        </div>
+        <h4>Control (S3 Chip)</h4>
+        <p>The brain of the board. Runs WLED firmware, talks to the network, and drives all four output zones. Boot and reset buttons on board for easy programming. Also reads the onboard temperature sensor.</p>
+        <div class="sys-parts">
+          <span class="part-tag">ESP32-S3</span>
+          <span class="part-tag">SW1 Boot</span>
+          <span class="part-tag">SW2 Reset</span>
+          <span class="part-tag">TMP102 Temp</span>
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="sys-card">
+        <div class="sys-icon out">
+          <svg width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="#c8921e" stroke-width="2">
+            <path d="M18 20V10M12 20V4M6 20v-6"/>
+          </svg>
+        </div>
+        <h4>LED Output (4 Zones)</h4>
+        <p>Four independent channels each controlled by a large power transistor (MOSFET). Each zone can be dimmed separately via PWM. Handles up to 7.5A per zone — enough for long runs of high-density strip lighting.</p>
+        <div class="sys-parts">
+          <span class="part-tag">IRF4905 MOSFET ×4</span>
+          <span class="part-tag">Gate Drivers</span>
+          <span class="part-tag">Screw Terminals</span>
+          <span class="part-tag">7.5A / zone</span>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-brand">AFTER<span>GLO</span></div>
-    <div class="footer-note">Internal design reference — not publicly linked</div>
-  </footer>
+<!-- GPIO TABLE -->
+<section class="section" id="gpio">
+  <div class="container">
+    <div class="sec-label">Pin Reference</div>
+    <h2 class="sec-title">GPIO Map</h2>
+    <p class="sec-desc" style="margin-bottom:28px">Pins marked <span style="color:var(--red)">RMII Fixed</span> are wired directly in silicon to the Ethernet chip — they can't be used for anything else.</p>
+    <div class="gpio-wrap">
+      <table class="gpio-table">
+        <thead>
+          <tr>
+            <th>Pin</th>
+            <th>What It Does</th>
+            <th>Connected To</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="gp">IO0</td>  <td class="gf">Boot mode</td>        <td class="gd">SW1 Boot button</td>              <td><span class="tag t-ctl">Control</span></td></tr>
+          <tr><td class="gp">IO2</td>  <td class="gf">Status LED</td>       <td class="gd">Onboard indicator</td>             <td><span class="tag t-out">Output</span></td></tr>
+          <tr><td class="gp">IO4</td>  <td class="gf">Zone 1 PWM</td>       <td class="gd">MOSFET Q2 gate driver</td>         <td><span class="tag t-out">Output</span></td></tr>
+          <tr><td class="gp">IO5</td>  <td class="gf">Zone 2 PWM</td>       <td class="gd">MOSFET Q3 gate driver</td>         <td><span class="tag t-out">Output</span></td></tr>
+          <tr><td class="gp">IO16</td> <td class="gf">RS485 Receive</td>    <td class="gd">U8 RS485 chip</td>                 <td><span class="tag t-com">Comms</span></td></tr>
+          <tr><td class="gp">IO17</td> <td class="gf">Ethernet TX Enable</td><td class="gd">LAN8720A — hardwired</td>         <td><span class="tag t-rmii">RMII Fixed</span></td></tr>
+          <tr><td class="gp">IO18</td> <td class="gf">Zone 3 PWM</td>       <td class="gd">MOSFET Q4 gate driver</td>         <td><span class="tag t-out">Output</span></td></tr>
+          <tr><td class="gp">IO19</td> <td class="gf">Ethernet TX Data 0</td><td class="gd">LAN8720A — hardwired</td>         <td><span class="tag t-rmii">RMII Fixed</span></td></tr>
+          <tr><td class="gp">IO21</td> <td class="gf">Ethernet TX Clock</td> <td class="gd">LAN8720A — hardwired</td>         <td><span class="tag t-rmii">RMII Fixed</span></td></tr>
+          <tr><td class="gp">IO22</td> <td class="gf">Ethernet TX Data 1</td><td class="gd">LAN8720A — hardwired</td>         <td><span class="tag t-rmii">RMII Fixed</span></td></tr>
+          <tr><td class="gp">IO23</td> <td class="gf">Zone 4 PWM</td>       <td class="gd">MOSFET Q5 gate driver</td>         <td><span class="tag t-out">Output</span></td></tr>
+          <tr><td class="gp">IO25</td> <td class="gf">Ethernet RX Data 0</td><td class="gd">LAN8720A — hardwired</td>         <td><span class="tag t-rmii">RMII Fixed</span></td></tr>
+          <tr><td class="gp">IO26</td> <td class="gf">Ethernet RX Data 1</td><td class="gd">LAN8720A — hardwired</td>         <td><span class="tag t-rmii">RMII Fixed</span></td></tr>
+          <tr><td class="gp">IO27</td> <td class="gf">Ethernet Carrier Sense</td><td class="gd">LAN8720A — hardwired</td>     <td><span class="tag t-rmii">RMII Fixed</span></td></tr>
+          <tr><td class="gp">IO32</td> <td class="gf">RS485 Transmit</td>   <td class="gd">U8 RS485 chip</td>                 <td><span class="tag t-com">Comms</span></td></tr>
+          <tr><td class="gp">IO33</td> <td class="gf">RS485 Direction</td>  <td class="gd">Switches TX/RX mode</td>           <td><span class="tag t-ctl">Control</span></td></tr>
+          <tr><td class="gp">IO34</td> <td class="gf">Analog Input</td>     <td class="gd">Spare / sense</td>                 <td><span class="tag t-adc">ADC</span></td></tr>
+          <tr><td class="gp">IO36</td> <td class="gf">Analog Input</td>     <td class="gd">Spare / sense</td>                 <td><span class="tag t-adc">ADC</span></td></tr>
+          <tr><td class="gp">SDA</td>  <td class="gf">I²C Data</td>         <td class="gd">TMP102 temp sensor</td>            <td><span class="tag t-com">Comms</span></td></tr>
+          <tr><td class="gp">SCL</td>  <td class="gf">I²C Clock</td>        <td class="gd">TMP102 temp sensor</td>            <td><span class="tag t-com">Comms</span></td></tr>
+          <tr><td class="gp">EN</td>   <td class="gf">Chip Reset</td>        <td class="gd">SW2 Reset button</td>             <td><span class="tag t-ctl">Control</span></td></tr>
+          <tr><td class="gp">TXD0</td> <td class="gf">USB Serial Out</td>   <td class="gd">CP2102N programming bridge</td>    <td><span class="tag t-com">Comms</span></td></tr>
+          <tr><td class="gp">RXD0</td> <td class="gf">USB Serial In</td>    <td class="gd">CP2102N programming bridge</td>    <td><span class="tag t-com">Comms</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
-  <script>
-    new QRCode(document.getElementById("qrcode"), {
-      text: "https://gamesum.github.io/circuit-board.html",
-      width: 220,
-      height: 220,
-      colorDark: "#ffffff",
-      colorLight: "#000000",
-      correctLevel: QRCode.CorrectLevel.H
-    });
-  </script>
+<!-- QR -->
+<section class="section" id="qr">
+  <div class="container">
+    <div class="qr-wrap">
+      <div class="qr-box"><div id="qrcode"></div></div>
+      <div class="qr-info">
+        <div class="sec-label">Quick Reference</div>
+        <h3>Scan to Open This Page</h3>
+        <p>Permanent link — no redirect, no expiry. Print it and stick it inside the enclosure lid or on the board bag.</p>
+        <div class="qr-url">https://gamesum.github.io/circuit-board.html</div>
+      </div>
+    </div>
+  </div>
+</section>
 
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand">AFTER<span>GLO</span></div>
+  <div class="footer-note">Controller v1 · S3 Variant · 180×120mm 2-Layer PCB · Internal Reference</div>
+</footer>
+
+<script>
+  // QR
+  new QRCode(document.getElementById('qrcode'), {
+    text: 'https://gamesum.github.io/circuit-board.html',
+    width:200, height:200,
+    colorDark:'#ffffff', colorLight:'#000000',
+    correctLevel: QRCode.CorrectLevel.H
+  });
+
+  // Tab switch
+  let currentLayer = 'top';
+  function showLayer(layer, btn) {
+    currentLayer = layer;
+    document.querySelectorAll('.pcb-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('pcbTop').style.display    = layer==='top'    ? 'block' : 'none';
+    document.getElementById('pcbBottom').style.display = layer==='bottom' ? 'block' : 'none';
+  }
+
+  // Load gerbers via pcb-stackup
+  const layers = [
+    { url: './gerbers/afterglo-controller-Edge_Cuts.gbr',    side: null,     type: 'outline'    },
+    { url: './gerbers/afterglo-controller-F_Cu.gbr',         side: 'top',    type: 'copper'     },
+    { url: './gerbers/afterglo-controller-B_Cu.gbr',         side: 'bottom', type: 'copper'     },
+    { url: './gerbers/afterglo-controller-F_Mask.gbr',       side: 'top',    type: 'soldermask' },
+    { url: './gerbers/afterglo-controller-B_Mask.gbr',       side: 'bottom', type: 'soldermask' },
+    { url: './gerbers/afterglo-controller-F_Silkscreen.gbr', side: 'top',    type: 'silkscreen' },
+    { url: './gerbers/afterglo-controller-B_Silkscreen.gbr', side: 'bottom', type: 'silkscreen' },
+    { url: './gerbers/afterglo-controller-F_Paste.gbr',      side: 'top',    type: 'solderpaste'},
+  ];
+
+  async function loadBoard() {
+    try {
+      const fetched = await Promise.all(
+        layers.map(async (l) => {
+          const r = await fetch(l.url);
+          if (!r.ok) throw new Error('Failed: ' + l.url);
+          const gerber = await r.text();
+          const entry = { gerber };
+          if (l.side) entry.options = { side: l.side, type: l.type };
+          else        entry.options = { type: l.type };
+          return entry;
+        })
+      );
+
+      const stackup = await pcbStackup(fetched);
+
+      const topEl = document.getElementById('pcbTop');
+      const botEl = document.getElementById('pcbBottom');
+      topEl.innerHTML = stackup.top.svg;
+      botEl.innerHTML = stackup.bottom.svg;
+
+      // Make SVGs responsive
+      [topEl, botEl].forEach(el => {
+        const svg = el.querySelector('svg');
+        if (svg) {
+          svg.removeAttribute('width');
+          svg.removeAttribute('height');
+          svg.style.width = '100%';
+          svg.style.height = 'auto';
+        }
+      });
+
+      document.getElementById('pcbLoading').style.display = 'none';
+      document.getElementById('pcbTop').style.display = 'block';
+
+    } catch (e) {
+      console.error(e);
+      const loading = document.getElementById('pcbLoading');
+      if (e instanceof TypeError && e.message.includes('fetch')) {
+        loading.innerHTML = `<div class="pcb-error">
+          Can't load Gerber files from <code>file://</code> — open this page through a local web server.<br><br>
+          Run <code style="color:var(--acc)">npx serve</code> in the Afterglo folder, then visit the localhost URL.
+        </div>`;
+        document.getElementById('pcbServNote').style.display = 'inline';
+      } else {
+        loading.innerHTML = `<div class="pcb-error">Error rendering board: ${e.message}</div>`;
+      }
+    }
+  }
+
+  loadBoard();
+</script>
 </body>
 </html>
