@@ -504,15 +504,15 @@
     document.getElementById('pcbBottom').style.display = layer==='bottom' ? 'block' : 'none';
   }
 
-  // Load gerbers via pcb-stackup — use standard KiCad extensions so the library auto-detects each layer
+  // Load gerbers — pass filename so pcb-stackup auto-detects layer type from F_Cu / B_Cu etc.
   const layers = [
-    'afterglo-controller-Edge_Cuts.gm1',
-    'afterglo-controller-F_Cu.gtl',
-    'afterglo-controller-B_Cu.gbl',
-    'afterglo-controller-F_Mask.gts',
-    'afterglo-controller-B_Mask.gbs',
-    'afterglo-controller-F_Silkscreen.gto',
-    'afterglo-controller-B_Silkscreen.gbo',
+    'afterglo-controller-Edge_Cuts.gbr',
+    'afterglo-controller-F_Cu.gbr',
+    'afterglo-controller-B_Cu.gbr',
+    'afterglo-controller-F_Mask.gbr',
+    'afterglo-controller-B_Mask.gbr',
+    'afterglo-controller-F_Silkscreen.gbr',
+    'afterglo-controller-B_Silkscreen.gbr',
   ];
 
   async function loadBoard() {
