@@ -849,56 +849,40 @@
     }
   }
 
-  /* ─── GOOGLE SIGN-IN (Identity Services) ─────────────────────── */
-  const GOOGLE_CLIENT_ID = document.querySelector('meta[name="google-signin-client_id"]')
-                               ?.getAttribute('content') || '';
+  /* ─── GOOGLE SIGN-IN (Firebase popup / redirect) ────────────── */
 
-  // Called by GIS after the user picks a Google account
-  async function handleGoogleCredential(response) {
+  async function handleGoogle() {
+    const btns = document.querySelectorAll('.btn-google');
+    btns.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
     try {
-      const result = await signInWithGoogleCredential(response.credential);
-      if (result.ok) {
+      const result = await signInWithGoogle();
+      if (result && result.redirecting) return; // mobile: page will reload after redirect
+      if (result && result.ok) {
         const firstName = (result.name || getUser()?.name || 'there').split(' ')[0];
         showToast('Welcome, ' + firstName + '!');
-        setTimeout(() => window.location.href = getRedirectUrl(), 1000);
+        setTimeout(() => window.location.href = getRedirectUrl(), 900);
       } else {
-        showToast(result.message || 'Google sign-in failed — please try again.', true);
+        showToast((result && result.message) || 'Google sign-in failed. Please try again.', true);
+        btns.forEach(b => { b.disabled = false; b.style.opacity = ''; });
       }
     } catch (err) {
-      showToast('Google sign-in failed — please try again.', true);
-      console.error('Google credential error:', err);
+      showToast('Google sign-in failed. Please try again.', true);
+      btns.forEach(b => { b.disabled = false; b.style.opacity = ''; });
+      console.error('Google sign-in error:', err);
     }
   }
 
-  function handleGoogle() {
-    if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
-      showToast('Google sign-in not configured yet. Use email sign-in for now.', true);
-      return;
-    }
-    // Initialize GIS and trigger the One Tap prompt / popup
-    google.accounts.id.initialize({
-      client_id: GOOGLE_CLIENT_ID,
-      callback:  handleGoogleCredential,
-      ux_mode:   'popup',
-    });
-    google.accounts.id.prompt((notification) => {
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        // One Tap was suppressed — render an explicit button as fallback
-        const btnEl = document.querySelector('.btn-google[onclick="handleGoogle()"]');
-        if (btnEl) {
-          const wrap = document.createElement('div');
-          wrap.id = 'gsi-btn-wrap';
-          btnEl.replaceWith(wrap);
-          google.accounts.id.renderButton(wrap, {
-            theme: 'filled_black',
-            size:  'large',
-            width: wrap.parentElement?.offsetWidth || 320,
-            text:  'signin_with',
-          });
-        }
+  // Handle mobile redirect result when page reloads after signInWithRedirect
+  (async function checkRedirect() {
+    try {
+      const result = await checkGoogleRedirectResult();
+      if (result && result.ok) {
+        const firstName = (result.name || getUser()?.name || 'there').split(' ')[0];
+        showToast('Welcome, ' + firstName + '!');
+        setTimeout(() => window.location.href = getRedirectUrl(), 900);
       }
-    });
-  }
+    } catch (_) {}
+  })();
 
   /* ─── FORGOT PASSWORD ────────────────────────────────────────── */
   async function handleForgotPassword(e) {

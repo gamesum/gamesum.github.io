@@ -621,7 +621,7 @@
 
     .testi-author { display: flex; align-items: center; gap: 14px; }
     .testi-avatar {
-      width: 44px; height: 44px;
+      width: 48px; height: 48px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--accent), #d97706);
       display: flex;
@@ -632,6 +632,13 @@
       font-weight: 700;
       color: #000;
       flex-shrink: 0;
+      overflow: hidden;
+      border: 2px solid rgba(200,146,30,0.3);
+    }
+    .testi-avatar img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
     .testi-name { font-weight: 600; font-size: 0.9rem; color: #fff; }
     .testi-loc  { font-size: 0.8rem; color: var(--muted); }
@@ -1531,7 +1538,9 @@
           <div class="stars">★★★★★</div>
           <p class="testi-quote">So impressed with this company! Installers were professional and fun! The system installation is clean. I love how easy the interface is to use and the customization that it allows. We had a small hiccup with using it but the support they offered after installation was top notch!</p>
           <div class="testi-author">
-            <div class="testi-avatar">DL</div>
+            <div class="testi-avatar">
+              <img src="https://ui-avatars.com/api/?name=Donovan+L&background=c8921e&color=000&size=96&bold=true&font-size=0.45" alt="Donovan L." onerror="this.style.display='none'" />
+            </div>
             <div>
               <div class="testi-name">Donovan L.</div>
               <div class="testi-loc">Google Review</div>
@@ -1542,7 +1551,9 @@
           <div class="stars">★★★★★</div>
           <p class="testi-quote">I love this local permanent lighting company. The owner is so friendly. Him and his team got the job done so fast and so efficiently. If you are thinking about getting permanent lights give these local guys a shot, it's worth it.</p>
           <div class="testi-author">
-            <div class="testi-avatar">BL</div>
+            <div class="testi-avatar">
+              <img src="https://ui-avatars.com/api/?name=Brianna+L&background=c8921e&color=000&size=96&bold=true&font-size=0.45" alt="Brianna L." onerror="this.style.display='none'" />
+            </div>
             <div>
               <div class="testi-name">Brianna L.</div>
               <div class="testi-loc">Google Review</div>
@@ -1553,7 +1564,9 @@
           <div class="stars">★★★★★</div>
           <p class="testi-quote">This company did an amazing job on our lights. The app is so user friendly and the technician was really great to explain how to use it. Very happy customer!</p>
           <div class="testi-author">
-            <div class="testi-avatar">MW</div>
+            <div class="testi-avatar">
+              <img src="https://ui-avatars.com/api/?name=Melanie+W&background=c8921e&color=000&size=96&bold=true&font-size=0.45" alt="Melanie W." onerror="this.style.display='none'" />
+            </div>
             <div>
               <div class="testi-name">Melanie W.</div>
               <div class="testi-loc">Google Review · Local Guide</div>

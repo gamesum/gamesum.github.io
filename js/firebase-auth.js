@@ -134,25 +134,81 @@ async function sendPasswordReset(email) {
   }
 }
 
-// ─── Google Sign-In (combines GIS JWT + Firebase credential) ─────────────────
+// ─── Google Sign-In via Firebase popup/redirect ───────────────────────────────
 
+async function signInWithGoogle() {
+  if (!FIREBASE_ENABLED) {
+    return { ok: false, message: 'Firebase not configured.' };
+  }
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.addScope('email');
+  provider.addScope('profile');
+
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  try {
+    let cred;
+    if (isMobile) {
+      await _firebaseAuth.signInWithRedirect(provider);
+      return { ok: true, redirecting: true };
+    } else {
+      cred = await _firebaseAuth.signInWithPopup(provider);
+    }
+    const idToken = await cred.user.getIdToken();
+    const existing = getUser();
+    saveUser({
+      name:      cred.user.displayName || existing?.name || '',
+      email:     cred.user.email,
+      picture:   cred.user.photoURL    || existing?.picture || '',
+      uid:       cred.user.uid,
+      token:     idToken,
+      library:   existing?.library    || [],
+      purchases: existing?.purchases  || [],
+      uploads:   existing?.uploads    || [],
+    });
+    return { ok: true, name: cred.user.displayName };
+  } catch (err) {
+    return { ok: false, message: firebaseErrorMessage(err.code) };
+  }
+}
+
+async function checkGoogleRedirectResult() {
+  if (!FIREBASE_ENABLED) return null;
+  try {
+    const cred = await _firebaseAuth.getRedirectResult();
+    if (!cred || !cred.user) return null;
+    const idToken = await cred.user.getIdToken();
+    const existing = getUser();
+    saveUser({
+      name:      cred.user.displayName || existing?.name || '',
+      email:     cred.user.email,
+      picture:   cred.user.photoURL    || existing?.picture || '',
+      uid:       cred.user.uid,
+      token:     idToken,
+      library:   existing?.library    || [],
+      purchases: existing?.purchases  || [],
+      uploads:   existing?.uploads    || [],
+    });
+    return { ok: true, name: cred.user.displayName };
+  } catch (err) {
+    return { ok: false, message: firebaseErrorMessage(err.code) };
+  }
+}
+
+// Keep legacy GIS credential path for any existing callers
 async function signInWithGoogleCredential(googleIdToken) {
   if (!FIREBASE_ENABLED) {
-    // Legacy mock: decode JWT locally (no sig check needed — came from GIS directly)
     const payload = JSON.parse(atob(googleIdToken.split('.')[1]));
     const { sub, email, name, picture } = payload;
     const existing = getUser();
-    const user = Object.assign({}, existing || {}, {
+    saveUser(Object.assign({}, existing || {}, {
       name, email, picture: picture || '',
       googleId: sub, token: 'google_' + sub,
       library:   existing?.library   || [],
       purchases: existing?.purchases || [],
       uploads:   existing?.uploads   || [],
-    });
-    saveUser(user);
+    }));
     return { ok: true, name };
   }
-
   try {
     const credential = firebase.auth.GoogleAuthProvider.credential(googleIdToken);
     const cred = await _firebaseAuth.signInWithCredential(credential);
@@ -203,13 +259,18 @@ async function syncPurchasesFromFirestore() {
 
 function firebaseErrorMessage(code) {
   const map = {
-    'auth/user-not-found':       'No account found with that email address.',
-    'auth/wrong-password':       'Incorrect password.',
-    'auth/email-already-in-use': 'An account with that email already exists.',
-    'auth/weak-password':        'Password must be at least 6 characters.',
-    'auth/invalid-email':        'Please enter a valid email address.',
-    'auth/too-many-requests':    'Too many attempts. Please try again later.',
-    'auth/network-request-failed': 'Network error — check your connection.',
+    'auth/user-not-found':           'No account found with that email address.',
+    'auth/wrong-password':           'Incorrect password.',
+    'auth/invalid-credential':       'Email or password is incorrect.',
+    'auth/invalid-login-credentials':'Email or password is incorrect.',
+    'auth/INVALID_LOGIN_CREDENTIALS':'Email or password is incorrect.',
+    'auth/email-already-in-use':     'An account with that email already exists.',
+    'auth/weak-password':            'Password must be at least 6 characters.',
+    'auth/invalid-email':            'Please enter a valid email address.',
+    'auth/too-many-requests':        'Too many attempts. Please try again later.',
+    'auth/network-request-failed':   'Network error. Check your connection.',
+    'auth/operation-not-allowed':    'Email sign-in is not enabled. Contact support.',
+    'auth/user-disabled':            'This account has been disabled.',
   };
-  return map[code] || 'Something went wrong. Please try again.';
+  return map[code] || ('Sign-in failed (' + code + '). Please try again.');
 }

@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AFTERGLO Platform — Light Show Marketplace</title>
+  <title>AFTERGLO Platform · Light Show Marketplace</title>
   <meta name="description" content="Browse, download, and share light show sequences for your AFTERGLO permanent LED system. Free community shows and premium packs from professional animators." />
-  <meta property="og:title" content="AFTERGLO Platform — Light Show Marketplace" />
+  <meta property="og:title" content="AFTERGLO Platform · Light Show Marketplace" />
   <meta property="og:description" content="Your AFTERGLO roofline lights can run any show you download here. Free community shows, premium packs, and creator uploads." />
   <meta property="og:image" content="https://afterglolighting.org/afterglo-logo-flat.png" />
   <meta property="og:type" content="website" />
@@ -560,7 +560,7 @@
     }
     .card-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 700;
       color: #fff;
       margin-bottom: 6px;
@@ -572,7 +572,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--muted);
       margin-bottom: 14px;
     }
@@ -893,6 +893,10 @@
     .pack-desc {
       font-size: 0.85rem;
       color: var(--muted);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
       line-height: 1.65;
       margin-bottom: 20px;
     }
@@ -1480,6 +1484,20 @@
       letter-spacing:0.05em;
     }
 
+    /* ─── PROP ICONS ────────────────────────────────────────────────── */
+    .card-props {
+      display:flex;flex-wrap:wrap;gap:4px;
+      margin-bottom:10px;
+    }
+    .card-prop {
+      font-size:1rem;line-height:1;
+      background:rgba(255,255,255,0.05);
+      border:1px solid #2a2a2a;
+      border-radius:6px;
+      padding:3px 6px;
+      cursor:default;
+    }
+
     /* ─── RESPONSIVE ───────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .nav-links, .nav-cta { display: none; }
@@ -1557,7 +1575,7 @@
   <div class="hero-content">
     <div class="hero-badge">✦ Community-Powered Light Shows</div>
     <h1 class="hero-title">The <span class="gold">AFTERGLO</span><br>Light Show Store</h1>
-    <p class="hero-sub">Browse hundreds of ready-to-play Christmas, Halloween, and holiday light shows. Pick a free one or grab a premium pack — then watch your roofline come alive. No technical experience needed.</p>
+    <p class="hero-sub">Browse hundreds of ready-to-play Christmas, Halloween, and holiday light shows. Pick a free one or grab a premium pack and watch your roofline come alive. No technical experience needed.</p>
     <div class="hero-ctas">
       <a href="#sequences" class="btn btn-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1617,9 +1635,9 @@
       <div>
         <span class="section-label">Marketplace</span>
         <h2 class="section-title">Featured Light Shows</h2>
-        <div class="trending-strip">🔥 Trending This Week — Most Downloaded</div>
+        <div class="trending-strip">🔥 Trending This Week · Most Downloaded</div>
       </div>
-      <p class="section-sub" style="margin:0; font-size:0.9rem;">Every light show file is ready to load onto your AFTERGLO controller — no extra software needed.</p>
+      <p class="section-sub" style="margin:0; font-size:0.9rem;">Every light show file is ready to load onto your AFTERGLO controller. No extra software needed.</p>
     </div>
 
     <!-- Horizontal scroll row (shown when filter = all, no search) -->
@@ -1717,7 +1735,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             47 AFTERGLO homes running this pack
           </div>
-          <p class="pack-desc">12 sequences covering the whole Christmas range — calm warm-white twinkling for background ambiance, and full-energy music-synchronized shows for the nights that matter.</p>
+          <p class="pack-desc">12 sequences covering the whole Christmas range. Calm warm-white twinkling for background ambiance, and full-energy music-synchronized shows for the nights that matter.</p>
           <div class="pack-meta">
             <div class="pack-meta-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1740,13 +1758,13 @@
             <!-- Change 3b: mailto request instead of broken "coming soon" toast -->
             <a class="btn-request-pack" href="#" data-buy-id="pack_holiday_mega" onclick="event.preventDefault();handlePackBuy('pack_holiday_mega','Holiday Mega Pack',58)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
-              Buy Pack — $58
+              Buy Pack $58
             </a>
           </div>
           <!-- Change 3c: guarantee line -->
           <div class="pack-guarantee">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            7-day satisfaction guarantee — doesn't work on your install, we'll refund it.
+            7 day satisfaction guarantee
           </div>
         </div>
       </div>
@@ -1769,7 +1787,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             31 AFTERGLO homes running this pack
           </div>
-          <p class="pack-desc">Six fast-paced red, white, and blue sequences built for outdoor crowds. Designed for Memorial Day, Independence Day, and Veterans Day — music included.</p>
+          <p class="pack-desc">Six fast-paced red, white, and blue sequences built for outdoor crowds. Designed for Memorial Day, Independence Day, and Veterans Day. Music included.</p>
           <div class="pack-meta">
             <div class="pack-meta-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1791,12 +1809,12 @@
             </div>
             <a class="btn-request-pack" href="#" data-buy-id="pack_patriotic_bundle" onclick="event.preventDefault();handlePackBuy('pack_patriotic_bundle','Patriotic Bundle',38)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
-              Buy Pack — $38
+              Buy Pack $38
             </a>
           </div>
           <div class="pack-guarantee">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            7-day satisfaction guarantee — doesn't work on your install, we'll refund it.
+            7 day satisfaction guarantee
           </div>
         </div>
       </div>
@@ -1841,12 +1859,12 @@
             </div>
             <a class="btn-request-pack" href="#" data-buy-id="pack_halloween" onclick="event.preventDefault();handlePackBuy('pack_halloween','Halloween Pack',48)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
-              Buy Pack — $48
+              Buy Pack $48
             </a>
           </div>
           <div class="pack-guarantee">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            7-day satisfaction guarantee — doesn't work on your install, we'll refund it.
+            7 day satisfaction guarantee
           </div>
         </div>
       </div>
@@ -1864,7 +1882,7 @@
         <span class="section-label">Community</span>
         <h2 class="section-title">Share Your Sequences</h2>
         <p>Have an xLights sequence you're proud of? Upload your FSEQ and put it in front of every AFTERGLO homeowner on the platform.</p>
-        <p>We check every upload against our controller spec before it goes public — if it won't run cleanly, we'll tell you what to fix.</p>
+        <p>We check every upload against our controller spec before it goes public. If it won't run cleanly, we'll tell you what to fix.</p>
         <ul class="upload-perks">
           <li>Your name and creator profile on every download</li>
           <li>Earn revenue on premium sequences you publish</li>
@@ -1876,7 +1894,7 @@
         <div style="text-align:center;padding:48px 24px;">
           <div style="font-size:3rem;margin-bottom:16px;">🎄</div>
           <h3 style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:12px;">Share Your Light Show</h3>
-          <p style="color:#94a3b8;max-width:480px;margin:0 auto 28px;">Built something amazing in xLights? Upload your show to the AFTERGLO community — earn revenue, get credit, and help other homeowners light up their neighborhoods.</p>
+          <p style="color:#94a3b8;max-width:480px;margin:0 auto 28px;">Built something amazing in xLights? Upload your show to the AFTERGLO community. Earn revenue, get credit, and help other homeowners light up their neighborhoods.</p>
           <a href="upload.html" style="display:inline-block;background:#c8921e;color:#000;font-weight:700;font-size:1rem;padding:16px 32px;border-radius:12px;min-height:52px;line-height:1.2;">Upload a Show →</a>
         </div>
       </div>
@@ -1909,7 +1927,7 @@
         </div>
         <span class="step-icon">🛒</span>
         <h3 class="step-title">Buy or Download a Show</h3>
-        <p class="step-desc">Pick a free sequence or buy a premium pack. Everything you download stays in your library — no expiry, no re-purchase.</p>
+        <p class="step-desc">Pick a free sequence or buy a premium pack. Everything you download stays in your library. No expiry, no re-purchase.</p>
       </div>
       <div class="step fade-in fade-delay-2">
         <div class="step-num">
@@ -1925,7 +1943,7 @@
         </div>
         <span class="step-icon">💡</span>
         <h3 class="step-title">Watch It Sync to Your Lights</h3>
-        <p class="step-desc">Hit play and watch your roofline come alive. Your lights sync up and play the show exactly as designed — every color, every beat.</p>
+        <p class="step-desc">Hit play and watch your roofline come alive. Your lights sync up and play the show exactly as designed. Every color, every beat.</p>
       </div>
     </div>
   </div>
@@ -1985,7 +2003,7 @@
   <div class="capture-card" id="captureCard">
     <button class="capture-close" onclick="closeCaptureModal()" aria-label="Close">✕</button>
     <div class="capture-icon">🎄</div>
-    <div class="capture-title">Your free sequence is ready —<br><em class="capture-seq-name" id="captureSeqName"></em></div>
+    <div class="capture-title">Your free sequence is ready:<br><em class="capture-seq-name" id="captureSeqName"></em></div>
     <p class="capture-sub">Enter your email and we'll save this sequence to your account, alert you when new free shows drop, and send you the xLights quick-start PDF.</p>
     <ul class="capture-perks">
       <li>Sequence saved to your library forever</li>
@@ -2217,6 +2235,12 @@
     // MP3 badge — shown when hasMp3 is true (live data from Firestore) or seq.hasMp3 flag set
     const mp3Badge = seq.hasMp3 ? '<div class="mp3-badge">&#9834; MP3</div>' : '';
 
+    // Prop icons
+    const PROP_ICONS = { roofline:'🏠', arch:'🌈', tree:'🌲', 'mega-tree':'🎄', stake:'⚡', window:'🪟', yard:'🌟', fence:'🔲' };
+    const propIcons = (seq.props && seq.props.length)
+      ? `<div class="card-props">${seq.props.map(p => `<span class="card-prop" title="${p}">${PROP_ICONS[p] || '💡'}</span>`).join('')}</div>`
+      : '';
+
     // Set data-name after innerHTML to avoid apostrophe breaking onclick string
     card.innerHTML = `
       <div class="card-thumb" style="background:${seq.gradient || seq.thumbnailGradient || 'linear-gradient(135deg,#1a1a1a,#333)'};">
@@ -2225,7 +2249,7 @@
         ${hotBadge}
         ${mp3Badge}
         <span class="card-duration">${seq.duration || (seq.durationSecs ? Math.floor(seq.durationSecs/60)+'m '+((seq.durationSecs%60)+'s') : '')}</span>
-        <div class="card-play" onclick="event.stopPropagation(); showToast('Preview coming soon — visit afterglolighting.org to see show demos');">
+        <div class="card-play" onclick="event.stopPropagation(); showToast('Preview coming soon. Visit afterglolighting.org to see show demos.');">
           <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
       </div>
@@ -2240,6 +2264,7 @@
             ${(seq.channels || seq.channelCount || 0).toLocaleString()} lights
           </span>
         </div>
+        ${propIcons}
         <div class="card-footer">
           <div class="card-downloads">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -2272,7 +2297,7 @@
       <div class="pack-inline-banner">
         <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(200,146,30,0.06) 0px,rgba(200,146,30,0.06) 2px,transparent 2px,transparent 16px);"></div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;opacity:0.55;">🎄🎁🦌</div>
-        <span class="pack-inline-label">Pack — Best Value</span>
+        <span class="pack-inline-label">Pack · Best Value</span>
         <span class="pack-inline-seq-count">12 sequences · 6.5 hrs</span>
       </div>
       <div class="pack-inline-body">
@@ -2599,7 +2624,7 @@
       const data = await resp.json();
 
       if (data.status === 'already_owned') {
-        showToast('You already own this sequence — check your Library!');
+        showToast('You already own this sequence. Check your Library!');
         if (btn) { btn.textContent = 'Already Owned'; btn.disabled = false; }
         return;
       }
@@ -2610,7 +2635,7 @@
       }
     } catch (err) {
       console.error('checkout error:', err);
-      showToast('Payment unavailable — please try again shortly.', true);
+      showToast('Payment unavailable. Please try again shortly.', true);
       if (btn) { btn.textContent = `$${price.toFixed(2)}`; btn.disabled = false; }
     }
   }
@@ -2652,8 +2677,7 @@
         updatedAt: Date.now(),
       };
       saveUser(user);
-      // Refresh the upload section and nav without a page reload
-      initUploadForm();
+      // Upload is on upload.html — no inline form to refresh
       updateNavAuth();
       showToast('Signed in as ' + name + '!');
     } catch(err) {
@@ -2680,249 +2704,7 @@
     }
   }
 
-  /* ─── UPLOAD FORM ────────────────────────────────────────────────── */
-  function initUploadForm() {
-    const user = getUser();
-    const uploadCard = document.querySelector('.upload-card');
-    if (!uploadCard) return;
-
-    if (!user || !user.token) {
-      // Show auth gate with Google sign-in + email fallback
-      const googleConfigured = GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID';
-      uploadCard.innerHTML = `
-        <div style="text-align:center;padding:40px 16px;">
-          <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
-          <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to upload</div>
-          <p style="font-size:0.88rem;color:#94a3b8;margin-bottom:24px;line-height:1.6;">Create a free account to share your sequences<br>with the AFTERGLO community.</p>
-          ${googleConfigured ? `
-          <div id="upload-google-btn" style="margin:0 auto 16px;max-width:280px;"></div>
-          <div style="display:flex;align-items:center;gap:10px;margin:0 auto 16px;max-width:280px;color:#444;font-size:0.8rem;">
-            <span style="flex:1;height:1px;background:#2a2a2a;"></span>or<span style="flex:1;height:1px;background:#2a2a2a;"></span>
-          </div>` : ''}
-          <a href="signin.html?redirect=platform.html%23upload" class="btn btn-primary" style="display:inline-flex;gap:8px;align-items:center;">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-            Sign In with Email
-          </a>
-        </div>`;
-
-      if (googleConfigured) {
-        // GIS may not be loaded yet — defer until it's ready
-        if (typeof google !== 'undefined') {
-          initGoogleSignIn('upload-google-btn');
-        } else {
-          window.onGoogleLibraryLoad = () => initGoogleSignIn('upload-google-btn');
-        }
-      }
-      return;
-    }
-
-    // Signed in — restore the upload form HTML and pre-fill creator name
-    uploadCard.innerHTML = `
-      <form id="uploadForm">
-        <div id="dropZone" class="drop-zone">
-          <div id="dropContent">
-            <div class="drop-zone-icon">📂</div>
-            <div class="drop-zone-title">Drop your light show file (.fseq) here</div>
-            <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>
-          </div>
-          <input type="file" id="fileInput" accept=".fseq" style="display:none;" />
-        </div>
-        <div class="form-group">
-          <label>Show Name</label>
-          <input type="text" id="showName" placeholder="e.g. Candy Cane Lane 2025" />
-        </div>
-        <div class="form-group">
-          <label>Category</label>
-          <select id="categoryInput" style="width:100%;padding:12px 14px;background:#111;border:1px solid #2a2a2a;border-radius:8px;color:#e2e8f0;font-size:15px;font-family:inherit;">
-            <option value="">Select a category…</option>
-            <option value="christmas">Christmas</option>
-            <option value="halloween">Halloween</option>
-            <option value="fourth">4th of July</option>
-            <option value="valentine">Valentine's Day</option>
-            <option value="patriotic">Patriotic</option>
-            <option value="custom">Custom / Other</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Price ($) <span style="color:#666;font-size:12px;">0 = free</span></label>
-          <input type="number" id="price" placeholder="0.00" min="0" max="99" step="0.01" value="0" style="font-size:16px;" />
-        </div>
-        <div class="form-group">
-          <label for="songName">Song Name *</label>
-          <input type="text" id="songName" placeholder="e.g. All I Want For Christmas Is You" required minlength="2" maxlength="200" style="font-size:16px;" />
-        </div>
-        <div class="form-group">
-          <label for="youtubeUrl">YouTube Link *</label>
-          <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." required style="font-size:16px;" />
-          <small style="color:#666;">Link to the exact version your sequence is synced to</small>
-        </div>
-        <div class="form-group" id="mp3UploadGroup" style="display:none;">
-          <label for="mp3File">MP3 File <span style="color:#c8921e;">(Premium only — only if you own the rights)</span></label>
-          <input type="file" id="mp3File" accept=".mp3,audio/mpeg" style="font-size:16px;" />
-          <small style="color:#666;">Only upload if you own or have licensed this music</small>
-        </div>
-        <div class="form-group" style="background:#0e0e0e;border:1px solid #2a2a2a;border-radius:10px;padding:16px;margin-top:8px;">
-          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;line-height:1.5;">
-            <input type="checkbox" id="legalCert" required style="margin-top:3px;min-width:20px;min-height:20px;accent-color:#c8921e;cursor:pointer;" />
-            <span style="font-size:0.85rem;color:#94a3b8;">
-              I certify that this sequence and any associated audio is <strong style="color:#fff;">entirely my original work</strong>, or that I hold all necessary rights and licenses to distribute it. I understand that AFTERGLO bears <strong style="color:#fff;">no legal responsibility</strong> for content I upload, and that any copyright infringement is solely my liability. I acknowledge that AFTERGLO reserves the right to remove infringing content at any time and, following a written warning, to pursue legal action against me if I knowingly upload copyrighted material without authorization.
-              <a href="terms.html" target="_blank" style="color:#c8921e;display:block;margin-top:6px;font-size:0.8rem;">Read full terms ↗</a>
-            </span>
-          </label>
-        </div>
-        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Upload to Community
-        </button>
-        <p style="font-size:0.8rem;color:#666;margin-top:10px;text-align:center;">
-          Uploading as <strong style="color:#94a3b8;">${esc(user.name || user.email)}</strong> &nbsp;·&nbsp;
-          <a href="my-library.html" style="color:var(--accent);text-decoration:none;">Change name</a>
-        </p>
-        <p class="upload-note">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Share your light show files with the community. In xLights, export as uncompressed FSEQ v2 before uploading. Max file size 50 MB.
-        </p>
-      </form>`;
-
-    // Re-attach the file drop/upload event listeners on the fresh form
-    attachUploadListeners();
-  }
-
-  function attachUploadListeners() {
-    const dropZone   = document.getElementById('dropZone');
-    const fileInput  = document.getElementById('fileInput');
-    const dropContent = document.getElementById('dropContent');
-    if (!dropZone || !fileInput) return;
-
-    function handleFileSelect(file) {
-      dropContent.innerHTML = `
-        <div class="drop-zone-icon">✅</div>
-        <div class="drop-zone-title" style="color:#4ade80;">${esc(file.name)}</div>
-        <div class="drop-zone-sub">${(file.size / 1048576).toFixed(1)} MB — ready to upload</div>`;
-    }
-
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (file) { fileInput._file = file; handleFileSelect(file); }
-    });
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
-    });
-
-    // Show/hide MP3 upload group based on price input
-    const priceInput = document.getElementById('price');
-    if (priceInput) {
-      priceInput.addEventListener('input', function() {
-        const mp3Group = document.getElementById('mp3UploadGroup');
-        if (mp3Group) mp3Group.style.display = parseFloat(this.value) > 0 ? 'block' : 'none';
-      });
-    }
-
-    document.getElementById('uploadForm').addEventListener('submit', async e => {
-      e.preventDefault();
-      const user = getUser();
-      if (!user || !user.token) { initUploadForm(); return; }
-      const name       = document.getElementById('showName').value.trim();
-      const creator    = user.name || user.email || 'Unknown';
-      const file       = (fileInput.files && fileInput.files[0]) || fileInput._file;
-      const mp3Input   = document.getElementById('mp3File');
-      const mp3File    = mp3Input && mp3Input.files && mp3Input.files[0] ? mp3Input.files[0] : null;
-      const price      = parseFloat(document.getElementById('price')?.value || '0') || 0;
-      const songName   = document.getElementById('songName')?.value.trim() || '';
-      const youtubeUrl = document.getElementById('youtubeUrl')?.value.trim() || '';
-      const hasMp3     = !!(mp3File && price > 0);
-
-      if (!file) { showToast('Please select an .fseq file before uploading', true); return; }
-      if (!name) { showToast('Please enter a show name', true); return; }
-      if (!songName) { showToast('Please enter the song name', true); return; }
-      if (!youtubeUrl) { showToast('Please enter the YouTube link', true); return; }
-      const legalCert = document.getElementById('legalCert');
-      if (!legalCert || !legalCert.checked) {
-        showToast('Please certify your content rights before uploading.');
-        return;
-      }
-
-      // Disable submit button during upload
-      const submitBtn = document.querySelector('#uploadForm button[type="submit"]');
-      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Uploading…'; }
-
-      try {
-        // Step 1: Get signed upload URLs from the backend
-        const idToken    = await getIdToken();
-        const sequenceId = 'seq_' + Date.now();
-        const category   = document.getElementById('categoryInput').value;
-
-        let uploadUrl    = null;
-        let mp3UploadUrl = null;
-        try {
-          const urlResp = await fetch(`${FUNCTIONS_BASE}/uploadSequence`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
-            body:    JSON.stringify({ sequenceId, name, category, price, songName, youtubeUrl, hasMp3, creator }),
-          });
-          const urlData = await urlResp.json();
-          uploadUrl    = urlData.uploadUrl;
-          mp3UploadUrl = urlData.mp3UploadUrl;
-        } catch (_) { /* fallback to local-only if Cloud Function not deployed yet */ }
-
-        if (uploadUrl) {
-          // Step 2a: PUT the FSEQ file to the signed URL
-          await fetch(uploadUrl, {
-            method:  'PUT',
-            headers: { 'Content-Type': 'application/octet-stream' },
-            body:    file,
-          });
-
-          // Step 2b: PUT the MP3 file if we have a signed URL for it
-          if (mp3UploadUrl && mp3File) {
-            await fetch(mp3UploadUrl, {
-              method:  'PUT',
-              headers: { 'Content-Type': 'audio/mpeg' },
-              body:    mp3File,
-            });
-          }
-
-          // Step 3: Confirm upload — mark the sequence as published
-          await fetch(`${FUNCTIONS_BASE}/confirmUpload`, {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
-            body:    JSON.stringify({ sequenceId }),
-          });
-        }
-
-        // Always save to local uploads list for immediate UI feedback
-        if (!user.uploads) user.uploads = [];
-        user.uploads.push({
-          id:         sequenceId,
-          name,
-          creator,
-          category,
-          songName,
-          youtubeUrl,
-          hasMp3,
-          price,
-          gradient:   'linear-gradient(135deg, #1a1a1a, #333)',
-          uploadedAt: Date.now(),
-          status:     uploadUrl ? 'published' : 'pending_review'
-        });
-        saveUser(user);
-        showToast(`"${name}" uploaded! ${uploadUrl ? 'Now in review.' : 'Under review.'}`);
-      } catch (err) {
-        console.error('Upload error:', err);
-        showToast('Upload failed — please try again.', true);
-      } finally {
-        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Upload to Community'; }
-        initUploadForm(); // re-render the fresh form
-      }
-    });
-  }
-
-  // Upload form submit + drag-drop handlers are set up by attachUploadListeners()
-  // which is called inside initUploadForm() whenever the signed-in form is rendered.
+  // Upload handled by dedicated upload.html page
 
   /* ─── SEQUENCE DETAIL DRAWER ────────────────────────────────────── */
   function openDrawer(seq) {
@@ -2992,7 +2774,7 @@
             ${seq.hasMp3 && price > 0 ? '<div style="font-size:0.8rem;color:#94a3b8;">Includes FSEQ + MP3</div>' : ''}
           </div>
           ${price > 0
-            ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#c8921e;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy &mdash; $${price.toFixed(2)}</button>`
+            ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#c8921e;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy $${price.toFixed(2)}</button>`
             : `<button onclick="handleDownload(event,'${esc(String(seq.id))}');closeDrawer();" style="width:100%;background:#4ade80;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Download Free</button>`
           }
         </div>
@@ -3145,14 +2927,13 @@
     }
     if (params.get('purchase') === 'cancelled') {
       history.replaceState({}, '', window.location.pathname);
-      showToast('Checkout cancelled — your cart was not charged.', true);
+      showToast('Checkout cancelled. Your cart was not charged.', true);
     }
   })();
 
   /* ─── INIT ───────────────────────────────────────────────────────── */
   render();
   updateNavAuth();
-  initUploadForm();
   // Trigger scrolled state if already scrolled on page load
   if (window.scrollY > 20) navbar.classList.add('scrolled');
 </script>
