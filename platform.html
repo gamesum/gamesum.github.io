@@ -2474,21 +2474,33 @@
 
   /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
   function updateNavAuth() {
-    const user    = getUser();
     const navArea = document.getElementById('navAuthArea');
     const mobArea = document.getElementById('mobileAuthArea');
-    if (user && user.token) {
-      const initial = (user.name || user.email || 'U')[0].toUpperCase();
+
+    // Firebase is the source of truth — don't trust localStorage alone
+    const fbUser = (typeof firebase !== 'undefined') ? firebase.auth().currentUser : null;
+    const user   = fbUser ? getUser() : null;
+
+    if (fbUser && user) {
+      const initial = (user.name || user.email || fbUser.email || 'U')[0].toUpperCase();
+      const displayName = esc(user.name || fbUser.displayName || user.email || fbUser.email);
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
           <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
-          ${esc(user.name || user.email)}
+          ${displayName}
         </a>`;
       mobArea.innerHTML = `<a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>`;
     } else {
+      // Clear stale localStorage so it doesn't show signed-in on next load
+      if (!fbUser && getUser()) signOutUser();
       navArea.innerHTML = `<a href="signin.html?redirect=platform.html" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>`;
       mobArea.innerHTML = `<a href="signin.html?redirect=platform.html" style="color:var(--accent);">Sign In / Create Account</a>`;
     }
+  }
+
+  // Re-run nav update once Firebase resolves its auth state (async)
+  if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged(() => updateNavAuth());
   }
 
   /* ─── EMAIL CAPTURE MODAL (Change 1) ────────────────────────────────
