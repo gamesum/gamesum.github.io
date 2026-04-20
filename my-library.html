@@ -1279,46 +1279,69 @@
 
   /* ─── RUN ──────────────────────────────────────────────────────── */
   window.addEventListener('DOMContentLoaded', () => {
-    console.log('[Auth] my-library.html loaded, waiting for Firebase...');
+    // Step 1: render from localStorage immediately (no wait, no flash)
+    const stored = getUser();
+    if (stored && stored.uid) {
+      currentUser = stored;
+      document.getElementById('authLoading').style.display = 'none';
+      document.getElementById('authCheck').style.display = 'none';
+      document.getElementById('pageContent').style.display = 'block';
+      const initial = (stored.name || stored.email || 'U')[0].toUpperCase();
+      const navAv = document.getElementById('navAvatar');
+      navAv.textContent = initial;
+      navAv.style.display = '';
+      document.getElementById('navSignOut').style.display = 'inline-flex';
+      document.getElementById('profileAvatar').textContent = initial;
+      setProfileNameDisplay(stored.name || 'My Account');
+      document.getElementById('profileEmail').textContent = stored.email || '';
+      renderSections();
+    } else {
+      // No stored session at all — show auth gate immediately
+      document.getElementById('authLoading').style.display = 'none';
+      document.getElementById('authCheck').style.display = 'flex';
+    }
 
-    let initCalled = false;
-
-    // Timeout fallback: if Firebase hasn't resolved within 8 seconds,
-    // check localStorage. If we have a stored user, trust it and render.
-    // If not, show the auth gate. This prevents infinite blank-page hangs.
-    const authTimeout = setTimeout(() => {
-      if (initCalled) return;
-      console.warn('[Auth] Firebase auth timed out -- falling back to localStorage');
-      const stored = getUser();
-      if (stored && stored.uid) {
-        // Trust the stored session; Firebase will catch up via onAuthStateChanged
-        initCalled = true;
-        document.getElementById('authLoading').style.display = 'none';
-        currentUser = stored;
-        document.getElementById('authCheck').style.display = 'none';
-        document.getElementById('pageContent').style.display = 'block';
-        renderSections();
-        // Update nav avatar
-        const initial = (stored.name || stored.email || 'U')[0].toUpperCase();
+    // Step 2: Firebase verifies in background — refresh token, update display name/photo
+    firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+      if (firebaseUser) {
+        // Firebase confirmed the user — refresh token silently
+        const token = await firebaseUser.getIdToken(false).catch(() => stored && stored.token || null);
+        const base = getUser() || {};
+        currentUser = {
+          name:      firebaseUser.displayName || base.name || firebaseUser.email.split('@')[0],
+          email:     firebaseUser.email,
+          picture:   firebaseUser.photoURL || base.picture || '',
+          uid:       firebaseUser.uid,
+          token:     token || base.token || '',
+          library:   base.library   || [],
+          purchases: base.purchases || [],
+          uploads:   base.uploads   || [],
+        };
+        saveUser(currentUser);
+        // Update nav and profile with fresh data
+        const initial = (currentUser.name || currentUser.email || 'U')[0].toUpperCase();
         const navAv = document.getElementById('navAvatar');
         navAv.textContent = initial;
         navAv.style.display = '';
         document.getElementById('navSignOut').style.display = 'inline-flex';
-        document.getElementById('profileAvatar').textContent = initial;
-        setProfileNameDisplay(stored.name || 'My Account');
-        document.getElementById('profileEmail').textContent = stored.email || '';
+        // Show content if it wasn't shown yet (e.g. localStorage was empty but Firebase has user)
+        if (document.getElementById('pageContent').style.display === 'none') {
+          document.getElementById('authLoading').style.display = 'none';
+          document.getElementById('authCheck').style.display = 'none';
+          document.getElementById('pageContent').style.display = 'block';
+          document.getElementById('profileAvatar').textContent = initial;
+          setProfileNameDisplay(currentUser.name || 'My Account');
+          document.getElementById('profileEmail').textContent = currentUser.email || '';
+          renderSections();
+        }
       } else {
-        initCalled = true;
-        document.getElementById('authLoading').style.display = 'none';
-        document.getElementById('authCheck').style.display = 'flex';
+        // Firebase says no session — only hide content if it was already showing
+        if (currentUser) {
+          currentUser = null;
+          document.getElementById('pageContent').style.display = 'none';
+          document.getElementById('authCheck').style.display = 'flex';
+        }
       }
-    }, 8000);
-
-    firebase.auth().onAuthStateChanged(async (firebaseUser) => {
-      if (initCalled) return; // already rendered via timeout fallback
-      initCalled = true;
-      clearTimeout(authTimeout);
-      await init(firebaseUser);
     });
   });
 </script>
