@@ -827,8 +827,8 @@
   </div><!-- /container -->
 </div><!-- /page-content -->
 
-<!-- Not signed in state (shown while checking) -->
-<div id="authCheck" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+<!-- Not signed in state (hidden until Firebase confirms no user) -->
+<div id="authCheck" style="min-height:100vh;display:none;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:40px 24px;">
     <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
     <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to see your saved light shows</div>
@@ -883,22 +883,25 @@
   /* ─── INIT ─────────────────────────────────────────────────────── */
   async function init(firebaseUser) {
     if (firebaseUser) {
-      // Always build from Firebase — localStorage may be stale or missing token
-      const token = await firebaseUser.getIdToken(true);
-      const stored = getUser() || {};
-      currentUser = {
-        name:      firebaseUser.displayName || stored.name || firebaseUser.email.split('@')[0],
-        email:     firebaseUser.email,
-        picture:   firebaseUser.photoURL || stored.picture || '',
-        uid:       firebaseUser.uid,
-        token,
-        library:   stored.library   || [],
-        purchases: stored.purchases || [],
-        uploads:   stored.uploads   || [],
-      };
-      saveUser(currentUser);
+      try {
+        const token = await firebaseUser.getIdToken(true);
+        const stored = getUser() || {};
+        currentUser = {
+          name:      firebaseUser.displayName || stored.name || firebaseUser.email.split('@')[0],
+          email:     firebaseUser.email,
+          picture:   firebaseUser.photoURL || stored.picture || '',
+          uid:       firebaseUser.uid,
+          token,
+          library:   stored.library   || [],
+          purchases: stored.purchases || [],
+          uploads:   stored.uploads   || [],
+        };
+        saveUser(currentUser);
+      } catch (err) {
+        console.error('[Auth] getIdToken failed:', err);
+        currentUser = null;
+      }
     } else {
-      // No Firebase session — clear stale data and show auth gate
       currentUser = null;
     }
 
