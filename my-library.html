@@ -727,9 +727,9 @@
     <div class="modal-sub">Sending <strong id="modalSeqName">sequence</strong> to your AFTERGLO controller over your home Wi-Fi.</div>
 
     <div class="modal-input-wrap">
-      <label for="controllerIP">Controller IP Address</label>
+      <label for="controllerIP">Controller Address</label>
       <input type="text" id="controllerIP" class="modal-input" placeholder="e.g. 192.168.1.105" autocomplete="off" inputmode="decimal" />
-      <div class="modal-hint">Find your controller's IP in your router's device list or on the controller's display.</div>
+      <div class="modal-hint">This is your AFTERGLO controller's local address on your home Wi-Fi. Find it on the controller's built-in screen, or look for "AFTERGLO" in your router's connected device list.</div>
     </div>
 
     <div class="modal-actions">
@@ -1005,11 +1005,11 @@
     const actionsBtns = type === 'upload'
       ? `<button class="btn-lib btn-lib-dl" onclick="downloadFseq('${escapedId}')">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-           Download FSEQ
+           Download File
          </button>`
       : `<button class="btn-lib btn-lib-dl" onclick="downloadFseq('${escapedId}')">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-           Download FSEQ
+           Download File
          </button>
          <button class="btn-lib btn-lib-send" onclick="openSendModal('${escapedId}','${escapedName}')">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
@@ -1048,9 +1048,9 @@
       upload: {
         icon:  '🚀',
         title: 'No uploads yet',
-        text:  'Upload your xLights sequences and sell them to other AFTERGLO homeowners. You set the price, you keep a cut.',
+        text:  'Upload your light shows and sell them to other AFTERGLO homeowners. You set the price, you keep a cut.',
         cta:   'Upload a Show',
-        link:  'platform.html#upload'
+        link:  'upload.html'
       }
     };
     const c   = configs[type];

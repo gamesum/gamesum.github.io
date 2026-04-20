@@ -1868,48 +1868,12 @@
         </ul>
       </div>
       <div class="upload-card fade-in fade-delay-2">
-        <form id="uploadForm">
-          <div id="dropZone" class="drop-zone">
-            <div id="dropContent">
-              <div class="drop-zone-icon">📂</div>
-              <div class="drop-zone-title">Drop your light show file here (.fseq)</div>
-              <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>
-            </div>
-            <input type="file" id="fileInput" accept=".fseq" style="display:none;" />
-          </div>
-          <div class="form-group">
-            <label>Show Name</label>
-            <input type="text" id="showName" placeholder="e.g. Candy Cane Lane 2025" />
-          </div>
-          <div class="form-group">
-            <label>Creator Name</label>
-            <input type="text" id="creatorName" placeholder="Your name or handle" />
-          </div>
-          <div class="form-group">
-            <label>Category</label>
-            <select id="categoryInput" style="width:100%;padding:12px 14px;background:#111;border:1px solid #2a2a2a;border-radius:8px;color:#e2e8f0;font-size:15px;font-family:inherit;">
-              <option value="">Select a category…</option>
-              <option value="christmas">Christmas</option>
-              <option value="halloween">Halloween</option>
-              <option value="fourth">4th of July</option>
-              <option value="valentine">Valentine's Day</option>
-              <option value="patriotic">Patriotic</option>
-              <option value="custom">Custom / Other</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Song Name <span style="color:#666;font-size:12px;">(optional)</span></label>
-            <input type="text" id="songName" placeholder="e.g. All I Want For Christmas Is You" />
-          </div>
-          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Upload to Community
-          </button>
-          <p class="upload-note">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Share your light show files with the community. In xLights, export as uncompressed FSEQ v2 before uploading. Max file size 50 MB.
-          </p>
-        </form>
+        <div style="text-align:center;padding:48px 24px;">
+          <div style="font-size:3rem;margin-bottom:16px;">🎄</div>
+          <h3 style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:12px;">Share Your Light Show</h3>
+          <p style="color:#94a3b8;max-width:480px;margin:0 auto 28px;">Built something amazing in xLights? Upload your show to the AFTERGLO community — earn revenue, get credit, and help other homeowners light up their neighborhoods.</p>
+          <a href="upload.html" style="display:inline-block;background:#c8921e;color:#000;font-weight:700;font-size:1rem;padding:16px 32px;border-radius:12px;min-height:52px;line-height:1.2;">Upload a Show →</a>
+        </div>
       </div>
     </div>
   </div>
@@ -1977,7 +1941,7 @@
           <li><a href="#sequences">Browse Sequences</a></li>
           <li><a href="#categories">Categories</a></li>
           <li><a href="#premium">Premium Packs</a></li>
-          <li><a href="#upload">Upload a Show</a></li>
+          <li><a href="upload.html">Upload a Show</a></li>
         </ul>
       </div>
       <div class="footer-col">

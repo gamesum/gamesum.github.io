@@ -227,7 +227,7 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
         res.status(401).json({ error: "Invalid or expired token" });
         return;
     }
-    const { sequenceId, name, category, durationSecs, channelCount, price } = req.body;
+    const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3 } = req.body;
     if (!sequenceId || !name) {
         res.status(400).json({ error: "Missing required fields" });
         return;
@@ -247,6 +247,17 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
             expires: Date.now() + 15 * 60 * 1000, // 15 min
             contentType: "application/octet-stream",
         });
+        // Generate MP3 signed upload URL if needed
+        let mp3UploadUrl;
+        if (hasMp3) {
+            const [mp3Url] = await bucket.file(`sequences/${sequenceId}.mp3`).getSignedUrl({
+                version: "v4",
+                action: "write",
+                expires: Date.now() + 15 * 60 * 1000,
+                contentType: "audio/mpeg",
+            });
+            mp3UploadUrl = mp3Url;
+        }
         // Record metadata in Firestore (pending until file is uploaded)
         await db.collection("sequences").doc(sequenceId).set({
             id: sequenceId,
@@ -258,11 +269,14 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
             channelCount: channelCount ?? 0,
             price: price ?? 0,
             isFree: (price ?? 0) === 0,
+            songName: songName ?? "",
+            youtubeUrl: youtubeUrl ?? "",
+            hasMp3: hasMp3 ?? false,
             status: "pending_upload",
             createdAt: admin.firestore.Timestamp.now(),
             downloadCount: 0,
         });
-        res.status(200).json({ uploadUrl: signedUrl, sequenceId });
+        res.status(200).json({ uploadUrl: signedUrl, sequenceId, ...(mp3UploadUrl ? { mp3UploadUrl } : {}) });
     }
     catch (err) {
         functions.logger.error("uploadSequence error", err);

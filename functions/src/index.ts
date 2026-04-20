@@ -225,7 +225,7 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
     return;
   }
 
-  const { sequenceId, name, category, durationSecs, channelCount, price } =
+  const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3 } =
     req.body as {
       sequenceId: string;
       name: string;
@@ -233,6 +233,9 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
       durationSecs: number;
       channelCount: number;
       price: number;
+      songName?: string;
+      youtubeUrl?: string;
+      hasMp3?: boolean;
     };
 
   if (!sequenceId || !name) {
@@ -257,6 +260,18 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
       contentType: "application/octet-stream",
     });
 
+    // Generate MP3 signed upload URL if needed
+    let mp3UploadUrl: string | undefined;
+    if (hasMp3) {
+      const [mp3Url] = await bucket.file(`sequences/${sequenceId}.mp3`).getSignedUrl({
+        version: "v4",
+        action: "write",
+        expires: Date.now() + 15 * 60 * 1000,
+        contentType: "audio/mpeg",
+      });
+      mp3UploadUrl = mp3Url;
+    }
+
     // Record metadata in Firestore (pending until file is uploaded)
     await db.collection("sequences").doc(sequenceId).set({
       id: sequenceId,
@@ -268,12 +283,15 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
       channelCount: channelCount ?? 0,
       price: price ?? 0,
       isFree: (price ?? 0) === 0,
+      songName: songName ?? "",
+      youtubeUrl: youtubeUrl ?? "",
+      hasMp3: hasMp3 ?? false,
       status: "pending_upload",
       createdAt: admin.firestore.Timestamp.now(),
       downloadCount: 0,
     });
 
-    res.status(200).json({ uploadUrl: signedUrl, sequenceId });
+    res.status(200).json({ uploadUrl: signedUrl, sequenceId, ...(mp3UploadUrl ? { mp3UploadUrl } : {}) });
   } catch (err) {
     functions.logger.error("uploadSequence error", err);
     res.status(500).json({ error: "Internal server error" });
