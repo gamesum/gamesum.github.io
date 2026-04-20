@@ -2143,8 +2143,11 @@
     card.className = 'seq-card' + (forRow ? '' : '');
 
     const btnHtml = seq.free
-      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="handleDownload(event,parseInt(this.dataset.seqid))">Download</button>`
-      : `<button class="btn-card btn-card-paid" data-price="${seq.price}" data-name="" onclick="handleBuy(event,this.dataset.name,parseFloat(this.dataset.price))">Buy $${seq.price.toFixed(2)}</button>`;
+      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="handleDownload(event,parseInt(this.dataset.seqid))">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+           Download
+         </button>`
+      : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" onclick="handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy $${seq.price.toFixed(2)}</button>`;
 
     const isTrending = seq.downloads >= 450;
     const hotBadge = isTrending
@@ -2187,7 +2190,10 @@
     // Set data-name via DOM property — safe for apostrophes and special chars
     if (!seq.free) {
       const buyBtn = card.querySelector('.btn-card-paid');
-      if (buyBtn) buyBtn.dataset.name = seq.name;
+      if (buyBtn) {
+        buyBtn.dataset.name  = seq.name;
+        buyBtn.dataset.buyId = seq.id; // for startStripeCheckout button lookup
+      }
     }
     return card;
   }
@@ -2492,9 +2498,15 @@
     }
   }
 
-  function handleBuy(e, sequenceId, name, creator, price) {
+  function handleBuy(e, sequenceId, name, price) {
     if (e && e.stopPropagation) e.stopPropagation();
-    startStripeCheckout({ sequenceId, sequenceName: name, creator, price });
+    const seq = sequences.find(s => String(s.id) === String(sequenceId));
+    startStripeCheckout({
+      sequenceId,
+      sequenceName: name || (seq ? seq.name : ''),
+      creator:      seq ? seq.creator : '',
+      price:        price || (seq ? seq.price : 0)
+    });
   }
 
   function handlePackBuy(sequenceId, name, price) {
@@ -2661,29 +2673,75 @@
       if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
     });
 
-    document.getElementById('uploadForm').addEventListener('submit', e => {
+    document.getElementById('uploadForm').addEventListener('submit', async e => {
       e.preventDefault();
       const user = getUser();
       if (!user || !user.token) { initUploadForm(); return; }
       const name    = document.getElementById('showName').value.trim();
       const creator = user.name || user.email || 'Unknown';
-      const hasFile = (fileInput.files && fileInput.files.length > 0) || fileInput._file;
-      if (!hasFile) { showToast('Please select an .fseq file before uploading', true); return; }
-      if (!name)    { showToast('Please enter a show name', true); return; }
+      const file    = (fileInput.files && fileInput.files[0]) || fileInput._file;
+      if (!file) { showToast('Please select an .fseq file before uploading', true); return; }
+      if (!name) { showToast('Please enter a show name', true); return; }
 
-      if (!user.uploads) user.uploads = [];
-      user.uploads.push({
-        id:         Date.now(),
-        name,
-        creator,
-        category:   document.getElementById('categoryInput').value,
-        song:       document.getElementById('songName').value.trim(),
-        gradient:   'linear-gradient(135deg, #1a1a1a, #333)',
-        uploadedAt: Date.now()
-      });
-      saveUser(user);
-      showToast(`"${name}" uploaded successfully! Under review.`);
-      initUploadForm(); // re-render the fresh form
+      // Disable submit button during upload
+      const submitBtn = document.querySelector('#uploadForm button[type="submit"]');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Uploading…'; }
+
+      try {
+        // Step 1: Get a signed upload URL from the backend
+        const idToken  = await getIdToken();
+        const sequenceId = 'seq_' + Date.now();
+        const category = document.getElementById('categoryInput').value;
+        const song     = document.getElementById('songName') ? document.getElementById('songName').value.trim() : '';
+
+        let uploadUrl = null;
+        try {
+          const urlResp = await fetch(`${FUNCTIONS_BASE}/getUploadUrl`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+            body:    JSON.stringify({ sequenceId, name, category, song, creator }),
+          });
+          const urlData = await urlResp.json();
+          uploadUrl = urlData.url;
+        } catch (_) { /* fallback to local-only if Cloud Function not deployed yet */ }
+
+        if (uploadUrl) {
+          // Step 2: PUT the file to the signed URL
+          await fetch(uploadUrl, {
+            method:  'PUT',
+            headers: { 'Content-Type': 'application/octet-stream' },
+            body:    file,
+          });
+
+          // Step 3: Confirm upload — mark the sequence as published
+          await fetch(`${FUNCTIONS_BASE}/confirmUpload`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+            body:    JSON.stringify({ sequenceId }),
+          });
+        }
+
+        // Always save to local uploads list for immediate UI feedback
+        if (!user.uploads) user.uploads = [];
+        user.uploads.push({
+          id:         sequenceId,
+          name,
+          creator,
+          category,
+          song,
+          gradient:   'linear-gradient(135deg, #1a1a1a, #333)',
+          uploadedAt: Date.now(),
+          status:     uploadUrl ? 'published' : 'pending_review'
+        });
+        saveUser(user);
+        showToast(`"${name}" uploaded! ${uploadUrl ? 'Now in review.' : 'Under review.'}`);
+      } catch (err) {
+        console.error('Upload error:', err);
+        showToast('Upload failed — please try again.', true);
+      } finally {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Upload to Community'; }
+        initUploadForm(); // re-render the fresh form
+      }
     });
   }
 
@@ -2786,6 +2844,23 @@
       didDrag = false;
     }
   }, true);
+
+  /* ─── PURCHASE SUCCESS REDIRECT ──────────────────────────────────── */
+  (function checkPurchaseSuccess() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('purchase') === 'success') {
+      // Clean the URL without reload
+      history.replaceState({}, '', window.location.pathname);
+      // Sync purchases from Firestore then show toast
+      syncPurchasesFromFirestore().then(() => {
+        showToast('Purchase complete! Your sequence is in My Library.');
+      });
+    }
+    if (params.get('purchase') === 'cancelled') {
+      history.replaceState({}, '', window.location.pathname);
+      showToast('Checkout cancelled — your cart was not charged.', true);
+    }
+  })();
 
   /* ─── INIT ───────────────────────────────────────────────────────── */
   render();

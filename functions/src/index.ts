@@ -415,3 +415,167 @@ export const stripeWebhook = functions
 
   res.status(200).send("OK");
 });
+
+// ─── GET /getDownloadUrl ──────────────────────────────────────────────────────
+// Returns a 1-hour signed download URL for a purchased (or free) FSEQ sequence.
+// Query: ?sequenceId=xxx
+// Header: Authorization: Bearer {Firebase ID token}
+export const getDownloadUrl = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  if (req.method !== "GET") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  // Verify Firebase ID token
+  const authHeader = req.headers.authorization ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const idToken = authHeader.slice(7);
+  let uid: string;
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    uid = decoded.uid;
+  } catch {
+    res.status(401).json({ error: "Invalid or expired token" });
+    return;
+  }
+
+  const sequenceId = req.query.sequenceId as string;
+  if (!sequenceId || sequenceId.trim().length === 0) {
+    res.status(400).json({ error: "Missing sequenceId parameter" });
+    return;
+  }
+
+  try {
+    // Check if user has purchased this sequence
+    const purchaseSnap = await db
+      .collection("purchases")
+      .where("userId", "==", uid)
+      .where("sequenceId", "==", sequenceId)
+      .limit(1)
+      .get();
+
+    const hasPurchase = !purchaseSnap.empty;
+
+    if (!hasPurchase) {
+      // Check if the sequence is free
+      const seqDoc = await db.collection("sequences").doc(sequenceId).get();
+      if (!seqDoc.exists) {
+        res.status(404).json({ error: "Sequence not found" });
+        return;
+      }
+      const seqData = seqDoc.data() as { isFree?: boolean };
+      if (!seqData.isFree) {
+        res.status(403).json({ error: "Not purchased" });
+        return;
+      }
+    }
+
+    // Generate a 1-hour signed download URL
+    const bucket = admin.storage().bucket();
+    const fseqPath = `sequences/${sequenceId}.fseq`;
+    const [signedUrl] = await bucket.file(fseqPath).getSignedUrl({
+      version: "v4",
+      action: "read",
+      expires: Date.now() + 60 * 60 * 1000, // 1 hour
+    });
+
+    // Increment download count (best-effort, non-blocking)
+    db.collection("sequences")
+      .doc(sequenceId)
+      .update({ downloadCount: admin.firestore.FieldValue.increment(1) })
+      .catch((err) => functions.logger.warn("downloadCount increment failed", err));
+
+    functions.logger.info(`Download URL issued: ${uid} → ${sequenceId}`);
+    res.status(200).json({ url: signedUrl, sequenceId });
+  } catch (err) {
+    functions.logger.error("getDownloadUrl error", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ─── POST /confirmUpload ──────────────────────────────────────────────────────
+// Called by the creator's client after the FSEQ file has been PUT to Storage.
+// Body: { sequenceId }
+// Header: Authorization: Bearer {Firebase ID token}
+// Verifies the caller owns the sequence, then sets status → "published".
+export const confirmUpload = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", SITE_URL);
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  // Verify Firebase ID token
+  const authHeader = req.headers.authorization ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const idToken = authHeader.slice(7);
+  let uid: string;
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    uid = decoded.uid;
+  } catch {
+    res.status(401).json({ error: "Invalid or expired token" });
+    return;
+  }
+
+  const { sequenceId } = req.body as { sequenceId: string };
+  if (!sequenceId) {
+    res.status(400).json({ error: "Missing sequenceId" });
+    return;
+  }
+
+  try {
+    const seqRef = db.collection("sequences").doc(sequenceId);
+    const seqDoc = await seqRef.get();
+
+    if (!seqDoc.exists) {
+      res.status(404).json({ error: "Sequence not found" });
+      return;
+    }
+
+    const seqData = seqDoc.data() as { creatorUid?: string; status?: string };
+
+    // Only the creator may confirm the upload
+    if (seqData.creatorUid !== uid) {
+      res.status(403).json({ error: "Forbidden: you do not own this sequence" });
+      return;
+    }
+
+    if (seqData.status !== "pending_upload") {
+      // Already published or in another state — treat as idempotent success
+      res.status(200).json({ status: seqData.status ?? "published" });
+      return;
+    }
+
+    await seqRef.update({ status: "published" });
+
+    functions.logger.info(`Sequence published: ${sequenceId} by ${uid}`);
+    res.status(200).json({ status: "published" });
+  } catch (err) {
+    functions.logger.error("confirmUpload error", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
