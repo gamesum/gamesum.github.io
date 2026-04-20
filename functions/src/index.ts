@@ -1,15 +1,13 @@
 import * as admin from "firebase-admin";
 import * as functions from "firebase-functions";
+import { defineSecret } from "firebase-functions/params";
 import Stripe from "stripe";
 
 admin.initializeApp();
 const db = admin.firestore();
 
-// Stripe secret key — set via: firebase functions:config:set stripe.secret="sk_live_..."
-// For local dev: firebase functions:config:set stripe.secret="sk_test_..."
-const stripeSecretKey = functions.config().stripe?.secret ?? process.env.STRIPE_SECRET_KEY ?? "";
-const stripeWebhookSecret = functions.config().stripe?.webhook_secret ?? process.env.STRIPE_WEBHOOK_SECRET ?? "";
-const stripe = new Stripe(stripeSecretKey, { apiVersion: "2023-10-16" });
+const STRIPE_SECRET = defineSecret("STRIPE_SECRET");
+const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
 
 const SITE_URL = "https://afterglolighting.github.io";
 
@@ -286,7 +284,9 @@ export const sequenceList = functions.https.onRequest(async (req, res) => {
 // Creates a Stripe Checkout Session for a sequence or pack purchase.
 // Body: { sequenceId, sequenceName, creator, price }  (price in dollars)
 // Requires Firebase ID token in Authorization header.
-export const createCheckout = functions.https.onRequest(async (req, res) => {
+export const createCheckout = functions
+  .runWith({ secrets: ["STRIPE_SECRET"] })
+  .https.onRequest(async (req, res) => {
   res.set("Access-Control-Allow-Origin", SITE_URL);
   res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -318,7 +318,6 @@ export const createCheckout = functions.https.onRequest(async (req, res) => {
     res.status(400).json({ error: "Missing required fields" }); return;
   }
 
-  // Already purchased? Don't double-charge.
   const existingSnap = await db.collection("purchases")
     .where("userId", "==", uid)
     .where("sequenceId", "==", sequenceId)
@@ -328,6 +327,7 @@ export const createCheckout = functions.https.onRequest(async (req, res) => {
   }
 
   try {
+    const stripe = new Stripe(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
     const session = await stripe.checkout.sessions.create({
       mode:          "payment",
       customer_email: email,
@@ -335,7 +335,7 @@ export const createCheckout = functions.https.onRequest(async (req, res) => {
         quantity: 1,
         price_data: {
           currency:     "usd",
-          unit_amount:  Math.round(price * 100), // cents
+          unit_amount:  Math.round(price * 100),
           product_data: {
             name:        sequenceName,
             description: `By ${creator} · AFTERGLO Light Show`,
@@ -357,12 +357,15 @@ export const createCheckout = functions.https.onRequest(async (req, res) => {
 // ─── POST /stripeWebhook ──────────────────────────────────────────────────────
 // Stripe calls this after a successful payment.
 // Verifies the signature, then records the purchase in Firestore.
-export const stripeWebhook = functions.https.onRequest(async (req, res) => {
+export const stripeWebhook = functions
+  .runWith({ secrets: ["STRIPE_SECRET", "STRIPE_WEBHOOK_SECRET"] })
+  .https.onRequest(async (req, res) => {
   const sig = req.headers["stripe-signature"] as string;
+  const stripe = new Stripe(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, stripeWebhookSecret);
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET.value());
   } catch (err) {
     functions.logger.warn("stripeWebhook signature verification failed", err);
     res.status(400).send("Webhook signature invalid");
