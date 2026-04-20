@@ -394,7 +394,7 @@
       border-radius: 8px;
       padding: 9px 16px 9px 38px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.88rem;
+      font-size: 1rem;
       width: 220px;
       transition: border-color 0.2s;
       outline: none;
@@ -779,7 +779,7 @@
       border-radius: 8px;
       padding: 10px 14px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
+      font-size: 1rem;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -797,8 +797,11 @@
     /* Toast */
     #toast {
       position: fixed;
-      bottom: 32px;
-      right: 32px;
+      bottom: 24px;
+      left: 16px;
+      right: 16px;
+      max-width: 440px;
+      margin: 0 auto;
       background: #1a2e1a;
       border: 1px solid rgba(74,222,128,0.35);
       color: #4ade80;
@@ -1263,7 +1266,7 @@
       border-radius: 8px;
       padding: 12px 14px;
       font-family: 'Inter', sans-serif;
-      font-size: 0.9rem;
+      font-size: 1rem;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -1294,10 +1297,11 @@
       background: transparent;
       border: none;
       color: #555;
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       cursor: pointer;
       font-family: 'Inter', sans-serif;
-      padding: 8px;
+      padding: 12px 8px;
+      min-height: 44px;
       transition: color 0.2s;
     }
     .capture-skip:hover { color: var(--muted); }
@@ -1557,7 +1561,7 @@
     <div class="filter-bar">
       <div class="search-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input type="text" id="searchInput" placeholder="Search sequences…" autocomplete="off" />
+        <input type="search" id="searchInput" placeholder="Search sequences…" autocomplete="off" />
       </div>
       <div class="filter-divider"></div>
       <div class="filter-tabs" id="filterTabs">
