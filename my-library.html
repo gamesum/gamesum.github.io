@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Library — AFTERGLO Platform</title>
+  <meta name="description" content="Your AFTERGLO light show library — downloads, purchases, and uploaded sequences." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #111111;
+      --bg4:      #1a1a1a;
+      --accent:   #c8921e;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --border2:  #2a2a2a;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 0.82rem;
+    }
+
+    /* ─── NAVBAR ──────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a.active { color: var(--accent); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #000;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      background: rgba(13,17,23,0.98);
+      backdrop-filter: blur(16px);
+      padding: 24px;
+      flex-direction: column;
+      gap: 24px;
+      z-index: 999;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── PAGE ────────────────────────────────────────────────────── */
+    .page-content {
+      padding-top: calc(var(--nav-h) + 48px);
+      padding-bottom: 80px;
+    }
+
+    /* ─── PROFILE HEADER ──────────────────────────────────────────── */
+    .profile-header {
+      background: linear-gradient(135deg, var(--bg2), var(--bg3));
+      border-bottom: 1px solid var(--border);
+      padding: 40px 0;
+      margin-bottom: 48px;
+    }
+
+    .profile-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .profile-left {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .profile-avatar {
+      width: 72px; height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.8rem;
+      color: #000;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(200,146,30,0.2), 0 8px 32px rgba(200,146,30,0.2);
+    }
+
+    .profile-info h1 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+    .profile-info p {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    .profile-stats {
+      display: flex;
+      gap: 32px;
+      flex-wrap: wrap;
+    }
+
+    .profile-stat {
+      text-align: center;
+    }
+    .profile-stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .profile-stat-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+
+    .sign-out-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.84rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid #333;
+      background: transparent;
+      color: var(--muted);
+      transition: all 0.2s;
+    }
+    .sign-out-btn:hover { border-color: #f87171; color: #f87171; }
+
+    /* ─── SECTIONS ────────────────────────────────────────────────── */
+    .lib-section {
+      margin-bottom: 56px;
+    }
+
+    .lib-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .lib-section-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lib-section-icon {
+      width: 40px; height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .icon-downloads { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); }
+    .icon-purchases  { background: rgba(200,146,30,0.1); border: 1px solid rgba(200,146,30,0.25); }
+    .icon-uploads    { background: rgba(99,102,241,0.1);  border: 1px solid rgba(99,102,241,0.25); }
+
+    .lib-section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .lib-section-count {
+      font-size: 0.82rem;
+      color: var(--muted);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 3px 10px;
+    }
+
+    /* ─── SEQUENCE CARDS GRID ─────────────────────────────────────── */
+    .lib-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .lib-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+    }
+    .lib-card:hover {
+      transform: translateY(-3px);
+      border-color: rgba(200,146,30,0.3);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    }
+
+    .lib-card-thumb {
+      height: 140px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .lib-card-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge-dl  { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
+    .badge-purchased { background: rgba(200,146,30,0.15); color: var(--accent); border: 1px solid rgba(200,146,30,0.35); }
+    .badge-upload { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.35); }
+
+    .lib-card-body {
+      padding: 16px 18px;
+    }
+
+    .lib-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .lib-card-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .lib-card-meta span { color: var(--accent); }
+
+    .lib-card-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-lib {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-lib svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+    .btn-lib-dl {
+      background: rgba(74,222,128,0.1);
+      color: #4ade80;
+      border: 1px solid rgba(74,222,128,0.2);
+    }
+    .btn-lib-dl:hover { background: rgba(74,222,128,0.2); }
+
+    .btn-lib-send {
+      background: rgba(200,146,30,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(200,146,30,0.25);
+    }
+    .btn-lib-send:hover { background: rgba(200,146,30,0.22); }
+
+    /* ─── EMPTY STATE ─────────────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 56px 24px;
+      background: var(--bg2);
+      border: 1px dashed var(--border2);
+      border-radius: 16px;
+    }
+    .empty-icon { font-size: 2.8rem; margin-bottom: 16px; }
+    .empty-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--silver);
+      margin-bottom: 8px;
+    }
+    .empty-text { font-size: 0.88rem; color: var(--muted); margin-bottom: 20px; }
+
+    /* ─── SEND TO CONTROLLER MODAL ────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 440px;
+      transform: translateY(20px);
+      transition: transform 0.25s;
+      position: relative;
+    }
+    .modal-overlay.open .modal-card { transform: translateY(0); }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .modal-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .modal-sub strong { color: var(--accent); }
+
+    .modal-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { border-color: #555; color: var(--text); }
+
+    .modal-input-wrap {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    .modal-input-wrap label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--silver);
+      margin-bottom: 7px;
+    }
+    .modal-input {
+      width: 100%;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      color: var(--text);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .modal-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200,146,30,0.12);
+    }
+    .modal-input::placeholder { color: #555; }
+    .modal-hint {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+    .modal-btn-send {
+      flex: 1;
+      padding: 13px;
+      justify-content: center;
+    }
+    .modal-btn-cancel {
+      padding: 13px 20px;
+    }
+
+    /* ─── TOAST ───────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: #1a2e1a;
+      border: 1px solid rgba(74,222,128,0.35);
+      color: #4ade80;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+      max-width: 380px;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.info {
+      background: #1a1a2e;
+      border-color: rgba(130,130,255,0.35);
+      color: #a5b4fc;
+    }
+    #toast.warning {
+      background: #2a1a0a;
+      border-color: rgba(200,146,30,0.35);
+      color: var(--accent);
+    }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .profile-stats { gap: 20px; }
+    }
+    @media (max-width: 600px) {
+      .profile-inner { flex-direction: column; align-items: flex-start; }
+      .lib-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="platform.html">Platform</a></li>
+        <li><a href="my-library.html" class="active">My Library</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <div class="nav-avatar" id="navAvatar" title="My Library">—</div>
+        <button class="sign-out-btn" onclick="signOut()" style="display:none;" id="navSignOut">
+          Sign Out
+        </button>
+        <a href="index.html#cta" class="btn btn-primary btn-sm">Get a Quote</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+    <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Platform</a>
+    <a href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
+    <button class="sign-out-btn" onclick="signOut()" style="text-align:left;">Sign Out</button>
+  </div>
+</nav>
+
+<!-- ─── SEND TO CONTROLLER MODAL ───────────────────────────────────── -->
+<div class="modal-overlay" id="sendModal" onclick="handleOverlayClick(event)">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">Send to Controller</div>
+    <div class="modal-sub">Sending <strong id="modalSeqName">sequence</strong> to your AFTERGLO controller over your home Wi-Fi.</div>
+
+    <div class="modal-input-wrap">
+      <label for="controllerIP">Controller IP Address</label>
+      <input type="text" id="controllerIP" class="modal-input" placeholder="e.g. 192.168.1.105" autocomplete="off" />
+      <div class="modal-hint">Find your controller's IP in your router's device list or on the controller's display.</div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost modal-btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary modal-btn-send" onclick="sendToController()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MAIN CONTENT ────────────────────────────────────────────────── -->
+<div class="page-content" id="pageContent" style="display:none;">
+
+  <!-- Profile Header -->
+  <div class="profile-header" id="profileHeader">
+    <div class="container">
+      <div class="profile-inner">
+        <div class="profile-left">
+          <div class="profile-avatar" id="profileAvatar">?</div>
+          <div class="profile-info">
+            <h1 id="profileName">Loading…</h1>
+            <p id="profileEmail"></p>
+          </div>
+        </div>
+        <div class="profile-stats">
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="statDownloads">0</div>
+            <div class="profile-stat-label">Downloads</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="statPurchases">0</div>
+            <div class="profile-stat-label">Purchases</div>
+          </div>
+          <div class="profile-stat">
+            <div class="profile-stat-num" id="statUploads">0</div>
+            <div class="profile-stat-label">Uploads</div>
+          </div>
+        </div>
+        <button class="sign-out-btn" onclick="signOut()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          Sign Out
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- My Downloads -->
+    <div class="lib-section">
+      <div class="lib-section-header">
+        <div class="lib-section-left">
+          <div class="lib-section-icon icon-downloads">⬇️</div>
+          <div>
+            <div class="lib-section-title">My Downloads</div>
+          </div>
+        </div>
+        <span class="lib-section-count" id="countDownloads">0 sequences</span>
+      </div>
+      <div id="downloadsGrid" class="lib-grid"></div>
+    </div>
+
+    <!-- My Purchases -->
+    <div class="lib-section">
+      <div class="lib-section-header">
+        <div class="lib-section-left">
+          <div class="lib-section-icon icon-purchases">⭐</div>
+          <div>
+            <div class="lib-section-title">My Purchases</div>
+          </div>
+        </div>
+        <span class="lib-section-count" id="countPurchases">0 packs</span>
+      </div>
+      <div id="purchasesGrid" class="lib-grid"></div>
+    </div>
+
+    <!-- My Uploads -->
+    <div class="lib-section">
+      <div class="lib-section-header">
+        <div class="lib-section-left">
+          <div class="lib-section-icon icon-uploads">🚀</div>
+          <div>
+            <div class="lib-section-title">My Uploads</div>
+          </div>
+        </div>
+        <span class="lib-section-count" id="countUploads">0 sequences</span>
+      </div>
+      <div id="uploadsGrid" class="lib-grid"></div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /page-content -->
+
+<!-- Not signed in state (shown while checking) -->
+<div id="authCheck" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;padding:40px 24px;">
+    <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
+    <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to view your library</div>
+    <div style="font-size:0.9rem;color:#94a3b8;margin-bottom:24px;">Your downloads, purchases, and uploads live here.</div>
+    <a href="signin.html?redirect=my-library.html" class="btn btn-primary">Sign In / Create Account</a>
+  </div>
+</div>
+
+<!-- ─── TOAST ──────────────────────────────────────────────────────── -->
+<div id="toast">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="toastIcon"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+  /* ─── STATE ────────────────────────────────────────────────────── */
+  let currentUser  = null;
+  let sendTargetId = null; // id of sequence being sent
+
+  /* ─── HELPERS ──────────────────────────────────────────────────── */
+  function getUser() {
+    try { return JSON.parse(localStorage.getItem('afterglo_user')); } catch(e) { return null; }
+  }
+  function saveUser(u) { localStorage.setItem('afterglo_user', JSON.stringify(u)); }
+
+  /* ─── MOCK GRADIENTS MAP (matches platform.html sequences) ───────── */
+  const GRADIENTS = {
+    1:  "linear-gradient(135deg, #c8000a 0%, #ffffff 50%, #c8000a 100%)",
+    2:  "linear-gradient(135deg, #3c3b6e 0%, #b22234 50%, #ffffff 100%)",
+    3:  "linear-gradient(135deg, #1a0030 0%, #ff6600 60%, #000000 100%)",
+    4:  "linear-gradient(135deg, #001a33 0%, #ffffff 40%, #c8921e 100%)",
+    5:  "linear-gradient(135deg, #ff0000 0%, #ffffff 50%, #0000cc 100%)",
+    6:  "linear-gradient(135deg, #2a0000 0%, #ff6600 45%, #3d0066 100%)",
+    7:  "linear-gradient(135deg, #3d001a 0%, #ff1a6b 50%, #ffffff 100%)",
+    8:  "linear-gradient(135deg, #001a00 0%, #00ff88 40%, #0066ff 100%)",
+    9:  "linear-gradient(135deg, #b22234 0%, #ffffff 35%, #3c3b6e 100%)",
+    10: "linear-gradient(135deg, #0a001a 0%, #ffffff 50%, #c8921e 100%)",
+    11: "linear-gradient(135deg, #ff0000 0%, #ffff00 50%, #ff0000 100%)",
+    12: "linear-gradient(135deg, #0d0005 0%, #6600aa 50%, #1a0000 100%)"
+  };
+
+  function getGradient(id) {
+    return GRADIENTS[id] || "linear-gradient(135deg, #1a1a1a, #333)";
+  }
+
+  /* ─── INIT ─────────────────────────────────────────────────────── */
+  function init() {
+    currentUser = getUser();
+    if (!currentUser || !currentUser.token) {
+      document.getElementById('authCheck').style.display = 'flex';
+      return;
+    }
+    document.getElementById('authCheck').style.display = 'none';
+    document.getElementById('pageContent').style.display = 'block';
+
+    // Ensure arrays exist
+    if (!currentUser.library)   currentUser.library   = [];
+    if (!currentUser.purchases) currentUser.purchases = [];
+    if (!currentUser.uploads)   currentUser.uploads   = [];
+
+    // Nav avatar
+    const initial = (currentUser.name || currentUser.email || 'U')[0].toUpperCase();
+    document.getElementById('navAvatar').textContent = initial;
+    document.getElementById('navSignOut').style.display = 'inline-flex';
+
+    // Profile header
+    document.getElementById('profileAvatar').textContent = initial;
+    document.getElementById('profileName').textContent   = currentUser.name || 'My Account';
+    document.getElementById('profileEmail').textContent  = currentUser.email || '';
+
+    renderSections();
+  }
+
+  /* ─── RENDER ───────────────────────────────────────────────────── */
+  function renderSections() {
+    const lib = currentUser.library   || [];
+    const pur = currentUser.purchases || [];
+    const upl = currentUser.uploads   || [];
+
+    document.getElementById('statDownloads').textContent = lib.length;
+    document.getElementById('statPurchases').textContent = pur.length;
+    document.getElementById('statUploads').textContent   = upl.length;
+
+    document.getElementById('countDownloads').textContent = lib.length + ' sequence' + (lib.length !== 1 ? 's' : '');
+    document.getElementById('countPurchases').textContent = pur.length + ' pack' + (pur.length !== 1 ? 's' : '');
+    document.getElementById('countUploads').textContent   = upl.length + ' sequence' + (upl.length !== 1 ? 's' : '');
+
+    renderGrid('downloadsGrid', lib, 'download');
+    renderGrid('purchasesGrid', pur, 'purchase');
+    renderGrid('uploadsGrid',   upl, 'upload');
+  }
+
+  function renderGrid(gridId, items, type) {
+    const grid = document.getElementById(gridId);
+    grid.innerHTML = '';
+    if (!items.length) {
+      grid.appendChild(buildEmptyState(type));
+      return;
+    }
+    items.forEach(item => grid.appendChild(buildCard(item, type)));
+  }
+
+  function buildCard(item, type) {
+    const card = document.createElement('div');
+    card.className = 'lib-card';
+
+    const badgeClass = type === 'download' ? 'badge-dl' : type === 'purchase' ? 'badge-purchased' : 'badge-upload';
+    const badgeText  = type === 'download' ? 'Downloaded' : type === 'purchase' ? 'Purchased' : 'Uploaded';
+    const gradient   = item.gradient || getGradient(item.id);
+
+    const actionsBtns = type === 'upload'
+      ? `<button class="btn-lib btn-lib-dl" onclick="redownload(${item.id})">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+           Download
+         </button>`
+      : `<button class="btn-lib btn-lib-dl" onclick="redownload(${item.id})">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+           Download Again
+         </button>
+         <button class="btn-lib btn-lib-send" onclick="openSendModal(${item.id},'${escapeHtml(item.name)}')">
+           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+           Send to Controller
+         </button>`;
+
+    card.innerHTML = `
+      <div class="lib-card-thumb" style="background:${gradient};">
+        <span class="lib-card-badge ${badgeClass}">${badgeText}</span>
+      </div>
+      <div class="lib-card-body">
+        <div class="lib-card-title">${escapeHtml(item.name)}</div>
+        <div class="lib-card-meta">By <span>${escapeHtml(item.creator || 'Community')}</span>${item.duration ? ' · ' + item.duration : ''}</div>
+        <div class="lib-card-actions">${actionsBtns}</div>
+      </div>
+    `;
+    return card;
+  }
+
+  function buildEmptyState(type) {
+    const configs = {
+      download: {
+        icon:  '⬇️',
+        title: 'No downloads yet',
+        text:  'Browse the platform and grab free sequences to get started.',
+        cta:   'Browse Free Shows'
+      },
+      purchase: {
+        icon:  '⭐',
+        title: 'No purchases yet',
+        text:  'Unlock premium show packs crafted by professional animators.',
+        cta:   'View Premium Packs'
+      },
+      upload: {
+        icon:  '🚀',
+        title: 'No uploads yet',
+        text:  'Share your xLights sequences with the AFTERGLO community.',
+        cta:   'Upload a Show'
+      }
+    };
+    const c   = configs[type];
+    const div = document.createElement('div');
+    div.className = 'empty-state';
+    div.innerHTML = `
+      <div class="empty-icon">${c.icon}</div>
+      <div class="empty-title">${c.title}</div>
+      <p class="empty-text">${c.text}</p>
+      <a href="platform.html${type === 'upload' ? '#upload' : type === 'purchase' ? '#premium' : '#sequences'}" class="btn btn-ghost btn-sm">${c.cta} →</a>
+    `;
+    return div;
+  }
+
+  /* ─── ACTIONS ──────────────────────────────────────────────────── */
+  function redownload(id) {
+    showToast('Download starting for sequence #' + id + '…');
+  }
+
+  function openSendModal(id, name) {
+    sendTargetId = id;
+    document.getElementById('modalSeqName').textContent = name;
+    document.getElementById('controllerIP').value = '';
+    document.getElementById('sendModal').classList.add('open');
+    setTimeout(() => document.getElementById('controllerIP').focus(), 100);
+  }
+
+  function closeModal() {
+    document.getElementById('sendModal').classList.remove('open');
+    sendTargetId = null;
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('sendModal')) closeModal();
+  }
+
+  function sendToController() {
+    const ip = document.getElementById('controllerIP').value.trim();
+    if (!ip) {
+      showToast('Please enter your controller\'s IP address.', 'warning');
+      return;
+    }
+    // Basic IP validation
+    if (!/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
+      showToast('Please enter a valid IP address (e.g. 192.168.1.105)', 'warning');
+      return;
+    }
+
+    closeModal();
+    showToast('Sending to controller at ' + ip + '…', 'info');
+
+    // Mock fetch to controller
+    fetch('http://' + ip + '/api/sequences/upload', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sequenceId: sendTargetId })
+    })
+    .then(() => {
+      showToast('Done! Check your Sequences tab on the controller.');
+    })
+    .catch(() => {
+      // Network error is expected (mock) — show success anyway for demo
+      showToast('Done! Check your Sequences tab on the controller.');
+    });
+  }
+
+  /* ─── SIGN OUT ─────────────────────────────────────────────────── */
+  function signOut() {
+    localStorage.removeItem('afterglo_user');
+    window.location.href = 'signin.html';
+  }
+
+  /* ─── TOAST ────────────────────────────────────────────────────── */
+  let toastTimer;
+  function showToast(msg, type) {
+    const toast  = document.getElementById('toast');
+    const msgEl  = document.getElementById('toastMsg');
+    msgEl.textContent = msg;
+    toast.classList.remove('info', 'warning');
+    if (type === 'info')    toast.classList.add('info');
+    if (type === 'warning') toast.classList.add('warning');
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 4000);
+  }
+
+  /* ─── NAVBAR ───────────────────────────────────────────────────── */
+  const hamburger  = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen = false;
+
+  hamburger.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    const spans = hamburger.querySelectorAll('span');
+    if (menuOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+
+  document.addEventListener('click', e => {
+    if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+  });
+
+  /* ─── ESCAPE ───────────────────────────────────────────────────── */
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  /* ─── RUN ──────────────────────────────────────────────────────── */
+  init();
+</script>
+</body>
+</html>

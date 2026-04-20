@@ -195,7 +195,11 @@
       cursor: pointer;
       background: none;
       border: none;
-      padding: 4px;
+      padding: 10px;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
     }
     .hamburger span {
       display: block;
@@ -224,8 +228,11 @@
       font-size: 1.1rem;
       font-weight: 500;
       color: var(--text);
-      padding: 8px 0;
+      padding: 14px 0;
       border-bottom: 1px solid var(--border);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
     }
 
     /* ─── HERO ─────────────────────────────────────────────────────── */
@@ -726,7 +733,7 @@
       gap: 12px;
     }
     .social-link {
-      width: 38px; height: 38px;
+      width: 44px; height: 44px;
       border-radius: 8px;
       background: var(--bg3);
       border: 1px solid var(--border);
@@ -880,6 +887,10 @@
       .cta-inner { padding: 48px 24px; }
       .gallery-grid { grid-template-columns: 1fr; }
       .gallery-grid .g-item:first-child { grid-column: auto; }
+      /* Visualizer preview images: single column on very small screens */
+      #visualizer-teaser .viz-split > div:last-child > div { grid-template-columns: 1fr 1fr; }
+      /* App side inner flex row: stack phone + feature list vertically */
+      .app-side > div > div[style*="display:flex"] { flex-direction: column; align-items: center; }
     }
 
     /* ─── ARCHES & APP SECTION ──────────────────────────────── */
@@ -1031,6 +1042,14 @@
       .arches-split { grid-template-columns: 1fr; gap: 48px; }
       .arch-props-row { flex-wrap: wrap; }
       .phone-mockup { width: 200px; }
+      .viz-split { grid-template-columns: 1fr !important; gap: 48px !important; }
+    }
+
+    .viz-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
     }
 
     /* ─── LED arch animation ────────────────────────────────── */
@@ -1116,6 +1135,7 @@
           <li><a href="#testimonials">Reviews</a></li>
           <li><a href="platform.html" style="color:var(--accent);">Platform</a></li>
           <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
+          <li id="myLibNavItem" style="display:none;"><a href="my-library.html" style="color:var(--accent);">My Library</a></li>
         </ul>
 
         <a href="#cta" class="btn btn-primary nav-cta">Get a Quote</a>
@@ -1132,6 +1152,7 @@
       <a href="#testimonials" onclick="closeMenu()">Reviews</a>
       <a href="platform.html" style="color:var(--accent);font-weight:700;" onclick="closeMenu()">Platform</a>
       <a href="afterglo-visualizer.html" style="color:var(--accent);font-weight:700;" onclick="closeMenu()">✦ Try the Visualizer</a>
+      <a href="my-library.html" id="myLibMobileLink" style="display:none;color:var(--accent);font-weight:700;" onclick="closeMenu()">My Library</a>
       <a href="#cta" class="btn btn-primary" style="text-align:center" onclick="closeMenu()">Get a Free Quote</a>
     </div>
   </nav>
@@ -1232,9 +1253,9 @@
   -->
 
   <!-- ─── CHRISTMAS LIGHT SHOWS ──────────────────────────────── -->
-  <section id="lightshow">
+  <section id="lightshow" class="section-pad" style="padding-bottom:96px;">
     <div class="container">
-      <div style="text-align:center;max-width:680px;margin:0 auto 56px;padding-top:32px;">
+      <div style="text-align:center;max-width:680px;margin:0 auto 56px;">
         <div class="section-label">Only in Utah — Only AFTERGLO</div>
         <h2 class="section-title">Full-Scale Christmas<br>Light Shows. In Your Yard.</h2>
         <p class="section-sub" style="margin:0 auto;">The only company in the country bringing full-scale, music-synchronized Christmas light shows to residential homes. Arches, giant trees, candy canes — choreographed to music, controlled from one app.</p>
@@ -1324,7 +1345,7 @@
             </div>
 
             <!-- Feature list -->
-            <ul class="app-features-list" style="flex:1;min-width:180px;">
+            <ul class="app-features-list" style="flex:1;min-width:min(180px, 100%);">
               <li>
                 <div class="app-feat-icon">🎵</div>
                 <div class="app-feat-text">
@@ -1379,7 +1400,7 @@
   <!-- ─── VISUALIZER TEASER ──────────────────────────────────── -->
   <section id="visualizer-teaser" style="padding:96px 0;background:var(--bg);overflow:hidden;">
     <div class="container">
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;">
+      <div class="viz-split">
 
         <!-- Left: text -->
         <div class="fade-in">
@@ -1569,7 +1590,7 @@
           <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:14px;letter-spacing:0.02em;">Get notified when we release new products, light show packages, and seasonal deals.</p>
           <form id="ctaEmailForm" onsubmit="submitCtaEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
             <input id="ctaEmailInput" type="email" placeholder="Your email address" required
-              style="background:#1a1a1a;border:1px solid #555;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:220px;transition:border-color 0.2s;"
+              style="background:#1a1a1a;border:1px solid #555;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:min(220px, 100%);transition:border-color 0.2s;"
               onfocus="this.style.borderColor='rgba(200,146,30,0.8)'" onblur="this.style.borderColor='#555'">
             <button type="submit" style="background:rgba(200,146,30,0.15);color:#c8921e;border:1px solid rgba(200,146,30,0.3);border-radius:8px;padding:12px 22px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;">
               Keep Me Posted
@@ -1670,6 +1691,19 @@
     window.addEventListener('scroll', () => {
       navbar.classList.toggle('scrolled', window.scrollY > 20);
     }, { passive: true });
+
+    // My Library nav link — show if signed in
+    (function() {
+      try {
+        const user = JSON.parse(localStorage.getItem('afterglo_user'));
+        if (user && user.token) {
+          const desktopItem = document.getElementById('myLibNavItem');
+          const mobileLink  = document.getElementById('myLibMobileLink');
+          if (desktopItem) desktopItem.style.display = '';
+          if (mobileLink)  mobileLink.style.display  = '';
+        }
+      } catch(e) {}
+    })();
 
     // Mobile hamburger
     const hamburger = document.getElementById('hamburger');
