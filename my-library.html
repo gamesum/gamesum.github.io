@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Library — AFTERGLO Platform</title>
+  <title>My Light Shows — AFTERGLO</title>
   <meta name="description" content="Your AFTERGLO light show library — downloads, purchases, and uploaded sequences." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -691,9 +691,9 @@
       <ul class="nav-links">
         <li><a href="arches.html">Light Shows</a></li>
         <li><a href="index.html#gallery">Gallery</a></li>
-        <li><a href="platform.html">Platform</a></li>
-        <li><a href="my-library.html" class="active">My Library</a></li>
-        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
+        <li><a href="platform.html">Light Show Store</a></li>
+        <li><a href="my-library.html" class="active">My Shows</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
       <div class="nav-right">
@@ -712,8 +712,8 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="arches.html" onclick="closeMenu()">Light Shows</a>
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
-    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Platform</a>
-    <a href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Light Show Store</a>
+    <a href="my-library.html" onclick="closeMenu()">My Shows</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
     <button class="sign-out-btn" onclick="signOut()" style="text-align:left;">Sign Out</button>
   </div>
@@ -723,8 +723,8 @@
 <div class="modal-overlay" id="sendModal" onclick="handleOverlayClick(event)">
   <div class="modal-card">
     <button class="modal-close" onclick="closeModal()">✕</button>
-    <div class="modal-title">Send to Controller</div>
-    <div class="modal-sub">Sending <strong id="modalSeqName">sequence</strong> to your AFTERGLO controller over your home Wi-Fi.</div>
+    <div class="modal-title">Send Show to Your Controller</div>
+    <div class="modal-sub">This sends <strong id="modalSeqName">this show</strong> directly to your AFTERGLO controller over your home Wi-Fi. You only need to do this once per show.</div>
 
     <div class="modal-input-wrap">
       <label for="controllerIP">Controller Address</label>
@@ -732,6 +732,7 @@
       <div class="modal-hint">This is your AFTERGLO controller's local address on your home Wi-Fi. Find it on the controller's built-in screen, or look for "AFTERGLO" in your router's connected device list.</div>
     </div>
 
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:16px;line-height:1.6;">💡 <strong style="color:var(--silver);">Tip:</strong> Make sure your phone or computer is connected to your home Wi-Fi (not mobile data) before sending.</div>
     <div class="modal-actions">
       <button class="btn btn-ghost modal-btn-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn btn-primary modal-btn-send" onclick="sendToController()">
@@ -759,11 +760,11 @@
         <div class="profile-stats">
           <div class="profile-stat">
             <div class="profile-stat-num" id="statDownloads">0</div>
-            <div class="profile-stat-label">Downloads</div>
+            <div class="profile-stat-label">Saved Shows</div>
           </div>
           <div class="profile-stat">
             <div class="profile-stat-num" id="statPurchases">0</div>
-            <div class="profile-stat-label">Purchases</div>
+            <div class="profile-stat-label">Purchased Packs</div>
           </div>
           <div class="profile-stat">
             <div class="profile-stat-num" id="statUploads">0</div>
@@ -786,7 +787,7 @@
         <div class="lib-section-left">
           <div class="lib-section-icon icon-downloads">⬇️</div>
           <div>
-            <div class="lib-section-title">My Downloads</div>
+            <div class="lib-section-title">My Saved Shows</div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Free shows you've saved from the store</div>
           </div>
         </div>
         <span class="lib-section-count" id="countDownloads">0 sequences</span>
@@ -800,7 +801,7 @@
         <div class="lib-section-left">
           <div class="lib-section-icon icon-purchases">⭐</div>
           <div>
-            <div class="lib-section-title">My Purchases</div>
+            <div class="lib-section-title">My Purchased Packs</div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Premium packs you've bought — yours to keep and replay every year</div>
           </div>
         </div>
         <span class="lib-section-count" id="countPurchases">0 packs</span>
@@ -814,7 +815,7 @@
         <div class="lib-section-left">
           <div class="lib-section-icon icon-uploads">🚀</div>
           <div>
-            <div class="lib-section-title">My Uploads</div>
+            <div class="lib-section-title">My Uploads <span style="font-size:0.72rem;background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);border-radius:100px;padding:2px 8px;font-weight:600;letter-spacing:0.05em;vertical-align:middle;">FOR CREATORS</span></div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Share your own light show designs with the AFTERGLO community</div>
           </div>
         </div>
         <span class="lib-section-count" id="countUploads">0 sequences</span>
@@ -829,9 +830,9 @@
 <div id="authCheck" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
   <div style="text-align:center;padding:40px 24px;">
     <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
-    <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to view your library</div>
-    <div style="font-size:0.9rem;color:#94a3b8;margin-bottom:24px;">Your downloads, purchases, and uploads live here.</div>
-    <a href="signin.html?redirect=my-library.html" class="btn btn-primary">Sign In / Create Account</a>
+    <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to see your saved light shows</div>
+    <div style="font-size:0.9rem;color:#94a3b8;margin-bottom:24px;">It's free to create an account — your shows will be saved and ready whenever you need them.</div>
+    <a href="signin.html?redirect=my-library.html" class="btn btn-primary">Sign In or Create Free Account</a>
   </div>
 </div>
 
@@ -1034,15 +1035,15 @@
       download: {
         icon:  '⬇️',
         title: 'No downloads yet',
-        text:  'Browse the marketplace and grab free sequences to get started. All downloads are saved here forever.',
-        cta:   'Browse Free Shows',
+        text:  'Head to the Light Show Store and tap "Save Free Show" on any show you like — it will appear here, ready to use anytime.',
+        cta:   'Go to the Light Show Store',
         link:  'platform.html#sequences'
       },
       purchase: {
         icon:  '⭐',
         title: 'No purchases yet',
         text:  'Browse premium show packs built by AFTERGLO's animation team — one-time purchase, no subscription.',
-        cta:   'View Premium Packs',
+        cta:   'Browse Premium Packs',
         link:  'platform.html#premium'
       },
       upload: {
@@ -1170,7 +1171,7 @@
         body:   formData,
       });
 
-      showToast('Sent! Check your Sequences tab on the controller.');
+      showToast('Show sent! It should now appear in the Sequences list on your controller.');
     } catch (err) {
       console.error('sendToController error:', err);
       // If it's a network error (CORS or controller unreachable), still note it clearly
