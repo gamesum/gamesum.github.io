@@ -697,7 +697,7 @@
       </ul>
 
       <div class="nav-right">
-        <div class="nav-avatar" id="navAvatar" title="My Library">—</div>
+        <div class="nav-avatar" id="navAvatar" title="My Library" style="display:none;"></div>
         <button class="sign-out-btn" onclick="signOut()" style="display:none;" id="navSignOut">
           Sign Out
         </button>
@@ -743,6 +743,17 @@
     </div>
   </div>
 </div>
+
+<!-- ─── AUTH LOADING SPINNER ────────────────────────────────────────── -->
+<div id="authLoading" style="min-height:100vh;display:flex;align-items:center;justify-content:center;">
+  <div style="text-align:center;padding:40px 24px;">
+    <div style="width:48px;height:48px;border:3px solid #222;border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;"></div>
+    <div style="font-size:0.9rem;color:#94a3b8;">Loading your library...</div>
+  </div>
+</div>
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
 
 <!-- ─── MAIN CONTENT ────────────────────────────────────────────────── -->
 <div class="page-content" id="pageContent" style="display:none;">
@@ -882,25 +893,25 @@
 
   /* ─── INIT ─────────────────────────────────────────────────────── */
   async function init(firebaseUser) {
+    // Always hide the spinner first
+    document.getElementById('authLoading').style.display = 'none';
+
     if (firebaseUser) {
-      try {
-        const token = await firebaseUser.getIdToken(true);
-        const stored = getUser() || {};
-        currentUser = {
-          name:      firebaseUser.displayName || stored.name || firebaseUser.email.split('@')[0],
-          email:     firebaseUser.email,
-          picture:   firebaseUser.photoURL || stored.picture || '',
-          uid:       firebaseUser.uid,
-          token,
-          library:   stored.library   || [],
-          purchases: stored.purchases || [],
-          uploads:   stored.uploads   || [],
-        };
-        saveUser(currentUser);
-      } catch (err) {
-        console.error('[Auth] getIdToken failed:', err);
-        currentUser = null;
-      }
+      // Do NOT force-refresh the token here -- it throws on slow networks
+      // and causes a false auth failure. Use cached token; it refreshes on its own.
+      const stored = getUser() || {};
+      const token = await firebaseUser.getIdToken(false).catch(() => stored.token || null);
+      currentUser = {
+        name:      firebaseUser.displayName || stored.name || firebaseUser.email.split('@')[0],
+        email:     firebaseUser.email,
+        picture:   firebaseUser.photoURL || stored.picture || '',
+        uid:       firebaseUser.uid,
+        token:     token || stored.token || '',
+        library:   stored.library   || [],
+        purchases: stored.purchases || [],
+        uploads:   stored.uploads   || [],
+      };
+      saveUser(currentUser);
     } else {
       currentUser = null;
     }
@@ -915,7 +926,9 @@
       setTimeout(() => showToast('Purchase complete! Your new sequence is ready to download.'), 400);
     }
 
-    if (!currentUser || !currentUser.token) {
+    // Gate only on whether Firebase confirmed a user -- not on token presence.
+    // A missing token is non-fatal; API calls will fall back to stored token.
+    if (!currentUser) {
       document.getElementById('authCheck').style.display = 'flex';
       return;
     }
@@ -929,7 +942,9 @@
 
     // Nav avatar
     const initial = (currentUser.name || currentUser.email || 'U')[0].toUpperCase();
-    document.getElementById('navAvatar').textContent = initial;
+    const navAvatar = document.getElementById('navAvatar');
+    navAvatar.textContent = initial;
+    navAvatar.style.display = '';
     document.getElementById('navSignOut').style.display = 'inline-flex';
 
     // Profile header
@@ -1266,8 +1281,44 @@
   window.addEventListener('DOMContentLoaded', () => {
     console.log('[Auth] my-library.html loaded, waiting for Firebase...');
 
+    let initCalled = false;
+
+    // Timeout fallback: if Firebase hasn't resolved within 8 seconds,
+    // check localStorage. If we have a stored user, trust it and render.
+    // If not, show the auth gate. This prevents infinite blank-page hangs.
+    const authTimeout = setTimeout(() => {
+      if (initCalled) return;
+      console.warn('[Auth] Firebase auth timed out -- falling back to localStorage');
+      const stored = getUser();
+      if (stored && stored.uid) {
+        // Trust the stored session; Firebase will catch up via onAuthStateChanged
+        initCalled = true;
+        document.getElementById('authLoading').style.display = 'none';
+        currentUser = stored;
+        document.getElementById('authCheck').style.display = 'none';
+        document.getElementById('pageContent').style.display = 'block';
+        renderSections();
+        // Update nav avatar
+        const initial = (stored.name || stored.email || 'U')[0].toUpperCase();
+        const navAv = document.getElementById('navAvatar');
+        navAv.textContent = initial;
+        navAv.style.display = '';
+        document.getElementById('navSignOut').style.display = 'inline-flex';
+        document.getElementById('profileAvatar').textContent = initial;
+        setProfileNameDisplay(stored.name || 'My Account');
+        document.getElementById('profileEmail').textContent = stored.email || '';
+      } else {
+        initCalled = true;
+        document.getElementById('authLoading').style.display = 'none';
+        document.getElementById('authCheck').style.display = 'flex';
+      }
+    }, 8000);
+
     firebase.auth().onAuthStateChanged(async (firebaseUser) => {
-      init(firebaseUser);
+      if (initCalled) return; // already rendered via timeout fallback
+      initCalled = true;
+      clearTimeout(authTimeout);
+      await init(firebaseUser);
     });
   });
 </script>

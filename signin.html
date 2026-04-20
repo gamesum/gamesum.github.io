@@ -682,14 +682,21 @@
   }
 
   /* ─── REDIRECT IF ALREADY SIGNED IN ──────────────────────────── */
+  // This flag is set to true when a sign-in action is in progress.
+  // It prevents the onAuthStateChanged listener from double-redirecting.
+  let _signingIn = false;
+
   (function() {
     // Pre-select tab from ?tab=create
     const tab = new URLSearchParams(window.location.search).get('tab');
     if (tab === 'create') switchTab('create');
 
-    // Wait for Firebase to resolve auth before redirecting
+    // Wait for Firebase to resolve auth before redirecting.
+    // Only redirect if we are NOT currently executing a sign-in action
+    // (those handle their own redirect after showing the welcome toast).
     if (typeof firebase !== 'undefined') {
       firebase.auth().onAuthStateChanged(function(fbUser) {
+        if (_signingIn) return; // active sign-in in progress; let its own handler redirect
         if (fbUser) {
           const redir = new URLSearchParams(window.location.search).get('redirect') || 'platform.html';
           safeRedirect(redir);
@@ -782,6 +789,7 @@
     const btn = e.target.querySelector('button[type=submit]');
     if (btn) btn.disabled = true;
 
+    _signingIn = true;
     const result = await signInWithEmail(email, password);
 
     if (btn) btn.disabled = false;
@@ -791,6 +799,7 @@
       showToast('Welcome back, ' + (user?.name || 'there') + '!');
       setTimeout(() => window.location.href = getRedirectUrl(), 1200);
     } else {
+      _signingIn = false;
       showErr('siGlobalErr', result.message || 'Sign in failed. Please try again.');
     }
   }
@@ -836,6 +845,7 @@
     const btn = e.target.querySelector('button[type=submit]');
     if (btn) btn.disabled = true;
 
+    _signingIn = true;
     const result = await createAccountWithEmail(name, email, password);
 
     if (btn) btn.disabled = false;
@@ -844,6 +854,7 @@
       showToast('Account created! Welcome to AFTERGLO, ' + name + '!');
       setTimeout(() => window.location.href = getRedirectUrl(), 1400);
     } else {
+      _signingIn = false;
       const field = result.code === 'auth/email-already-in-use' ? 'caEmailErr' : 'caGlobalErr';
       showErr(field, result.message || 'Account creation failed.');
     }
@@ -854,6 +865,7 @@
   async function handleGoogle() {
     const btns = document.querySelectorAll('.btn-google');
     btns.forEach(b => { b.disabled = true; b.style.opacity = '0.6'; });
+    _signingIn = true;
     try {
       const result = await signInWithGoogle();
       if (result && result.redirecting) return; // mobile: page will reload after redirect
@@ -862,10 +874,12 @@
         showToast('Welcome, ' + firstName + '!');
         setTimeout(() => window.location.href = getRedirectUrl(), 900);
       } else {
+        _signingIn = false;
         showToast((result && result.message) || 'Google sign-in failed. Please try again.', true);
         btns.forEach(b => { b.disabled = false; b.style.opacity = ''; });
       }
     } catch (err) {
+      _signingIn = false;
       showToast('Google sign-in failed. Please try again.', true);
       btns.forEach(b => { b.disabled = false; b.style.opacity = ''; });
       console.error('Google sign-in error:', err);

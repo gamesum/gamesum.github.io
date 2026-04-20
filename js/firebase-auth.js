@@ -29,10 +29,16 @@ if (FIREBASE_ENABLED) {
   _firebaseApp  = firebase.initializeApp(firebaseConfig);
   _firebaseAuth = firebase.auth();
 
+  // Explicitly set LOCAL persistence so the session survives page navigations
+  // and is stored in IndexedDB rather than sessionStorage.
+  _firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
+
   // Keep localStorage in sync whenever the Firebase auth state changes
   _firebaseAuth.onAuthStateChanged(async (fbUser) => {
     if (!fbUser) return;
-    const idToken = await fbUser.getIdToken();
+    // Use non-force-refresh to avoid throwing on slow networks
+    const idToken = await fbUser.getIdToken(false).catch(() => null);
+    if (!idToken) return;
     const existing = getUser();
     const merged = Object.assign({}, existing || {}, {
       name:       fbUser.displayName || existing?.name || fbUser.email.split('@')[0],
@@ -61,10 +67,11 @@ function signOutUser() {
   if (FIREBASE_ENABLED) _firebaseAuth.signOut();
 }
 
-// Returns a fresh ID token string for API calls, or the stored token as fallback.
+// Returns an ID token string for API calls, or the stored token as fallback.
+// Does NOT force-refresh to avoid failures on slow networks.
 async function getIdToken() {
   if (FIREBASE_ENABLED && _firebaseAuth.currentUser) {
-    return _firebaseAuth.currentUser.getIdToken(/* forceRefresh */ true);
+    return _firebaseAuth.currentUser.getIdToken(false).catch(() => getUser()?.token ?? null);
   }
   return getUser()?.token ?? null;
 }
