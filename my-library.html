@@ -231,10 +231,69 @@
       font-weight: 800;
       color: #fff;
       margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .profile-info p {
       font-size: 0.88rem;
       color: var(--muted);
+    }
+
+    .edit-name-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 2px 4px;
+      border-radius: 4px;
+      line-height: 1;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .edit-name-btn:hover { color: var(--accent); }
+
+    .name-edit-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .name-edit-input {
+      background: #111;
+      border: 1.5px solid var(--accent);
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      outline: none;
+      width: 220px;
+    }
+    .name-save-btn {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .name-save-btn:hover { background: var(--accent2); }
+    .name-cancel-btn {
+      background: none;
+      border: 1px solid #333;
+      border-radius: 6px;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 6px 10px;
+      cursor: pointer;
     }
 
     .profile-stats {
@@ -670,7 +729,7 @@
         <div class="profile-left">
           <div class="profile-avatar" id="profileAvatar">?</div>
           <div class="profile-info">
-            <h1 id="profileName">Loading…</h1>
+            <h1 id="profileName">Loading…<button class="edit-name-btn" onclick="startEditName()" title="Edit display name" aria-label="Edit display name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></h1>
             <p id="profileEmail"></p>
           </div>
         </div>
@@ -812,10 +871,56 @@
 
     // Profile header
     document.getElementById('profileAvatar').textContent = initial;
-    document.getElementById('profileName').textContent   = currentUser.name || 'My Account';
+    setProfileNameDisplay(currentUser.name || 'My Account');
     document.getElementById('profileEmail').textContent  = currentUser.email || '';
 
     renderSections();
+  }
+
+  /* ─── DISPLAY NAME EDITING ────────────────────────────────────── */
+  function setProfileNameDisplay(name) {
+    const h1 = document.getElementById('profileName');
+    h1.innerHTML = `${name}<button class="edit-name-btn" onclick="startEditName()" title="Edit display name" aria-label="Edit display name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`;
+  }
+
+  function startEditName() {
+    const current = currentUser.name || '';
+    const h1 = document.getElementById('profileName');
+    h1.innerHTML = `
+      <span class="name-edit-wrap">
+        <input class="name-edit-input" id="nameEditInput" type="text" value="${current}" maxlength="40" autocomplete="off" />
+        <button class="name-save-btn" onclick="saveDisplayName()">Save</button>
+        <button class="name-cancel-btn" onclick="cancelEditName()">Cancel</button>
+      </span>`;
+    const input = document.getElementById('nameEditInput');
+    input.focus();
+    input.select();
+    input.addEventListener('keydown', e => {
+      if (e.key === 'Enter')  saveDisplayName();
+      if (e.key === 'Escape') cancelEditName();
+    });
+  }
+
+  function saveDisplayName() {
+    const input = document.getElementById('nameEditInput');
+    if (!input) return;
+    const newName = input.value.trim();
+    if (!newName) { input.focus(); return; }
+
+    currentUser.name = newName;
+    saveUser(currentUser);
+
+    // Refresh avatar initial
+    const initial = newName[0].toUpperCase();
+    document.getElementById('profileAvatar').textContent = initial;
+    document.getElementById('navAvatar').textContent = initial;
+
+    setProfileNameDisplay(newName);
+    showToast('Display name updated!');
+  }
+
+  function cancelEditName() {
+    setProfileNameDisplay(currentUser.name || 'My Account');
   }
 
   /* ─── RENDER ───────────────────────────────────────────────────── */

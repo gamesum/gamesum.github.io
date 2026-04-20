@@ -2565,10 +2565,6 @@
           <input type="text" id="showName" placeholder="e.g. Candy Cane Lane 2025" />
         </div>
         <div class="form-group">
-          <label>Creator Name</label>
-          <input type="text" id="creatorName" placeholder="Your name or handle" value="${user.name || ''}" />
-        </div>
-        <div class="form-group">
           <label>Category</label>
           <select id="categoryInput" style="width:100%;padding:12px 14px;background:#111;border:1px solid #2a2a2a;border-radius:8px;color:#e2e8f0;font-size:15px;font-family:inherit;">
             <option value="">Select a category…</option>
@@ -2588,6 +2584,10 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Upload to Community
         </button>
+        <p style="font-size:0.8rem;color:#666;margin-top:10px;text-align:center;">
+          Uploading as <strong style="color:#94a3b8;">${user.name || user.email}</strong> &nbsp;·&nbsp;
+          <a href="my-library.html" style="color:var(--accent);text-decoration:none;">Change name</a>
+        </p>
         <p class="upload-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Share your xLights sequences with the community. Export uncompressed FSEQ v2 from xLights before uploading. Max file size 50 MB.
@@ -2628,10 +2628,10 @@
       const user = getUser();
       if (!user || !user.token) { initUploadForm(); return; }
       const name    = document.getElementById('showName').value.trim();
-      const creator = document.getElementById('creatorName').value.trim();
+      const creator = user.name || user.email || 'Unknown';
       const hasFile = (fileInput.files && fileInput.files.length > 0) || fileInput._file;
-      if (!hasFile)        { showToast('Please select an .fseq file before uploading', true); return; }
-      if (!name || !creator) { showToast('Please fill in show name and creator name', true); return; }
+      if (!hasFile) { showToast('Please select an .fseq file before uploading', true); return; }
+      if (!name)    { showToast('Please enter a show name', true); return; }
 
       if (!user.uploads) user.uploads = [];
       user.uploads.push({
