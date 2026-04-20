@@ -2003,6 +2003,13 @@
 </div>
 
 <script>
+  /* ─── XSS ESCAPE HELPER ──────────────────────────────────────────── */
+  function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str ?? '';
+    return d.innerHTML;
+  }
+
   /* ─── MOCK DATA ──────────────────────────────────────────────────── */
   const sequences = [
     {
@@ -2199,9 +2206,9 @@
       </div>
       <div class="card-body">
         <div class="card-stars">${stars}</div>
-        <div class="card-title">${seq.name}</div>
+        <div class="card-title">${esc(seq.name)}</div>
         <div class="card-meta">
-          <span class="card-creator">${seq.creator}</span>
+          <span class="card-creator">${esc(seq.creator)}</span>
           <span class="card-dot">·</span>
           <span class="card-channels">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
@@ -2381,6 +2388,16 @@
   // getUser / saveUser / signOutUser / getIdToken come from js/firebase-auth.js
   function isSignedIn() { const u = getUser(); return !!(u && u.token); }
 
+  function requireAuth() {
+    const user = getUser();
+    if (!user || !user.uid) {
+      showToast('Sign in to access store features');
+      setTimeout(() => { window.location.href = 'signin.html?redirect=platform.html'; }, 1200);
+      return false;
+    }
+    return true;
+  }
+
   /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
   function updateNavAuth() {
     const user    = getUser();
@@ -2390,8 +2407,8 @@
       const initial = (user.name || user.email || 'U')[0].toUpperCase();
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
-          ${user.name || user.email}
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
+          ${esc(user.name || user.email)}
         </a>`;
       mobArea.innerHTML = `<a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>`;
     } else {
@@ -2484,17 +2501,7 @@
   /* ─── DOWNLOAD / BUY HANDLERS ────────────────────────────────────── */
   function handleDownload(e, id) {
     e.stopPropagation();
-    if (!isSignedIn()) {
-      // Change 1: show email capture modal instead of bare redirect
-      // Skip modal if user has already provided email in this session
-      const hasLead = (localStorage.getItem('afterglo_leads') || '').includes('@');
-      if (hasLead) {
-        window.location.href = 'signin.html?redirect=platform.html';
-      } else {
-        showCaptureModal(id);
-      }
-      return;
-    }
+    if (!requireAuth()) return;
     _doDownload(id);
   }
 
@@ -2526,11 +2533,7 @@
   const FUNCTIONS_BASE = "https://us-central1-afterglo-website-fbb89.cloudfunctions.net";
 
   async function startStripeCheckout({ sequenceId, sequenceName, creator, price }) {
-    const user = getUser();
-    if (!user || !user.token) {
-      window.location.href = `signin.html?redirect=platform.html`;
-      return;
-    }
+    if (!requireAuth()) return;
 
     // Find by data-buy-id (pack cards) OR data-seqid (sequence cards)
     const btn = document.querySelector(`[data-buy-id="${sequenceId}"]`)
@@ -2700,7 +2703,7 @@
           Upload to Community
         </button>
         <p style="font-size:0.8rem;color:#666;margin-top:10px;text-align:center;">
-          Uploading as <strong style="color:#94a3b8;">${user.name || user.email}</strong> &nbsp;·&nbsp;
+          Uploading as <strong style="color:#94a3b8;">${esc(user.name || user.email)}</strong> &nbsp;·&nbsp;
           <a href="my-library.html" style="color:var(--accent);text-decoration:none;">Change name</a>
         </p>
         <p class="upload-note">
@@ -2722,7 +2725,7 @@
     function handleFileSelect(file) {
       dropContent.innerHTML = `
         <div class="drop-zone-icon">✅</div>
-        <div class="drop-zone-title" style="color:#4ade80;">${file.name}</div>
+        <div class="drop-zone-title" style="color:#4ade80;">${esc(file.name)}</div>
         <div class="drop-zone-sub">${(file.size / 1048576).toFixed(1)} MB — ready to upload</div>`;
     }
 
@@ -2761,7 +2764,7 @@
 
         let uploadUrl = null;
         try {
-          const urlResp = await fetch(`${FUNCTIONS_BASE}/getUploadUrl`, {
+          const urlResp = await fetch(`${FUNCTIONS_BASE}/uploadSequence`, {
             method:  'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
             body:    JSON.stringify({ sequenceId, name, category, song, creator }),
@@ -2911,15 +2914,29 @@
   }, true);
 
   /* ─── PURCHASE SUCCESS REDIRECT ──────────────────────────────────── */
-  (function checkPurchaseSuccess() {
+  (async function checkPurchaseSuccess() {
     const params = new URLSearchParams(window.location.search);
     if (params.get('purchase') === 'success') {
+      const sequenceId = params.get('seq');
+      const sessionId  = params.get('session_id');
       // Clean the URL without reload
       history.replaceState({}, '', window.location.pathname);
+      // Record purchase with Stripe session ID so backend can verify
+      const token = await getIdToken();
+      if (sequenceId && sessionId && token) {
+        try {
+          await fetch(`${FUNCTIONS_BASE}/recordPurchase`, {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+            body:    JSON.stringify({ sequenceId, stripeSessionId: sessionId }),
+          });
+        } catch (err) {
+          console.warn('recordPurchase failed:', err);
+        }
+      }
       // Sync purchases from Firestore then show toast
-      syncPurchasesFromFirestore().then(() => {
-        showToast('Purchase complete! Your sequence is in My Library.');
-      });
+      await syncPurchasesFromFirestore();
+      showToast('Purchase successful! Check your library.');
     }
     if (params.get('purchase') === 'cancelled') {
       history.replaceState({}, '', window.location.pathname);

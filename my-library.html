@@ -824,6 +824,13 @@
 </div>
 
 <script>
+  /* ─── XSS ESCAPE HELPER ──────────────────────────────────────── */
+  function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str ?? '';
+    return d.innerHTML;
+  }
+
   /* ─── STATE ────────────────────────────────────────────────────── */
   const FUNCTIONS_BASE = "https://us-central1-afterglo-website-fbb89.cloudfunctions.net";
   let currentUser  = null;
@@ -895,7 +902,7 @@
   /* ─── DISPLAY NAME EDITING ────────────────────────────────────── */
   function setProfileNameDisplay(name) {
     const h1 = document.getElementById('profileName');
-    h1.innerHTML = `${name}<button class="edit-name-btn" onclick="startEditName()" title="Edit display name" aria-label="Edit display name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`;
+    h1.innerHTML = `${esc(name)}<button class="edit-name-btn" onclick="startEditName()" title="Edit display name" aria-label="Edit display name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`;
   }
 
   function startEditName() {
@@ -903,7 +910,7 @@
     const h1 = document.getElementById('profileName');
     h1.innerHTML = `
       <span class="name-edit-wrap">
-        <input class="name-edit-input" id="nameEditInput" type="text" value="${current}" maxlength="40" autocomplete="off" />
+        <input class="name-edit-input" id="nameEditInput" type="text" value="${esc(current)}" maxlength="40" autocomplete="off" />
         <button class="name-save-btn" onclick="saveDisplayName()">Save</button>
         <button class="name-cancel-btn" onclick="cancelEditName()">Cancel</button>
       </span>`;

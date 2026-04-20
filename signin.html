@@ -654,13 +654,25 @@
 </div>
 
 <script>
+  /* ─── SAFE REDIRECT HELPER ───────────────────────────────────── */
+  function safeRedirect(url) {
+    const allowed = ['platform.html', 'my-library.html', 'index.html', '/'];
+    const isRelative = !url.startsWith('http') && !url.startsWith('//');
+    const isSafe = allowed.some(a => url === a || url.startsWith(a + '?'));
+    if (isRelative && isSafe) {
+      window.location.replace(url);
+    } else {
+      window.location.replace('platform.html');
+    }
+  }
+
   /* ─── REDIRECT IF ALREADY SIGNED IN ──────────────────────────── */
   (function() {
     const user = getUser();
     if (user && user.token) {
       const params = new URLSearchParams(window.location.search);
-      const redir  = params.get('redirect') || 'my-library.html';
-      window.location.replace(redir === 'my-library.html' ? 'my-library.html' : redir);
+      const redir  = params.get('redirect') || 'platform.html';
+      safeRedirect(redir);
     }
 
     // Pre-select tab from ?tab=create
@@ -672,7 +684,11 @@
   // getUser / saveUser come from js/firebase-auth.js
   function getRedirectUrl() {
     const params = new URLSearchParams(window.location.search);
-    return params.get('redirect') || 'platform.html';
+    const url = params.get('redirect') || 'platform.html';
+    const allowed = ['platform.html', 'my-library.html', 'index.html', '/'];
+    const isRelative = !url.startsWith('http') && !url.startsWith('//');
+    const isSafe = allowed.some(a => url === a || url.startsWith(a + '?'));
+    return (isRelative && isSafe) ? url : 'platform.html';
   }
 
   /* ─── TAB SWITCHING ──────────────────────────────────────────── */

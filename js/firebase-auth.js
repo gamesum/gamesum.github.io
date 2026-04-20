@@ -64,7 +64,7 @@ function signOutUser() {
 // Returns a fresh ID token string for API calls, or the stored token as fallback.
 async function getIdToken() {
   if (FIREBASE_ENABLED && _firebaseAuth.currentUser) {
-    return _firebaseAuth.currentUser.getIdToken(/* forceRefresh */ false);
+    return _firebaseAuth.currentUser.getIdToken(/* forceRefresh */ true);
   }
   return getUser()?.token ?? null;
 }
@@ -177,20 +177,25 @@ async function signInWithGoogleCredential(googleIdToken) {
 // ─── Firestore: sync purchases from backend ───────────────────────────────────
 
 async function syncPurchasesFromFirestore() {
-  if (!FIREBASE_ENABLED) return;
-  const user = getUser();
-  if (!user?.uid) return;
-
+  const token = await getIdToken();
+  if (!token) return [];
   try {
-    const db = firebase.firestore();
-    const snap = await db.collection('purchases')
-      .where('userId', '==', user.uid)
-      .get();
-    const ids = snap.docs.map(d => d.data().sequenceId);
-    user.purchases = ids;
-    saveUser(user);
+    const res = await fetch(
+      `https://us-central1-afterglo-website-fbb89.cloudfunctions.net/purchases`,
+      { headers: { 'Authorization': `Bearer ${token}` } }
+    );
+    if (!res.ok) return [];
+    const data = await res.json();
+    const purchases = data.purchases ?? [];
+    const user = getUser();
+    if (user) {
+      user.purchases = purchases;
+      saveUser(user);
+    }
+    return purchases;
   } catch (err) {
     console.warn('syncPurchases failed:', err);
+    return [];
   }
 }
 
