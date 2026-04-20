@@ -354,7 +354,7 @@
       position: absolute;
       top: 0; right: 0; bottom: 0;
       width: 48px;
-      background: linear-gradient(to right, transparent, var(--bg));
+      background: linear-gradient(to right, transparent, var(--bg2));
       pointer-events: none;
     }
     .filter-bar {
@@ -1158,8 +1158,8 @@
     .capture-overlay.open .capture-card { transform: translateY(0) scale(1); }
     .capture-close {
       position: absolute;
-      top: 14px; right: 14px;
-      width: 30px; height: 30px;
+      top: 10px; right: 10px;
+      width: 44px; height: 44px;
       border-radius: 50%;
       background: #1a1a1a;
       border: 1px solid #333;
@@ -1432,6 +1432,7 @@
       .filter-tabs::-webkit-scrollbar { display: none; }
       /* Pack cards footer: stack on very narrow */
       .pack-footer { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .pack-footer .btn-request-pack { align-self: flex-start; }
       /* Capture modal card on small screens */
       .capture-card { padding: 28px 20px 22px; }
     }
@@ -1921,7 +1922,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 AFTERGLO. All rights reserved. Licensed &amp; Insured in Utah.</p>
+      <p>&copy; 2026 AFTERGLO. All rights reserved. Licensed &amp; Insured in Utah.</p>
       <div style="display:flex; gap:20px;">
         <a href="mailto:info@afterglolighting.org">Privacy</a>
         <a href="mailto:info@afterglolighting.org">Terms</a>
@@ -1935,7 +1936,7 @@
 <!-- Change 1: Soft email gate shown before first-ever free download -->
 <div class="capture-overlay" id="captureOverlay" onclick="handleCaptureBgClick(event)">
   <div class="capture-card" id="captureCard">
-    <button class="capture-close" onclick="dismissCapture()" aria-label="Close">✕</button>
+    <button class="capture-close" onclick="closeCaptureModal()" aria-label="Close">✕</button>
     <div class="capture-icon">🎄</div>
     <div class="capture-title">Your free sequence is ready —<br><em class="capture-seq-name" id="captureSeqName"></em></div>
     <p class="capture-sub">Drop your email and we'll save your library, notify you when new shows arrive, and send you a free setup guide.</p>
@@ -2134,7 +2135,7 @@
     card.className = 'seq-card' + (forRow ? '' : '');
 
     const btnHtml = seq.free
-      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="handleDownload(event,this.dataset.seqid)">Download</button>`
+      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="handleDownload(event,parseInt(this.dataset.seqid))">Download</button>`
       : `<button class="btn-card btn-card-paid" data-price="${seq.price}" data-name="" onclick="handleBuy(event,this.dataset.name,parseFloat(this.dataset.price))">Buy $${seq.price.toFixed(2)}</button>`;
 
     const isTrending = seq.downloads >= 450;
@@ -2335,6 +2336,7 @@
   let captureTargetId = null; // sequence id awaiting capture
 
   function showCaptureModal(seqId) {
+    seqId = parseInt(seqId, 10);
     captureTargetId = seqId;
     const seq = sequences.find(s => s.id === seqId);
     const nameEl = document.getElementById('captureSeqName');
@@ -2380,24 +2382,28 @@
     }
   }
 
+  // closeCaptureModal: just hides the overlay, stays on page.
+  // Used by ✕ button, backdrop click, and Escape key.
+  function closeCaptureModal() {
+    document.getElementById('captureOverlay').classList.remove('open');
+    captureTargetId = null;
+  }
+
+  // dismissCapture: closes AND redirects to sign-in.
+  // Used only by the "No thanks, just sign in →" text button.
   function dismissCapture() {
     closeCaptureModal();
-    // Fall back to sign-in redirect
     window.location.href = 'signin.html?redirect=platform.html';
   }
 
-  function closeCaptureModal() {
-    document.getElementById('captureOverlay').classList.remove('open');
-  }
-
   function handleCaptureBgClick(e) {
-    if (e.target === document.getElementById('captureOverlay')) dismissCapture();
+    if (e.target === document.getElementById('captureOverlay')) closeCaptureModal();
   }
 
-  // Allow Escape key to dismiss
+  // Allow Escape key to close modal (no redirect)
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape' && document.getElementById('captureOverlay').classList.contains('open')) {
-      dismissCapture();
+      closeCaptureModal();
     }
   });
 
@@ -2419,6 +2425,7 @@
   }
 
   function _doDownload(id) {
+    id = parseInt(id, 10);
     const seq = sequences.find(s => s.id === id);
     if (!seq) return;
     seq.downloads++;
@@ -2444,12 +2451,13 @@
 
   function handleBuy(e, name, price) {
     if (e && e.stopPropagation) e.stopPropagation();
-    if (!isSignedIn()) {
-      window.location.href = 'signin.html?redirect=platform.html';
-      return;
-    }
-    // Kept as fallback for any remaining individual-sequence buy buttons
-    showToast(`Contact info@afterglolighting.org to purchase "${name}"`);
+    // Open a pre-filled mailto for individual sequence purchases
+    // so the customer has an immediate next step regardless of auth state.
+    const subject = encodeURIComponent(`Purchase Request: ${name} ($${price.toFixed(2)})`);
+    const body    = encodeURIComponent(
+      `Hi, I'd like to purchase the sequence "${name}" ($${price.toFixed(2)}). Please send payment instructions.\n\nMy name: \nMy AFTERGLO install address: `
+    );
+    window.location.href = `mailto:info@afterglolighting.org?subject=${subject}&body=${body}`;
   }
 
   /* ─── DRAG & DROP ────────────────────────────────────────────────── */
@@ -2622,9 +2630,12 @@
 
   /* ─── DRAG-TO-SCROLL ROW ─────────────────────────────────────────── */
   const seqRow = document.getElementById('seqRow');
-  let isDragging = false, startX, scrollLeft;
+  let isDragging = false, didDrag = false, startX, scrollLeft;
+  const DRAG_THRESHOLD = 6; // px moved before we treat it as a drag, not a click
+
   seqRow.addEventListener('mousedown', e => {
     isDragging = true;
+    didDrag    = false;
     startX     = e.pageX - seqRow.offsetLeft;
     scrollLeft = seqRow.scrollLeft;
     seqRow.style.cursor = 'grabbing';
@@ -2633,11 +2644,22 @@
   seqRow.addEventListener('mouseup',   () => { isDragging = false; seqRow.style.cursor = 'grab'; });
   seqRow.addEventListener('mousemove', e => {
     if (!isDragging) return;
-    e.preventDefault();
     const x    = e.pageX - seqRow.offsetLeft;
-    const walk = (x - startX) * 1.5;
-    seqRow.scrollLeft = scrollLeft - walk;
+    const walk = x - startX;
+    if (Math.abs(walk) > DRAG_THRESHOLD) {
+      didDrag = true;
+      e.preventDefault();
+      seqRow.scrollLeft = scrollLeft - walk * 1.5;
+    }
   });
+  // Suppress clicks on child buttons if the mouse was dragged
+  seqRow.addEventListener('click', e => {
+    if (didDrag) {
+      e.stopPropagation();
+      e.preventDefault();
+      didDrag = false;
+    }
+  }, true);
 
   /* ─── INIT ───────────────────────────────────────────────────────── */
   render();
