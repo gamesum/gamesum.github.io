@@ -77,84 +77,75 @@ export const purchases = functions.https.onRequest(async (req, res) => {
 });
 
 // ─── POST /recordPurchase ─────────────────────────────────────────────────────
-// Called by website after successful Stripe Checkout redirect.
-// Body: { userId, sequenceId, sequenceName, creator, price, stripeSessionId }
-// Requires a valid Firebase ID token in Authorization: Bearer <token>
-export const recordPurchase = functions.https.onRequest(async (req, res) => {
+// Called by website after Stripe Checkout redirect.
+// Requires stripeSessionId — verifies payment with Stripe before recording.
+export const recordPurchase = functions
+  .runWith({ secrets: ["STRIPE_SECRET"] })
+  .https.onRequest(async (req, res) => {
   res.set("Access-Control-Allow-Origin", "https://afterglolighting.github.io");
   res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 
-  if (req.method === "OPTIONS") {
-    res.status(204).send("");
-    return;
-  }
+  if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+  if (req.method !== "POST") { res.status(405).json({ error: "Method not allowed" }); return; }
 
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "Method not allowed" });
-    return;
-  }
-
-  // Verify caller's Firebase ID token
   const authHeader = req.headers.authorization ?? "";
-  if (!authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ error: "Unauthorized" });
-    return;
-  }
-  const idToken = authHeader.slice(7);
+  if (!authHeader.startsWith("Bearer ")) { res.status(401).json({ error: "Unauthorized" }); return; }
+
   let uid: string;
   try {
-    const decoded = await admin.auth().verifyIdToken(idToken);
+    const decoded = await admin.auth().verifyIdToken(authHeader.slice(7));
     uid = decoded.uid;
   } catch {
-    res.status(401).json({ error: "Invalid or expired token" });
-    return;
+    res.status(401).json({ error: "Invalid or expired token" }); return;
   }
 
-  const { sequenceId, sequenceName, creator, price, stripeSessionId } =
-    req.body as {
-      sequenceId: string;
-      sequenceName: string;
-      creator: string;
-      price: number;
-      stripeSessionId?: string;
-    };
+  const { sequenceId, stripeSessionId } = req.body as {
+    sequenceId: string;
+    stripeSessionId: string;
+  };
 
-  if (!sequenceId || !sequenceName) {
-    res.status(400).json({ error: "Missing required fields" });
-    return;
+  if (!sequenceId || !stripeSessionId) {
+    res.status(400).json({ error: "Missing sequenceId or stripeSessionId" }); return;
   }
 
   try {
-    // Idempotency: only record if not already purchased
-    const existing = await db
-      .collection("purchases")
-      .where("userId", "==", uid)
-      .where("sequenceId", "==", sequenceId)
-      .limit(1)
-      .get();
+    // Verify payment actually happened with Stripe
+    const stripe = new Stripe(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
+    const session = await stripe.checkout.sessions.retrieve(stripeSessionId);
 
-    if (!existing.empty) {
-      res.status(200).json({ status: "already_owned" });
-      return;
+    if (session.payment_status !== "paid") {
+      res.status(402).json({ error: "Payment not completed" }); return;
+    }
+    if (session.metadata?.userId !== uid || session.metadata?.sequenceId !== sequenceId) {
+      res.status(403).json({ error: "Session mismatch" }); return;
     }
 
-    const record: PurchaseRecord = {
+    // Idempotent
+    const existing = await db.collection("purchases")
+      .where("userId", "==", uid).where("sequenceId", "==", sequenceId).limit(1).get();
+    if (!existing.empty) { res.status(200).json({ status: "already_owned" }); return; }
+
+    const meta = session.metadata!;
+    const priceNum = parseFloat(meta.price ?? "0");
+
+    // Look up creatorUid from sequences collection (key by UID, not display name)
+    const seqDoc = await db.collection("sequences").doc(sequenceId).get();
+    const creatorUid = seqDoc.exists ? (seqDoc.data()?.creatorUid ?? meta.creator) : meta.creator;
+
+    await db.collection("purchases").add({
       userId: uid,
       sequenceId,
-      sequenceName,
-      creator: creator ?? "Unknown",
-      price: price ?? 0,
+      sequenceName: meta.sequenceName,
+      creator: meta.creator ?? "Unknown",
+      price: priceNum,
       purchasedAt: admin.firestore.Timestamp.now(),
-      ...(stripeSessionId ? { stripeSessionId } : {}),
-    };
+      stripeSessionId,
+    });
 
-    await db.collection("purchases").add(record);
-
-    // Increment creator earnings (70/30 split)
-    const creatorShare = Math.round(price * 0.7 * 100) / 100;
-    const creatorRef = db.collection("creator_earnings").doc(creator);
-    await creatorRef.set(
+    // Creator earnings keyed by UID, not display name
+    const creatorShare = Math.round(priceNum * 0.7 * 100) / 100;
+    await db.collection("creator_earnings").doc(creatorUid).set(
       { totalEarnings: admin.firestore.FieldValue.increment(creatorShare) },
       { merge: true }
     );
@@ -273,6 +264,7 @@ export const sequenceList = functions.https.onRequest(async (req, res) => {
       .get();
 
     const sequences = snap.docs.map((doc) => doc.data());
+    res.set("Cache-Control", "public, max-age=60, s-maxage=60");
     res.status(200).json({ sequences });
   } catch (err) {
     functions.logger.error("sequenceList error", err);
@@ -342,8 +334,9 @@ export const createCheckout = functions
           },
         },
       }],
+      allow_promotion_codes: true,
       metadata: { userId: uid, sequenceId, sequenceName, creator, price: String(price) },
-      success_url: `${SITE_URL}/platform.html?purchase=success&seq=${sequenceId}`,
+      success_url: `${SITE_URL}/platform.html?purchase=success&seq=${sequenceId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${SITE_URL}/platform.html?purchase=cancel`,
     });
 
@@ -401,9 +394,11 @@ export const stripeWebhook = functions
         stripeSessionId:  session.id,
       });
 
-      // Creator earnings (70/30 split)
-      if (creator) {
-        await db.collection("creator_earnings").doc(creator).set(
+      // Creator earnings keyed by creatorUid (not display name) so renames don't lose earnings
+      const seqSnap = await db.collection("sequences").doc(sequenceId).get();
+      const creatorUid = seqSnap.exists ? (seqSnap.data()?.creatorUid ?? creator) : creator;
+      if (creatorUid) {
+        await db.collection("creator_earnings").doc(creatorUid).set(
           { totalEarnings: admin.firestore.FieldValue.increment(Math.round(priceNum * 0.7 * 100) / 100) },
           { merge: true }
         );
