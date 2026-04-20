@@ -692,7 +692,7 @@
         <li><a href="arches.html">Light Shows</a></li>
         <li><a href="index.html#gallery">Gallery</a></li>
         <li><a href="platform.html">Light Show Store</a></li>
-        <li><a href="my-library.html" class="active">My Shows</a></li>
+        <li><a href="my-library.html" class="active">My Library</a></li>
         <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
@@ -713,7 +713,7 @@
     <a href="arches.html" onclick="closeMenu()">Light Shows</a>
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
     <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Light Show Store</a>
-    <a href="my-library.html" onclick="closeMenu()">My Shows</a>
+    <a href="my-library.html" onclick="closeMenu()">My Library</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
     <button class="sign-out-btn" onclick="signOut()" style="text-align:left;">Sign Out</button>
   </div>
@@ -898,7 +898,8 @@
       };
       saveUser(currentUser);
     } else {
-      currentUser = getUser();
+      // No Firebase session — clear stale data and show auth gate
+      currentUser = null;
     }
 
     // Handle purchase redirect from Stripe
@@ -1260,25 +1261,10 @@
 
   /* ─── RUN ──────────────────────────────────────────────────────── */
   window.addEventListener('DOMContentLoaded', () => {
-    const pageLoadTime = Date.now();
+    console.log('[Auth] my-library.html loaded, waiting for Firebase...');
 
     firebase.auth().onAuthStateChanged(async (firebaseUser) => {
-      if (firebaseUser) {
-        init(firebaseUser);
-        return;
-      }
-
-      // If null fires within 800ms of page load, Firebase may still be
-      // restoring the session from IndexedDB. Wait, then re-check.
-      const elapsed = Date.now() - pageLoadTime;
-      if (elapsed < 800) {
-        await new Promise(r => setTimeout(r, 1200));
-        const recheckUser = firebase.auth().currentUser;
-        if (recheckUser) { init(recheckUser); return; }
-      }
-
-      // Confirmed not signed in — redirect
-      window.location.replace('signin.html?redirect=my-library.html');
+      init(firebaseUser);
     });
   });
 </script>
