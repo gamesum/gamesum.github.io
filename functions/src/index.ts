@@ -1,0 +1,414 @@
+import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
+import Stripe from "stripe";
+
+admin.initializeApp();
+const db = admin.firestore();
+
+// Stripe secret key — set via: firebase functions:config:set stripe.secret="sk_live_..."
+// For local dev: firebase functions:config:set stripe.secret="sk_test_..."
+const stripeSecretKey = functions.config().stripe?.secret ?? process.env.STRIPE_SECRET_KEY ?? "";
+const stripeWebhookSecret = functions.config().stripe?.webhook_secret ?? process.env.STRIPE_WEBHOOK_SECRET ?? "";
+const stripe = new Stripe(stripeSecretKey, { apiVersion: "2023-10-16" });
+
+const SITE_URL = "https://afterglolighting.github.io";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface PurchaseRecord {
+  userId: string;
+  sequenceId: string;
+  sequenceName: string;
+  creator: string;
+  price: number;
+  purchasedAt: admin.firestore.Timestamp;
+  stripeSessionId?: string;
+}
+
+interface PurchaseManifestItem {
+  id: string;
+  name: string;
+  creator: string;
+}
+
+// ─── GET /purchases ───────────────────────────────────────────────────────────
+// Called by firmware: GET https://api.afterglolighting.org/purchases?token={uid}
+// Returns the list of purchased sequence IDs for that user account.
+export const purchases = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  if (req.method !== "GET") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  const token = req.query.token as string;
+  if (!token || token.trim().length === 0) {
+    res.status(400).json({ error: "Missing token parameter" });
+    return;
+  }
+
+  try {
+    // token == Firebase UID (Google sub)
+    const snap = await db
+      .collection("purchases")
+      .where("userId", "==", token)
+      .get();
+
+    const purchaseList: PurchaseManifestItem[] = snap.docs.map((doc) => {
+      const data = doc.data() as PurchaseRecord;
+      return {
+        id: data.sequenceId,
+        name: data.sequenceName,
+        creator: data.creator,
+      };
+    });
+
+    res.status(200).json({ purchases: purchaseList });
+  } catch (err) {
+    functions.logger.error("purchases fetch error", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ─── POST /recordPurchase ─────────────────────────────────────────────────────
+// Called by website after successful Stripe Checkout redirect.
+// Body: { userId, sequenceId, sequenceName, creator, price, stripeSessionId }
+// Requires a valid Firebase ID token in Authorization: Bearer <token>
+export const recordPurchase = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "https://afterglolighting.github.io");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  // Verify caller's Firebase ID token
+  const authHeader = req.headers.authorization ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const idToken = authHeader.slice(7);
+  let uid: string;
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    uid = decoded.uid;
+  } catch {
+    res.status(401).json({ error: "Invalid or expired token" });
+    return;
+  }
+
+  const { sequenceId, sequenceName, creator, price, stripeSessionId } =
+    req.body as {
+      sequenceId: string;
+      sequenceName: string;
+      creator: string;
+      price: number;
+      stripeSessionId?: string;
+    };
+
+  if (!sequenceId || !sequenceName) {
+    res.status(400).json({ error: "Missing required fields" });
+    return;
+  }
+
+  try {
+    // Idempotency: only record if not already purchased
+    const existing = await db
+      .collection("purchases")
+      .where("userId", "==", uid)
+      .where("sequenceId", "==", sequenceId)
+      .limit(1)
+      .get();
+
+    if (!existing.empty) {
+      res.status(200).json({ status: "already_owned" });
+      return;
+    }
+
+    const record: PurchaseRecord = {
+      userId: uid,
+      sequenceId,
+      sequenceName,
+      creator: creator ?? "Unknown",
+      price: price ?? 0,
+      purchasedAt: admin.firestore.Timestamp.now(),
+      ...(stripeSessionId ? { stripeSessionId } : {}),
+    };
+
+    await db.collection("purchases").add(record);
+
+    // Increment creator earnings (70/30 split)
+    const creatorShare = Math.round(price * 0.7 * 100) / 100;
+    const creatorRef = db.collection("creator_earnings").doc(creator);
+    await creatorRef.set(
+      { totalEarnings: admin.firestore.FieldValue.increment(creatorShare) },
+      { merge: true }
+    );
+
+    functions.logger.info(`Purchase recorded: ${uid} → ${sequenceId}`);
+    res.status(201).json({ status: "recorded" });
+  } catch (err) {
+    functions.logger.error("recordPurchase error", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ─── POST /uploadSequence ─────────────────────────────────────────────────────
+// Called by platform.html upload form.
+// Stores metadata in Firestore; the actual FSEQ file goes to Firebase Storage
+// (or CDN) separately via a signed upload URL returned from this function.
+export const uploadSequence = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "https://afterglolighting.github.io");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") {
+    res.status(204).send("");
+    return;
+  }
+
+  if (req.method !== "POST") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  // Verify caller
+  const authHeader = req.headers.authorization ?? "";
+  if (!authHeader.startsWith("Bearer ")) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  const idToken = authHeader.slice(7);
+  let uid: string;
+  let displayName: string;
+  try {
+    const decoded = await admin.auth().verifyIdToken(idToken);
+    uid = decoded.uid;
+    displayName = decoded.name ?? decoded.email ?? "Unknown";
+  } catch {
+    res.status(401).json({ error: "Invalid or expired token" });
+    return;
+  }
+
+  const { sequenceId, name, category, durationSecs, channelCount, price } =
+    req.body as {
+      sequenceId: string;
+      name: string;
+      category: string;
+      durationSecs: number;
+      channelCount: number;
+      price: number;
+    };
+
+  if (!sequenceId || !name) {
+    res.status(400).json({ error: "Missing required fields" });
+    return;
+  }
+
+  try {
+    const bucket = admin.storage().bucket();
+    const fseqPath = `sequences/${sequenceId}.fseq`;
+
+    // Generate a signed URL so the client can PUT the file directly to Storage
+    const [signedUrl] = await bucket.file(fseqPath).getSignedUrl({
+      version: "v4",
+      action: "write",
+      expires: Date.now() + 15 * 60 * 1000, // 15 min
+      contentType: "application/octet-stream",
+    });
+
+    // Record metadata in Firestore (pending until file is uploaded)
+    await db.collection("sequences").doc(sequenceId).set({
+      id: sequenceId,
+      name,
+      creator: displayName,
+      creatorUid: uid,
+      category,
+      durationSecs: durationSecs ?? 0,
+      channelCount: channelCount ?? 0,
+      price: price ?? 0,
+      isFree: (price ?? 0) === 0,
+      status: "pending_upload",
+      createdAt: admin.firestore.Timestamp.now(),
+      downloadCount: 0,
+    });
+
+    res.status(200).json({ uploadUrl: signedUrl, sequenceId });
+  } catch (err) {
+    functions.logger.error("uploadSequence error", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ─── GET /sequences ───────────────────────────────────────────────────────────
+// Public endpoint: list published sequences for the store.
+export const sequenceList = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", "*");
+
+  if (req.method !== "GET") {
+    res.status(405).json({ error: "Method not allowed" });
+    return;
+  }
+
+  try {
+    const snap = await db
+      .collection("sequences")
+      .where("status", "==", "published")
+      .orderBy("downloadCount", "desc")
+      .limit(100)
+      .get();
+
+    const sequences = snap.docs.map((doc) => doc.data());
+    res.status(200).json({ sequences });
+  } catch (err) {
+    functions.logger.error("sequenceList error", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// ─── POST /createCheckout ─────────────────────────────────────────────────────
+// Creates a Stripe Checkout Session for a sequence or pack purchase.
+// Body: { sequenceId, sequenceName, creator, price }  (price in dollars)
+// Requires Firebase ID token in Authorization header.
+export const createCheckout = functions.https.onRequest(async (req, res) => {
+  res.set("Access-Control-Allow-Origin", SITE_URL);
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+  if (req.method !== "POST")    { res.status(405).json({ error: "Method not allowed" }); return; }
+
+  const authHeader = req.headers.authorization ?? "";
+  if (!authHeader.startsWith("Bearer ")) { res.status(401).json({ error: "Unauthorized" }); return; }
+
+  let uid: string;
+  let email: string | undefined;
+  try {
+    const decoded = await admin.auth().verifyIdToken(authHeader.slice(7));
+    uid   = decoded.uid;
+    email = decoded.email;
+  } catch {
+    res.status(401).json({ error: "Invalid token" }); return;
+  }
+
+  const { sequenceId, sequenceName, creator, price } = req.body as {
+    sequenceId: string;
+    sequenceName: string;
+    creator: string;
+    price: number;
+  };
+
+  if (!sequenceId || !sequenceName || price == null) {
+    res.status(400).json({ error: "Missing required fields" }); return;
+  }
+
+  // Already purchased? Don't double-charge.
+  const existingSnap = await db.collection("purchases")
+    .where("userId", "==", uid)
+    .where("sequenceId", "==", sequenceId)
+    .limit(1).get();
+  if (!existingSnap.empty) {
+    res.status(200).json({ status: "already_owned" }); return;
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode:          "payment",
+      customer_email: email,
+      line_items: [{
+        quantity: 1,
+        price_data: {
+          currency:     "usd",
+          unit_amount:  Math.round(price * 100), // cents
+          product_data: {
+            name:        sequenceName,
+            description: `By ${creator} · AFTERGLO Light Show`,
+          },
+        },
+      }],
+      metadata: { userId: uid, sequenceId, sequenceName, creator, price: String(price) },
+      success_url: `${SITE_URL}/platform.html?purchase=success&seq=${sequenceId}`,
+      cancel_url:  `${SITE_URL}/platform.html?purchase=cancel`,
+    });
+
+    res.status(200).json({ url: session.url });
+  } catch (err) {
+    functions.logger.error("createCheckout error", err);
+    res.status(500).json({ error: "Failed to create checkout session" });
+  }
+});
+
+// ─── POST /stripeWebhook ──────────────────────────────────────────────────────
+// Stripe calls this after a successful payment.
+// Verifies the signature, then records the purchase in Firestore.
+export const stripeWebhook = functions.https.onRequest(async (req, res) => {
+  const sig = req.headers["stripe-signature"] as string;
+
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, stripeWebhookSecret);
+  } catch (err) {
+    functions.logger.warn("stripeWebhook signature verification failed", err);
+    res.status(400).send("Webhook signature invalid");
+    return;
+  }
+
+  if (event.type === "checkout.session.completed") {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const meta = session.metadata ?? {};
+    const { userId, sequenceId, sequenceName, creator, price } = meta;
+
+    if (!userId || !sequenceId) {
+      functions.logger.warn("stripeWebhook: missing metadata", meta);
+      res.status(200).send("OK");
+      return;
+    }
+
+    // Idempotent: skip if already recorded
+    const existing = await db.collection("purchases")
+      .where("userId", "==", userId)
+      .where("sequenceId", "==", sequenceId)
+      .limit(1).get();
+
+    if (existing.empty) {
+      const priceNum = parseFloat(price ?? "0");
+      await db.collection("purchases").add({
+        userId,
+        sequenceId,
+        sequenceName,
+        creator:          creator ?? "Unknown",
+        price:            priceNum,
+        purchasedAt:      admin.firestore.Timestamp.now(),
+        stripeSessionId:  session.id,
+      });
+
+      // Creator earnings (70/30 split)
+      if (creator) {
+        await db.collection("creator_earnings").doc(creator).set(
+          { totalEarnings: admin.firestore.FieldValue.increment(Math.round(priceNum * 0.7 * 100) / 100) },
+          { merge: true }
+        );
+      }
+
+      functions.logger.info(`Purchase recorded via webhook: ${userId} → ${sequenceId}`);
+    }
+  }
+
+  res.status(200).send("OK");
+});

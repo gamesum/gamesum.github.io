@@ -18,6 +18,11 @@
   <!-- Google Identity Services (same client ID as signin.html) -->
   <meta name="google-signin-client_id" content="358004783589-kvqgqvvjgqsa57gcip6nfumbp0a1ntsp.apps.googleusercontent.com" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-auth.js"></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1660,7 +1665,7 @@
               <div class="pack-price-sub">one-time purchase</div>
             </div>
             <!-- Change 3b: mailto request instead of broken "coming soon" toast -->
-            <a class="btn-request-pack" href="mailto:info@afterglolighting.org?subject=Purchase%20Request%3A%20Holiday%20Mega%20Pack%20%2458&body=Hi%2C%20I%27d%20like%20to%20purchase%20the%20Holiday%20Mega%20Pack%20(%2458).%20Please%20send%20payment%20instructions.%0A%0AMy%20name%3A%20%0AMy%20AFTERGLO%20install%20address%3A%20">
+            <a class="btn-request-pack" href="#" data-buy-id="pack_holiday_mega" onclick="event.preventDefault();handlePackBuy('pack_holiday_mega','Holiday Mega Pack',58)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               Get Pack — $58
             </a>
@@ -1710,7 +1715,7 @@
               <div class="pack-price"><sup>$</sup>38</div>
               <div class="pack-price-sub">one-time purchase</div>
             </div>
-            <a class="btn-request-pack" href="mailto:info@afterglolighting.org?subject=Purchase%20Request%3A%20Patriotic%20Bundle%20%2438&body=Hi%2C%20I%27d%20like%20to%20purchase%20the%20Patriotic%20Bundle%20(%2438).%20Please%20send%20payment%20instructions.%0A%0AMy%20name%3A%20%0AMy%20AFTERGLO%20install%20address%3A%20">
+            <a class="btn-request-pack" href="#" data-buy-id="pack_patriotic_bundle" onclick="event.preventDefault();handlePackBuy('pack_patriotic_bundle','Patriotic Bundle',38)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               Get Pack — $38
             </a>
@@ -1759,7 +1764,7 @@
               <div class="pack-price"><sup>$</sup>48</div>
               <div class="pack-price-sub">one-time purchase</div>
             </div>
-            <a class="btn-request-pack" href="mailto:info@afterglolighting.org?subject=Purchase%20Request%3A%20Halloween%20Pack%20%2448&body=Hi%2C%20I%27d%20like%20to%20purchase%20the%20Halloween%20Pack%20(%2448).%20Please%20send%20payment%20instructions.%0A%0AMy%20name%3A%20%0AMy%20AFTERGLO%20install%20address%3A%20">
+            <a class="btn-request-pack" href="#" data-buy-id="pack_halloween" onclick="event.preventDefault();handlePackBuy('pack_halloween','Halloween Pack',48)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
               Get Pack — $48
             </a>
@@ -2304,10 +2309,7 @@
   }
 
   /* ─── AUTH HELPERS ───────────────────────────────────────────────── */
-  function getUser() {
-    try { return JSON.parse(localStorage.getItem('afterglo_user')); } catch(e) { return null; }
-  }
-  function saveUser(u) { localStorage.setItem('afterglo_user', JSON.stringify(u)); }
+  // getUser / saveUser / signOutUser / getIdToken come from js/firebase-auth.js
   function isSignedIn() { const u = getUser(); return !!(u && u.token); }
 
   /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
@@ -2452,15 +2454,51 @@
     render();
   }
 
-  function handleBuy(e, name, price) {
+  const FUNCTIONS_BASE = "https://us-central1-afterglo-website-fbb89.cloudfunctions.net";
+
+  async function startStripeCheckout({ sequenceId, sequenceName, creator, price }) {
+    const user = getUser();
+    if (!user || !user.token) {
+      window.location.href = `signin.html?redirect=platform.html`;
+      return;
+    }
+
+    const btn = document.querySelector(`[data-buy-id="${sequenceId}"]`);
+    if (btn) { btn.textContent = 'Redirecting…'; btn.disabled = true; }
+
+    try {
+      const idToken = await getIdToken();
+      const resp = await fetch(`${FUNCTIONS_BASE}/createCheckout`, {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+        body:    JSON.stringify({ sequenceId, sequenceName, creator, price }),
+      });
+      const data = await resp.json();
+
+      if (data.status === 'already_owned') {
+        showToast('You already own this sequence — check your Library!');
+        if (btn) { btn.textContent = 'Already Owned'; btn.disabled = false; }
+        return;
+      }
+      if (data.url) {
+        window.location.href = data.url; // Stripe Checkout
+      } else {
+        throw new Error(data.error || 'Checkout failed');
+      }
+    } catch (err) {
+      console.error('checkout error:', err);
+      showToast('Payment unavailable — please try again shortly.', true);
+      if (btn) { btn.textContent = `$${price.toFixed(2)}`; btn.disabled = false; }
+    }
+  }
+
+  function handleBuy(e, sequenceId, name, creator, price) {
     if (e && e.stopPropagation) e.stopPropagation();
-    // Open a pre-filled mailto for individual sequence purchases
-    // so the customer has an immediate next step regardless of auth state.
-    const subject = encodeURIComponent(`Purchase Request: ${name} ($${price.toFixed(2)})`);
-    const body    = encodeURIComponent(
-      `Hi, I'd like to purchase the sequence "${name}" ($${price.toFixed(2)}). Please send payment instructions.\n\nMy name: \nMy AFTERGLO install address: `
-    );
-    window.location.href = `mailto:info@afterglolighting.org?subject=${subject}&body=${body}`;
+    startStripeCheckout({ sequenceId, sequenceName: name, creator, price });
+  }
+
+  function handlePackBuy(sequenceId, name, price) {
+    startStripeCheckout({ sequenceId, sequenceName: name, creator: 'AfterGLO Official', price });
   }
 
   /* ─── GOOGLE AUTH (platform page) ───────────────────────────────── */

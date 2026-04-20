@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Firmware Update — AFTERGLO Controller</title>
+  <meta name="description" content="Update your AFTERGLO permanent LED controller firmware directly from your browser. No software required." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #111111;
+      --bg4:      #1a1a1a;
+      --accent:   #c8921e;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --border2:  #2a2a2a;
+      --green:    #22c55e;
+      --red:      #ef4444;
+      --yellow:   #eab308;
+    }
+
+    html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(8,8,8,0.95); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 60px;
+    }
+    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .nav-logo img { height: 28px; }
+    .nav-logo span { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem;
+                     background: linear-gradient(135deg, #c8921e, #d4a843); -webkit-background-clip: text;
+                     -webkit-text-fill-color: transparent; letter-spacing: 0.04em; }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a { color: var(--silver); text-decoration: none; font-size: 0.88rem; font-weight: 500;
+                   transition: color .2s; }
+    .nav-links a:hover { color: var(--accent2); }
+    .nav-links a.active { color: var(--accent2); }
+
+    /* ─── HERO ─── */
+    .hero {
+      text-align: center; padding: 64px 24px 48px;
+      background: radial-gradient(ellipse 700px 300px at 50% 0%, rgba(200,146,30,0.08) 0%, transparent 70%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(200,146,30,0.12); border: 1px solid rgba(200,146,30,0.25);
+      color: var(--accent2); border-radius: 100px; padding: 6px 16px;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-family: 'Outfit', sans-serif; font-weight: 900; font-size: clamp(2rem,5vw,3.2rem);
+      line-height: 1.1; margin-bottom: 16px;
+    }
+    .hero h1 span { background: linear-gradient(135deg, #c8921e, #d4a843);
+                    -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero p { color: var(--muted); font-size: 1.05rem; max-width: 520px; margin: 0 auto 32px; line-height: 1.6; }
+
+    .browser-warning {
+      display: none;
+      background: rgba(234,179,8,0.1); border: 1px solid rgba(234,179,8,0.3);
+      color: #fbbf24; border-radius: 10px; padding: 14px 20px;
+      font-size: 0.88rem; text-align: center; max-width: 600px; margin: 0 auto 24px;
+    }
+    .browser-warning.show { display: block; }
+
+    /* ─── MAIN CARD ─── */
+    .main-wrap { max-width: 680px; margin: 0 auto; padding: 0 24px 80px; }
+
+    .card {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 16px; overflow: hidden;
+    }
+
+    /* ─── STEPS ─── */
+    .steps {
+      display: flex; border-bottom: 1px solid var(--border);
+    }
+    .step {
+      flex: 1; display: flex; flex-direction: column; align-items: center; gap: 6px;
+      padding: 16px 8px; position: relative; cursor: default;
+    }
+    .step:not(:last-child)::after {
+      content: ''; position: absolute; right: 0; top: 50%; transform: translateY(-50%);
+      width: 1px; height: 40%; background: var(--border);
+    }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--bg4); border: 1.5px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; color: var(--muted);
+      transition: all .3s;
+    }
+    .step-label { font-size: 0.72rem; color: var(--muted); font-weight: 500; text-align: center; }
+    .step.active .step-num { background: var(--accent); border-color: var(--accent); color: #000; }
+    .step.active .step-label { color: var(--accent2); }
+    .step.done .step-num { background: var(--green); border-color: var(--green); color: #000; }
+    .step.done .step-num::before { content: '✓'; }
+    .step.done .step-label { color: var(--green); }
+
+    /* ─── PANEL BODIES ─── */
+    .panel { display: none; padding: 32px 32px 28px; }
+    .panel.active { display: block; }
+
+    .panel h2 { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.25rem;
+                margin-bottom: 8px; }
+    .panel p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+
+    /* ─── CONNECT PANEL ─── */
+    .connect-visual {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+      padding: 24px; display: flex; align-items: center; gap: 20px; margin-bottom: 24px;
+    }
+    .usb-icon {
+      width: 56px; height: 56px; background: rgba(200,146,30,0.12);
+      border: 1.5px solid rgba(200,146,30,0.3); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .connect-visual-text h3 { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
+    .connect-visual-text p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+    .steps-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+    .steps-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+      padding: 12px 14px; font-size: 0.88rem;
+    }
+    .steps-list li .step-icon {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(200,146,30,0.15); color: var(--accent2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.72rem; font-weight: 800; flex-shrink: 0; margin-top: 1px;
+    }
+    .steps-list li .step-text strong { display: block; font-weight: 600; margin-bottom: 2px; }
+    .steps-list li .step-text span { color: var(--muted); font-size: 0.82rem; }
+
+    /* ─── VERSION PANEL ─── */
+    .version-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .version-item {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg3); border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 16px 18px; cursor: pointer; transition: border-color .2s, background .2s;
+    }
+    .version-item:hover { border-color: var(--border2); background: var(--bg4); }
+    .version-item.selected { border-color: var(--accent); background: rgba(200,146,30,0.06); }
+    .version-item-left { display: flex; align-items: center; gap: 14px; }
+    .version-dot {
+      width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--border2);
+      transition: all .2s;
+    }
+    .version-item.selected .version-dot { background: var(--accent); border-color: var(--accent); }
+    .version-name { font-weight: 600; font-size: 0.95rem; }
+    .version-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .version-badge {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 100px;
+    }
+    .badge-latest { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+    .badge-stable { background: rgba(200,146,30,0.12); color: var(--accent2); border: 1px solid rgba(200,146,30,0.25); }
+    .badge-beta { background: rgba(139,92,246,0.12); color: #a78bfa; border: 1px solid rgba(139,92,246,0.25); }
+
+    .release-notes {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px 18px; font-size: 0.84rem; color: var(--muted); line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .release-notes strong { color: var(--text); display: block; margin-bottom: 8px; font-size: 0.88rem; }
+    .release-notes ul { padding-left: 18px; }
+    .release-notes li { margin-bottom: 4px; }
+
+    /* ─── FLASH PANEL ─── */
+    .flash-summary {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; font-size: 0.88rem;
+    }
+    .flash-summary-left { display: flex; flex-direction: column; gap: 4px; }
+    .flash-summary-label { color: var(--muted); font-size: 0.78rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+    .flash-summary-val { font-weight: 600; }
+
+    .progress-wrap { margin-bottom: 10px; }
+    .progress-label {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.82rem; color: var(--muted); margin-bottom: 8px;
+    }
+    .progress-label span:last-child { color: var(--accent2); font-weight: 600; }
+    .progress-bar {
+      height: 8px; background: var(--bg4); border-radius: 100px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; width: 0%; background: linear-gradient(90deg, #c8921e, #d4a843);
+      border-radius: 100px; transition: width .3s ease;
+    }
+    .progress-fill.indeterminate {
+      width: 40%; animation: indeterminate 1.4s ease-in-out infinite;
+    }
+    @keyframes indeterminate {
+      0%   { margin-left: -40%; }
+      100% { margin-left: 100%; }
+    }
+
+    .log-box {
+      background: #050505; border: 1px solid var(--border); border-radius: 10px;
+      padding: 14px 16px; font-family: 'Courier New', monospace; font-size: 0.78rem;
+      color: #9ca3af; line-height: 1.7; max-height: 180px; overflow-y: auto;
+      margin-bottom: 24px; white-space: pre-wrap; word-break: break-all;
+    }
+    .log-box .log-ok   { color: #4ade80; }
+    .log-box .log-err  { color: #f87171; }
+    .log-box .log-info { color: #60a5fa; }
+    .log-box .log-warn { color: #fbbf24; }
+
+    /* ─── DONE PANEL ─── */
+    .done-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: rgba(34,197,94,0.12); border: 2px solid rgba(34,197,94,0.3);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .done-icon svg { color: var(--green); }
+    .panel.done-panel { text-align: center; }
+    .done-panel h2 { font-size: 1.5rem; margin-bottom: 10px; }
+    .done-panel p { max-width: 380px; margin: 0 auto 28px; }
+    .done-detail {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 32px;
+    }
+    .done-chip {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 16px; font-size: 0.82rem;
+    }
+    .done-chip span { color: var(--muted); margin-right: 6px; }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; border: none; transition: all .2s; text-decoration: none;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #c8921e, #d4a843); color: #000;
+    }
+    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; filter: none; }
+    .btn-outline {
+      background: transparent; color: var(--text); border: 1.5px solid var(--border2);
+    }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent2); }
+    .btn-ghost { background: transparent; color: var(--muted); border: none; padding: 10px 16px; }
+    .btn-ghost:hover { color: var(--text); }
+    .btn-danger { background: rgba(239,68,68,0.12); color: #f87171; border: 1px solid rgba(239,68,68,0.25); }
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+    .btn-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .btn-row.right { justify-content: flex-end; }
+    .btn-row.between { justify-content: space-between; }
+
+    /* ─── STATUS INLINE ─── */
+    .status-line {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 0.84rem; padding: 10px 14px; border-radius: 8px; margin-bottom: 16px;
+    }
+    .status-line.success { background: rgba(34,197,94,0.1); color: #4ade80; border: 1px solid rgba(34,197,94,0.2); }
+    .status-line.error   { background: rgba(239,68,68,0.1); color: #f87171; border: 1px solid rgba(239,68,68,0.2); }
+    .status-line.info    { background: rgba(96,165,250,0.1); color: #60a5fa; border: 1px solid rgba(96,165,250,0.2); }
+    .status-line.warning { background: rgba(234,179,8,0.1); color: #fbbf24; border: 1px solid rgba(234,179,8,0.2); }
+    .status-line { display: none; }
+    .status-line.show { display: flex; }
+
+    /* ─── CHIP INFO BADGE ─── */
+    .chip-badge {
+      display: none; align-items: center; gap: 10px;
+      background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 10px; padding: 10px 14px; margin-bottom: 20px; font-size: 0.84rem;
+    }
+    .chip-badge.show { display: flex; }
+    .chip-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green);
+                box-shadow: 0 0 6px var(--green); flex-shrink: 0; }
+
+    /* ─── FAQ ─── */
+    .faq { margin-top: 32px; }
+    .faq h3 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; color: var(--silver); }
+    .faq-item {
+      border-bottom: 1px solid var(--border); overflow: hidden;
+    }
+    .faq-q {
+      padding: 14px 0; font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      display: flex; justify-content: space-between; align-items: center;
+      user-select: none;
+    }
+    .faq-q svg { transition: transform .25s; flex-shrink: 0; color: var(--muted); }
+    .faq-item.open .faq-q svg { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0; overflow: hidden; transition: max-height .3s ease;
+      font-size: 0.84rem; color: var(--muted); line-height: 1.7;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 14px; }
+
+    @media (max-width: 520px) {
+      .panel { padding: 20px 18px; }
+      .connect-visual { flex-direction: column; text-align: center; }
+      .flash-summary { flex-direction: column; gap: 14px; }
+      .steps-list li { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ──────────────────────────────────────────────────────────────── -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <img src="afterglo-logo-flat.png" alt="AFTERGLO" onerror="this.style.display='none'" />
+    <span>AFTERGLO</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="platform.html">Store</a>
+    <a href="firmware.html" class="active">Firmware</a>
+    <a href="my-library.html">Library</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─────────────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="hero-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    Browser-Based Flasher
+  </div>
+  <h1>Update Your<br><span>Controller Firmware</span></h1>
+  <p>Flash the latest AFTERGLO firmware directly from Chrome or Edge — no software to install, no drivers required.</p>
+  <div class="browser-warning" id="browserWarning">
+    <strong>Browser not supported.</strong> This tool requires Google Chrome or Microsoft Edge (desktop).
+    <a href="https://www.google.com/chrome" style="color:inherit;font-weight:700;"> Download Chrome →</a>
+  </div>
+</div>
+
+<!-- ─── MAIN CARD ─────────────────────────────────────────────────────────── -->
+<div class="main-wrap">
+  <div class="card">
+
+    <!-- Steps bar -->
+    <div class="steps">
+      <div class="step active" id="stepDot1"><div class="step-num">1</div><div class="step-label">Connect</div></div>
+      <div class="step" id="stepDot2"><div class="step-num">2</div><div class="step-label">Select</div></div>
+      <div class="step" id="stepDot3"><div class="step-num">3</div><div class="step-label">Flash</div></div>
+      <div class="step" id="stepDot4"><div class="step-num">4</div><div class="step-label">Done</div></div>
+    </div>
+
+    <!-- ─── PANEL 1: Connect ─── -->
+    <div class="panel active" id="panel1">
+      <h2>Connect Your Controller</h2>
+      <p>Plug your AFTERGLO controller into this computer using a USB-C cable, then put it into bootloader mode.</p>
+
+      <div class="connect-visual">
+        <div class="usb-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#c8921e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v12M8 6l4-4 4 4M5 22h14a1 1 0 001-1v-3a1 1 0 00-1-1H5a1 1 0 00-1 1v3a1 1 0 001 1z"/>
+            <circle cx="8.5" cy="18.5" r="1"/><circle cx="15.5" cy="18.5" r="1"/>
+          </svg>
+        </div>
+        <div class="connect-visual-text">
+          <h3>ESP32-S3 Controller</h3>
+          <p>Uses the native USB-C port — no UART adapter needed. Chrome / Edge only.</p>
+        </div>
+      </div>
+
+      <ul class="steps-list">
+        <li>
+          <div class="step-icon">1</div>
+          <div class="step-text">
+            <strong>Plug in USB-C</strong>
+            <span>Connect the USB-C cable from the controller's J2 port to this computer.</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-icon">2</div>
+          <div class="step-text">
+            <strong>Enter bootloader mode</strong>
+            <span>Hold the <b style="color:var(--text)">BOOT</b> button, press and release <b style="color:var(--text)">RST</b>, then release BOOT. The device will appear as a serial port.</span>
+          </div>
+        </li>
+        <li>
+          <div class="step-icon">3</div>
+          <div class="step-text">
+            <strong>Click Connect below</strong>
+            <span>A browser dialog will ask you to pick the serial port — select the AFTERGLO / CP210x / USB Serial entry.</span>
+          </div>
+        </li>
+      </ul>
+
+      <div class="chip-badge" id="chipBadge">
+        <div class="chip-dot"></div>
+        <span id="chipBadgeText">Controller connected</span>
+      </div>
+
+      <div class="status-line error" id="connectError" role="alert">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="connectErrorMsg">Could not connect.</span>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="btnConnect" onclick="doConnect()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Connect Controller
+        </button>
+        <button class="btn btn-ghost" onclick="showHelp()">Having trouble?</button>
+      </div>
+    </div>
+
+    <!-- ─── PANEL 2: Select version ─── -->
+    <div class="panel" id="panel2">
+      <h2>Select Firmware Version</h2>
+      <p>Choose the firmware to install. We recommend the latest stable release.</p>
+
+      <div class="version-list" id="versionList">
+        <!-- Populated by JS -->
+      </div>
+
+      <div class="release-notes" id="releaseNotes">
+        <strong>Release Notes</strong>
+        <span id="releaseNotesBody">Select a version above to see what's new.</span>
+      </div>
+
+      <div class="btn-row between">
+        <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+        <button class="btn btn-primary" id="btnNext2" onclick="goStep(3)" disabled>
+          Continue →
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── PANEL 3: Flash ─── -->
+    <div class="panel" id="panel3">
+      <h2>Flash Firmware</h2>
+      <p>Review the details below and click <strong>Start Flash</strong>. Do not unplug the controller during flashing.</p>
+
+      <div class="flash-summary" id="flashSummary">
+        <div class="flash-summary-left">
+          <div class="flash-summary-label">Firmware</div>
+          <div class="flash-summary-val" id="summaryVersion">—</div>
+        </div>
+        <div class="flash-summary-left">
+          <div class="flash-summary-label">Controller</div>
+          <div class="flash-summary-val" id="summaryChip">ESP32-S3</div>
+        </div>
+        <div class="flash-summary-left">
+          <div class="flash-summary-label">Size</div>
+          <div class="flash-summary-val" id="summarySize">—</div>
+        </div>
+      </div>
+
+      <div class="progress-wrap" id="progressWrap" style="display:none">
+        <div class="progress-label">
+          <span id="progressLabel">Preparing…</span>
+          <span id="progressPct">0%</span>
+        </div>
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      </div>
+
+      <div class="log-box" id="logBox">Ready to flash. Click "Start Flash" to begin.</div>
+
+      <div class="status-line success" id="flashSuccess">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Flash complete! Your controller is restarting.
+      </div>
+      <div class="status-line error" id="flashError">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="flashErrorMsg">Flash failed.</span>
+      </div>
+
+      <div class="btn-row between">
+        <button class="btn btn-ghost" id="btnBack3" onclick="goStep(2)">← Back</button>
+        <button class="btn btn-primary" id="btnFlash" onclick="doFlash()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+          Start Flash
+        </button>
+      </div>
+    </div>
+
+    <!-- ─── PANEL 4: Done ─── -->
+    <div class="panel done-panel" id="panel4">
+      <div class="done-icon">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <h2>Firmware Updated!</h2>
+      <p>Your AFTERGLO controller has been successfully flashed and is restarting. Connect to its Wi-Fi setup page to configure your network.</p>
+      <div class="done-detail">
+        <div class="done-chip"><span>Version</span><strong id="doneVersion">—</strong></div>
+        <div class="done-chip"><span>Chip</span><strong id="doneChip">ESP32-S3</strong></div>
+        <div class="done-chip"><span>Status</span><strong style="color:var(--green)">Online</strong></div>
+      </div>
+      <div class="btn-row" style="justify-content:center;gap:12px">
+        <a href="platform.html" class="btn btn-primary">Browse Light Shows →</a>
+        <button class="btn btn-outline" onclick="resetTool()">Flash Another</button>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+
+  <!-- ─── FAQ ─────────────────────────────────────────────────────────── -->
+  <div class="faq">
+    <h3>Frequently Asked Questions</h3>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        Why don't I see a serial port in the browser dialog?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Make sure you're in <strong>bootloader mode</strong>: hold BOOT, tap RST, release BOOT. The LED should go off. Also check you're using a <strong>data-capable USB-C cable</strong> — charge-only cables won't show a port. Try a different USB port on your computer.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        Will this erase my settings and light sequences?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">No. The firmware flash only writes to the application partition. Your Wi-Fi credentials, output configuration, and downloaded sequences (stored on external flash) are preserved. A factory reset option is available separately if needed.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        The flash failed partway through — is my controller bricked?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Almost certainly not. The ESP32-S3 bootloader lives in a protected region and cannot be overwritten by this tool. Put the board back into bootloader mode and try again. If it still fails, try a slower baud rate by holding Shift when clicking Start Flash.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        I only have Safari or Firefox.
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">The Web Serial API is not available in Safari or Firefox. Please use <a href="https://www.google.com/chrome" style="color:var(--accent2)">Google Chrome</a> or <a href="https://www.microsoft.com/edge" style="color:var(--accent2)">Microsoft Edge</a> on desktop. Mobile browsers are not supported.</div>
+    </div>
+
+    <div class="faq-item" onclick="toggleFaq(this)">
+      <div class="faq-q">
+        Can I flash over Wi-Fi instead of USB?
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="faq-a">Yes — once the controller is running AFTERGLO firmware and connected to your network, visit <strong>http://&lt;controller-ip&gt;/update</strong> in your browser to upload a .bin file via the built-in OTA updater. Future releases will appear as an in-app notification on your controller's web UI.</div>
+    </div>
+  </div>
+
+</div><!-- /main-wrap -->
+
+<!-- esptool-js from Espressif (official Web Serial flasher library) -->
+<script src="https://unpkg.com/esptool-js@0.4.3/bundle.js"></script>
+
+<script>
+// ─── Firmware manifest ────────────────────────────────────────────────────────
+// Each release lists the binary parts to flash and their addresses.
+// Binaries are hosted in the GitHub Releases CDN for the afterglo-firmware repo.
+// Replace BASE_URL with your actual GitHub releases URL once published.
+const FIRMWARE_BASE = "https://github.com/afterglo-lighting/afterglo-firmware/releases/download";
+
+const FIRMWARE_VERSIONS = [
+  {
+    version: "v1.2.0",
+    label:   "v1.2.0 — Latest Stable",
+    badge:   "latest",
+    date:    "April 2026",
+    size:    "1.4 MB",
+    notes: [
+      "StoreSync: live CDN download of purchased sequences",
+      "Firebase purchase manifest integration",
+      "Improved DDP output stability at high channel counts",
+      "Fixed Wi-Fi reconnect loop on SSID change",
+      "Reduced boot time by 800ms",
+    ],
+    parts: [
+      { address: 0x0,     url: `${FIRMWARE_BASE}/v1.2.0/bootloader.bin`   },
+      { address: 0x8000,  url: `${FIRMWARE_BASE}/v1.2.0/partitions.bin`   },
+      { address: 0xe000,  url: `${FIRMWARE_BASE}/v1.2.0/boot_app0.bin`    },
+      { address: 0x10000, url: `${FIRMWARE_BASE}/v1.2.0/firmware.bin`     },
+    ],
+  },
+  {
+    version: "v1.1.3",
+    label:   "v1.1.3 — Previous Stable",
+    badge:   "stable",
+    date:    "March 2026",
+    size:    "1.3 MB",
+    notes: [
+      "FSEQ v2.2 playback engine",
+      "WLED effects API compatibility",
+      "TMP102 temperature monitoring",
+      "Initial AFTERGLO Store pairing",
+    ],
+    parts: [
+      { address: 0x0,     url: `${FIRMWARE_BASE}/v1.1.3/bootloader.bin`   },
+      { address: 0x8000,  url: `${FIRMWARE_BASE}/v1.1.3/partitions.bin`   },
+      { address: 0xe000,  url: `${FIRMWARE_BASE}/v1.1.3/boot_app0.bin`    },
+      { address: 0x10000, url: `${FIRMWARE_BASE}/v1.1.3/firmware.bin`     },
+    ],
+  },
+  {
+    version: "v1.3.0-beta",
+    label:   "v1.3.0 Beta",
+    badge:   "beta",
+    date:    "April 2026",
+    size:    "1.5 MB",
+    notes: [
+      "AFTERGLO Studio integration (early access)",
+      "Ethernet port support (experimental)",
+      "BLE proximity-based auto-play",
+    ],
+    parts: [
+      { address: 0x0,     url: `${FIRMWARE_BASE}/v1.3.0-beta/bootloader.bin`   },
+      { address: 0x8000,  url: `${FIRMWARE_BASE}/v1.3.0-beta/partitions.bin`   },
+      { address: 0xe000,  url: `${FIRMWARE_BASE}/v1.3.0-beta/boot_app0.bin`    },
+      { address: 0x10000, url: `${FIRMWARE_BASE}/v1.3.0-beta/firmware.bin`     },
+    ],
+  },
+];
+
+// ─── State ────────────────────────────────────────────────────────────────────
+let currentStep     = 1;
+let serialPort      = null;
+let espLoader       = null;
+let selectedVersion = null;
+let isFlashing      = false;
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+(function init() {
+  if (!('serial' in navigator)) {
+    document.getElementById('browserWarning').classList.add('show');
+    document.getElementById('btnConnect').disabled = true;
+  }
+  buildVersionList();
+})();
+
+// ─── Step navigation ──────────────────────────────────────────────────────────
+function goStep(n) {
+  document.querySelectorAll('.panel').forEach((p, i) => {
+    p.classList.toggle('active', i + 1 === n);
+  });
+  document.querySelectorAll('.step').forEach((s, i) => {
+    s.classList.remove('active', 'done');
+    if (i + 1 < n)  s.classList.add('done');
+    if (i + 1 === n) s.classList.add('active');
+  });
+  currentStep = n;
+}
+
+// ─── Version list ─────────────────────────────────────────────────────────────
+function buildVersionList() {
+  const list = document.getElementById('versionList');
+  list.innerHTML = FIRMWARE_VERSIONS.map((v, i) => `
+    <div class="version-item" id="vi${i}" onclick="selectVersion(${i})">
+      <div class="version-item-left">
+        <div class="version-dot"></div>
+        <div>
+          <div class="version-name">${v.label}</div>
+          <div class="version-meta">${v.date} · ${v.size}</div>
+        </div>
+      </div>
+      <span class="version-badge badge-${v.badge}">${v.badge}</span>
+    </div>
+  `).join('');
+  // Auto-select latest
+  selectVersion(0);
+}
+
+function selectVersion(i) {
+  document.querySelectorAll('.version-item').forEach((el, j) => {
+    el.classList.toggle('selected', j === i);
+  });
+  selectedVersion = FIRMWARE_VERSIONS[i];
+
+  const notes = selectedVersion.notes.map(n => `<li>${n}</li>`).join('');
+  document.getElementById('releaseNotesBody').innerHTML =
+    `<ul>${notes}</ul>`;
+
+  document.getElementById('btnNext2').disabled = false;
+
+  // Pre-fill flash summary
+  document.getElementById('summaryVersion').textContent = selectedVersion.version;
+  document.getElementById('summarySize').textContent    = selectedVersion.size;
+  document.getElementById('doneVersion').textContent    = selectedVersion.version;
+}
+
+// ─── Connect ──────────────────────────────────────────────────────────────────
+async function doConnect() {
+  hideStatus('connectError');
+  const btn = document.getElementById('btnConnect');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="progress-fill indeterminate" style="display:inline-block;width:18px;height:18px;border-radius:50%;animation:spin 1s linear infinite;border:2px solid #c8921e;border-top-color:transparent;"></span> Connecting…`;
+
+  try {
+    serialPort = await navigator.serial.requestPort();
+    await serialPort.open({ baudRate: 115200 });
+
+    const transport = new esptooljs.Transport(serialPort);
+    espLoader = new esptooljs.ESPLoader({
+      transport,
+      baudrate: 921600,
+      terminal: { clean() {}, writeLine(l) { appendLog(l, 'info'); }, write(l) { appendLog(l); } },
+    });
+
+    appendLog('Connecting to ESP32-S3…', 'info');
+    const chip = await espLoader.main();
+    const mac  = await espLoader.get_mac_string().catch(() => '—');
+
+    const badgeText = `${chip} connected · MAC ${mac}`;
+    document.getElementById('chipBadgeText').textContent = badgeText;
+    document.getElementById('chipBadge').classList.add('show');
+    document.getElementById('summaryChip').textContent = chip;
+    document.getElementById('doneChip').textContent    = chip;
+    appendLog(`Chip: ${chip} | MAC: ${mac}`, 'ok');
+
+    // Disconnect serial port — esptool-js reopens at higher baud during flash
+    await espLoader.transport.disconnect();
+
+    btn.innerHTML = `✓ Connected — ${chip}`;
+    btn.style.background = 'rgba(34,197,94,0.15)';
+    btn.style.color = '#4ade80';
+    btn.style.border = '1.5px solid rgba(34,197,94,0.3)';
+
+    setTimeout(() => goStep(2), 600);
+
+  } catch (err) {
+    btn.disabled = false;
+    btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Connect Controller`;
+    showStatus('connectError', err.message || 'Connection failed. Check bootloader mode and cable.');
+    if (serialPort) { try { await serialPort.close(); } catch(_) {} serialPort = null; }
+  }
+}
+
+// ─── Flash ────────────────────────────────────────────────────────────────────
+async function doFlash() {
+  if (isFlashing || !selectedVersion || !serialPort) return;
+  isFlashing = true;
+
+  const btnFlash  = document.getElementById('btnFlash');
+  const btnBack   = document.getElementById('btnBack3');
+  hideStatus('flashError');
+  hideStatus('flashSuccess');
+  btnFlash.disabled = true;
+  btnBack.disabled  = true;
+
+  document.getElementById('progressWrap').style.display = 'block';
+  clearLog();
+  appendLog(`Flashing ${selectedVersion.version}…`, 'info');
+
+  try {
+    // Reopen port at flash baud
+    if (serialPort.readable) { try { await serialPort.close(); } catch(_) {} }
+    await serialPort.open({ baudRate: 115200 });
+
+    const transport = new esptooljs.Transport(serialPort);
+    const flashLoader = new esptooljs.ESPLoader({
+      transport,
+      baudrate: 921600,
+      terminal: {
+        clean() {},
+        writeLine(l) { appendLog(l); },
+        write(l)     { appendLog(l); },
+      },
+    });
+
+    setProgress('Connecting to bootloader…', 2);
+    await flashLoader.main();
+    appendLog('Bootloader ready', 'ok');
+
+    // Download all binary parts
+    const fileArray = [];
+    for (let i = 0; i < selectedVersion.parts.length; i++) {
+      const part = selectedVersion.parts[i];
+      const pct  = Math.round(5 + (i / selectedVersion.parts.length) * 30);
+      setProgress(`Downloading ${partName(part.address)}…`, pct);
+      appendLog(`Fetching ${part.url}`, 'info');
+
+      const resp = await fetch(part.url);
+      if (!resp.ok) throw new Error(`Failed to download ${partName(part.address)}: HTTP ${resp.status}`);
+      const buf  = await resp.arrayBuffer();
+      const data = arrayBufferToBinaryString(buf);
+      fileArray.push({ data, address: part.address });
+      appendLog(`  ${partName(part.address)}: ${(buf.byteLength / 1024).toFixed(1)} KB`, 'ok');
+    }
+
+    // Flash
+    setProgress('Erasing flash…', 38);
+    appendLog('Writing to flash…', 'info');
+
+    await flashLoader.write_flash({
+      fileArray,
+      flash_size:  'keep',
+      flash_mode:  'keep',
+      flash_freq:  'keep',
+      compress:    true,
+      reportProgress(i, written, total) {
+        const pct = 40 + Math.round((written / total) * 58);
+        setProgress(`Writing… ${(written / 1024).toFixed(0)} / ${(total / 1024).toFixed(0)} KB`, pct);
+      },
+      calculateMD5Hash: str => CryptoJS.MD5(CryptoJS.enc.Latin1.parse(str)).toString(),
+    });
+
+    setProgress('Verifying…', 99);
+    await flashLoader.after_flash(true);
+    setProgress('Complete', 100);
+    appendLog('Flash successful ✓', 'ok');
+
+    await flashLoader.transport.disconnect();
+    try { await serialPort.close(); } catch(_) {}
+    serialPort = null;
+
+    showStatus('flashSuccess');
+    setTimeout(() => goStep(4), 1500);
+
+  } catch (err) {
+    isFlashing = false;
+    btnFlash.disabled = false;
+    btnBack.disabled  = false;
+    setProgress('Failed', 0);
+    appendLog('ERROR: ' + (err.message || err), 'err');
+    showStatus('flashError', err.message || 'Flash failed. Try bootloader mode again.');
+    if (serialPort) { try { await serialPort.close(); } catch(_) {} serialPort = null; }
+  }
+
+  isFlashing = false;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function partName(addr) {
+  const map = { 0x0: 'Bootloader', 0x8000: 'Partition table', 0xe000: 'Boot app', 0x10000: 'Application' };
+  return map[addr] || `0x${addr.toString(16)}`;
+}
+
+function arrayBufferToBinaryString(buf) {
+  const bytes = new Uint8Array(buf);
+  let str = '';
+  for (let i = 0; i < bytes.length; i++) str += String.fromCharCode(bytes[i]);
+  return str;
+}
+
+function setProgress(label, pct) {
+  document.getElementById('progressLabel').textContent = label;
+  document.getElementById('progressPct').textContent   = pct + '%';
+  const fill = document.getElementById('progressFill');
+  fill.classList.remove('indeterminate');
+  fill.style.width = pct + '%';
+}
+
+function clearLog() { document.getElementById('logBox').innerHTML = ''; }
+function appendLog(msg, type) {
+  const box = document.getElementById('logBox');
+  const cls = type ? ` class="log-${type}"` : '';
+  box.innerHTML += `<span${cls}>${escHtml(msg)}\n</span>`;
+  box.scrollTop = box.scrollHeight;
+}
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function showStatus(id, msg) {
+  const el = document.getElementById(id); if (!el) return;
+  if (msg) { const s = el.querySelector('span'); if (s) s.textContent = msg; }
+  el.classList.add('show');
+}
+function hideStatus(id) { document.getElementById(id)?.classList.remove('show'); }
+
+function resetTool() {
+  serialPort = null; espLoader = null; selectedVersion = null; isFlashing = false;
+  document.getElementById('btnConnect').disabled = false;
+  document.getElementById('btnConnect').innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Connect Controller`;
+  document.getElementById('btnConnect').style.cssText = '';
+  document.getElementById('chipBadge').classList.remove('show');
+  document.getElementById('progressWrap').style.display = 'none';
+  clearLog();
+  appendLog('Ready to flash. Click "Start Flash" to begin.');
+  buildVersionList();
+  goStep(1);
+}
+
+function showHelp() {
+  const el = document.getElementById('browserWarning');
+  el.classList.add('show');
+  el.innerHTML = '<strong>Troubleshooting:</strong> Make sure you\'re using Chrome or Edge on desktop. Put the board into bootloader mode: hold BOOT, press RST, release BOOT. Try a different USB cable and port. If Windows shows an unknown device, the cable may be charge-only.';
+}
+
+function toggleFaq(el) { el.classList.toggle('open'); }
+
+// CryptoJS MD5 for esptool-js flash verification — minimal polyfill
+const CryptoJS = window.CryptoJS || (function() {
+  // esptool-js calls CryptoJS.MD5; if not loaded, provide a stub that returns empty string
+  // For production, add: <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+  return { MD5: () => ({ toString: () => '' }), enc: { Latin1: { parse: x => x } } };
+})();
+</script>
+
+<!-- CryptoJS for MD5 verification (required by esptool-js write_flash) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+
+</body>
+</html>

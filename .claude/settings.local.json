@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git pull:*)",
+      "Bash(git rebase:*)",
+      "Bash(git fetch:*)",
+      "Bash(git reset:*)",
+      "Bash(git -C \"c:/Users/18018/Desktop/RIDGELINE/Afterglo\" pull)",
+      "Bash(git -C \"c:/Users/18018/Desktop/RIDGELINE/Afterglo\" add index.html yardsign.html)",
+      "Bash(git -C:*)",
+      "Bash(git -C \"c:/Users/18018/Desktop/RIDGELINE/Afterglo\" push)",
+      "Bash(\"C:/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --screenshot=\"c:/Users/18018/Desktop/RIDGELINE/Afterglo/yardsign.png\" --window-size=5400,3600 --force-device-scale-factor=3.125 \"file:///c:/Users/18018/Desktop/RIDGELINE/Afterglo/yardsign.html\")",
+      "Bash(node -e:*)",
+      "Bash(\"C:/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --screenshot=\"c:/Users/18018/Desktop/RIDGELINE/Afterglo/yardsign.png\" --window-size=1728,1152 --force-device-scale-factor=3.125 \"file:///c:/Users/18018/Desktop/RIDGELINE/Afterglo/yardsign.html\")",
+      "Bash(\"C:/Program Files/Google/Chrome/Application/chrome.exe\":*)",
+      "Bash(\"C:/Program Files/Google/Chrome/Application/chrome.exe\" --headless --disable-gpu --screenshot=\"c:/Users/18018/Desktop/RIDGELINE/Afterglo/yardsign-24x18.png\" --window-size=2304,1728 --force-device-scale-factor=3.125 \"file:///c:/Users/18018/Desktop/RIDGELINE/Afterglo/yardsign-24x18.html\")",
+      "Bash(git rm:*)",
+      "Bash(where:*)",
+      "Bash(npx --yes sharp-cli:*)"
+    ]
+  }
+}

@@ -13,6 +13,11 @@
        Authorized JS origins: https://afterglolighting.org + http://localhost -->
   <meta name="google-signin-client_id" content="358004783589-kvqgqvvjgqsa57gcip6nfumbp0a1ntsp.apps.googleusercontent.com" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- Firebase SDK (compat build — required by js/firebase-auth.js) -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-auth.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -639,12 +644,7 @@
   })();
 
   /* ─── HELPERS ────────────────────────────────────────────────── */
-  function getUser() {
-    try { return JSON.parse(localStorage.getItem('afterglo_user')); } catch(e) { return null; }
-  }
-  function saveUser(user) {
-    localStorage.setItem('afterglo_user', JSON.stringify(user));
-  }
+  // getUser / saveUser come from js/firebase-auth.js
   function getRedirectUrl() {
     const params = new URLSearchParams(window.location.search);
     return params.get('redirect') || 'platform.html';
@@ -700,7 +700,7 @@
   }
 
   /* ─── SIGN IN ────────────────────────────────────────────────── */
-  function handleSignIn(e) {
+  async function handleSignIn(e) {
     e.preventDefault();
     clearErrors();
 
@@ -720,36 +720,24 @@
     }
     if (!valid) return;
 
-    // Mock auth — check if an account was created in this browser
-    const existing = getUser();
-    if (existing && existing.email.toLowerCase() === email.toLowerCase()) {
-      // Returning user — refresh token, preserve all library data
-      existing.token = 'mock_' + Date.now();
-      saveUser(existing);
-      showToast('Welcome back, ' + (existing.name || 'there') + '!');
+    const btn = e.target.querySelector('button[type=submit]');
+    if (btn) btn.disabled = true;
+
+    const result = await signInWithEmail(email, password);
+
+    if (btn) btn.disabled = false;
+
+    if (result.ok) {
+      const user = getUser();
+      showToast('Welcome back, ' + (user?.name || 'there') + '!');
       setTimeout(() => window.location.href = getRedirectUrl(), 1200);
-    } else if (existing && existing.email.toLowerCase() !== email.toLowerCase()) {
-      // A different account exists locally — warn instead of silently overwriting
-      showErr('siGlobalErr', 'An account for ' + existing.email + ' is saved in this browser. Sign out of that account first, or use the same email address.');
-      document.getElementById('siEmail').classList.add('error');
     } else {
-      // No existing account — create a new mock session
-      const user = {
-        name:      email.split('@')[0],
-        email:     email,
-        token:     'mock_' + Date.now(),
-        library:   [],
-        purchases: [],
-        uploads:   []
-      };
-      saveUser(user);
-      showToast('Signed in successfully!');
-      setTimeout(() => window.location.href = getRedirectUrl(), 1200);
+      showErr('siGlobalErr', result.message || 'Sign in failed. Please try again.');
     }
   }
 
   /* ─── CREATE ACCOUNT ─────────────────────────────────────────── */
-  function handleCreate(e) {
+  async function handleCreate(e) {
     e.preventDefault();
     clearErrors();
 
@@ -786,17 +774,20 @@
     }
     if (!valid) return;
 
-    const user = {
-      name:      name,
-      email:     email,
-      token:     'mock_' + Date.now(),
-      library:   [],
-      purchases: [],
-      uploads:   []
-    };
-    saveUser(user);
-    showToast('Account created! Welcome to AFTERGLO, ' + name + '!');
-    setTimeout(() => window.location.href = getRedirectUrl(), 1400);
+    const btn = e.target.querySelector('button[type=submit]');
+    if (btn) btn.disabled = true;
+
+    const result = await createAccountWithEmail(name, email, password);
+
+    if (btn) btn.disabled = false;
+
+    if (result.ok) {
+      showToast('Account created! Welcome to AFTERGLO, ' + name + '!');
+      setTimeout(() => window.location.href = getRedirectUrl(), 1400);
+    } else {
+      const field = result.code === 'auth/email-already-in-use' ? 'caEmailErr' : 'caGlobalErr';
+      showErr(field, result.message || 'Account creation failed.');
+    }
   }
 
   /* ─── GOOGLE SIGN-IN (Identity Services) ─────────────────────── */
@@ -804,44 +795,19 @@
                                ?.getAttribute('content') || '';
 
   // Called by GIS after the user picks a Google account
-  function handleGoogleCredential(response) {
+  async function handleGoogleCredential(response) {
     try {
-      // Decode the JWT payload (no signature check needed — it came from Google directly)
-      const payload = JSON.parse(atob(response.credential.split('.')[1]));
-      const { sub, email, name, picture } = payload;
-
-      const existing = getUser();
-      let user;
-      if (existing && existing.googleId === sub) {
-        // Returning Google user — refresh token, keep library
-        user = Object.assign(existing, {
-          name,
-          email,
-          picture:   picture || existing.picture || '',
-          token:     'google_' + sub,
-          updatedAt: Date.now(),
-        });
+      const result = await signInWithGoogleCredential(response.credential);
+      if (result.ok) {
+        const firstName = (result.name || getUser()?.name || 'there').split(' ')[0];
+        showToast('Welcome, ' + firstName + '!');
+        setTimeout(() => window.location.href = getRedirectUrl(), 1000);
       } else {
-        // New or different Google account
-        user = {
-          name,
-          email,
-          picture:   picture || '',
-          googleId:  sub,
-          token:     'google_' + sub,
-          library:   existing?.library   || [],
-          purchases: existing?.purchases || [],
-          uploads:   existing?.uploads   || [],
-          createdAt: existing?.createdAt || Date.now(),
-          updatedAt: Date.now(),
-        };
+        showToast(result.message || 'Google sign-in failed — please try again.', true);
       }
-      saveUser(user);
-      showToast('Welcome, ' + (name.split(' ')[0] || 'there') + '!');
-      setTimeout(() => window.location.href = getRedirectUrl(), 1000);
     } catch (err) {
       showToast('Google sign-in failed — please try again.', true);
-      console.error('Google credential decode error:', err);
+      console.error('Google credential error:', err);
     }
   }
 
@@ -876,9 +842,19 @@
   }
 
   /* ─── FORGOT PASSWORD ────────────────────────────────────────── */
-  function handleForgotPassword(e) {
+  async function handleForgotPassword(e) {
     e.preventDefault();
-    showToast('Password reset coming soon — contact info@afterglolighting.org for help', true);
+    const email = document.getElementById('siEmail')?.value?.trim();
+    if (!email || !isValidEmail(email)) {
+      showToast('Enter your email above first, then click Forgot Password.', true);
+      return;
+    }
+    const result = await sendPasswordReset(email);
+    if (result.ok) {
+      showToast('Reset email sent! Check your inbox.');
+    } else {
+      showToast(result.message || 'Password reset coming soon — contact info@afterglolighting.org', true);
+    }
   }
 
   /* ─── TOAST ──────────────────────────────────────────────────── */

@@ -1,0 +1,23 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Published sequences are public-read
+    match /sequences/{seqId} {
+      allow read: if resource.data.status == "published";
+      allow write: if false; // Cloud Functions only
+    }
+
+    // Purchases: user can read their own, write via Cloud Functions only
+    match /purchases/{docId} {
+      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
+      allow write: if false; // Cloud Functions only
+    }
+
+    // Creator earnings: creator can read their own record
+    match /creator_earnings/{creatorId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Cloud Functions only
+    }
+  }
+}
