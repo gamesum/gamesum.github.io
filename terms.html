@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — AFTERGLO</title>
+  <meta name="description" content="AFTERGLO Terms of Service — learn about your rights and responsibilities when using the AFTERGLO platform and marketplace." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #111111;
+      --bg4:      #1a1a1a;
+      --accent:   #c8921e;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --border2:  #2a2a2a;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+    }
+    .btn-sm { padding: 8px 16px; font-size: 0.82rem; }
+
+    /* ─── NAVBAR ──────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 10px;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      background: rgba(13,17,23,0.98);
+      backdrop-filter: blur(16px);
+      padding: 24px;
+      flex-direction: column;
+      gap: 24px;
+      z-index: 999;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ─── PAGE CONTENT ────────────────────────────────────────────── */
+    .page-content {
+      padding-top: calc(var(--nav-h) + 60px);
+      padding-bottom: 100px;
+    }
+
+    .legal-hero {
+      background: linear-gradient(135deg, var(--bg2), var(--bg3));
+      border-bottom: 1px solid var(--border);
+      padding: 52px 0 44px;
+      margin-bottom: 56px;
+    }
+
+    .legal-hero-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .legal-hero h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+
+    .legal-hero-meta {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    /* ─── LEGAL BODY ──────────────────────────────────────────────── */
+    .legal-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .legal-toc {
+      position: sticky;
+      top: calc(var(--nav-h) + 24px);
+    }
+
+    .legal-toc h3 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .legal-toc ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .legal-toc ul a {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+      border-left: 2px solid transparent;
+    }
+
+    .legal-toc ul a:hover {
+      background: var(--bg2);
+      color: var(--text);
+      border-left-color: var(--accent);
+    }
+
+    .legal-body section {
+      margin-bottom: 44px;
+    }
+
+    .legal-body h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legal-body p {
+      font-size: 0.925rem;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.75;
+    }
+
+    .legal-body ul {
+      list-style: none;
+      margin: 0 0 12px 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legal-body ul li {
+      font-size: 0.925rem;
+      color: var(--text);
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.7;
+    }
+
+    .legal-body ul li::before {
+      content: "–";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .legal-body a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .legal-body a:hover { color: var(--accent2); }
+
+    .legal-highlight {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0;
+    }
+
+    .legal-highlight p {
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      color: var(--silver);
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 56px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand .nav-logo { font-size: 1.3rem; }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    .footer-brand-sub {
+      font-size: 0.8rem;
+      color: #444;
+      margin-top: 10px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a {
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--text); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-bottom p { font-size: 0.82rem; color: #444; }
+    .footer-bottom a { color: var(--muted); transition: color 0.2s; text-decoration: none; }
+    .footer-bottom a:hover { color: var(--accent); }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .legal-layout { grid-template-columns: 1fr; }
+      .legal-toc { display: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="platform.html">Platform</a></li>
+        <li><a href="my-library.html">My Library</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">&#10022; Visualizer</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <a href="index.html#cta" class="btn btn-primary btn-sm">Get a Quote</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+    <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+    <a href="platform.html" onclick="closeMenu()">Platform</a>
+    <a href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()">&#10022; Visualizer</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ───────────────────────────────────────────────────────── -->
+<div class="page-content">
+  <div class="legal-hero">
+    <div class="container">
+      <div class="legal-hero-label">Legal</div>
+      <h1>Terms of Service</h1>
+      <p class="legal-hero-meta">Last updated: April 20, 2026 &nbsp;·&nbsp; Effective: April 20, 2026</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="legal-layout">
+
+      <!-- Sidebar TOC -->
+      <nav class="legal-toc">
+        <h3>On this page</h3>
+        <ul>
+          <li><a href="#acceptance">1. Acceptance of Terms</a></li>
+          <li><a href="#accounts">2. Account Registration</a></li>
+          <li><a href="#marketplace">3. Marketplace</a></li>
+          <li><a href="#payments">4. Payment Terms</a></li>
+          <li><a href="#refunds">5. Refund Policy</a></li>
+          <li><a href="#ip">6. Intellectual Property</a></li>
+          <li><a href="#prohibited">7. Prohibited Content</a></li>
+          <li><a href="#removal">8. Content Removal &amp; Termination</a></li>
+          <li><a href="#liability">9. Limitation of Liability</a></li>
+          <li><a href="#governing">10. Governing Law</a></li>
+          <li><a href="#contact">11. Contact</a></li>
+        </ul>
+      </nav>
+
+      <!-- Body -->
+      <div class="legal-body">
+
+        <section id="acceptance">
+          <h2>1. Acceptance of Terms</h2>
+          <p>Welcome to AFTERGLO, a residential LED light show platform operated by Ridgeline Lighting LLC ("AFTERGLO," "we," "us," or "our"). By accessing or using the AFTERGLO website located at <a href="https://afterglolighting.github.io">afterglolighting.github.io</a> (the "Site"), creating an account, purchasing or downloading content, or uploading sequences to our marketplace, you agree to be bound by these Terms of Service ("Terms").</p>
+          <p>If you do not agree to these Terms in their entirety, you must not use the Site or any services we provide. We reserve the right to modify these Terms at any time. Continued use of the Site after any modification constitutes your acceptance of the revised Terms. We will update the "Last updated" date at the top of this page whenever changes are made.</p>
+          <p>These Terms apply to all users of the Site, including visitors, registered account holders, purchasers, and content creators ("Creators") who upload or sell sequences on the marketplace.</p>
+        </section>
+
+        <section id="accounts">
+          <h2>2. Account Registration and Responsibilities</h2>
+          <p>To access certain features of the Site — including downloading sequences, making purchases, and uploading content — you must create an account. Account creation is handled through Google Firebase Authentication.</p>
+          <p>When registering, you agree to:</p>
+          <ul>
+            <li>Provide accurate and complete registration information (name and email address).</li>
+            <li>Keep your account credentials confidential and not share them with any third party.</li>
+            <li>Promptly notify us at <a href="mailto:wardlegacygroup@gmail.com">wardlegacygroup@gmail.com</a> if you suspect unauthorized access to your account.</li>
+            <li>Take full responsibility for all activity that occurs under your account.</li>
+          </ul>
+          <p>You must be at least 13 years of age to create an account. If you are under 18, you represent that you have your parent's or legal guardian's permission to use the Site.</p>
+          <p>AFTERGLO reserves the right to suspend or terminate accounts that violate these Terms, provide false information, or engage in activity that we reasonably determine is harmful to other users or the platform.</p>
+        </section>
+
+        <section id="marketplace">
+          <h2>3. Marketplace: Buying and Selling Sequences</h2>
+          <p>AFTERGLO operates a digital marketplace where registered users may browse, download free sequences, purchase premium sequences, and — if approved as Creators — sell their own original light show sequences ("Sequences") to other users.</p>
+          <p>As a buyer, you understand that:</p>
+          <ul>
+            <li>All Sequences purchased or downloaded are licensed for personal, non-commercial use on your own AFTERGLO-compatible hardware only.</li>
+            <li>You may not redistribute, resell, sublicense, or publicly display Sequences obtained through the marketplace without written permission from the Creator and AFTERGLO.</li>
+            <li>Sequences are digital goods delivered electronically. Ownership of the underlying intellectual property remains with the original Creator.</li>
+          </ul>
+          <p>As a Creator listing Sequences on the marketplace, you further agree to the terms set forth in our <a href="creator-agreement.html">Creator Agreement</a>, which is incorporated into these Terms by reference.</p>
+          <p>AFTERGLO acts as a marketplace facilitator. We do not produce, verify, or guarantee the quality or accuracy of Creator-submitted Sequences except where expressly indicated.</p>
+        </section>
+
+        <section id="payments">
+          <h2>4. Payment Terms</h2>
+          <p>All transactions on the AFTERGLO marketplace are processed through Stripe, Inc., a third-party payment processor. By making a purchase, you agree to Stripe's <a href="https://stripe.com/legal" target="_blank" rel="noopener noreferrer">Terms of Service</a> and <a href="https://stripe.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>. AFTERGLO does not store, process, or have access to your credit card or bank account information — all payment data is handled exclusively by Stripe.</p>
+          <p>Prices for premium Sequences and packs are listed in US dollars (USD). AFTERGLO reserves the right to adjust pricing at any time without prior notice, but existing purchases will not be affected.</p>
+          <div class="legal-highlight">
+            <p><strong>Revenue Split:</strong> When a Creator's Sequence is purchased, the Creator receives 70% of the net sale price (after Stripe processing fees). AFTERGLO retains 30% as a platform fee. Creator payouts are made monthly via Stripe, subject to a minimum threshold of $10.00. See the <a href="creator-agreement.html">Creator Agreement</a> for full payout details.</p>
+          </div>
+          <p>Free Sequences may require account creation and email capture but are not subject to any purchase requirement. AFTERGLO reserves the right to convert free Sequences to paid listings with reasonable advance notice.</p>
+        </section>
+
+        <section id="refunds">
+          <h2>5. Refund Policy</h2>
+          <p>All sales of digital Sequence files are final. Because Sequences are delivered electronically and are immediately accessible upon purchase, we generally do not offer refunds or exchanges.</p>
+          <div class="legal-highlight">
+            <p><strong>Exception:</strong> If the purchased file is corrupt, unreadable, or otherwise unusable — and you notify us within 14 days of purchase with supporting details — we will either provide a corrected file or issue a full refund at our discretion.</p>
+          </div>
+          <p>To request a refund under the exception above, email <a href="mailto:wardlegacygroup@gmail.com">wardlegacygroup@gmail.com</a> with your order details and a description of the issue. We aim to respond within 3 business days.</p>
+          <p>AFTERGLO reserves the right to deny refund requests that we reasonably determine are fraudulent or abusive.</p>
+        </section>
+
+        <section id="ip">
+          <h2>6. Intellectual Property</h2>
+          <p>All original content you upload to the AFTERGLO marketplace — including FSEQ sequence files, audio files, and any associated metadata ("User Content") — remains your intellectual property. You retain full ownership of your uploads.</p>
+          <p>By uploading User Content to AFTERGLO, you grant AFTERGLO a non-exclusive, worldwide, royalty-free license to host, store, reproduce, display, distribute, and promote your User Content in connection with operating and improving the platform. This license persists for as long as your content is listed on the marketplace, and terminates when you remove your content, subject to reasonable wind-down periods for cached or archived copies.</p>
+          <p>AFTERGLO's own content — including the website design, platform code, marketing materials, the AFTERGLO name, and logo — is owned exclusively by Ridgeline Lighting LLC. You may not copy, modify, or distribute AFTERGLO's proprietary content without our express written consent.</p>
+          <p>If you believe that content on our platform infringes your copyright, please follow our DMCA takedown process described in our <a href="creator-agreement.html">Creator Agreement</a> or contact us directly at <a href="mailto:wardlegacygroup@gmail.com">wardlegacygroup@gmail.com</a>.</p>
+        </section>
+
+        <section id="prohibited">
+          <h2>7. Prohibited Content</h2>
+          <p>You may not upload, post, distribute, or otherwise make available content that:</p>
+          <ul>
+            <li>Infringes any third party's copyright, trademark, patent, trade secret, or other intellectual property rights — including syncing FSEQ files to commercially released music without a valid license.</li>
+            <li>Contains malware, viruses, trojan horses, corrupted data, or any code designed to disrupt, damage, or gain unauthorized access to any device or system.</li>
+            <li>Is deceptive, misleading, or misrepresented (e.g., claiming a sequence is original when it is not).</li>
+            <li>Contains obscene, hateful, defamatory, or otherwise objectionable material.</li>
+            <li>Promotes illegal activity or violates applicable laws or regulations.</li>
+            <li>Impersonates AFTERGLO, its employees, or another user.</li>
+            <li>Violates the privacy of any individual, including uploading personal data of third parties without their consent.</li>
+          </ul>
+          <p>AFTERGLO reserves the right — but assumes no obligation — to review, screen, edit, or remove any User Content at any time and for any reason, with or without notice.</p>
+        </section>
+
+        <section id="removal">
+          <h2>8. Content Removal and Account Termination</h2>
+          <p>AFTERGLO reserves the right to remove any User Content and to suspend or permanently terminate any account that:</p>
+          <ul>
+            <li>Violates these Terms or our <a href="creator-agreement.html">Creator Agreement</a>.</li>
+            <li>Has received a valid DMCA takedown notice that we have verified.</li>
+            <li>Engages in fraud, abuse, or activity that harms other users or the platform.</li>
+            <li>Remains inactive for an extended period (we will make reasonable efforts to notify you before removing inactive content).</li>
+          </ul>
+          <p>In cases of repeated or egregious violations, AFTERGLO may pursue legal remedies available under applicable law, including seeking damages and injunctive relief.</p>
+          <p>If your account is terminated for a violation of these Terms, any pending Creator earnings that have not yet met the $10.00 payout threshold may be forfeited. Earned amounts already queued for payout will be remitted at our discretion after deducting any applicable fees or damages.</p>
+          <p>You may also voluntarily close your account at any time by contacting us at <a href="mailto:wardlegacygroup@gmail.com">wardlegacygroup@gmail.com</a>. Upon closure, your public listings will be removed from the marketplace, though copies already downloaded by purchasers remain valid under their existing licenses.</p>
+        </section>
+
+        <section id="liability">
+          <h2>9. Limitation of Liability</h2>
+          <p>To the fullest extent permitted by applicable law, AFTERGLO and its officers, directors, employees, agents, and licensors ("AFTERGLO Parties") shall not be liable for any indirect, incidental, special, consequential, punitive, or exemplary damages arising from your use of — or inability to use — the Site or any Sequence purchased or downloaded through it.</p>
+          <p>The AFTERGLO Parties' total aggregate liability to you for any claim arising from these Terms or your use of the Site shall not exceed the greater of: (a) the total amount you paid to AFTERGLO in the twelve (12) months preceding the claim, or (b) one hundred dollars ($100.00 USD).</p>
+          <p>AFTERGLO provides the platform and all content "as is" and "as available" without warranties of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. We do not warrant that the Site will be uninterrupted, error-free, or free of harmful components.</p>
+          <p>Some jurisdictions do not allow the exclusion or limitation of certain warranties or liabilities. In such jurisdictions, our liability is limited to the maximum extent permitted by law.</p>
+        </section>
+
+        <section id="governing">
+          <h2>10. Governing Law</h2>
+          <p>These Terms shall be governed by and construed in accordance with the laws of the State of Texas, United States, without regard to its conflict of law provisions. Any legal action or proceeding arising from or relating to these Terms shall be brought exclusively in the state or federal courts located in Texas, and you hereby consent to the personal jurisdiction of such courts.</p>
+          <p>If any provision of these Terms is held to be invalid or unenforceable, that provision will be enforced to the maximum extent permissible, and the remaining provisions will continue in full force and effect.</p>
+          <p>These Terms constitute the entire agreement between you and AFTERGLO with respect to your use of the Site and supersede all prior agreements and understandings.</p>
+        </section>
+
+        <section id="contact">
+          <h2>11. Contact Information</h2>
+          <p>If you have questions, concerns, or requests related to these Terms of Service, please reach out to us:</p>
+          <ul>
+            <li><strong>Email:</strong> <a href="mailto:wardlegacygroup@gmail.com">wardlegacygroup@gmail.com</a></li>
+            <li><strong>Website:</strong> <a href="https://afterglolighting.github.io">afterglolighting.github.io</a></li>
+            <li><strong>Company:</strong> Ridgeline Lighting LLC (operating as AFTERGLO)</li>
+          </ul>
+          <p>We will make every effort to respond to inquiries within 5 business days.</p>
+          <p>Related documents: <a href="privacy.html">Privacy Policy</a> &nbsp;·&nbsp; <a href="creator-agreement.html">Creator Agreement</a></p>
+        </section>
+
+      </div><!-- /legal-body -->
+    </div><!-- /legal-layout -->
+  </div><!-- /container -->
+</div><!-- /page-content -->
+
+<!-- ─── FOOTER ──────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="nav-logo">AFTER<span>GLO</span></span>
+        <p>Permanent LED roofline lighting installed across Utah. Music-synchronized Christmas light shows. And a growing library of FSEQ sequences for the xLights community.</p>
+        <p class="footer-brand-sub">Salt Lake City, Utah &bull; (385) 337-4144</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="platform.html#sequences">Browse Sequences</a></li>
+          <li><a href="platform.html#categories">Categories</a></li>
+          <li><a href="platform.html#premium">Premium Packs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="arches.html">Light Shows</a></li>
+          <li><a href="afterglo-visualizer.html">Visualizer</a></li>
+          <li><a href="index.html#cta">Get a Quote</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="creator-agreement.html">Creator Agreement</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AFTERGLO by Ridgeline Lighting LLC. All rights reserved.</p>
+      <div style="display:flex; gap:20px;">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="creator-agreement.html">Creator Agreement</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const hamburger  = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen = false;
+
+  hamburger.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    const spans = hamburger.querySelectorAll('span');
+    if (menuOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+
+  document.addEventListener('click', e => {
+    if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+  });
+</script>
+</body>
+</html>
