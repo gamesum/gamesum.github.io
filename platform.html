@@ -1,0 +1,1927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AFTERGLO Platform — Light Show Marketplace</title>
+  <meta name="description" content="Browse, download, and share FSEQ light show sequences for your AFTERGLO permanent LED system. Free community shows and premium packs from top creators." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & BASE ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #141414;
+      --bg4:      #1a1a1a;
+      --accent:   #c8921e;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --border2:  #2a2a2a;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.15;
+    }
+
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; }
+    section { width: 100%; }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-pad { padding: 96px 0; }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 540px;
+      line-height: 1.75;
+    }
+
+    /* ─── SCROLL ANIMATIONS ────────────────────────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-delay-1 { transition-delay: 0.1s; }
+    .fade-delay-2 { transition-delay: 0.2s; }
+    .fade-delay-3 { transition-delay: 0.3s; }
+    .fade-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── BUTTONS ──────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 0.82rem;
+    }
+
+    /* ─── NAVBAR ───────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
+    }
+    #navbar.scrolled {
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a.active { color: var(--accent); }
+
+    .nav-cta { margin-left: 16px; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      background: rgba(13,17,23,0.98);
+      backdrop-filter: blur(16px);
+      padding: 24px;
+      flex-direction: column;
+      gap: 24px;
+      z-index: 999;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* ─── HERO ─────────────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 72vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding-top: var(--nav-h);
+      background: var(--bg);
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 70% at 50% 120%, rgba(200,146,30,0.20) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(200,146,30,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(200,146,30,0.06) 0%, transparent 60%);
+      z-index: 0;
+    }
+
+    /* Animated grid dots */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-image:
+        radial-gradient(circle, rgba(200,146,30,0.12) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 860px;
+      padding: 64px 24px 48px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(200,146,30,0.1);
+      border: 1px solid rgba(200,146,30,0.25);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 6vw, 4.8rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+    .hero-title .gold { color: var(--accent); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.8;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      margin-top: 56px;
+      flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .hero-stat-num span { color: var(--accent); }
+    .hero-stat-label {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── FILTER BAR ───────────────────────────────────────────────── */
+    #filters {
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: var(--nav-h);
+      z-index: 100;
+    }
+
+    .filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .filter-bar::-webkit-scrollbar { display: none; }
+
+    .search-wrap {
+      position: relative;
+      flex-shrink: 0;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px; height: 16px;
+      color: var(--muted);
+    }
+    #searchInput {
+      background: var(--bg3);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 9px 16px 9px 38px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      width: 220px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    #searchInput:focus { border-color: var(--accent); }
+    #searchInput::placeholder { color: var(--muted); }
+
+    .filter-divider {
+      width: 1px; height: 28px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .filter-tab {
+      padding: 7px 16px;
+      border-radius: 100px;
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: var(--muted);
+      background: transparent;
+      border: 1.5px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .filter-tab:hover { color: var(--text); border-color: var(--border); }
+    .filter-tab.active {
+      color: var(--accent);
+      border-color: rgba(200,146,30,0.4);
+      background: rgba(200,146,30,0.08);
+    }
+
+    /* ─── FEATURED SEQUENCES ───────────────────────────────────────── */
+    #sequences { background: var(--bg); }
+
+    .seq-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 36px;
+      flex-wrap: wrap;
+    }
+
+    /* Horizontal scroll row */
+    .seq-scroll-wrap {
+      position: relative;
+      margin: 0 -24px;
+    }
+    .seq-row {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      padding: 8px 24px 20px;
+      scrollbar-width: none;
+      cursor: grab;
+    }
+    .seq-row::-webkit-scrollbar { display: none; }
+    .seq-row:active { cursor: grabbing; }
+
+    /* Card grid (for filtered view) */
+    .seq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    /* ─── SEQUENCE CARD ────────────────────────────────────────────── */
+    .seq-card {
+      flex: 0 0 280px;
+      scroll-snap-align: start;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+    }
+    .seq-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(200,146,30,0.3);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,146,30,0.1);
+    }
+
+    .card-thumb {
+      height: 160px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-glow {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .seq-card:hover .card-glow { opacity: 1; }
+
+    .card-badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .badge-free {
+      background: rgba(34,197,94,0.15);
+      color: #4ade80;
+      border: 1px solid rgba(34,197,94,0.3);
+    }
+    .badge-paid {
+      background: rgba(200,146,30,0.15);
+      color: var(--accent);
+      border: 1px solid rgba(200,146,30,0.35);
+    }
+
+    .card-play {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.2s;
+    }
+    .seq-card:hover .card-play { background: rgba(200,146,30,0.8); }
+    .card-play svg { width: 14px; height: 14px; color: #fff; fill: currentColor; }
+
+    .card-duration {
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.75);
+      background: rgba(0,0,0,0.5);
+      padding: 2px 8px;
+      border-radius: 100px;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-body {
+      padding: 16px 18px;
+    }
+    .card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .card-creator { color: var(--accent); font-weight: 500; }
+    .card-dot { color: var(--border2); }
+    .card-channels {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-channels svg { width: 12px; height: 12px; }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-downloads {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+    .card-downloads svg { width: 13px; height: 13px; }
+
+    .btn-card {
+      padding: 7px 16px;
+      font-size: 0.8rem;
+      border-radius: 7px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .btn-card-free {
+      background: rgba(34,197,94,0.1);
+      color: #4ade80;
+      border: 1px solid rgba(34,197,94,0.25);
+    }
+    .btn-card-free:hover { background: rgba(34,197,94,0.2); }
+    .btn-card-paid {
+      background: var(--accent);
+      color: #000;
+    }
+    .btn-card-paid:hover { background: var(--accent2); transform: translateY(-1px); }
+
+    /* ─── CATEGORIES ───────────────────────────────────────────────── */
+    #categories { background: var(--bg2); }
+
+    .cat-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 16px;
+    }
+
+    .cat-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 16px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .cat-card:hover {
+      border-color: rgba(200,146,30,0.4);
+      background: var(--bg4);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+
+    .cat-icon {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+      display: block;
+      filter: drop-shadow(0 0 12px rgba(200,146,30,0.4));
+    }
+
+    .cat-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .cat-count {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* ─── UPLOAD SECTION ───────────────────────────────────────────── */
+    #upload { background: var(--bg); }
+
+    .upload-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .upload-info h2 { margin-bottom: 16px; }
+    .upload-info p { margin-bottom: 12px; color: var(--muted); line-height: 1.75; }
+
+    .upload-perks {
+      list-style: none;
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .upload-perks li {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.9rem;
+      color: var(--silver);
+    }
+    .upload-perks li::before {
+      content: '';
+      display: block;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: rgba(200,146,30,0.15);
+      border: 1px solid rgba(200,146,30,0.4);
+      flex-shrink: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8921e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      background-size: 11px 11px;
+      background-position: center;
+      background-repeat: no-repeat;
+    }
+
+    .upload-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .drop-zone {
+      border: 2px dashed var(--border2);
+      border-radius: 12px;
+      padding: 36px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.25s;
+      margin-bottom: 24px;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(200,146,30,0.04);
+    }
+    .drop-zone-icon {
+      font-size: 2rem;
+      margin-bottom: 12px;
+    }
+    .drop-zone-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .drop-zone-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+    .drop-zone-sub span { color: var(--accent); cursor: pointer; }
+    .drop-zone-file {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(200,146,30,0.08);
+      border: 1px solid rgba(200,146,30,0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--silver);
+      margin-bottom: 7px;
+      letter-spacing: 0.04em;
+    }
+    .form-group input {
+      width: 100%;
+      background: var(--bg3);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus { border-color: var(--accent); }
+    .form-group input::placeholder { color: var(--muted); }
+
+    .upload-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+    .upload-note svg { display: inline; width: 13px; height: 13px; vertical-align: middle; margin-right: 4px; }
+
+    /* Toast */
+    #toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: #1a2e1a;
+      border: 1px solid rgba(74,222,128,0.35);
+      color: #4ade80;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ─── PREMIUM PACKS ────────────────────────────────────────────── */
+    #premium { background: var(--bg2); }
+
+    .premium-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .pack-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.25s;
+    }
+    .pack-card:hover {
+      border-color: rgba(200,146,30,0.35);
+      transform: translateY(-4px);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.4);
+    }
+
+    .pack-card.featured {
+      border-color: rgba(200,146,30,0.4);
+      background: linear-gradient(180deg, rgba(200,146,30,0.05) 0%, var(--bg3) 40%);
+    }
+
+    .pack-banner {
+      height: 120px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .pack-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--accent);
+      color: #000;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.06em;
+    }
+
+    .pack-previews {
+      display: flex;
+      gap: 4px;
+      position: absolute;
+      bottom: 12px;
+      left: 12px;
+    }
+    .pack-preview-dot {
+      width: 32px;
+      height: 22px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .pack-body {
+      padding: 22px 22px 24px;
+    }
+    .pack-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .pack-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .pack-meta {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .pack-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.8rem;
+      color: var(--silver);
+    }
+    .pack-meta-item svg { width: 14px; height: 14px; color: var(--accent); }
+
+    .pack-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+    }
+    .pack-price {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #fff;
+    }
+    .pack-price sup {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--muted);
+      vertical-align: super;
+      margin-right: 2px;
+    }
+    .pack-price-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 2px;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ─── HOW IT WORKS ─────────────────────────────────────────────── */
+    #how { background: var(--bg); }
+
+    .steps-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .steps-row::before {
+      content: '';
+      position: absolute;
+      top: 40px;
+      left: calc(16.67% + 40px);
+      right: calc(16.67% + 40px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent) 0%, rgba(200,146,30,0.3) 50%, var(--accent) 100%);
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 32px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-num {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: var(--bg2);
+      border: 2px solid rgba(200,146,30,0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      position: relative;
+    }
+    .step-num::after {
+      content: '';
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 1px solid rgba(200,146,30,0.12);
+    }
+    .step-num-inner {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .step-icon {
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .step-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ─── FOOTER ───────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 56px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand .nav-logo {
+      font-size: 1.4rem;
+      display: block;
+      margin-bottom: 14px;
+    }
+    .footer-brand p {
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.75;
+      max-width: 280px;
+    }
+    .footer-brand-sub {
+      font-size: 0.78rem;
+      color: #444;
+      margin-top: 16px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--silver);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a {
+      font-size: 0.88rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--text); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-bottom p { font-size: 0.82rem; color: #444; }
+    .footer-bottom a { color: var(--muted); transition: color 0.2s; }
+    .footer-bottom a:hover { color: var(--accent); }
+
+    /* No results */
+    .no-results {
+      text-align: center;
+      padding: 64px 24px;
+      color: var(--muted);
+      display: none;
+    }
+    .no-results.show { display: block; }
+    .no-results h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      color: var(--silver);
+      margin-bottom: 8px;
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+
+      .cat-grid { grid-template-columns: repeat(3, 1fr); }
+      .premium-grid { grid-template-columns: 1fr; }
+      .steps-row { grid-template-columns: 1fr; gap: 40px; }
+      .steps-row::before { display: none; }
+      .upload-wrap { grid-template-columns: 1fr; gap: 32px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+
+    @media (max-width: 600px) {
+      .section-pad { padding: 64px 0; }
+      .cat-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 32px; }
+      .premium-grid { grid-template-columns: 1fr; }
+      #searchInput { width: 160px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ──────────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#testimonials">Reviews</a></li>
+        <li><a href="platform.html" class="active" style="color:var(--accent);">Platform</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
+      </ul>
+
+      <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+    <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+    <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
+    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Platform</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
+    <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─────────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">✦ Community-Powered Light Shows</div>
+    <h1 class="hero-title">The <span class="gold">AFTERGLO</span><br>Platform</h1>
+    <p class="hero-sub">Browse hundreds of FSEQ sequences crafted by professional animators and the xLights community. Download free, buy premium, or share your own creations.</p>
+    <div class="hero-ctas">
+      <a href="#sequences" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Browse Free Shows
+      </a>
+      <a href="#premium" class="btn btn-ghost">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Get Premium Packs
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">2,400<span>+</span></div>
+        <div class="hero-stat-label">Total Downloads</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">140<span>+</span></div>
+        <div class="hero-stat-label">Sequences</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">58<span>+</span></div>
+        <div class="hero-stat-label">Creators</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">6</div>
+        <div class="hero-stat-label">Categories</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FILTER BAR ─────────────────────────────────────────────────── -->
+<div id="filters">
+  <div class="container">
+    <div class="filter-bar">
+      <div class="search-wrap">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input type="text" id="searchInput" placeholder="Search sequences…" autocomplete="off" />
+      </div>
+      <div class="filter-divider"></div>
+      <div class="filter-tabs" id="filterTabs">
+        <button class="filter-tab active" data-filter="all">All</button>
+        <button class="filter-tab" data-filter="free">Free</button>
+        <button class="filter-tab" data-filter="paid">Premium</button>
+        <button class="filter-tab" data-filter="christmas">Christmas</button>
+        <button class="filter-tab" data-filter="halloween">Halloween</button>
+        <button class="filter-tab" data-filter="patriotic">Patriotic</button>
+        <button class="filter-tab" data-filter="fourth">4th of July</button>
+        <button class="filter-tab" data-filter="valentine">Valentine's</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FEATURED SEQUENCES ─────────────────────────────────────────── -->
+<section id="sequences" class="section-pad">
+  <div class="container">
+    <div class="seq-header fade-in">
+      <div>
+        <span class="section-label">Marketplace</span>
+        <h2 class="section-title">Featured Sequences</h2>
+      </div>
+      <p class="section-sub" style="margin:0; font-size:0.9rem;">All sequences are exported as uncompressed FSEQ v2 files, ready to drop onto your AFTERGLO controller.</p>
+    </div>
+
+    <!-- Horizontal scroll row (shown when filter = all, no search) -->
+    <div class="seq-scroll-wrap" id="seqScrollWrap">
+      <div class="seq-row" id="seqRow"></div>
+    </div>
+
+    <!-- Grid (shown when filtered) -->
+    <div class="seq-grid" id="seqGrid" style="display:none;"></div>
+    <div class="no-results" id="noResults">
+      <h3>No sequences found</h3>
+      <p>Try a different search term or filter.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CATEGORIES ─────────────────────────────────────────────────── -->
+<section id="categories" class="section-pad">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:48px;" class="fade-in">
+      <span class="section-label">Browse by Holiday</span>
+      <h2 class="section-title">All Categories</h2>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card fade-in" data-cat="christmas" onclick="filterByCategory('christmas')">
+        <span class="cat-icon">🎄</span>
+        <div class="cat-label">Christmas</div>
+        <div class="cat-count">40+ sequences</div>
+      </div>
+      <div class="cat-card fade-in fade-delay-1" data-cat="halloween" onclick="filterByCategory('halloween')">
+        <span class="cat-icon">🎃</span>
+        <div class="cat-label">Halloween</div>
+        <div class="cat-count">22 sequences</div>
+      </div>
+      <div class="cat-card fade-in fade-delay-2" data-cat="fourth" onclick="filterByCategory('fourth')">
+        <span class="cat-icon">🎆</span>
+        <div class="cat-label">4th of July</div>
+        <div class="cat-count">18 sequences</div>
+      </div>
+      <div class="cat-card fade-in fade-delay-3" data-cat="valentine" onclick="filterByCategory('valentine')">
+        <span class="cat-icon">💝</span>
+        <div class="cat-label">Valentine's</div>
+        <div class="cat-count">12 sequences</div>
+      </div>
+      <div class="cat-card fade-in fade-delay-3" data-cat="patriotic" onclick="filterByCategory('patriotic')">
+        <span class="cat-icon">🦅</span>
+        <div class="cat-label">Patriotic</div>
+        <div class="cat-count">15 sequences</div>
+      </div>
+      <div class="cat-card fade-in fade-delay-4" data-cat="custom" onclick="filterByCategory('all')">
+        <span class="cat-icon">✨</span>
+        <div class="cat-label">Custom</div>
+        <div class="cat-count">33+ sequences</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COMMUNITY UPLOAD ─────────────────────────────────────────────── -->
+<section id="upload" class="section-pad">
+  <div class="container">
+    <div class="upload-wrap">
+      <div class="upload-info fade-in">
+        <span class="section-label">Community</span>
+        <h2 class="section-title">Share Your Sequences</h2>
+        <p>Built something spectacular in xLights? Upload your FSEQ files to share with the AFTERGLO community and help other homeowners put on an incredible show.</p>
+        <p>Every sequence is reviewed for compatibility with AFTERGLO's ESP32-S3 controller before going live.</p>
+        <ul class="upload-perks">
+          <li>Your name and creator profile on every download</li>
+          <li>Earn revenue on premium sequences you publish</li>
+          <li>Direct feedback from the community</li>
+          <li>Featured placement for top-rated shows</li>
+        </ul>
+      </div>
+      <div class="upload-card fade-in fade-delay-2">
+        <form id="uploadForm">
+          <div id="dropZone" class="drop-zone">
+            <div id="dropContent">
+              <div class="drop-zone-icon">📂</div>
+              <div class="drop-zone-title">Drop your FSEQ file here</div>
+              <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>
+            </div>
+            <input type="file" id="fileInput" accept=".fseq" style="display:none;" />
+          </div>
+          <div class="form-group">
+            <label>Show Name</label>
+            <input type="text" id="showName" placeholder="e.g. Candy Cane Lane 2025" />
+          </div>
+          <div class="form-group">
+            <label>Creator Name</label>
+            <input type="text" id="creatorName" placeholder="Your name or handle" />
+          </div>
+          <div class="form-group">
+            <label>Category</label>
+            <input type="text" id="categoryInput" placeholder="Christmas, Halloween, Patriotic…" />
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Upload to Community
+          </button>
+          <p class="upload-note">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Share your xLights sequences with the community. Export uncompressed FSEQ v2 from xLights before uploading. Max file size 50 MB.
+          </p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PREMIUM PACKS ────────────────────────────────────────────────── -->
+<section id="premium" class="section-pad">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:52px;" class="fade-in">
+      <span class="section-label">Premium</span>
+      <h2 class="section-title">Curated Show Packs</h2>
+      <p class="section-sub" style="margin: 0 auto;">Hand-picked bundles from AFTERGLO's professional animation team. Every sequence is tuned for Utah roofline installs.</p>
+    </div>
+    <div class="premium-grid">
+
+      <!-- Holiday Mega Pack -->
+      <div class="pack-card featured fade-in">
+        <div class="pack-banner" style="background: linear-gradient(135deg, #1a0a00 0%, #3d1f00 40%, #1a0a00 100%);">
+          <div style="position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(200,146,30,0.06) 0px, rgba(200,146,30,0.06) 2px, transparent 2px, transparent 16px);"></div>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3.5rem; opacity:0.6;">🎄🎁🦌</div>
+          <div class="pack-badge">MOST POPULAR</div>
+          <div class="pack-previews">
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#c8000a,#007000);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ffffff,#c8921e);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#0000a0,#c8000a);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#00a000,#ffd700);"></div>
+          </div>
+        </div>
+        <div class="pack-body">
+          <div class="pack-title">Holiday Mega Pack</div>
+          <p class="pack-desc">The ultimate Christmas collection. From soft twinkling scenes to full-energy synchronized music shows — everything you need for an unforgettable season.</p>
+          <div class="pack-meta">
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              12 sequences
+            </div>
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              6.5 hrs total
+            </div>
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+              Music included
+            </div>
+          </div>
+          <div class="pack-footer">
+            <div>
+              <div class="pack-price"><sup>$</sup>29</div>
+              <div class="pack-price-sub">one-time purchase</div>
+            </div>
+            <button class="btn btn-primary" onclick="handleBuy('Holiday Mega Pack', 29)">Buy Now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Patriotic Bundle -->
+      <div class="pack-card fade-in fade-delay-1">
+        <div class="pack-banner" style="background: linear-gradient(135deg, #000a1a 0%, #001a3d 40%, #1a0000 100%);">
+          <div style="position:absolute; inset:0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 2px, transparent 2px, transparent 16px);"></div>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3.5rem; opacity:0.6;">🇺🇸🦅⭐</div>
+          <div class="pack-previews">
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#b22234,#ffffff);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#3c3b6e,#b22234);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ffffff,#3c3b6e);"></div>
+          </div>
+        </div>
+        <div class="pack-body">
+          <div class="pack-title">Patriotic Bundle</div>
+          <p class="pack-desc">Red, white, and brilliant. Six high-energy shows perfect for Memorial Day, Independence Day, and Veterans Day celebrations.</p>
+          <div class="pack-meta">
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              6 sequences
+            </div>
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              3.2 hrs total
+            </div>
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+              Music included
+            </div>
+          </div>
+          <div class="pack-footer">
+            <div>
+              <div class="pack-price"><sup>$</sup>19</div>
+              <div class="pack-price-sub">one-time purchase</div>
+            </div>
+            <button class="btn btn-primary" onclick="handleBuy('Patriotic Bundle', 19)">Buy Now</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Halloween Pack -->
+      <div class="pack-card fade-in fade-delay-2">
+        <div class="pack-banner" style="background: linear-gradient(135deg, #0d0005 0%, #2a0a00 40%, #0d0005 100%);">
+          <div style="position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(180,60,0,0.06) 0px, rgba(180,60,0,0.06) 2px, transparent 2px, transparent 16px);"></div>
+          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3.5rem; opacity:0.6;">🎃👻🕷️</div>
+          <div class="pack-previews">
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ff6600,#000000);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#6600aa,#ff6600);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#000000,#6600aa);"></div>
+          </div>
+        </div>
+        <div class="pack-body">
+          <div class="pack-title">Halloween Pack</div>
+          <p class="pack-desc">Eight spine-chilling shows ranging from eerie slow fades to high-speed strobe-free spooky effects. Neighborhood-approved thrills.</p>
+          <div class="pack-meta">
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              8 sequences
+            </div>
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              4.1 hrs total
+            </div>
+            <div class="pack-meta-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+              Music included
+            </div>
+          </div>
+          <div class="pack-footer">
+            <div>
+              <div class="pack-price"><sup>$</sup>24</div>
+              <div class="pack-price-sub">one-time purchase</div>
+            </div>
+            <button class="btn btn-primary" onclick="handleBuy('Halloween Pack', 24)">Buy Now</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /premium-grid -->
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ──────────────────────────────────────────────────── -->
+<section id="how" class="section-pad">
+  <div class="container">
+    <div style="text-align:center; margin-bottom:64px;" class="fade-in">
+      <span class="section-label">Getting Started</span>
+      <h2 class="section-title">How It Works</h2>
+    </div>
+    <div class="steps-row">
+      <div class="step fade-in">
+        <div class="step-num">
+          <div class="step-num-inner">1</div>
+        </div>
+        <span class="step-icon">🛒</span>
+        <h3 class="step-title">Buy or Download a Show</h3>
+        <p class="step-desc">Browse the marketplace and grab any free sequence or purchase a premium pack. Your downloads are stored in your account forever.</p>
+      </div>
+      <div class="step fade-in fade-delay-2">
+        <div class="step-num">
+          <div class="step-num-inner">2</div>
+        </div>
+        <span class="step-icon">📡</span>
+        <h3 class="step-title">Transfer to Your Controller</h3>
+        <p class="step-desc">Open your AFTERGLO controller's built-in web UI from any browser on your home network. Drag-and-drop the FSEQ file to upload in seconds.</p>
+      </div>
+      <div class="step fade-in fade-delay-4">
+        <div class="step-num">
+          <div class="step-num-inner">3</div>
+        </div>
+        <span class="step-icon">💡</span>
+        <h3 class="step-title">Watch It Sync to Your Lights</h3>
+        <p class="step-desc">Hit play and watch your roofline come alive. The AFTERGLO controller streams DDP pixel data frame-perfect to every LED on your home.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ────────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="nav-logo">AFTER<span>GLO</span></span>
+        <p>Utah's premier permanent outdoor LED lighting company. Custom installs, music-synchronized light shows, and now an open platform for the xLights community.</p>
+        <p class="footer-brand-sub">Salt Lake City, Utah &bull; (385) 337-4144</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="#sequences">Browse Sequences</a></li>
+          <li><a href="#categories">Categories</a></li>
+          <li><a href="#premium">Premium Packs</a></li>
+          <li><a href="#upload">Upload a Show</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="arches.html">Light Shows</a></li>
+          <li><a href="afterglo-visualizer.html">Visualizer</a></li>
+          <li><a href="index.html#cta">Get a Quote</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul>
+          <li><a href="#">xLights Guide</a></li>
+          <li><a href="#">Controller Setup</a></li>
+          <li><a href="#">FSEQ Format</a></li>
+          <li><a href="#">Creator FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 AFTERGLO. All rights reserved. Utah Contractor Lic. #12345678.</p>
+      <div style="display:flex; gap:20px;">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="#">Creator Agreement</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ─── TOAST ──────────────────────────────────────────────────────────── -->
+<div id="toast">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg">Sequence uploaded successfully!</span>
+</div>
+
+<script>
+  /* ─── MOCK DATA ──────────────────────────────────────────────────── */
+  const sequences = [
+    {
+      id: 1,
+      name: "Candy Cane Dream",
+      creator: "jwitchell",
+      duration: "3:42",
+      channels: 1024,
+      category: "christmas",
+      free: true,
+      downloads: 412,
+      price: null,
+      gradient: "linear-gradient(135deg, #c8000a 0%, #ffffff 50%, #c8000a 100%)",
+      glow: "rgba(200,0,10,0.3)"
+    },
+    {
+      id: 2,
+      name: "Star-Spangled Roofline",
+      creator: "patriot_pixels",
+      duration: "4:18",
+      channels: 768,
+      category: "patriotic",
+      free: false,
+      downloads: 287,
+      price: 4.99,
+      gradient: "linear-gradient(135deg, #3c3b6e 0%, #b22234 50%, #ffffff 100%)",
+      glow: "rgba(178,34,52,0.3)"
+    },
+    {
+      id: 3,
+      name: "Spooky Strobe-Free",
+      creator: "HauntMaster",
+      duration: "2:55",
+      channels: 512,
+      category: "halloween",
+      free: true,
+      downloads: 634,
+      price: null,
+      gradient: "linear-gradient(135deg, #1a0030 0%, #ff6600 60%, #000000 100%)",
+      glow: "rgba(255,102,0,0.3)"
+    },
+    {
+      id: 4,
+      name: "Winter Wonderland Chase",
+      creator: "ShaneW_Lights",
+      duration: "5:10",
+      channels: 2048,
+      category: "christmas",
+      free: false,
+      downloads: 198,
+      price: 6.99,
+      gradient: "linear-gradient(135deg, #001a33 0%, #ffffff 40%, #c8921e 100%)",
+      glow: "rgba(200,146,30,0.35)"
+    },
+    {
+      id: 5,
+      name: "Firecracker Finale",
+      creator: "UTpixels",
+      duration: "6:02",
+      channels: 1536,
+      category: "fourth",
+      free: false,
+      downloads: 321,
+      price: 7.99,
+      gradient: "linear-gradient(135deg, #ff0000 0%, #ffffff 50%, #0000cc 100%)",
+      glow: "rgba(255,0,0,0.25)"
+    },
+    {
+      id: 6,
+      name: "Pumpkin Pulse",
+      creator: "HauntMaster",
+      duration: "3:28",
+      channels: 512,
+      category: "halloween",
+      free: true,
+      downloads: 509,
+      price: null,
+      gradient: "linear-gradient(135deg, #2a0000 0%, #ff6600 45%, #3d0066 100%)",
+      glow: "rgba(255,102,0,0.25)"
+    },
+    {
+      id: 7,
+      name: "Be My Valentine",
+      creator: "HeartBeat_Shows",
+      duration: "2:44",
+      channels: 640,
+      category: "valentine",
+      free: true,
+      downloads: 183,
+      price: null,
+      gradient: "linear-gradient(135deg, #3d001a 0%, #ff1a6b 50%, #ffffff 100%)",
+      glow: "rgba(255,26,107,0.3)"
+    },
+    {
+      id: 8,
+      name: "Northern Lights Effect",
+      creator: "AuroraCraft",
+      duration: "4:55",
+      channels: 1024,
+      category: "christmas",
+      free: false,
+      downloads: 445,
+      price: 5.99,
+      gradient: "linear-gradient(135deg, #001a00 0%, #00ff88 40%, #0066ff 100%)",
+      glow: "rgba(0,255,136,0.2)"
+    },
+    {
+      id: 9,
+      name: "Freedom Waves",
+      creator: "patriot_pixels",
+      duration: "3:12",
+      channels: 768,
+      category: "patriotic",
+      free: true,
+      downloads: 267,
+      price: null,
+      gradient: "linear-gradient(135deg, #b22234 0%, #ffffff 35%, #3c3b6e 100%)",
+      glow: "rgba(60,59,110,0.3)"
+    },
+    {
+      id: 10,
+      name: "Twinkle & Sparkle",
+      creator: "jwitchell",
+      duration: "2:30",
+      channels: 256,
+      category: "christmas",
+      free: true,
+      downloads: 871,
+      price: null,
+      gradient: "linear-gradient(135deg, #0a001a 0%, #ffffff 50%, #c8921e 100%)",
+      glow: "rgba(200,255,255,0.2)"
+    },
+    {
+      id: 11,
+      name: "Rocket's Red Glare",
+      creator: "UTpixels",
+      duration: "5:30",
+      channels: 1280,
+      category: "fourth",
+      free: false,
+      downloads: 156,
+      price: 4.99,
+      gradient: "linear-gradient(135deg, #ff0000 0%, #ffff00 50%, #ff0000 100%)",
+      glow: "rgba(255,200,0,0.25)"
+    },
+    {
+      id: 12,
+      name: "Haunted Mansion Fade",
+      creator: "ShadowPixels",
+      duration: "4:05",
+      channels: 896,
+      category: "halloween",
+      free: false,
+      downloads: 312,
+      price: 3.99,
+      gradient: "linear-gradient(135deg, #0d0005 0%, #6600aa 50%, #1a0000 100%)",
+      glow: "rgba(102,0,170,0.3)"
+    }
+  ];
+
+  /* ─── STATE ──────────────────────────────────────────────────────── */
+  let activeFilter = 'all';
+  let searchQuery  = '';
+
+  /* ─── RENDER CARD ────────────────────────────────────────────────── */
+  function createCard(seq, forRow) {
+    const card = document.createElement('div');
+    card.className = 'seq-card' + (forRow ? '' : '');
+
+    const btnHtml = seq.free
+      ? `<button class="btn-card btn-card-free" onclick="handleDownload(event,${seq.id})">Download</button>`
+      : `<button class="btn-card btn-card-paid" onclick="handleBuy(event,'${seq.name}',${seq.price})">Buy $${seq.price.toFixed(2)}</button>`;
+
+    card.innerHTML = `
+      <div class="card-thumb" style="background:${seq.gradient};">
+        <div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow} 0%,transparent 70%);"></div>
+        <span class="card-badge ${seq.free ? 'badge-free' : 'badge-paid'}">${seq.free ? 'Free' : 'Premium'}</span>
+        <span class="card-duration">${seq.duration}</span>
+        <div class="card-play">
+          <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${seq.name}</div>
+        <div class="card-meta">
+          <span class="card-creator">${seq.creator}</span>
+          <span class="card-dot">·</span>
+          <span class="card-channels">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+            ${seq.channels.toLocaleString()} ch
+          </span>
+        </div>
+        <div class="card-footer">
+          <div class="card-downloads">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            ${seq.downloads.toLocaleString()}
+          </div>
+          ${btnHtml}
+        </div>
+      </div>
+    `;
+    return card;
+  }
+
+  /* ─── RENDER ─────────────────────────────────────────────────────── */
+  function render() {
+    const row     = document.getElementById('seqRow');
+    const grid    = document.getElementById('seqGrid');
+    const wrap    = document.getElementById('seqScrollWrap');
+    const noRes   = document.getElementById('noResults');
+
+    const isFiltered = activeFilter !== 'all' || searchQuery !== '';
+
+    let filtered = sequences.filter(s => {
+      const matchFilter =
+        activeFilter === 'all'      ? true :
+        activeFilter === 'free'     ? s.free :
+        activeFilter === 'paid'     ? !s.free :
+        s.category === activeFilter;
+
+      const matchSearch = searchQuery === '' ||
+        s.name.toLowerCase().includes(searchQuery) ||
+        s.creator.toLowerCase().includes(searchQuery) ||
+        s.category.toLowerCase().includes(searchQuery);
+
+      return matchFilter && matchSearch;
+    });
+
+    row.innerHTML  = '';
+    grid.innerHTML = '';
+
+    if (isFiltered) {
+      wrap.style.display = 'none';
+      grid.style.display = '';
+      if (filtered.length === 0) {
+        noRes.classList.add('show');
+      } else {
+        noRes.classList.remove('show');
+        filtered.forEach(s => grid.appendChild(createCard(s, false)));
+      }
+    } else {
+      wrap.style.display = '';
+      grid.style.display = 'none';
+      noRes.classList.remove('show');
+      sequences.forEach(s => row.appendChild(createCard(s, true)));
+    }
+  }
+
+  /* ─── FILTER TABS ────────────────────────────────────────────────── */
+  document.getElementById('filterTabs').addEventListener('click', e => {
+    const btn = e.target.closest('.filter-tab');
+    if (!btn) return;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.filter;
+    render();
+  });
+
+  /* ─── SEARCH ─────────────────────────────────────────────────────── */
+  document.getElementById('searchInput').addEventListener('input', e => {
+    searchQuery = e.target.value.toLowerCase().trim();
+    render();
+  });
+
+  /* ─── CATEGORY CLICK FROM GRID ───────────────────────────────────── */
+  function filterByCategory(cat) {
+    activeFilter = cat;
+    searchQuery  = '';
+    document.getElementById('searchInput').value = '';
+    document.querySelectorAll('.filter-tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.filter === cat);
+    });
+    render();
+    document.getElementById('sequences').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  /* ─── DOWNLOAD / BUY HANDLERS ────────────────────────────────────── */
+  function handleDownload(e, id) {
+    e.stopPropagation();
+    const seq = sequences.find(s => s.id === id);
+    if (seq) seq.downloads++;
+    showToast(`Downloading "${seq ? seq.name : 'sequence'}"…`);
+  }
+
+  function handleBuy(e, name, price) {
+    if (e && e.stopPropagation) e.stopPropagation();
+    showToast(`Redirecting to checkout for "${name}" — $${typeof price === 'number' ? price.toFixed(2) : price}`);
+  }
+
+  /* ─── DRAG & DROP ────────────────────────────────────────────────── */
+  const dropZone  = document.getElementById('dropZone');
+  const fileInput = document.getElementById('fileInput');
+  const dropContent = document.getElementById('dropContent');
+
+  dropZone.addEventListener('dragover', e => {
+    e.preventDefault();
+    dropZone.classList.add('drag-over');
+  });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleFileSelect(file);
+  });
+  fileInput.addEventListener('change', () => {
+    if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+  });
+
+  function handleFileSelect(file) {
+    if (!file.name.endsWith('.fseq')) {
+      showToast('Please select a valid .fseq file', true);
+      return;
+    }
+    dropContent.innerHTML = `
+      <div class="drop-zone-file">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        ${file.name} (${(file.size/1024/1024).toFixed(2)} MB)
+      </div>`;
+  }
+
+  /* ─── UPLOAD FORM ────────────────────────────────────────────────── */
+  document.getElementById('uploadForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const name    = document.getElementById('showName').value.trim();
+    const creator = document.getElementById('creatorName').value.trim();
+    if (!name || !creator) {
+      showToast('Please fill in show name and creator name', true);
+      return;
+    }
+    showToast(`"${name}" uploaded successfully! Under review.`);
+    document.getElementById('uploadForm').reset();
+    dropContent.innerHTML = `
+      <div class="drop-zone-icon">📂</div>
+      <div class="drop-zone-title">Drop your FSEQ file here</div>
+      <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>`;
+  });
+
+  /* ─── TOAST ──────────────────────────────────────────────────────── */
+  let toastTimer;
+  function showToast(msg, isError) {
+    const toast = document.getElementById('toast');
+    const msgEl = document.getElementById('toastMsg');
+    msgEl.textContent = msg;
+    if (isError) {
+      toast.style.background = '#2e1a1a';
+      toast.style.borderColor = 'rgba(248,113,113,0.35)';
+      toast.style.color       = '#f87171';
+      toast.querySelector('svg').style.stroke = '#f87171';
+    } else {
+      toast.style.background = '#1a2e1a';
+      toast.style.borderColor = 'rgba(74,222,128,0.35)';
+      toast.style.color       = '#4ade80';
+      toast.querySelector('svg').style.stroke = '#4ade80';
+    }
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  /* ─── NAVBAR SCROLL ──────────────────────────────────────────────── */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  }, { passive: true });
+
+  /* ─── MOBILE HAMBURGER ───────────────────────────────────────────── */
+  const hamburger  = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen     = false;
+
+  hamburger.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    const spans = hamburger.querySelectorAll('span');
+    if (menuOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    const spans = hamburger.querySelectorAll('span');
+    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+
+  /* ─── SCROLL ANIMATIONS ──────────────────────────────────────────── */
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => obs.observe(el));
+
+  /* ─── DRAG-TO-SCROLL ROW ─────────────────────────────────────────── */
+  const seqRow = document.getElementById('seqRow');
+  let isDragging = false, startX, scrollLeft;
+  seqRow.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX     = e.pageX - seqRow.offsetLeft;
+    scrollLeft = seqRow.scrollLeft;
+    seqRow.style.cursor = 'grabbing';
+  });
+  seqRow.addEventListener('mouseleave', () => { isDragging = false; seqRow.style.cursor = 'grab'; });
+  seqRow.addEventListener('mouseup',   () => { isDragging = false; seqRow.style.cursor = 'grab'; });
+  seqRow.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x    = e.pageX - seqRow.offsetLeft;
+    const walk = (x - startX) * 1.5;
+    seqRow.scrollLeft = scrollLeft - walk;
+  });
+
+  /* ─── INIT ───────────────────────────────────────────────────────── */
+  render();
+  // Trigger scrolled state if already scrolled on page load
+  if (window.scrollY > 20) navbar.classList.add('scrolled');
+</script>
+</body>
+</html>
