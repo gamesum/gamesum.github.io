@@ -1,0 +1,1592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload a Show — AFTERGLO Platform</title>
+  <meta name="description" content="Share your xLights light show sequence with the AFTERGLO community. Upload your FSEQ, set a price, and earn revenue on every download." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-auth.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #141414;
+      --bg4:      #1a1a1a;
+      --accent:   #c8921e;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --border2:  #2a2a2a;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+
+    .container { max-width: 760px; margin: 0 auto; padding: 0 24px; }
+
+    /* ─── NAVBAR ──────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a.active { color: var(--accent); }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-avatar {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: #000;
+      cursor: pointer;
+      display: none;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+      border: none;
+      text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+    }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1.5px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 8px 18px; font-size: 0.85rem; }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 10px;
+      min-width: 44px; min-height: 44px;
+      align-items: center; justify-content: center;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      background: rgba(13,17,23,0.98);
+      backdrop-filter: blur(16px);
+      padding: 24px;
+      flex-direction: column;
+      gap: 24px;
+      z-index: 999;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ─── PAGE ────────────────────────────────────────────────────── */
+    .page-wrap {
+      padding-top: calc(var(--nav-h) + 48px);
+      padding-bottom: 100px;
+    }
+
+    /* ─── PAGE HEADER ─────────────────────────────────────────────── */
+    .page-header {
+      margin-bottom: 40px;
+    }
+    .page-header-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 20px;
+      transition: color 0.2s;
+    }
+    .page-header-back:hover { color: var(--accent); }
+    .page-header h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .page-header p {
+      color: var(--muted);
+      font-size: 1rem;
+    }
+
+    /* ─── STEP PROGRESS ───────────────────────────────────────────── */
+    .step-progress {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 40px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .step-dot {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 2px solid var(--border2);
+      background: var(--bg2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--muted);
+      flex-shrink: 0;
+      transition: all 0.35s;
+      position: relative;
+      z-index: 1;
+    }
+    .step-dot.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+      box-shadow: 0 0 0 4px rgba(200,146,30,0.18);
+    }
+    .step-dot.done {
+      background: rgba(74,222,128,0.15);
+      border-color: rgba(74,222,128,0.5);
+      color: #4ade80;
+    }
+    .step-dot.done::after {
+      content: '✓';
+      font-size: 0.9rem;
+    }
+    .step-dot.done .step-num-inner { display: none; }
+
+    .step-label {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .step-label.active { color: #fff; }
+    .step-label.done { color: #4ade80; }
+
+    .step-line {
+      flex: 1;
+      height: 2px;
+      background: var(--border2);
+      margin: 0 8px;
+      transition: background 0.35s;
+      flex-shrink: 0;
+    }
+    .step-line.done { background: rgba(74,222,128,0.4); }
+
+    /* ─── FORM CARD ───────────────────────────────────────────────── */
+    .form-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 24px;
+    }
+
+    .form-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .form-card-sub {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--silver);
+      margin-bottom: 8px;
+    }
+    .form-label .req { color: var(--accent); margin-left: 3px; }
+    .form-label .opt { color: #555; font-weight: 400; margin-left: 4px; }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: #111;
+      border: 1.5px solid var(--border2);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200,146,30,0.12);
+    }
+    .form-input::placeholder, .form-textarea::placeholder { color: #444; }
+    .form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+      padding-right: 40px;
+      cursor: pointer;
+    }
+    .form-select option { background: #1a1a1a; }
+
+    .char-counter {
+      text-align: right;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+    .char-counter.warn { color: #f59e0b; }
+    .char-counter.over { color: #f87171; }
+
+    .form-hint {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 7px;
+      line-height: 1.5;
+    }
+    .form-hint a { color: var(--accent); }
+    .form-hint a:hover { text-decoration: underline; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    /* ─── DROP ZONE ───────────────────────────────────────────────── */
+    .drop-zone {
+      border: 2px dashed var(--border2);
+      border-radius: 14px;
+      padding: 48px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+    }
+    .drop-zone:hover, .drop-zone.drag-over {
+      border-color: var(--accent);
+      background: rgba(200,146,30,0.04);
+    }
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .dz-icon { font-size: 2.8rem; margin-bottom: 12px; }
+    .dz-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .dz-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+    .dz-sub span { color: var(--accent); cursor: pointer; }
+
+    .dz-file-info {
+      display: none;
+      align-items: center;
+      gap: 16px;
+      background: rgba(74,222,128,0.06);
+      border: 1px solid rgba(74,222,128,0.2);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-top: 16px;
+      text-align: left;
+    }
+    .dz-file-info.show { display: flex; }
+    .dz-file-icon { font-size: 1.8rem; flex-shrink: 0; }
+    .dz-file-name {
+      font-weight: 600;
+      color: #fff;
+      font-size: 0.92rem;
+      word-break: break-all;
+    }
+    .dz-file-size { font-size: 0.8rem; color: #4ade80; }
+    .dz-remove {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: color 0.2s;
+      flex-shrink: 0;
+    }
+    .dz-remove:hover { color: #f87171; }
+
+    /* ─── PRICE SELECTOR ──────────────────────────────────────────── */
+    .price-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .price-radio { display: none; }
+    .price-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 20px 16px;
+      background: #111;
+      border: 2px solid var(--border2);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+    .price-label:hover { border-color: #444; }
+    .price-radio:checked + .price-label {
+      border-color: var(--accent);
+      background: rgba(200,146,30,0.07);
+    }
+    .price-label-icon { font-size: 1.6rem; }
+    .price-label-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #fff;
+    }
+    .price-label-sub { font-size: 0.78rem; color: var(--muted); }
+
+    .price-amount-wrap {
+      display: none;
+      align-items: center;
+      gap: 12px;
+    }
+    .price-amount-wrap.show { display: flex; }
+    .price-currency {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .price-input {
+      flex: 1;
+      background: #111;
+      border: 1.5px solid var(--border2);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      padding: 12px 16px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .price-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(200,146,30,0.12);
+    }
+    .price-input::placeholder { color: #333; font-size: 1.5rem; }
+
+    /* ─── MP3 UPLOAD ──────────────────────────────────────────────── */
+    .mp3-section {
+      display: none;
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(99,102,241,0.06);
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 12px;
+    }
+    .mp3-section.show { display: block; }
+    .mp3-label-title {
+      font-weight: 600;
+      color: #fff;
+      font-size: 0.9rem;
+      margin-bottom: 6px;
+    }
+    .mp3-label-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
+    .mp3-file-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 20px;
+      background: rgba(99,102,241,0.12);
+      border: 1.5px solid rgba(99,102,241,0.3);
+      border-radius: 8px;
+      color: #a5b4fc;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: 'Inter', sans-serif;
+    }
+    .mp3-file-btn:hover { background: rgba(99,102,241,0.2); }
+    #mp3FileInfo { font-size: 0.82rem; color: #4ade80; margin-top: 10px; display: none; }
+
+    /* ─── YOUTUBE PREVIEW ─────────────────────────────────────────── */
+    .yt-preview {
+      display: none;
+      margin-top: 12px;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #000;
+      aspect-ratio: 16/9;
+      max-width: 360px;
+    }
+    .yt-preview.show { display: block; }
+    .yt-preview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* ─── REVIEW CARD ─────────────────────────────────────────────── */
+    .review-card {
+      background: var(--bg3);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+    .review-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 20px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .review-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.88rem;
+    }
+    .review-row:last-child { border-bottom: none; }
+    .review-key { color: var(--muted); flex-shrink: 0; }
+    .review-val { color: #fff; font-weight: 500; text-align: right; word-break: break-word; }
+    .review-val.accent { color: var(--accent); font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1rem; }
+
+    /* ─── LEGAL ───────────────────────────────────────────────────── */
+    .legal-wrap {
+      background: rgba(30,30,30,0.6);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+    .legal-check-wrap {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+    .legal-check {
+      width: 22px; height: 22px;
+      border: 2px solid var(--border2);
+      border-radius: 6px;
+      background: #111;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 2px;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .legal-check:checked {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .legal-check:checked::after {
+      content: '';
+      position: absolute;
+      left: 5px; top: 2px;
+      width: 9px; height: 13px;
+      border: 2px solid #000;
+      border-top: none;
+      border-left: none;
+      transform: rotate(45deg);
+    }
+    .legal-text {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    /* ─── NAV BUTTONS ─────────────────────────────────────────────── */
+    .form-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .form-nav-right {
+      display: flex;
+      gap: 12px;
+      margin-left: auto;
+    }
+
+    .btn-next {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 16px 32px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Inter', sans-serif;
+      transition: all 0.2s;
+      box-shadow: 0 4px 20px rgba(200,146,30,0.3);
+    }
+    .btn-next:hover:not(:disabled) {
+      background: var(--accent2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 28px rgba(200,146,30,0.45);
+    }
+    .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-back {
+      background: transparent;
+      color: var(--muted);
+      border: 1.5px solid var(--border2);
+      border-radius: 10px;
+      padding: 14px 24px;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    .btn-back:hover { border-color: #555; color: var(--text); }
+
+    .btn-publish {
+      width: 100%;
+      justify-content: center;
+      font-size: 1.05rem;
+      padding: 18px 32px;
+      border-radius: 14px;
+    }
+
+    /* ─── PROGRESS BAR ────────────────────────────────────────────── */
+    .upload-progress {
+      display: none;
+      margin-top: 20px;
+    }
+    .upload-progress.show { display: block; }
+    .upload-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .upload-progress-bar {
+      height: 6px;
+      background: var(--border2);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .upload-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 100px;
+      width: 0%;
+      transition: width 0.4s ease;
+    }
+
+    /* ─── SUCCESS STATE ───────────────────────────────────────────── */
+    #successState {
+      display: none;
+      text-align: center;
+      padding: 72px 24px;
+    }
+    #successState.show { display: block; }
+    .success-icon { font-size: 4rem; margin-bottom: 20px; }
+    .success-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .success-sub { color: var(--muted); max-width: 480px; margin: 0 auto 32px; }
+
+    /* ─── FSEQ MODAL ──────────────────────────────────────────────── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(6px);
+      z-index: 5000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+    .modal-card {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 36px;
+      width: 100%;
+      max-width: 520px;
+      transform: translateY(20px);
+      transition: transform 0.25s;
+      position: relative;
+    }
+    .modal-overlay.open .modal-card { transform: translateY(0); }
+
+    .modal-close {
+      position: absolute;
+      top: 12px; right: 12px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: all 0.2s;
+    }
+    .modal-close:hover { border-color: #555; color: var(--text); }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .modal-body { font-size: 0.88rem; color: var(--muted); line-height: 1.75; }
+    .modal-body strong { color: var(--text); }
+    .modal-body ul { padding-left: 20px; margin: 12px 0; }
+    .modal-body ul li { margin-bottom: 8px; }
+
+    /* ─── TOAST ───────────────────────────────────────────────────── */
+    #toast {
+      position: fixed;
+      bottom: 24px; left: 16px; right: 16px;
+      max-width: 440px;
+      margin: 0 auto;
+      background: #1a2a1a;
+      border: 1px solid rgba(74,222,128,0.35);
+      color: #4ade80;
+      padding: 14px 20px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 9999;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+    }
+    #toast.show { transform: translateY(0); opacity: 1; }
+    #toast.warning { background: #2a1a0a; border-color: rgba(200,146,30,0.35); color: var(--accent); }
+    #toast.error   { background: #2a0a0a; border-color: rgba(248,113,113,0.35); color: #f87171; }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+    }
+    @media (max-width: 640px) {
+      .form-card { padding: 24px 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .price-options { grid-template-columns: 1fr; }
+      .step-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+
+    <ul class="nav-links">
+      <li><a href="arches.html">Light Shows</a></li>
+      <li><a href="index.html#gallery">Gallery</a></li>
+      <li><a href="platform.html">Platform</a></li>
+      <li><a href="my-library.html">My Library</a></li>
+      <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="nav-avatar" id="navAvatar">?</div>
+      <a href="index.html#cta" class="btn btn-primary btn-sm">Get a Quote</a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+  <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+  <a href="platform.html" onclick="closeMenu()">Platform</a>
+  <a href="my-library.html" onclick="closeMenu()">My Library</a>
+  <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
+</div>
+
+<!-- ─── FSEQ EXPLAINER MODAL ─────────────────────────────────────── -->
+<div class="modal-overlay" id="fseqModal" onclick="if(event.target===this)closeFseqModal()">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeFseqModal()">✕</button>
+    <div class="modal-title">What is an FSEQ file?</div>
+    <div class="modal-body">
+      <p>An <strong>FSEQ (Falcon Sequence)</strong> file is the standard format used by xLights to store light show timing data. It contains a frame-by-frame record of every channel value for your entire sequence — essentially the "film reel" of your light show.</p>
+      <ul>
+        <li><strong>How to export from xLights:</strong> File → Export Sequence → FSEQ v2 (uncompressed)</li>
+        <li><strong>Max file size:</strong> 50 MB</li>
+        <li><strong>Version:</strong> FSEQ v2 (v1 is not supported)</li>
+        <li><strong>Compression:</strong> Choose "None" (uncompressed) so the controller can stream it directly</li>
+      </ul>
+      <p>The AFTERGLO controller streams the FSEQ file in real time, frame by frame, driving your roofline LEDs in perfect sync with your audio.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── MAIN ────────────────────────────────────────────────────────── -->
+<div class="page-wrap">
+  <div class="container">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <a href="platform.html" class="page-header-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        Back to Platform
+      </a>
+      <h1>Upload a Light Show</h1>
+      <p>Share your xLights creation with the AFTERGLO community in three easy steps.</p>
+    </div>
+
+    <!-- ─── STEP PROGRESS ──────────────────────────────────────────── -->
+    <div class="step-progress" id="stepProgress">
+      <div class="step-item">
+        <div class="step-dot active" id="dot1"><span class="step-num-inner">1</span></div>
+        <div class="step-label active" id="label1">Your Show File</div>
+      </div>
+      <div class="step-line" id="line1"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot2"><span class="step-num-inner">2</span></div>
+        <div class="step-label" id="label2">Show Details</div>
+      </div>
+      <div class="step-line" id="line2"></div>
+      <div class="step-item">
+        <div class="step-dot" id="dot3"><span class="step-num-inner">3</span></div>
+        <div class="step-label" id="label3">Review &amp; Publish</div>
+      </div>
+    </div>
+
+    <!-- ─── SUCCESS STATE ────────────────────────────────────────────── -->
+    <div id="successState">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">Show Submitted!</div>
+      <p class="success-sub">Your show has been submitted for review. We'll check it against our controller spec and publish it within 24–48 hours. You'll receive an email when it goes live.</p>
+      <a href="my-library.html" class="btn btn-primary" style="font-size:1rem;padding:16px 32px;border-radius:12px;">View My Uploads →</a>
+    </div>
+
+    <!-- ─── STEP 1: File ─────────────────────────────────────────────── -->
+    <div id="step1">
+      <div class="form-card">
+        <div class="form-card-title">Your Show File</div>
+        <div class="form-card-sub">Drop your FSEQ file below. We'll read the show duration automatically.</div>
+
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fseqInput" accept=".fseq" />
+          <div id="dzDefault">
+            <div class="dz-icon">📂</div>
+            <div class="dz-title">Drop your .fseq file here</div>
+            <div class="dz-sub">or <span>click to browse</span></div>
+          </div>
+        </div>
+
+        <div class="dz-file-info" id="dzFileInfo">
+          <div class="dz-file-icon">🎬</div>
+          <div>
+            <div class="dz-file-name" id="dzFileName"></div>
+            <div class="dz-file-size" id="dzFileSize"></div>
+          </div>
+          <button class="dz-remove" id="dzRemove" onclick="removeFile()" title="Remove file">✕</button>
+        </div>
+
+        <div class="form-hint" style="margin-top:16px;">
+          Export an <strong>uncompressed FSEQ v2</strong> file from xLights. Max 50 MB.
+          <a href="#" onclick="openFseqModal();return false;">What is an FSEQ file? →</a>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <div class="form-nav-right">
+          <button class="btn-next" id="step1Next" onclick="goToStep2()" disabled>
+            Continue
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STEP 2: Details ──────────────────────────────────────────── -->
+    <div id="step2" style="display:none;">
+      <div class="form-card">
+        <div class="form-card-title">Show Details</div>
+        <div class="form-card-sub">Tell us about your light show so buyers know what they're getting.</div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Show Name<span class="req">*</span></label>
+            <input type="text" class="form-input" id="showName" placeholder="e.g. Candy Cane Lane 2025" maxlength="80" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Category<span class="req">*</span></label>
+            <select class="form-select" id="category">
+              <option value="">Select a category…</option>
+              <option value="christmas">Christmas</option>
+              <option value="halloween">Halloween</option>
+              <option value="fourth">4th of July</option>
+              <option value="newyears">New Year's</option>
+              <option value="valentine">Valentine's</option>
+              <option value="easter">Easter</option>
+              <option value="ambient">Ambient</option>
+              <option value="musicsync">Music Sync</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Description<span class="opt">(optional)</span></label>
+          <textarea class="form-textarea" id="description" maxlength="500" placeholder="Tell the community what makes this show special — the vibe, the song choice, how many channels it uses…"></textarea>
+          <div class="char-counter" id="descCounter">0 / 500</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Song Name<span class="req">*</span></label>
+            <input type="text" class="form-input" id="songName" placeholder="e.g. All I Want For Christmas Is You — Mariah Carey" maxlength="120" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Show Duration (seconds)<span class="req">*</span></label>
+            <input type="number" class="form-input" id="duration" placeholder="e.g. 215" min="1" max="7200" id="durationInput" />
+            <div class="form-hint" id="durationHint"></div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">YouTube Link<span class="req">*</span></label>
+          <input type="url" class="form-input" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." />
+          <div class="form-hint">Paste a YouTube link so buyers can preview the show before downloading.</div>
+          <div class="yt-preview" id="ytPreview">
+            <img id="ytThumb" src="" alt="YouTube preview" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Price<span class="req">*</span></label>
+          <div class="price-options">
+            <div>
+              <input type="radio" name="price" id="priceFree" class="price-radio" value="free" checked />
+              <label for="priceFree" class="price-label">
+                <div class="price-label-icon">🆓</div>
+                <div class="price-label-title">Free</div>
+                <div class="price-label-sub">Anyone can download</div>
+              </label>
+            </div>
+            <div>
+              <input type="radio" name="price" id="pricePremium" class="price-radio" value="premium" />
+              <label for="pricePremium" class="price-label">
+                <div class="price-label-icon">💰</div>
+                <div class="price-label-title">Premium ($)</div>
+                <div class="price-label-sub">Earn on every download</div>
+              </label>
+            </div>
+          </div>
+
+          <div class="price-amount-wrap" id="priceAmountWrap">
+            <div class="price-currency">$</div>
+            <input type="number" class="price-input" id="priceAmount" min="0.99" max="99" step="0.01" placeholder="4.99" />
+          </div>
+        </div>
+
+        <div class="mp3-section" id="mp3Section">
+          <div class="mp3-label-title">Bundle your MP3</div>
+          <div class="mp3-label-sub">Only include audio if you own the rights or have a license to distribute it. Buyers will receive the FSEQ + MP3 together.</div>
+          <input type="file" id="mp3Input" accept=".mp3,.m4a,.aac,.wav" style="display:none;" />
+          <button class="mp3-file-btn" onclick="document.getElementById('mp3Input').click()">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            Select MP3
+          </button>
+          <div id="mp3FileInfo"></div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" onclick="goToStep1()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+        <div class="form-nav-right">
+          <button class="btn-next" onclick="goToStep3()">
+            Review
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── STEP 3: Review ───────────────────────────────────────────── -->
+    <div id="step3" style="display:none;">
+      <div class="form-card">
+        <div class="form-card-title">Review &amp; Publish</div>
+        <div class="form-card-sub">Everything look good? Check your details below before publishing.</div>
+
+        <div class="review-card">
+          <div class="review-title">Your Show</div>
+          <div class="review-row"><span class="review-key">File</span><span class="review-val" id="rFile">—</span></div>
+          <div class="review-row"><span class="review-key">Show Name</span><span class="review-val" id="rName">—</span></div>
+          <div class="review-row"><span class="review-key">Category</span><span class="review-val" id="rCategory">—</span></div>
+          <div class="review-row"><span class="review-key">Song</span><span class="review-val" id="rSong">—</span></div>
+          <div class="review-row"><span class="review-key">Duration</span><span class="review-val" id="rDuration">—</span></div>
+          <div class="review-row"><span class="review-key">YouTube</span><span class="review-val" id="rYoutube">—</span></div>
+          <div class="review-row"><span class="review-key">Price</span><span class="review-val accent" id="rPrice">Free</span></div>
+          <div class="review-row" id="rMp3Row" style="display:none;"><span class="review-key">MP3 Bundled</span><span class="review-val" id="rMp3">—</span></div>
+        </div>
+
+        <div class="legal-wrap">
+          <div class="legal-check-wrap">
+            <input type="checkbox" id="legalCheck" class="legal-check" />
+            <label for="legalCheck" class="legal-text">
+              I certify that this sequence and any associated audio is entirely my original work, or that I hold all necessary rights and licenses to distribute it. I understand that AFTERGLO bears no legal responsibility for content I upload, and that any copyright infringement is solely my liability. I acknowledge that AFTERGLO reserves the right to remove infringing content at any time and, following a written warning, to pursue legal action against me if I knowingly upload copyrighted material without authorization.
+            </label>
+          </div>
+        </div>
+
+        <button class="btn-next btn-publish" id="publishBtn" onclick="submitUpload()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Publish to AFTERGLO
+        </button>
+
+        <div class="upload-progress" id="uploadProgress">
+          <div class="upload-progress-label">
+            <span id="progressLabel">Uploading…</span>
+            <span id="progressPct">0%</span>
+          </div>
+          <div class="upload-progress-bar">
+            <div class="upload-progress-fill" id="progressFill"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-nav">
+        <button class="btn-back" id="step3BackBtn" onclick="goToStep2()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          Back
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /container -->
+</div><!-- /page-wrap -->
+
+<!-- ─── TOAST ───────────────────────────────────────────────────────── -->
+<div id="toast"><span id="toastMsg"></span></div>
+
+<script>
+  /* ─── CONSTANTS ────────────────────────────────────────────────── */
+  const FUNCTIONS_BASE = "https://us-central1-afterglo-website-fbb89.cloudfunctions.net";
+
+  /* ─── STATE ────────────────────────────────────────────────────── */
+  let currentStep   = 1;
+  let fseqFile      = null;
+  let mp3File       = null;
+  let detectedDuration = null;
+
+  /* ─── AUTH GATE ─────────────────────────────────────────────────── */
+  window.addEventListener('DOMContentLoaded', () => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        window.location.replace('signin.html?redirect=upload.html');
+        return;
+      }
+      // Show avatar initial
+      const initial = (user.displayName || user.email || 'U')[0].toUpperCase();
+      const avatar  = document.getElementById('navAvatar');
+      avatar.textContent = initial;
+      avatar.style.display = 'flex';
+    });
+
+    initDropZone();
+    initPriceToggle();
+    initYouTubePreview();
+    initDescCounter();
+    initMp3Input();
+    initLegalCheck();
+  });
+
+  /* ─── STEP NAVIGATION ───────────────────────────────────────────── */
+  function setStep(n) {
+    document.getElementById('step1').style.display = n === 1 ? 'block' : 'none';
+    document.getElementById('step2').style.display = n === 2 ? 'block' : 'none';
+    document.getElementById('step3').style.display = n === 3 ? 'block' : 'none';
+
+    [1,2,3].forEach(i => {
+      const dot   = document.getElementById('dot'   + i);
+      const label = document.getElementById('label' + i);
+      dot.className   = 'step-dot'   + (i < n ? ' done' : i === n ? ' active' : '');
+      label.className = 'step-label' + (i < n ? ' done' : i === n ? ' active' : '');
+      dot.innerHTML   = i < n ? '' : `<span class="step-num-inner">${i}</span>`;
+    });
+
+    if (document.getElementById('line1'))
+      document.getElementById('line1').className = 'step-line' + (n > 1 ? ' done' : '');
+    if (document.getElementById('line2'))
+      document.getElementById('line2').className = 'step-line' + (n > 2 ? ' done' : '');
+
+    currentStep = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function goToStep1() { setStep(1); }
+  function goToStep2() {
+    if (!fseqFile) { showToast('Please select an FSEQ file first.', 'warning'); return; }
+    setStep(2);
+  }
+  function goToStep3() {
+    if (!validateStep2()) return;
+    populateReview();
+    setStep(3);
+  }
+
+  /* ─── STEP 2 VALIDATION ─────────────────────────────────────────── */
+  function validateStep2() {
+    const name = document.getElementById('showName').value.trim();
+    const cat  = document.getElementById('category').value;
+    const song = document.getElementById('songName').value.trim();
+    const dur  = document.getElementById('duration').value;
+    const yt   = document.getElementById('youtubeUrl').value.trim();
+
+    if (!name) { showToast('Please enter a show name.', 'warning'); document.getElementById('showName').focus(); return false; }
+    if (!cat)  { showToast('Please select a category.', 'warning'); document.getElementById('category').focus(); return false; }
+    if (!song) { showToast('Please enter a song name.', 'warning'); document.getElementById('songName').focus(); return false; }
+    if (!dur || parseFloat(dur) <= 0) { showToast('Please enter the show duration in seconds.', 'warning'); document.getElementById('duration').focus(); return false; }
+    if (!yt || !isValidYouTubeUrl(yt)) { showToast('Please enter a valid YouTube link.', 'warning'); document.getElementById('youtubeUrl').focus(); return false; }
+
+    const isPremium = document.getElementById('pricePremium').checked;
+    if (isPremium) {
+      const price = parseFloat(document.getElementById('priceAmount').value);
+      if (!price || price < 0.99) { showToast('Please enter a price of at least $0.99.', 'warning'); document.getElementById('priceAmount').focus(); return false; }
+    }
+    return true;
+  }
+
+  /* ─── REVIEW POPULATION ─────────────────────────────────────────── */
+  const CATEGORY_LABELS = {
+    christmas:'Christmas', halloween:'Halloween', fourth:'4th of July',
+    newyears:"New Year's", valentine:"Valentine's", easter:'Easter',
+    ambient:'Ambient', musicsync:'Music Sync', other:'Other'
+  };
+
+  function populateReview() {
+    const isPremium = document.getElementById('pricePremium').checked;
+    const priceVal  = isPremium ? parseFloat(document.getElementById('priceAmount').value) : 0;
+    const yt        = document.getElementById('youtubeUrl').value.trim();
+    const dur       = parseInt(document.getElementById('duration').value, 10);
+    const hasMp3    = !!(mp3File && isPremium && priceVal > 0);
+
+    document.getElementById('rFile').textContent     = fseqFile ? (fseqFile.name + ' (' + formatBytes(fseqFile.size) + ')') : '—';
+    document.getElementById('rName').textContent     = document.getElementById('showName').value.trim();
+    document.getElementById('rCategory').textContent = CATEGORY_LABELS[document.getElementById('category').value] || document.getElementById('category').value;
+    document.getElementById('rSong').textContent     = document.getElementById('songName').value.trim();
+    document.getElementById('rDuration').textContent = formatDuration(dur);
+    document.getElementById('rYoutube').textContent  = yt;
+    document.getElementById('rPrice').textContent    = isPremium ? '$' + priceVal.toFixed(2) : 'Free';
+    document.getElementById('rMp3Row').style.display = hasMp3 ? 'flex' : 'none';
+    document.getElementById('rMp3').textContent      = hasMp3 ? mp3File.name : '—';
+    document.getElementById('publishBtn').disabled   = true;
+    document.getElementById('legalCheck').checked    = false;
+  }
+
+  /* ─── DROP ZONE ─────────────────────────────────────────────────── */
+  function initDropZone() {
+    const zone  = document.getElementById('dropZone');
+    const input = document.getElementById('fseqInput');
+
+    zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFseqFile(file);
+    });
+
+    input.addEventListener('change', () => {
+      if (input.files[0]) handleFseqFile(input.files[0]);
+    });
+  }
+
+  function handleFseqFile(file) {
+    if (!file.name.toLowerCase().endsWith('.fseq')) {
+      showToast('Please select a .fseq file.', 'warning');
+      return;
+    }
+    if (file.size > 50 * 1024 * 1024) {
+      showToast('File is too large. Max 50 MB.', 'warning');
+      return;
+    }
+
+    fseqFile = file;
+    document.getElementById('dzFileName').textContent = file.name;
+    document.getElementById('dzFileSize').textContent = formatBytes(file.size);
+    document.getElementById('dzFileInfo').classList.add('show');
+    document.getElementById('dzDefault').style.display = 'none';
+    document.getElementById('step1Next').disabled = false;
+
+    parseFseqDuration(file);
+  }
+
+  function removeFile() {
+    fseqFile = null;
+    detectedDuration = null;
+    document.getElementById('fseqInput').value = '';
+    document.getElementById('dzFileInfo').classList.remove('show');
+    document.getElementById('dzDefault').style.display = 'block';
+    document.getElementById('step1Next').disabled = true;
+  }
+
+  /* ─── FSEQ DURATION PARSER ──────────────────────────────────────── */
+  function parseFseqDuration(file) {
+    const reader = new FileReader();
+    reader.onload = e => {
+      try {
+        const buf = e.target.result;
+        const view = new DataView(buf);
+        // FSEQ v2 header: bytes 0-3 = "PSEQ", bytes 4-5 = offset to channel data
+        // bytes 16-19 = frame count (uint32 LE), bytes 20-23 = step time in ms (uint32 LE)
+        const magic = String.fromCharCode(view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3));
+        if (magic !== 'PSEQ') { console.warn('Not a valid FSEQ v2 file (magic mismatch)'); return; }
+        const frameCount = view.getUint32(16, true); // little-endian
+        const stepTimeMs = view.getUint16(20, true); // step time in ms
+        if (frameCount > 0 && stepTimeMs > 0) {
+          const totalSecs = Math.round((frameCount * stepTimeMs) / 1000);
+          detectedDuration = totalSecs;
+          const durInput = document.getElementById('duration');
+          durInput.value = totalSecs;
+          document.getElementById('durationHint').textContent = 'Auto-detected from file: ' + formatDuration(totalSecs);
+        }
+      } catch (err) {
+        console.warn('Could not parse FSEQ header:', err);
+      }
+    };
+    reader.readAsArrayBuffer(file.slice(0, 64));
+  }
+
+  /* ─── PRICE TOGGLE ──────────────────────────────────────────────── */
+  function initPriceToggle() {
+    document.querySelectorAll('input[name="price"]').forEach(radio => {
+      radio.addEventListener('change', updatePriceUI);
+    });
+  }
+
+  function updatePriceUI() {
+    const isPremium = document.getElementById('pricePremium').checked;
+    document.getElementById('priceAmountWrap').classList.toggle('show', isPremium);
+    document.getElementById('mp3Section').classList.toggle('show', isPremium);
+  }
+
+  /* ─── YOUTUBE PREVIEW ───────────────────────────────────────────── */
+  function initYouTubePreview() {
+    document.getElementById('youtubeUrl').addEventListener('input', function() {
+      const id = extractYouTubeId(this.value.trim());
+      const preview = document.getElementById('ytPreview');
+      const thumb   = document.getElementById('ytThumb');
+      if (id) {
+        thumb.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+        preview.classList.add('show');
+      } else {
+        preview.classList.remove('show');
+        thumb.src = '';
+      }
+    });
+  }
+
+  function extractYouTubeId(url) {
+    const patterns = [
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([A-Za-z0-9_-]{11})/,
+      /youtube\.com\/embed\/([A-Za-z0-9_-]{11})/,
+    ];
+    for (const p of patterns) {
+      const m = url.match(p);
+      if (m) return m[1];
+    }
+    return null;
+  }
+
+  function isValidYouTubeUrl(url) {
+    return !!extractYouTubeId(url);
+  }
+
+  /* ─── DESCRIPTION COUNTER ───────────────────────────────────────── */
+  function initDescCounter() {
+    const ta = document.getElementById('description');
+    const counter = document.getElementById('descCounter');
+    ta.addEventListener('input', () => {
+      const len = ta.value.length;
+      counter.textContent = len + ' / 500';
+      counter.className = 'char-counter' + (len > 450 ? (len >= 500 ? ' over' : ' warn') : '');
+    });
+  }
+
+  /* ─── MP3 INPUT ─────────────────────────────────────────────────── */
+  function initMp3Input() {
+    document.getElementById('mp3Input').addEventListener('change', function() {
+      mp3File = this.files[0] || null;
+      const info = document.getElementById('mp3FileInfo');
+      if (mp3File) {
+        info.textContent = mp3File.name + ' (' + formatBytes(mp3File.size) + ')';
+        info.style.display = 'block';
+      } else {
+        info.style.display = 'none';
+      }
+    });
+  }
+
+  /* ─── LEGAL CHECKBOX ────────────────────────────────────────────── */
+  function initLegalCheck() {
+    document.getElementById('legalCheck').addEventListener('change', function() {
+      document.getElementById('publishBtn').disabled = !this.checked;
+    });
+  }
+
+  /* ─── SUBMIT UPLOAD ─────────────────────────────────────────────── */
+  async function submitUpload() {
+    const btn = document.getElementById('publishBtn');
+    const backBtn = document.getElementById('step3BackBtn');
+    btn.disabled = true;
+    backBtn.disabled = true;
+
+    const progressEl = document.getElementById('uploadProgress');
+    const fillEl     = document.getElementById('progressFill');
+    const labelEl    = document.getElementById('progressLabel');
+    const pctEl      = document.getElementById('progressPct');
+
+    const setProgress = (pct, label) => {
+      progressEl.classList.add('show');
+      fillEl.style.width = pct + '%';
+      labelEl.textContent = label;
+      pctEl.textContent   = Math.round(pct) + '%';
+    };
+
+    try {
+      // Get Firebase ID token
+      const firebaseUser = firebase.auth().currentUser;
+      if (!firebaseUser) throw new Error('Not signed in');
+      const token = await firebaseUser.getIdToken();
+
+      const isPremium = document.getElementById('pricePremium').checked;
+      const priceVal  = isPremium ? parseFloat(document.getElementById('priceAmount').value) : 0;
+      const dur       = parseInt(document.getElementById('duration').value, 10);
+      const hasMp3    = !!(mp3File && isPremium && priceVal > 0);
+      const seqId     = crypto.randomUUID();
+
+      const payload = {
+        sequenceId:   seqId,
+        name:         document.getElementById('showName').value.trim(),
+        category:     document.getElementById('category').value,
+        durationSecs: dur || 0,
+        channelCount: 0,
+        price:        parseFloat(priceVal) || 0,
+        songName:     document.getElementById('songName').value.trim(),
+        youtubeUrl:   document.getElementById('youtubeUrl').value.trim(),
+        hasMp3:       hasMp3
+      };
+
+      setProgress(10, 'Preparing upload…');
+
+      // Step 1: POST metadata to Cloud Function
+      const metaRes = await fetch(`${FUNCTIONS_BASE}/uploadSequence`, {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!metaRes.ok) {
+        const errBody = await metaRes.text();
+        throw new Error('Metadata upload failed: ' + errBody);
+      }
+      const { uploadUrl, mp3UploadUrl } = await metaRes.json();
+
+      setProgress(30, 'Uploading FSEQ file…');
+
+      // Step 2: PUT FSEQ binary
+      const fseqRes = await fetch(uploadUrl, {
+        method:  'PUT',
+        headers: { 'Content-Type': 'application/octet-stream' },
+        body:    fseqFile
+      });
+      if (!fseqRes.ok) throw new Error('FSEQ upload failed: ' + fseqRes.status);
+
+      setProgress(65, 'FSEQ uploaded…');
+
+      // Step 3: PUT MP3 if applicable
+      if (hasMp3 && mp3UploadUrl) {
+        setProgress(70, 'Uploading MP3…');
+        const mp3Res = await fetch(mp3UploadUrl, {
+          method:  'PUT',
+          headers: { 'Content-Type': 'audio/mpeg' },
+          body:    mp3File
+        });
+        if (!mp3Res.ok) throw new Error('MP3 upload failed: ' + mp3Res.status);
+        setProgress(85, 'MP3 uploaded…');
+      }
+
+      setProgress(90, 'Confirming…');
+
+      // Step 4: Confirm upload
+      const confirmRes = await fetch(`${FUNCTIONS_BASE}/confirmUpload`, {
+        method:  'POST',
+        headers: {
+          'Content-Type':  'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ sequenceId: seqId })
+      });
+      if (!confirmRes.ok) throw new Error('Confirmation failed: ' + confirmRes.status);
+
+      setProgress(100, 'Complete!');
+
+      // Show success
+      setTimeout(() => {
+        document.getElementById('step3').style.display = 'none';
+        document.getElementById('stepProgress').style.display = 'none';
+        document.getElementById('successState').classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 600);
+
+    } catch (err) {
+      console.error('Upload error:', err);
+      showToast('Upload failed: ' + err.message, 'error');
+      btn.disabled = false;
+      backBtn.disabled = false;
+      progressEl.classList.remove('show');
+    }
+  }
+
+  /* ─── FSEQ MODAL ─────────────────────────────────────────────────── */
+  function openFseqModal()  { document.getElementById('fseqModal').classList.add('open'); }
+  function closeFseqModal() { document.getElementById('fseqModal').classList.remove('open'); }
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeFseqModal(); });
+
+  /* ─── HAMBURGER ─────────────────────────────────────────────────── */
+  const hamburger  = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen = false;
+  hamburger.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    const spans = hamburger.querySelectorAll('span');
+    if (menuOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+  document.addEventListener('click', e => {
+    if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+  });
+
+  /* ─── TOAST ─────────────────────────────────────────────────────── */
+  let toastTimer;
+  function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    const msgEl = document.getElementById('toastMsg');
+    msgEl.textContent = msg;
+    toast.className = 'show' + (type ? ' ' + type : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 5000);
+  }
+
+  /* ─── HELPERS ───────────────────────────────────────────────────── */
+  function formatBytes(b) {
+    if (b < 1024) return b + ' B';
+    if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+    return (b / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+  function formatDuration(secs) {
+    if (!secs || isNaN(secs)) return '—';
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return m + 'm ' + String(s).padStart(2,'0') + 's';
+  }
+</script>
+</body>
+</html>
