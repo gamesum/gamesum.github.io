@@ -681,16 +681,19 @@
 
   /* ─── REDIRECT IF ALREADY SIGNED IN ──────────────────────────── */
   (function() {
-    const user = getUser();
-    if (user && user.token) {
-      const params = new URLSearchParams(window.location.search);
-      const redir  = params.get('redirect') || 'platform.html';
-      safeRedirect(redir);
-    }
-
     // Pre-select tab from ?tab=create
     const tab = new URLSearchParams(window.location.search).get('tab');
     if (tab === 'create') switchTab('create');
+
+    // Wait for Firebase to resolve auth before redirecting
+    if (typeof firebase !== 'undefined') {
+      firebase.auth().onAuthStateChanged(function(fbUser) {
+        if (fbUser) {
+          const redir = new URLSearchParams(window.location.search).get('redirect') || 'platform.html';
+          safeRedirect(redir);
+        }
+      });
+    }
   })();
 
   /* ─── HELPERS ────────────────────────────────────────────────── */
