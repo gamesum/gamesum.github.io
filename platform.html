@@ -2726,6 +2726,15 @@
           <label>Song Name <span style="color:#666;font-size:12px;">(optional)</span></label>
           <input type="text" id="songName" placeholder="e.g. All I Want For Christmas Is You" />
         </div>
+        <div class="form-group" style="background:#0e0e0e;border:1px solid #2a2a2a;border-radius:10px;padding:16px;margin-top:8px;">
+          <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;line-height:1.5;">
+            <input type="checkbox" id="legalCert" required style="margin-top:3px;min-width:20px;min-height:20px;accent-color:#c8921e;cursor:pointer;" />
+            <span style="font-size:0.85rem;color:#94a3b8;">
+              I certify that this sequence and any associated audio is <strong style="color:#fff;">entirely my original work</strong>, or that I hold all necessary rights and licenses to distribute it. I understand that AFTERGLO bears <strong style="color:#fff;">no legal responsibility</strong> for content I upload, and that any copyright infringement is solely my liability. I acknowledge that AFTERGLO reserves the right to remove infringing content at any time and, following a written warning, to pursue legal action against me if I knowingly upload copyrighted material without authorization.
+              <a href="#" onclick="return false;" style="color:#c8921e;display:block;margin-top:6px;font-size:0.8rem;">Read full terms ↗</a>
+            </span>
+          </label>
+        </div>
         <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
           Upload to Community
@@ -2778,6 +2787,11 @@
       const file    = (fileInput.files && fileInput.files[0]) || fileInput._file;
       if (!file) { showToast('Please select an .fseq file before uploading', true); return; }
       if (!name) { showToast('Please enter a show name', true); return; }
+      const legalCert = document.getElementById('legalCert');
+      if (!legalCert || !legalCert.checked) {
+        showToast('Please certify your content rights before uploading.');
+        return;
+      }
 
       // Disable submit button during upload
       const submitBtn = document.querySelector('#uploadForm button[type="submit"]');
