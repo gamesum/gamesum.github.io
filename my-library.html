@@ -1260,12 +1260,25 @@
 
   /* ─── RUN ──────────────────────────────────────────────────────── */
   window.addEventListener('DOMContentLoaded', () => {
+    const pageLoadTime = Date.now();
+
     firebase.auth().onAuthStateChanged(async (firebaseUser) => {
-      if (!firebaseUser) {
-        window.location.replace('signin.html?redirect=my-library.html');
+      if (firebaseUser) {
+        init(firebaseUser);
         return;
       }
-      init(firebaseUser);
+
+      // If null fires within 800ms of page load, Firebase may still be
+      // restoring the session from IndexedDB. Wait, then re-check.
+      const elapsed = Date.now() - pageLoadTime;
+      if (elapsed < 800) {
+        await new Promise(r => setTimeout(r, 1200));
+        const recheckUser = firebase.auth().currentUser;
+        if (recheckUser) { init(recheckUser); return; }
+      }
+
+      // Confirmed not signed in — redirect
+      window.location.replace('signin.html?redirect=my-library.html');
     });
   });
 </script>
