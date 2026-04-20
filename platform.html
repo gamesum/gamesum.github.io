@@ -1522,8 +1522,8 @@
         <li><a href="arches.html">Light Shows</a></li>
         <li><a href="index.html#gallery">Gallery</a></li>
         <li><a href="index.html#testimonials">Reviews</a></li>
-        <li><a href="platform.html" class="active" style="color:var(--accent);">Platform</a></li>
-        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
+        <li><a href="platform.html" class="active" style="color:var(--accent);">Light Show Store</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
       <div id="navAuthArea" style="display:flex;align-items:center;gap:10px;margin-left:16px;"></div>
@@ -1538,7 +1538,7 @@
     <a href="arches.html" onclick="closeMenu()">Light Shows</a>
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
     <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
-    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Platform</a>
+    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Light Show Store</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
     <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
     <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
@@ -1551,8 +1551,8 @@
   <div class="hero-bg"></div>
   <div class="hero-content">
     <div class="hero-badge">✦ Community-Powered Light Shows</div>
-    <h1 class="hero-title">The <span class="gold">AFTERGLO</span><br>Platform</h1>
-    <p class="hero-sub">Browse hundreds of FSEQ sequences crafted by professional animators and the xLights community. Download free, buy premium, or share your own creations.</p>
+    <h1 class="hero-title">The <span class="gold">AFTERGLO</span><br>Light Show Store</h1>
+    <p class="hero-sub">FSEQ files built by xLights animators and AFTERGLO's own team. Grab a free show, pick up a premium pack, or upload your own sequences and earn on downloads.</p>
     <div class="hero-ctas">
       <a href="#sequences" class="btn btn-primary">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1573,8 +1573,8 @@
         <div class="hero-stat-label">Shows Weekly</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num">FSEQ</div>
-        <div class="hero-stat-label">Ready to Play</div>
+        <div class="hero-stat-num">Plug &amp; Play</div>
+        <div class="hero-stat-label">No Setup Needed</div>
       </div>
     </div>
   </div>
@@ -1587,7 +1587,7 @@
     <div class="filter-bar">
       <div class="search-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input type="search" id="searchInput" placeholder="Search sequences…" autocomplete="off" />
+        <input type="search" id="searchInput" placeholder="Search light shows…" autocomplete="off" />
       </div>
       <div class="filter-divider"></div>
       <div class="filter-tabs" id="filterTabs">
@@ -1611,10 +1611,10 @@
     <div class="seq-header fade-in">
       <div>
         <span class="section-label">Marketplace</span>
-        <h2 class="section-title">Featured Sequences</h2>
+        <h2 class="section-title">Featured Light Shows</h2>
         <div class="trending-strip">🔥 Trending This Week — Most Downloaded</div>
       </div>
-      <p class="section-sub" style="margin:0; font-size:0.9rem;">All sequences are exported as uncompressed FSEQ v2 files, ready to drop onto your AFTERGLO controller.</p>
+      <p class="section-sub" style="margin:0; font-size:0.9rem;">Every light show file is ready to load onto your AFTERGLO controller — no extra software needed.</p>
     </div>
 
     <!-- Horizontal scroll row (shown when filter = all, no search) -->
@@ -1677,6 +1677,13 @@
 <!-- Change 2: Moved premium packs ABOVE the upload section so revenue content reaches mobile users -->
 <section id="premium" class="section-pad">
   <div class="container">
+    <div style="background:rgba(200,146,30,0.07);border:1px solid rgba(200,146,30,0.25);border-radius:12px;padding:14px 20px;margin-bottom:32px;display:flex;align-items:flex-start;gap:12px;" class="fade-in">
+      <span style="font-size:1.3rem;flex-shrink:0;">💡</span>
+      <div>
+        <div style="font-family:'Outfit',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:4px;">These shows run on your AFTERGLO controller</div>
+        <div style="font-size:0.84rem;color:var(--muted);line-height:1.6;">You need an AFTERGLO permanent LED system installed on your home to play these shows. <a href="index.html#cta" style="color:var(--accent);">Don't have one yet? Get a free quote first →</a></div>
+      </div>
+    </div>
     <div style="text-align:center; margin-bottom:52px;" class="fade-in">
       <span class="section-label">Premium</span>
       <h2 class="section-title">Curated Show Packs</h2>
@@ -1699,12 +1706,13 @@
         </div>
         <div class="pack-body">
           <div class="pack-title">Holiday Mega Pack</div>
+          <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
           <!-- Change 3a: social proof purchase count -->
           <div class="pack-social-proof">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             47 AFTERGLO homes running this pack
           </div>
-          <p class="pack-desc">The ultimate Christmas collection. From soft twinkling scenes to full-energy synchronized music shows — everything you need for an unforgettable season.</p>
+          <p class="pack-desc">12 sequences covering the whole Christmas range — calm warm-white twinkling for background ambiance, and full-energy music-synchronized shows for the nights that matter.</p>
           <div class="pack-meta">
             <div class="pack-meta-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1726,8 +1734,8 @@
             </div>
             <!-- Change 3b: mailto request instead of broken "coming soon" toast -->
             <a class="btn-request-pack" href="#" data-buy-id="pack_holiday_mega" onclick="event.preventDefault();handlePackBuy('pack_holiday_mega','Holiday Mega Pack',58)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              Get Pack — $58
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
+              Buy Pack — $58
             </a>
           </div>
           <!-- Change 3c: guarantee line -->
@@ -1751,11 +1759,12 @@
         </div>
         <div class="pack-body">
           <div class="pack-title">Patriotic Bundle</div>
+          <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
           <div class="pack-social-proof">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             31 AFTERGLO homes running this pack
           </div>
-          <p class="pack-desc">Red, white, and brilliant. Six high-energy shows perfect for Memorial Day, Independence Day, and Veterans Day celebrations.</p>
+          <p class="pack-desc">Six fast-paced red, white, and blue sequences built for outdoor crowds. Designed for Memorial Day, Independence Day, and Veterans Day — music included.</p>
           <div class="pack-meta">
             <div class="pack-meta-item">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1776,8 +1785,8 @@
               <div class="pack-price-sub">one-time purchase</div>
             </div>
             <a class="btn-request-pack" href="#" data-buy-id="pack_patriotic_bundle" onclick="event.preventDefault();handlePackBuy('pack_patriotic_bundle','Patriotic Bundle',38)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              Get Pack — $38
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
+              Buy Pack — $38
             </a>
           </div>
           <div class="pack-guarantee">
@@ -1800,6 +1809,7 @@
         </div>
         <div class="pack-body">
           <div class="pack-title">Halloween Pack</div>
+          <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
           <div class="pack-social-proof">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             39 AFTERGLO homes running this pack
@@ -1825,8 +1835,8 @@
               <div class="pack-price-sub">one-time purchase</div>
             </div>
             <a class="btn-request-pack" href="#" data-buy-id="pack_halloween" onclick="event.preventDefault();handlePackBuy('pack_halloween','Halloween Pack',48)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-              Get Pack — $48
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
+              Buy Pack — $48
             </a>
           </div>
           <div class="pack-guarantee">
@@ -1848,8 +1858,8 @@
       <div class="upload-info fade-in">
         <span class="section-label">Community</span>
         <h2 class="section-title">Share Your Sequences</h2>
-        <p>Built something spectacular in xLights? Upload your FSEQ files to share with the AFTERGLO community and help other homeowners put on an incredible show.</p>
-        <p>Every sequence is reviewed for compatibility with AFTERGLO controllers before going live.</p>
+        <p>Have an xLights sequence you're proud of? Upload your FSEQ and put it in front of every AFTERGLO homeowner on the platform.</p>
+        <p>We check every upload against our controller spec before it goes public — if it won't run cleanly, we'll tell you what to fix.</p>
         <ul class="upload-perks">
           <li>Your name and creator profile on every download</li>
           <li>Earn revenue on premium sequences you publish</li>
@@ -1862,7 +1872,7 @@
           <div id="dropZone" class="drop-zone">
             <div id="dropContent">
               <div class="drop-zone-icon">📂</div>
-              <div class="drop-zone-title">Drop your FSEQ file here</div>
+              <div class="drop-zone-title">Drop your light show file here (.fseq)</div>
               <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>
             </div>
             <input type="file" id="fileInput" accept=".fseq" style="display:none;" />
@@ -1897,7 +1907,7 @@
           </button>
           <p class="upload-note">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Share your xLights sequences with the community. Export uncompressed FSEQ v2 from xLights before uploading. Max file size 50 MB.
+            Share your light show files with the community. In xLights, export as uncompressed FSEQ v2 before uploading. Max file size 50 MB.
           </p>
         </form>
       </div>
@@ -1930,7 +1940,7 @@
         </div>
         <span class="step-icon">🛒</span>
         <h3 class="step-title">Buy or Download a Show</h3>
-        <p class="step-desc">Browse the marketplace and grab any free sequence or purchase a premium pack. Your downloads are stored in your account forever.</p>
+        <p class="step-desc">Pick a free sequence or buy a premium pack. Everything you download stays in your library — no expiry, no re-purchase.</p>
       </div>
       <div class="step fade-in fade-delay-2">
         <div class="step-num">
@@ -1938,7 +1948,7 @@
         </div>
         <span class="step-icon">📡</span>
         <h3 class="step-title">Transfer to Your Controller</h3>
-        <p class="step-desc">Open your AFTERGLO controller's built-in web UI from any browser on your home network. Drag-and-drop the FSEQ file to upload in seconds.</p>
+        <p class="step-desc">Open your AFTERGLO controller's built-in web page from any browser on your home network. Drag and drop the light show file to load it onto your controller in seconds.</p>
       </div>
       <div class="step fade-in fade-delay-4">
         <div class="step-num">
@@ -1946,7 +1956,7 @@
         </div>
         <span class="step-icon">💡</span>
         <h3 class="step-title">Watch It Sync to Your Lights</h3>
-        <p class="step-desc">Hit play and watch your roofline come alive. The AFTERGLO controller streams DDP pixel data frame-perfect to every LED on your home.</p>
+        <p class="step-desc">Hit play and watch your roofline come alive. Your lights sync up and play the show exactly as designed — every color, every beat.</p>
       </div>
     </div>
   </div>
@@ -1958,7 +1968,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <span class="nav-logo">AFTER<span>GLO</span></span>
-        <p>Utah's premier permanent outdoor LED lighting company. Custom installs, music-synchronized light shows, and now an open platform for the xLights community.</p>
+        <p>Permanent LED roofline lighting installed across Utah. Music-synchronized Christmas light shows. And a growing library of FSEQ sequences for the xLights community.</p>
         <p class="footer-brand-sub">Salt Lake City, Utah &bull; (385) 337-4144</p>
       </div>
       <div class="footer-col">
@@ -1982,9 +1992,9 @@
       <div class="footer-col">
         <h4>Resources</h4>
         <ul>
-          <li><a href="#">xLights Guide</a></li>
+          <li><a href="#">Show Design Guide (xLights)</a></li>
           <li><a href="#">Controller Setup</a></li>
-          <li><a href="#">FSEQ Format</a></li>
+          <li><a href="#">Light Show File Format</a></li>
           <li><a href="#">Creator FAQ</a></li>
         </ul>
       </div>
@@ -2007,11 +2017,11 @@
     <button class="capture-close" onclick="closeCaptureModal()" aria-label="Close">✕</button>
     <div class="capture-icon">🎄</div>
     <div class="capture-title">Your free sequence is ready —<br><em class="capture-seq-name" id="captureSeqName"></em></div>
-    <p class="capture-sub">Drop your email and we'll save your library, notify you when new shows arrive, and send you a free setup guide.</p>
+    <p class="capture-sub">Enter your email and we'll save this sequence to your account, alert you when new free shows drop, and send you the xLights quick-start PDF.</p>
     <ul class="capture-perks">
       <li>Sequence saved to your library forever</li>
       <li>Email alerts when new free shows drop</li>
-      <li>Free xLights quick-start guide PDF</li>
+      <li>Free light show setup guide PDF</li>
     </ul>
     <div class="capture-inputs">
       <input type="text" class="capture-input" id="captureFirstName" placeholder="First name" autocomplete="given-name" />
@@ -2021,8 +2031,17 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Get Free Access &amp; Download
     </button>
-    <button class="capture-skip" onclick="dismissCapture()">No thanks, just sign in →</button>
-    <p class="capture-legal">No spam. Unsubscribe any time. By continuing you agree to receive occasional emails from AFTERGLO.</p>
+    <button class="capture-skip" onclick="dismissCapture()">Already have an account? Sign in instead</button>
+    <p class="capture-legal" style="color:#555;font-size:0.75rem;">No spam. Unsubscribe any time. By continuing you agree to receive occasional emails from AFTERGLO.</p>
+  </div>
+</div>
+
+<!-- ─── SEQUENCE DETAIL DRAWER ───────────────────────────────────────── -->
+<div id="seqDrawer" class="seq-drawer">
+  <div class="seq-drawer-backdrop"></div>
+  <div class="seq-drawer-panel">
+    <button class="seq-drawer-close" onclick="closeDrawer()" aria-label="Close">&#x2715;</button>
+    <div id="seqDrawerContent"></div>
   </div>
 </div>
 
@@ -2249,7 +2268,7 @@
           <span class="card-dot">·</span>
           <span class="card-channels">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-            ${(seq.channels || seq.channelCount || 0).toLocaleString()} ch
+            ${(seq.channels || seq.channelCount || 0).toLocaleString()} lights
           </span>
         </div>
         <div class="card-footer">
@@ -2542,7 +2561,7 @@
   }
 
   // dismissCapture: closes AND redirects to sign-in.
-  // Used only by the "No thanks, just sign in →" text button.
+  // Used only by the "Already have an account? Sign in →" text button.
   function dismissCapture() {
     closeCaptureModal();
     window.location.href = 'signin.html?redirect=platform.html';
@@ -2734,7 +2753,7 @@
         <div id="dropZone" class="drop-zone">
           <div id="dropContent">
             <div class="drop-zone-icon">📂</div>
-            <div class="drop-zone-title">Drop your FSEQ file here</div>
+            <div class="drop-zone-title">Drop your light show file (.fseq) here</div>
             <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>
           </div>
           <input type="file" id="fileInput" accept=".fseq" style="display:none;" />
@@ -2756,8 +2775,22 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Song Name <span style="color:#666;font-size:12px;">(optional)</span></label>
-          <input type="text" id="songName" placeholder="e.g. All I Want For Christmas Is You" />
+          <label>Price ($) <span style="color:#666;font-size:12px;">0 = free</span></label>
+          <input type="number" id="price" placeholder="0.00" min="0" max="99" step="0.01" value="0" style="font-size:16px;" />
+        </div>
+        <div class="form-group">
+          <label for="songName">Song Name *</label>
+          <input type="text" id="songName" placeholder="e.g. All I Want For Christmas Is You" required minlength="2" maxlength="200" style="font-size:16px;" />
+        </div>
+        <div class="form-group">
+          <label for="youtubeUrl">YouTube Link *</label>
+          <input type="url" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." required style="font-size:16px;" />
+          <small style="color:#666;">Link to the exact version your sequence is synced to</small>
+        </div>
+        <div class="form-group" id="mp3UploadGroup" style="display:none;">
+          <label for="mp3File">MP3 File <span style="color:#c8921e;">(Premium only — only if you own the rights)</span></label>
+          <input type="file" id="mp3File" accept=".mp3,audio/mpeg" style="font-size:16px;" />
+          <small style="color:#666;">Only upload if you own or have licensed this music</small>
         </div>
         <div class="form-group" style="background:#0e0e0e;border:1px solid #2a2a2a;border-radius:10px;padding:16px;margin-top:8px;">
           <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;line-height:1.5;">
@@ -2778,7 +2811,7 @@
         </p>
         <p class="upload-note">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          Share your xLights sequences with the community. Export uncompressed FSEQ v2 from xLights before uploading. Max file size 50 MB.
+          Share your light show files with the community. In xLights, export as uncompressed FSEQ v2 before uploading. Max file size 50 MB.
         </p>
       </form>`;
 
@@ -2811,15 +2844,33 @@
       if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
     });
 
+    // Show/hide MP3 upload group based on price input
+    const priceInput = document.getElementById('price');
+    if (priceInput) {
+      priceInput.addEventListener('input', function() {
+        const mp3Group = document.getElementById('mp3UploadGroup');
+        if (mp3Group) mp3Group.style.display = parseFloat(this.value) > 0 ? 'block' : 'none';
+      });
+    }
+
     document.getElementById('uploadForm').addEventListener('submit', async e => {
       e.preventDefault();
       const user = getUser();
       if (!user || !user.token) { initUploadForm(); return; }
-      const name    = document.getElementById('showName').value.trim();
-      const creator = user.name || user.email || 'Unknown';
-      const file    = (fileInput.files && fileInput.files[0]) || fileInput._file;
+      const name       = document.getElementById('showName').value.trim();
+      const creator    = user.name || user.email || 'Unknown';
+      const file       = (fileInput.files && fileInput.files[0]) || fileInput._file;
+      const mp3Input   = document.getElementById('mp3File');
+      const mp3File    = mp3Input && mp3Input.files && mp3Input.files[0] ? mp3Input.files[0] : null;
+      const price      = parseFloat(document.getElementById('price')?.value || '0') || 0;
+      const songName   = document.getElementById('songName')?.value.trim() || '';
+      const youtubeUrl = document.getElementById('youtubeUrl')?.value.trim() || '';
+      const hasMp3     = !!(mp3File && price > 0);
+
       if (!file) { showToast('Please select an .fseq file before uploading', true); return; }
       if (!name) { showToast('Please enter a show name', true); return; }
+      if (!songName) { showToast('Please enter the song name', true); return; }
+      if (!youtubeUrl) { showToast('Please enter the YouTube link', true); return; }
       const legalCert = document.getElementById('legalCert');
       if (!legalCert || !legalCert.checked) {
         showToast('Please certify your content rights before uploading.');
@@ -2831,30 +2882,40 @@
       if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Uploading…'; }
 
       try {
-        // Step 1: Get a signed upload URL from the backend
-        const idToken  = await getIdToken();
+        // Step 1: Get signed upload URLs from the backend
+        const idToken    = await getIdToken();
         const sequenceId = 'seq_' + Date.now();
-        const category = document.getElementById('categoryInput').value;
-        const song     = document.getElementById('songName') ? document.getElementById('songName').value.trim() : '';
+        const category   = document.getElementById('categoryInput').value;
 
-        let uploadUrl = null;
+        let uploadUrl    = null;
+        let mp3UploadUrl = null;
         try {
           const urlResp = await fetch(`${FUNCTIONS_BASE}/uploadSequence`, {
             method:  'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
-            body:    JSON.stringify({ sequenceId, name, category, song, creator }),
+            body:    JSON.stringify({ sequenceId, name, category, price, songName, youtubeUrl, hasMp3, creator }),
           });
           const urlData = await urlResp.json();
-          uploadUrl = urlData.url;
+          uploadUrl    = urlData.uploadUrl;
+          mp3UploadUrl = urlData.mp3UploadUrl;
         } catch (_) { /* fallback to local-only if Cloud Function not deployed yet */ }
 
         if (uploadUrl) {
-          // Step 2: PUT the file to the signed URL
+          // Step 2a: PUT the FSEQ file to the signed URL
           await fetch(uploadUrl, {
             method:  'PUT',
             headers: { 'Content-Type': 'application/octet-stream' },
             body:    file,
           });
+
+          // Step 2b: PUT the MP3 file if we have a signed URL for it
+          if (mp3UploadUrl && mp3File) {
+            await fetch(mp3UploadUrl, {
+              method:  'PUT',
+              headers: { 'Content-Type': 'audio/mpeg' },
+              body:    mp3File,
+            });
+          }
 
           // Step 3: Confirm upload — mark the sequence as published
           await fetch(`${FUNCTIONS_BASE}/confirmUpload`, {
@@ -2871,7 +2932,10 @@
           name,
           creator,
           category,
-          song,
+          songName,
+          youtubeUrl,
+          hasMp3,
+          price,
           gradient:   'linear-gradient(135deg, #1a1a1a, #333)',
           uploadedAt: Date.now(),
           status:     uploadUrl ? 'published' : 'pending_review'
@@ -2890,6 +2954,103 @@
 
   // Upload form submit + drag-drop handlers are set up by attachUploadListeners()
   // which is called inside initUploadForm() whenever the signed-in form is rendered.
+
+  /* ─── SEQUENCE DETAIL DRAWER ────────────────────────────────────── */
+  function openDrawer(seq) {
+    // Build YouTube embed URL from watch URL or short URL
+    let ytEmbed = null;
+    if (seq.youtubeUrl) {
+      ytEmbed = seq.youtubeUrl
+        .replace('watch?v=', 'embed/')
+        .replace('youtu.be/', 'www.youtube.com/embed/');
+      // ensure https://www.youtube.com/embed/...
+      if (ytEmbed.includes('youtube.com/embed/') && !ytEmbed.startsWith('http')) {
+        ytEmbed = 'https://' + ytEmbed;
+      }
+    }
+
+    const isFree = seq.free || seq.isFree || (seq.price === 0);
+    const price  = seq.price != null ? Number(seq.price) : 0;
+    const durationSecs = seq.durationSecs || 0;
+    const durationDisplay = durationSecs
+      ? Math.floor(durationSecs / 60) + 'm ' + (durationSecs % 60) + 's'
+      : (seq.duration || '\u2014');
+    const gradient = seq.gradient || seq.thumbnailGradient || 'linear-gradient(135deg,#1a1a1a,#333)';
+
+    document.getElementById('seqDrawerContent').innerHTML = `
+      <div style="height:200px;background:${esc(gradient)};position:relative;">
+        ${seq.hasMp3 ? '<div style="position:absolute;bottom:12px;left:12px;background:#c8921e;color:#000;font-size:0.75rem;font-weight:700;padding:4px 10px;border-radius:20px;">&#9834; MP3 Included</div>' : ''}
+      </div>
+      <div style="padding:24px;">
+        <div style="font-family:\'Outfit\',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:4px;">${esc(seq.name)}</div>
+        <div style="color:#c8921e;font-size:0.9rem;margin-bottom:16px;">by ${esc(seq.creator)}</div>
+
+        ${seq.songName ? `<div style="background:#0e0e0e;border:1px solid #222;border-radius:10px;padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1.4rem;">&#9834;</span>
+          <div>
+            <div style="font-size:0.75rem;color:#666;margin-bottom:2px;">SYNCED TO</div>
+            <div style="color:#fff;font-weight:600;">${esc(seq.songName)}</div>
+          </div>
+          ${seq.youtubeUrl ? `<a href="${esc(seq.youtubeUrl)}" target="_blank" rel="noopener" style="margin-left:auto;background:#ff0000;color:#fff;padding:6px 12px;border-radius:6px;font-size:0.8rem;font-weight:600;white-space:nowrap;">&#9654; YouTube</a>` : ''}
+        </div>` : ''}
+
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+          <div style="background:#0e0e0e;border:1px solid #222;border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:1.1rem;font-weight:700;color:#fff;">${esc(durationDisplay)}</div>
+            <div style="font-size:0.7rem;color:#666;margin-top:2px;">DURATION</div>
+          </div>
+          <div style="background:#0e0e0e;border:1px solid #222;border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:1.1rem;font-weight:700;color:#fff;">${seq.channels || seq.channelCount || '\u2014'}</div>
+            <div style="font-size:0.7rem;color:#666;margin-top:2px;">CHANNELS</div>
+          </div>
+          <div style="background:#0e0e0e;border:1px solid #222;border-radius:8px;padding:12px;text-align:center;">
+            <div style="font-size:1.1rem;font-weight:700;color:#fff;">${seq.downloads || seq.downloadCount || 0}</div>
+            <div style="font-size:0.7rem;color:#666;margin-top:2px;">DOWNLOADS</div>
+          </div>
+        </div>
+
+        ${seq.description ? `<p style="color:#94a3b8;font-size:0.9rem;line-height:1.6;margin-bottom:20px;">${esc(seq.description)}</p>` : ''}
+
+        ${ytEmbed ? `<div style="position:relative;padding-bottom:56.25%;border-radius:10px;overflow:hidden;margin-bottom:20px;">
+          <iframe src="${esc(ytEmbed)}" style="position:absolute;inset:0;width:100%;height:100%;border:0;" allowfullscreen loading="lazy"></iframe>
+        </div>` : ''}
+
+        <div style="padding:20px 0;border-top:1px solid #222;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <div style="font-family:\'Outfit\',sans-serif;font-size:1.8rem;font-weight:800;color:${price > 0 ? '#c8921e' : '#4ade80'};">
+              ${price > 0 ? '$' + price.toFixed(2) : 'Free'}
+            </div>
+            ${seq.hasMp3 && price > 0 ? '<div style="font-size:0.8rem;color:#94a3b8;">Includes FSEQ + MP3</div>' : ''}
+          </div>
+          ${price > 0
+            ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#c8921e;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy &mdash; $${price.toFixed(2)}</button>`
+            : `<button onclick="handleDownload(event,'${esc(String(seq.id))}');closeDrawer();" style="width:100%;background:#4ade80;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Download Free</button>`
+          }
+        </div>
+      </div>
+    `;
+
+    const drawer = document.getElementById('seqDrawer');
+    drawer.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeDrawer() {
+    document.getElementById('seqDrawer').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  // Close drawer on backdrop click
+  document.addEventListener('DOMContentLoaded', () => {
+    const backdrop = document.querySelector('.seq-drawer-backdrop');
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+  });
+  // Also handle Escape key for drawer
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && document.getElementById('seqDrawer')?.classList.contains('open')) {
+      closeDrawer();
+    }
+  });
 
   /* ─── TOAST ──────────────────────────────────────────────────────── */
   let toastTimer;
