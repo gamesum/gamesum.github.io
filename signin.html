@@ -8,6 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Google Identity Services — replace YOUR_GOOGLE_CLIENT_ID with your OAuth Client ID from
+       console.cloud.google.com → APIs & Services → Credentials → Create OAuth 2.0 Client ID
+       Authorized JS origins: https://afterglolighting.org + http://localhost -->
+  <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -794,9 +799,80 @@
     setTimeout(() => window.location.href = getRedirectUrl(), 1400);
   }
 
-  /* ─── GOOGLE STUB ────────────────────────────────────────────── */
+  /* ─── GOOGLE SIGN-IN (Identity Services) ─────────────────────── */
+  const GOOGLE_CLIENT_ID = document.querySelector('meta[name="google-signin-client_id"]')
+                               ?.getAttribute('content') || '';
+
+  // Called by GIS after the user picks a Google account
+  function handleGoogleCredential(response) {
+    try {
+      // Decode the JWT payload (no signature check needed — it came from Google directly)
+      const payload = JSON.parse(atob(response.credential.split('.')[1]));
+      const { sub, email, name, picture } = payload;
+
+      const existing = getUser();
+      let user;
+      if (existing && existing.googleId === sub) {
+        // Returning Google user — refresh token, keep library
+        user = Object.assign(existing, {
+          name,
+          email,
+          picture:   picture || existing.picture || '',
+          token:     'google_' + sub,
+          updatedAt: Date.now(),
+        });
+      } else {
+        // New or different Google account
+        user = {
+          name,
+          email,
+          picture:   picture || '',
+          googleId:  sub,
+          token:     'google_' + sub,
+          library:   existing?.library   || [],
+          purchases: existing?.purchases || [],
+          uploads:   existing?.uploads   || [],
+          createdAt: existing?.createdAt || Date.now(),
+          updatedAt: Date.now(),
+        };
+      }
+      saveUser(user);
+      showToast('Welcome, ' + (name.split(' ')[0] || 'there') + '!');
+      setTimeout(() => window.location.href = getRedirectUrl(), 1000);
+    } catch (err) {
+      showToast('Google sign-in failed — please try again.', true);
+      console.error('Google credential decode error:', err);
+    }
+  }
+
   function handleGoogle() {
-    showToast('Google sign-in coming soon!', true);
+    if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') {
+      showToast('Google sign-in not configured yet. Use email sign-in for now.', true);
+      return;
+    }
+    // Initialize GIS and trigger the One Tap prompt / popup
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback:  handleGoogleCredential,
+      ux_mode:   'popup',
+    });
+    google.accounts.id.prompt((notification) => {
+      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+        // One Tap was suppressed — render an explicit button as fallback
+        const btnEl = document.querySelector('.btn-google[onclick="handleGoogle()"]');
+        if (btnEl) {
+          const wrap = document.createElement('div');
+          wrap.id = 'gsi-btn-wrap';
+          btnEl.replaceWith(wrap);
+          google.accounts.id.renderButton(wrap, {
+            theme: 'filled_black',
+            size:  'large',
+            width: wrap.parentElement?.offsetWidth || 320,
+            text:  'signin_with',
+          });
+        }
+      }
+    });
   }
 
   /* ─── FORGOT PASSWORD ────────────────────────────────────────── */

@@ -15,6 +15,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Google Identity Services (same client ID as signin.html) -->
+  <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID" />
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -2460,109 +2463,194 @@
     window.location.href = `mailto:info@afterglolighting.org?subject=${subject}&body=${body}`;
   }
 
-  /* ─── DRAG & DROP ────────────────────────────────────────────────── */
-  const dropZone  = document.getElementById('dropZone');
-  const fileInput = document.getElementById('fileInput');
-  const dropContent = document.getElementById('dropContent');
+  /* ─── GOOGLE AUTH (platform page) ───────────────────────────────── */
+  const GOOGLE_CLIENT_ID = document.querySelector('meta[name="google-signin-client_id"]')
+                               ?.getAttribute('content') || '';
 
-  dropZone.addEventListener('dragover', e => {
-    e.preventDefault();
-    dropZone.classList.add('drag-over');
-  });
-  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-  dropZone.addEventListener('drop', e => {
-    e.preventDefault();
-    dropZone.classList.remove('drag-over');
-    const file = e.dataTransfer.files[0];
-    if (file) handleFileSelect(file);
-  });
-  fileInput.addEventListener('change', () => {
-    if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
-  });
-
-  function handleFileSelect(file) {
-    if (!file.name.endsWith('.fseq')) {
-      showToast('Please select a valid .fseq file', true);
-      return;
+  function handleGoogleCredential(response) {
+    try {
+      const payload = JSON.parse(atob(response.credential.split('.')[1]));
+      const { sub, email, name, picture } = payload;
+      const existing = getUser();
+      const user = {
+        name,
+        email,
+        picture:   picture || '',
+        googleId:  sub,
+        token:     'google_' + sub,
+        library:   existing?.library   || [],
+        purchases: existing?.purchases || [],
+        uploads:   existing?.uploads   || [],
+        createdAt: existing?.createdAt || Date.now(),
+        updatedAt: Date.now(),
+      };
+      saveUser(user);
+      // Refresh the upload section and nav without a page reload
+      initUploadForm();
+      updateNavAuth();
+      showToast('Signed in as ' + name + '!');
+    } catch(err) {
+      showToast('Google sign-in failed. Please try again.', true);
     }
-    dropContent.innerHTML = `
-      <div class="drop-zone-file">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        ${file.name} (${(file.size/1024/1024).toFixed(2)} MB)
-      </div>`;
+  }
+
+  function initGoogleSignIn(buttonContainerId) {
+    if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID === 'YOUR_GOOGLE_CLIENT_ID') return;
+    if (typeof google === 'undefined') return;
+    google.accounts.id.initialize({
+      client_id: GOOGLE_CLIENT_ID,
+      callback:  handleGoogleCredential,
+      ux_mode:   'popup',
+    });
+    const container = document.getElementById(buttonContainerId);
+    if (container) {
+      google.accounts.id.renderButton(container, {
+        theme: 'filled_black',
+        size:  'large',
+        width: container.offsetWidth || 320,
+        text:  'signin_with',
+      });
+    }
   }
 
   /* ─── UPLOAD FORM ────────────────────────────────────────────────── */
   function initUploadForm() {
     const user = getUser();
+    const uploadCard = document.querySelector('.upload-card');
+    if (!uploadCard) return;
+
     if (!user || !user.token) {
-      // Replace the upload card content with a sign-in prompt
-      const uploadCard = document.querySelector('.upload-card');
-      if (uploadCard) {
-        uploadCard.innerHTML = `
-          <div style="text-align:center;padding:40px 16px;">
-            <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
-            <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to upload</div>
-            <p style="font-size:0.88rem;color:#94a3b8;margin-bottom:24px;line-height:1.6;">Create a free account to share your sequences with the AFTERGLO community.</p>
-            <a href="signin.html?redirect=platform.html%23upload" class="btn btn-primary" style="display:inline-flex;gap:8px;align-items:center;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-              Sign In to Upload
-            </a>
-          </div>`;
+      // Show auth gate with Google sign-in + email fallback
+      const googleConfigured = GOOGLE_CLIENT_ID && GOOGLE_CLIENT_ID !== 'YOUR_GOOGLE_CLIENT_ID';
+      uploadCard.innerHTML = `
+        <div style="text-align:center;padding:40px 16px;">
+          <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
+          <div style="font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to upload</div>
+          <p style="font-size:0.88rem;color:#94a3b8;margin-bottom:24px;line-height:1.6;">Create a free account to share your sequences<br>with the AFTERGLO community.</p>
+          ${googleConfigured ? `
+          <div id="upload-google-btn" style="margin:0 auto 16px;max-width:280px;"></div>
+          <div style="display:flex;align-items:center;gap:10px;margin:0 auto 16px;max-width:280px;color:#444;font-size:0.8rem;">
+            <span style="flex:1;height:1px;background:#2a2a2a;"></span>or<span style="flex:1;height:1px;background:#2a2a2a;"></span>
+          </div>` : ''}
+          <a href="signin.html?redirect=platform.html%23upload" class="btn btn-primary" style="display:inline-flex;gap:8px;align-items:center;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Sign In with Email
+          </a>
+        </div>`;
+
+      if (googleConfigured) {
+        // GIS may not be loaded yet — defer until it's ready
+        if (typeof google !== 'undefined') {
+          initGoogleSignIn('upload-google-btn');
+        } else {
+          window.onGoogleLibraryLoad = () => initGoogleSignIn('upload-google-btn');
+        }
       }
       return;
     }
 
-    // Pre-fill creator name
-    if (user.name) {
-      const creatorInput = document.getElementById('creatorName');
-      if (creatorInput && !creatorInput.value) creatorInput.value = user.name;
-    }
+    // Signed in — restore the upload form HTML and pre-fill creator name
+    uploadCard.innerHTML = `
+      <form id="uploadForm">
+        <div id="dropZone" class="drop-zone">
+          <div id="dropContent">
+            <div class="drop-zone-icon">📂</div>
+            <div class="drop-zone-title">Drop your FSEQ file here</div>
+            <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>
+          </div>
+          <input type="file" id="fileInput" accept=".fseq" style="display:none;" />
+        </div>
+        <div class="form-group">
+          <label>Show Name</label>
+          <input type="text" id="showName" placeholder="e.g. Candy Cane Lane 2025" />
+        </div>
+        <div class="form-group">
+          <label>Creator Name</label>
+          <input type="text" id="creatorName" placeholder="Your name or handle" value="${user.name || ''}" />
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="categoryInput" style="width:100%;padding:12px 14px;background:#111;border:1px solid #2a2a2a;border-radius:8px;color:#e2e8f0;font-size:15px;font-family:inherit;">
+            <option value="">Select a category…</option>
+            <option value="christmas">Christmas</option>
+            <option value="halloween">Halloween</option>
+            <option value="fourth">4th of July</option>
+            <option value="valentine">Valentine's Day</option>
+            <option value="patriotic">Patriotic</option>
+            <option value="custom">Custom / Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Song Name <span style="color:#666;font-size:12px;">(optional)</span></label>
+          <input type="text" id="songName" placeholder="e.g. All I Want For Christmas Is You" />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Upload to Community
+        </button>
+        <p class="upload-note">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Share your xLights sequences with the community. Export uncompressed FSEQ v2 from xLights before uploading. Max file size 50 MB.
+        </p>
+      </form>`;
+
+    // Re-attach the file drop/upload event listeners on the fresh form
+    attachUploadListeners();
   }
 
-  document.getElementById('uploadForm').addEventListener('submit', e => {
-    e.preventDefault();
-    if (!isSignedIn()) {
-      window.location.href = 'signin.html?redirect=platform.html%23upload';
-      return;
-    }
-    const name    = document.getElementById('showName').value.trim();
-    const creator = document.getElementById('creatorName').value.trim();
-    const hasFile = fileInput.files && fileInput.files.length > 0;
-    if (!hasFile) {
-      showToast('Please select an .fseq file before uploading', true);
-      return;
-    }
-    if (!name || !creator) {
-      showToast('Please fill in show name and creator name', true);
-      return;
+  function attachUploadListeners() {
+    const dropZone   = document.getElementById('dropZone');
+    const fileInput  = document.getElementById('fileInput');
+    const dropContent = document.getElementById('dropContent');
+    if (!dropZone || !fileInput) return;
+
+    function handleFileSelect(file) {
+      dropContent.innerHTML = `
+        <div class="drop-zone-icon">✅</div>
+        <div class="drop-zone-title" style="color:#4ade80;">${file.name}</div>
+        <div class="drop-zone-sub">${(file.size / 1048576).toFixed(1)} MB — ready to upload</div>`;
     }
 
-    // Add to user's uploads
-    const user = getUser();
-    if (!user.uploads) user.uploads = [];
-    const category = document.getElementById('categoryInput').value;
-    const song     = document.getElementById('songName').value.trim();
-    user.uploads.push({
-      id:       Date.now(),
-      name:     name,
-      creator:  creator,
-      category: category,
-      song:     song,
-      gradient: 'linear-gradient(135deg, #1a1a1a, #333)',
-      uploadedAt: Date.now()
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) { fileInput._file = file; handleFileSelect(file); }
     });
-    saveUser(user);
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) handleFileSelect(fileInput.files[0]);
+    });
 
-    showToast(`"${name}" uploaded successfully! Under review.`);
-    document.getElementById('uploadForm').reset();
-    fileInput.value = '';
-    dropContent.innerHTML = `
-      <div class="drop-zone-icon">📂</div>
-      <div class="drop-zone-title">Drop your FSEQ file here</div>
-      <div class="drop-zone-sub">or <span onclick="document.getElementById('fileInput').click()">browse to upload</span></div>`;
-    if (user.name) document.getElementById('creatorName').value = user.name;
-  });
+    document.getElementById('uploadForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const user = getUser();
+      if (!user || !user.token) { initUploadForm(); return; }
+      const name    = document.getElementById('showName').value.trim();
+      const creator = document.getElementById('creatorName').value.trim();
+      const hasFile = (fileInput.files && fileInput.files.length > 0) || fileInput._file;
+      if (!hasFile)        { showToast('Please select an .fseq file before uploading', true); return; }
+      if (!name || !creator) { showToast('Please fill in show name and creator name', true); return; }
+
+      if (!user.uploads) user.uploads = [];
+      user.uploads.push({
+        id:         Date.now(),
+        name,
+        creator,
+        category:   document.getElementById('categoryInput').value,
+        song:       document.getElementById('songName').value.trim(),
+        gradient:   'linear-gradient(135deg, #1a1a1a, #333)',
+        uploadedAt: Date.now()
+      });
+      saveUser(user);
+      showToast(`"${name}" uploaded successfully! Under review.`);
+      initUploadForm(); // re-render the fresh form
+    });
+  }
+
+  // Upload form submit + drag-drop handlers are set up by attachUploadListeners()
+  // which is called inside initUploadForm() whenever the signed-in form is rendered.
 
   /* ─── TOAST ──────────────────────────────────────────────────────── */
   let toastTimer;
