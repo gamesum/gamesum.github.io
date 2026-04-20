@@ -718,13 +718,17 @@
     // Mock auth — check if an account was created in this browser
     const existing = getUser();
     if (existing && existing.email.toLowerCase() === email.toLowerCase()) {
-      // Returning user
+      // Returning user — refresh token, preserve all library data
       existing.token = 'mock_' + Date.now();
       saveUser(existing);
       showToast('Welcome back, ' + (existing.name || 'there') + '!');
       setTimeout(() => window.location.href = getRedirectUrl(), 1200);
+    } else if (existing && existing.email.toLowerCase() !== email.toLowerCase()) {
+      // A different account exists locally — warn instead of silently overwriting
+      showErr('siGlobalErr', 'An account for ' + existing.email + ' is saved in this browser. Sign out of that account first, or use the same email address.');
+      document.getElementById('siEmail').classList.add('error');
     } else {
-      // Create a new mock session for any email/password
+      // No existing account — create a new mock session
       const user = {
         name:      email.split('@')[0],
         email:     email,
