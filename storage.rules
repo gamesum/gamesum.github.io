@@ -1,10 +1,12 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Published FSEQ files are publicly readable (CDN)
-    match /sequences/{filename} {
-      allow read: if true;
-      allow write: if false; // Only via signed URLs from Cloud Functions
+    match /sequences/{file} {
+      allow read: if false;
+      allow write: if false;
+    }
+    match /{allPaths=**} {
+      allow read, write: if false;
     }
   }
 }
