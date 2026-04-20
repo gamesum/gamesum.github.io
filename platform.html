@@ -1130,6 +1130,36 @@
       margin-bottom: 8px;
     }
 
+    /* ─── SKELETON LOADING CARDS ─────────────────────────────────────── */
+    @keyframes shimmer {
+      0%   { background-position: -800px 0; }
+      100% { background-position: 800px 0; }
+    }
+    .skeleton-card {
+      flex: 0 0 280px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .skeleton-thumb {
+      height: 160px;
+      background: linear-gradient(90deg, var(--bg3) 25%, var(--bg4) 50%, var(--bg3) 75%);
+      background-size: 800px 160px;
+      animation: shimmer 1.5s infinite;
+    }
+    .skeleton-body { padding: 16px 18px; }
+    .skeleton-line {
+      border-radius: 4px;
+      background: linear-gradient(90deg, var(--bg3) 25%, var(--bg4) 50%, var(--bg3) 75%);
+      background-size: 800px 20px;
+      animation: shimmer 1.5s infinite;
+      margin-bottom: 8px;
+    }
+    .skeleton-line.title { height: 18px; width: 75%; }
+    .skeleton-line.meta  { height: 13px; width: 50%; }
+    .skeleton-line.btn   { height: 36px; width: 100%; margin-top: 14px; border-radius: 7px; }
+
     /* ─── EMAIL CAPTURE MODAL ─────────────────────────────────────────── */
     /* Change 1: Soft email gate before first free download */
     .capture-overlay {
@@ -2228,6 +2258,23 @@
     return card;
   }
 
+  /* ─── SKELETON CARDS (shown on first load) ───────────────────────── */
+  function createSkeletonCard() {
+    const card = document.createElement('div');
+    card.className = 'skeleton-card';
+    card.innerHTML = `
+      <div class="skeleton-thumb"></div>
+      <div class="skeleton-body">
+        <div class="skeleton-line title"></div>
+        <div class="skeleton-line meta"></div>
+        <div class="skeleton-line btn"></div>
+      </div>
+    `;
+    return card;
+  }
+
+  let firstRender = true;
+
   /* ─── RENDER ─────────────────────────────────────────────────────── */
   function render() {
     const row     = document.getElementById('seqRow');
@@ -2252,6 +2299,22 @@
       return matchFilter && matchSearch;
     });
 
+    // Show skeleton cards on very first render for a polished loading feel
+    if (firstRender) {
+      firstRender = false;
+      wrap.style.display = '';
+      grid.style.display = 'none';
+      row.innerHTML = '';
+      for (let i = 0; i < 6; i++) row.appendChild(createSkeletonCard());
+      // Replace with real cards after a brief moment
+      setTimeout(() => _renderReal(row, grid, wrap, noRes, isFiltered, filtered), 350);
+      return;
+    }
+
+    _renderReal(row, grid, wrap, noRes, isFiltered, filtered);
+  }
+
+  function _renderReal(row, grid, wrap, noRes, isFiltered, filtered) {
     row.innerHTML  = '';
     grid.innerHTML = '';
 
@@ -2268,7 +2331,7 @@
       wrap.style.display = '';
       grid.style.display = 'none';
       noRes.classList.remove('show');
-      // Change 2: insert inline pack card at position 3 (after 3 sequence cards)
+      // Insert inline pack card at position 3 (after 3 sequence cards)
       const INSERT_PACK_AT = 3;
       sequences.forEach((s, i) => {
         if (i === INSERT_PACK_AT) row.appendChild(createInlinePackCard());
@@ -2469,7 +2532,9 @@
       return;
     }
 
-    const btn = document.querySelector(`[data-buy-id="${sequenceId}"]`);
+    // Find by data-buy-id (pack cards) OR data-seqid (sequence cards)
+    const btn = document.querySelector(`[data-buy-id="${sequenceId}"]`)
+             || document.querySelector(`[data-seqid="${sequenceId}"].btn-card-paid`);
     if (btn) { btn.textContent = 'Redirecting…'; btn.disabled = true; }
 
     try {

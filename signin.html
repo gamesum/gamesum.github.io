@@ -214,6 +214,18 @@
       text-align: center;
       margin-bottom: 32px;
     }
+    .auth-logo-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 56px; height: 56px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(200,146,30,0.15), rgba(200,146,30,0.05));
+      border: 1px solid rgba(200,146,30,0.25);
+      margin-bottom: 16px;
+      font-size: 1.6rem;
+      box-shadow: 0 4px 24px rgba(200,146,30,0.15);
+    }
     .auth-logo-text {
       font-family: 'Outfit', sans-serif;
       font-size: 2rem;
@@ -237,7 +249,17 @@
       border: 1px solid var(--border2);
       border-radius: 16px;
       padding: 36px 32px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,146,30,0.06);
+      position: relative;
+    }
+    /* Subtle top highlight line */
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 10%; right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,146,30,0.4), transparent);
+      border-radius: 50%;
     }
 
     /* ─── TABS ────────────────────────────────────────────────────── */
@@ -514,7 +536,10 @@
   <div class="auth-wrap">
     <!-- Logo -->
     <div class="auth-logo">
-      <div class="auth-logo-text">AFTER<span>GLO</span></div>
+      <a href="index.html" style="display:inline-block;">
+        <div class="auth-logo-icon">✦</div>
+        <div class="auth-logo-text">AFTER<span>GLO</span></div>
+      </a>
       <div class="auth-logo-sub">Light Show Platform</div>
     </div>
 
