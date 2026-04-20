@@ -882,23 +882,23 @@
 
   /* ─── INIT ─────────────────────────────────────────────────────── */
   async function init(firebaseUser) {
-    // Wait for firebase-auth.js to sync the user into localStorage (it's async)
-    // by giving it up to 2s to finish, then fall back to building from firebaseUser
-    currentUser = getUser();
-    if (!currentUser && firebaseUser) {
-      // localStorage not yet populated — build a minimal user from Firebase
-      const token = await firebaseUser.getIdToken();
+    if (firebaseUser) {
+      // Always build from Firebase — localStorage may be stale or missing token
+      const token = await firebaseUser.getIdToken(true);
+      const stored = getUser() || {};
       currentUser = {
-        name:      firebaseUser.displayName || firebaseUser.email.split('@')[0],
+        name:      firebaseUser.displayName || stored.name || firebaseUser.email.split('@')[0],
         email:     firebaseUser.email,
-        picture:   firebaseUser.photoURL || '',
+        picture:   firebaseUser.photoURL || stored.picture || '',
         uid:       firebaseUser.uid,
         token,
-        library:   [],
-        purchases: [],
-        uploads:   [],
+        library:   stored.library   || [],
+        purchases: stored.purchases || [],
+        uploads:   stored.uploads   || [],
       };
       saveUser(currentUser);
+    } else {
+      currentUser = getUser();
     }
 
     // Handle purchase redirect from Stripe
