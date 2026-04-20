@@ -519,8 +519,8 @@
         <li><a href="arches.html">Light Shows</a></li>
         <li><a href="index.html#gallery">Gallery</a></li>
         <li><a href="index.html#testimonials">Reviews</a></li>
-        <li><a href="platform.html" style="color:var(--accent);">Platform</a></li>
-        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
+        <li><a href="platform.html" style="color:var(--accent);">Light Show Store</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
       <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
@@ -534,7 +534,7 @@
     <a href="arches.html" onclick="closeMenu()">Light Shows</a>
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
     <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
-    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Platform</a>
+    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Light Show Store</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
     <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
   </div>
@@ -554,6 +554,7 @@
         <div class="auth-logo-text">AFTER<span>GLO</span></div>
       </a>
       <div class="auth-logo-sub">Light Show Platform</div>
+      <div style="font-size:0.82rem;color:#555;margin-top:8px;max-width:300px;margin-left:auto;margin-right:auto;line-height:1.6;">Create a free account to save your favorite light shows and access them anytime — like a playlist for your roofline.</div>
     </div>
 
     <!-- Card -->
@@ -584,7 +585,7 @@
             <input type="checkbox" id="siRemember" />
             <span>Remember me</span>
           </label>
-          <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">Forgot password?</a>
+          <a href="#" class="forgot-link" onclick="handleForgotPassword(event)" title="Enter your email address above first, then click here">Forgot password?</a>
         </div>
 
         <div class="form-error" id="siGlobalErr" style="margin-bottom:16px; text-align:center;"></div>
@@ -618,7 +619,7 @@
 
         <div class="form-group">
           <label for="caPassword">Password</label>
-          <input type="password" id="caPassword" placeholder="Create a password" autocomplete="new-password" oninput="checkStrength(this.value)" />
+          <input type="password" id="caPassword" placeholder="At least 8 characters" autocomplete="new-password" oninput="checkStrength(this.value)" />
           <div class="pw-strength-bar">
             <span id="pb1"></span>
             <span id="pb2"></span>
@@ -637,7 +638,7 @@
 
         <div class="terms-wrap" style="margin-bottom:22px;">
           <input type="checkbox" id="caTerms" />
-          <span>I agree to the <a href="mailto:info@afterglolighting.org">Terms of Service</a> and <a href="mailto:info@afterglolighting.org">Privacy Policy</a></span>
+          <span>I agree to the <a href="mailto:info@afterglolighting.org" title="Email us to request a copy of our Terms of Service">Terms of Service</a> and <a href="mailto:info@afterglolighting.org" title="Email us to request our Privacy Policy">Privacy Policy</a></span>
         </div>
         <div class="form-error" id="caTermsErr" style="margin-top:-16px; margin-bottom:16px;">You must agree to the Terms of Service.</div>
 
@@ -645,8 +646,9 @@
 
         <button type="submit" class="btn btn-primary btn-full">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
-          Create Account
+          Create Free Account
         </button>
+        <p style="text-align:center;font-size:0.78rem;color:#555;margin-top:10px;">No credit card required &bull; Free to join</p>
 
         <div class="divider">or</div>
 
@@ -903,7 +905,7 @@
     e.preventDefault();
     const email = document.getElementById('siEmail')?.value?.trim();
     if (!email || !isValidEmail(email)) {
-      showToast('Enter your email above first, then click Forgot Password.', true);
+      showToast('First type your email address in the box above, then tap Forgot password? and we will email you a reset link.', true);
       return;
     }
     const result = await sendPasswordReset(email);

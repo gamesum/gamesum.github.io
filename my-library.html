@@ -729,7 +729,8 @@
     <div class="modal-input-wrap">
       <label for="controllerIP">Controller Address</label>
       <input type="text" id="controllerIP" class="modal-input" placeholder="e.g. 192.168.1.105" autocomplete="off" inputmode="decimal" />
-      <div class="modal-hint">This is your AFTERGLO controller's local address on your home Wi-Fi. Find it on the controller's built-in screen, or look for "AFTERGLO" in your router's connected device list.</div>
+      <div class="modal-hint">Not sure what this is? <button onclick="var h=document.getElementById('ipHelp');h.style.display=h.style.display==='none'?'block':'none'" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;padding:0;text-decoration:underline;">Tap here for step-by-step help</button></div>
+      <div id="ipHelp" style="display:none;margin-top:10px;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;font-size:0.8rem;color:var(--muted);line-height:1.7;"><strong style="color:var(--silver);">Option 1 — Check your controller's screen:</strong> When your AFTERGLO controller starts up, a number like 192.168.1.105 appears on its screen. Type that number here.<br><br><strong style="color:var(--silver);">Option 2 — Check your router:</strong> Type 192.168.1.1 into your browser address bar. Look for a page with a list of connected devices and find "AFTERGLO."<br><br><strong style="color:var(--silver);">Can't find it?</strong> Use the "Download Show File" button instead — then drag that file onto your controller's web page.</div>
     </div>
 
     <div style="font-size:0.78rem;color:var(--muted);margin-bottom:16px;line-height:1.6;">💡 <strong style="color:var(--silver);">Tip:</strong> Make sure your phone or computer is connected to your home Wi-Fi (not mobile data) before sending.</div>
@@ -1006,11 +1007,11 @@
     const actionsBtns = type === 'upload'
       ? `<button class="btn-lib btn-lib-dl" onclick="downloadFseq('${escapedId}')">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-           Download File
+           Download Show File
          </button>`
       : `<button class="btn-lib btn-lib-dl" onclick="downloadFseq('${escapedId}')">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-           Download File
+           Download Show File
          </button>
          <button class="btn-lib btn-lib-send" onclick="openSendModal('${escapedId}','${escapedName}')">
            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
