@@ -11,6 +11,12 @@ const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
 
 const SITE_URL = "https://afterglolighting.github.io";
 
+// ─── Validation helper ────────────────────────────────────────────────────────
+// FIX 1: prevents path-traversal / injection via sequenceId
+function isValidId(id: string): boolean {
+  return typeof id === "string" && /^[a-zA-Z0-9_-]{1,128}$/.test(id);
+}
+
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface PurchaseRecord {
@@ -30,8 +36,9 @@ interface PurchaseManifestItem {
 }
 
 // ─── GET /purchases ───────────────────────────────────────────────────────────
-// Called by firmware: GET https://api.afterglolighting.org/purchases?token={uid}
-// Returns the list of purchased sequence IDs for that user account.
+// Called by firmware: GET https://api.afterglolighting.org/purchases
+// Accepts Firebase ID token in Authorization: Bearer header OR ?token= query param.
+// FIX 3: token is now verified as a Firebase ID token, not used raw as a UID.
 export const purchases = functions.https.onRequest(async (req, res) => {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
@@ -47,17 +54,29 @@ export const purchases = functions.https.onRequest(async (req, res) => {
     return;
   }
 
-  const token = req.query.token as string;
-  if (!token || token.trim().length === 0) {
-    res.status(400).json({ error: "Missing token parameter" });
+  // FIX 3: accept Bearer header or ?token= as a real Firebase ID token
+  const rawToken = (req.headers.authorization?.startsWith("Bearer ")
+    ? req.headers.authorization.slice(7)
+    : req.query.token as string) ?? "";
+
+  if (!rawToken) {
+    res.status(400).json({ error: "Missing token" });
+    return;
+  }
+
+  let uid: string;
+  try {
+    const decoded = await admin.auth().verifyIdToken(rawToken);
+    uid = decoded.uid;
+  } catch {
+    res.status(401).json({ error: "Invalid token" });
     return;
   }
 
   try {
-    // token == Firebase UID (Google sub)
     const snap = await db
       .collection("purchases")
-      .where("userId", "==", token)
+      .where("userId", "==", uid)
       .get();
 
     const purchaseList: PurchaseManifestItem[] = snap.docs.map((doc) => {
@@ -109,6 +128,11 @@ export const recordPurchase = functions
     res.status(400).json({ error: "Missing sequenceId or stripeSessionId" }); return;
   }
 
+  // FIX 1: validate sequenceId
+  if (!isValidId(sequenceId)) {
+    res.status(400).json({ error: "Invalid sequenceId" }); return;
+  }
+
   try {
     // Verify payment actually happened with Stripe
     const stripe = new Stripe(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
@@ -121,34 +145,40 @@ export const recordPurchase = functions
       res.status(403).json({ error: "Session mismatch" }); return;
     }
 
-    // Idempotent
-    const existing = await db.collection("purchases")
-      .where("userId", "==", uid).where("sequenceId", "==", sequenceId).limit(1).get();
-    if (!existing.empty) { res.status(200).json({ status: "already_owned" }); return; }
-
     const meta = session.metadata!;
     const priceNum = parseFloat(meta.price ?? "0");
+
+    // FIX 6: price validation
+    if (typeof priceNum !== "number" || !isFinite(priceNum) || priceNum < 0 || priceNum > 999) {
+      res.status(400).json({ error: "Invalid price" }); return;
+    }
 
     // Look up creatorUid from sequences collection (key by UID, not display name)
     const seqDoc = await db.collection("sequences").doc(sequenceId).get();
     const creatorUid = seqDoc.exists ? (seqDoc.data()?.creatorUid ?? meta.creator) : meta.creator;
 
-    await db.collection("purchases").add({
-      userId: uid,
-      sequenceId,
-      sequenceName: meta.sequenceName,
-      creator: meta.creator ?? "Unknown",
-      price: priceNum,
-      purchasedAt: admin.firestore.Timestamp.now(),
-      stripeSessionId,
-    });
+    // FIX 2: deterministic doc ID for idempotency + atomic transaction
+    const purchaseDocRef = db.collection("purchases").doc(`${uid}_${sequenceId}`);
+    await db.runTransaction(async (tx) => {
+      const existing = await tx.get(purchaseDocRef);
+      if (existing.exists) return; // already recorded
 
-    // Creator earnings keyed by UID, not display name
-    const creatorShare = Math.round(priceNum * 0.7 * 100) / 100;
-    await db.collection("creator_earnings").doc(creatorUid).set(
-      { totalEarnings: admin.firestore.FieldValue.increment(creatorShare) },
-      { merge: true }
-    );
+      tx.set(purchaseDocRef, {
+        userId: uid,
+        sequenceId,
+        sequenceName: meta.sequenceName,
+        creator: meta.creator ?? "Unknown",
+        price: priceNum,
+        purchasedAt: admin.firestore.Timestamp.now(),
+        stripeSessionId,
+      });
+
+      const creatorEarningsRef = db.collection("creator_earnings").doc(creatorUid);
+      tx.set(creatorEarningsRef,
+        { totalEarnings: admin.firestore.FieldValue.increment(Math.round(priceNum * 0.7 * 100) / 100) },
+        { merge: true }
+      );
+    });
 
     functions.logger.info(`Purchase recorded: ${uid} → ${sequenceId}`);
     res.status(201).json({ status: "recorded" });
@@ -208,6 +238,11 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
   if (!sequenceId || !name) {
     res.status(400).json({ error: "Missing required fields" });
     return;
+  }
+
+  // FIX 1: validate sequenceId
+  if (!isValidId(sequenceId)) {
+    res.status(400).json({ error: "Invalid sequenceId" }); return;
   }
 
   try {
@@ -310,6 +345,16 @@ export const createCheckout = functions
     res.status(400).json({ error: "Missing required fields" }); return;
   }
 
+  // FIX 1: validate sequenceId
+  if (!isValidId(sequenceId)) {
+    res.status(400).json({ error: "Invalid sequenceId" }); return;
+  }
+
+  // FIX 6: price validation
+  if (typeof price !== "number" || !isFinite(price) || price < 0 || price > 999) {
+    res.status(400).json({ error: "Invalid price" }); return;
+  }
+
   const existingSnap = await db.collection("purchases")
     .where("userId", "==", uid)
     .where("sequenceId", "==", sequenceId)
@@ -367,6 +412,14 @@ export const stripeWebhook = functions
 
   if (event.type === "checkout.session.completed") {
     const session = event.data.object as Stripe.Checkout.Session;
+
+    // FIX 4: only process fully paid sessions
+    if (session.payment_status !== "paid") {
+      functions.logger.info(`Webhook: session ${session.id} not yet paid (${session.payment_status}), skipping`);
+      res.status(200).send("OK");
+      return;
+    }
+
     const meta = session.metadata ?? {};
     const { userId, sequenceId, sequenceName, creator, price } = meta;
 
@@ -376,36 +429,38 @@ export const stripeWebhook = functions
       return;
     }
 
-    // Idempotent: skip if already recorded
-    const existing = await db.collection("purchases")
-      .where("userId", "==", userId)
-      .where("sequenceId", "==", sequenceId)
-      .limit(1).get();
+    const priceNum = parseFloat(price ?? "0");
 
-    if (existing.empty) {
-      const priceNum = parseFloat(price ?? "0");
-      await db.collection("purchases").add({
+    // Look up creatorUid by UID so renames don't lose earnings
+    const seqSnap = await db.collection("sequences").doc(sequenceId).get();
+    const creatorUid = seqSnap.exists ? (seqSnap.data()?.creatorUid ?? creator) : creator;
+
+    // FIX 2: deterministic doc ID + atomic transaction for idempotency
+    const purchaseDocRef = db.collection("purchases").doc(`${userId}_${sequenceId}`);
+    await db.runTransaction(async (tx) => {
+      const existing = await tx.get(purchaseDocRef);
+      if (existing.exists) return; // already recorded
+
+      tx.set(purchaseDocRef, {
         userId,
         sequenceId,
         sequenceName,
-        creator:          creator ?? "Unknown",
-        price:            priceNum,
-        purchasedAt:      admin.firestore.Timestamp.now(),
-        stripeSessionId:  session.id,
+        creator:         creator ?? "Unknown",
+        price:           priceNum,
+        purchasedAt:     admin.firestore.Timestamp.now(),
+        stripeSessionId: session.id,
       });
 
-      // Creator earnings keyed by creatorUid (not display name) so renames don't lose earnings
-      const seqSnap = await db.collection("sequences").doc(sequenceId).get();
-      const creatorUid = seqSnap.exists ? (seqSnap.data()?.creatorUid ?? creator) : creator;
       if (creatorUid) {
-        await db.collection("creator_earnings").doc(creatorUid).set(
+        const creatorEarningsRef = db.collection("creator_earnings").doc(creatorUid);
+        tx.set(creatorEarningsRef,
           { totalEarnings: admin.firestore.FieldValue.increment(Math.round(priceNum * 0.7 * 100) / 100) },
           { merge: true }
         );
       }
+    });
 
-      functions.logger.info(`Purchase recorded via webhook: ${userId} → ${sequenceId}`);
-    }
+    functions.logger.info(`Purchase recorded via webhook: ${userId} → ${sequenceId}`);
   }
 
   res.status(200).send("OK");
@@ -450,6 +505,11 @@ export const getDownloadUrl = functions.https.onRequest(async (req, res) => {
   if (!sequenceId || sequenceId.trim().length === 0) {
     res.status(400).json({ error: "Missing sequenceId parameter" });
     return;
+  }
+
+  // FIX 1: validate sequenceId
+  if (!isValidId(sequenceId)) {
+    res.status(400).json({ error: "Invalid sequenceId" }); return;
   }
 
   try {
@@ -542,6 +602,11 @@ export const confirmUpload = functions.https.onRequest(async (req, res) => {
     return;
   }
 
+  // FIX 1: validate sequenceId
+  if (!isValidId(sequenceId)) {
+    res.status(400).json({ error: "Invalid sequenceId" }); return;
+  }
+
   try {
     const seqRef = db.collection("sequences").doc(sequenceId);
     const seqDoc = await seqRef.get();
@@ -563,6 +628,13 @@ export const confirmUpload = functions.https.onRequest(async (req, res) => {
       // Already published or in another state — treat as idempotent success
       res.status(200).json({ status: seqData.status ?? "published" });
       return;
+    }
+
+    // FIX 5: verify the file actually exists in Storage before publishing
+    const bucket = admin.storage().bucket();
+    const [exists] = await bucket.file(`sequences/${sequenceId}.fseq`).exists();
+    if (!exists) {
+      res.status(400).json({ error: "File not yet uploaded" }); return;
     }
 
     await seqRef.update({ status: "published" });
