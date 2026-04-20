@@ -4,7 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AFTERGLO Platform — Light Show Marketplace</title>
-  <meta name="description" content="Browse, download, and share FSEQ light show sequences for your AFTERGLO permanent LED system. Free community shows and premium packs from top creators." />
+  <meta name="description" content="Browse, download, and share light show sequences for your AFTERGLO permanent LED system. Free community shows and premium packs from professional animators." />
+  <meta property="og:title" content="AFTERGLO Platform — Light Show Marketplace" />
+  <meta property="og:description" content="Your AFTERGLO roofline lights can run any show you download here. Free community shows, premium packs, and creator uploads." />
+  <meta property="og:image" content="https://afterglolighting.org/afterglo-logo-flat.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://afterglolighting.org/platform.html" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://afterglolighting.org/afterglo-logo-flat.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -332,6 +339,17 @@
       z-index: 100;
     }
 
+    .filter-bar-wrap {
+      position: relative;
+    }
+    .filter-bar-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0; right: 0; bottom: 0;
+      width: 48px;
+      background: linear-gradient(to right, transparent, var(--bg));
+      pointer-events: none;
+    }
     .filter-bar {
       display: flex;
       align-items: center;
@@ -541,7 +559,7 @@
       margin-bottom: 14px;
     }
     .card-creator { color: var(--accent); font-weight: 500; }
-    .card-dot { color: var(--border2); }
+    .card-dot { color: #555; }
     .card-channels {
       display: inline-flex;
       align-items: center;
@@ -1083,6 +1101,7 @@
         <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
       </ul>
 
+      <a href="mailto:info@afterglolighting.org?subject=Platform Account" class="btn btn-ghost nav-cta" style="margin-right:8px;">Sign In</a>
       <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
 
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -1120,16 +1139,16 @@
     </div>
     <div class="hero-stats">
       <div class="hero-stat">
-        <div class="hero-stat-num">2,400<span>+</span></div>
-        <div class="hero-stat-label">Total Downloads</div>
+        <div class="hero-stat-num">Free</div>
+        <div class="hero-stat-label">Community Shows</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num">140<span>+</span></div>
-        <div class="hero-stat-label">Sequences</div>
+        <div class="hero-stat-num">6</div>
+        <div class="hero-stat-label">Categories</div>
       </div>
       <div class="hero-stat">
-        <div class="hero-stat-num">58<span>+</span></div>
-        <div class="hero-stat-label">Creators</div>
+        <div class="hero-stat-num">New</div>
+        <div class="hero-stat-label">Shows Weekly</div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-num">6</div>
@@ -1142,6 +1161,7 @@
 <!-- ─── FILTER BAR ─────────────────────────────────────────────────── -->
 <div id="filters">
   <div class="container">
+    <div class="filter-bar-wrap">
     <div class="filter-bar">
       <div class="search-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -1159,6 +1179,7 @@
         <button class="filter-tab" data-filter="valentine">Valentine's</button>
       </div>
     </div>
+    </div><!-- /filter-bar-wrap -->
   </div>
 </div>
 
@@ -1220,7 +1241,7 @@
         <div class="cat-label">Patriotic</div>
         <div class="cat-count">15 sequences</div>
       </div>
-      <div class="cat-card fade-in fade-delay-4" data-cat="custom" onclick="filterByCategory('all')">
+      <div class="cat-card fade-in fade-delay-4" data-cat="custom" onclick="filterByCategory('custom')">
         <span class="cat-icon">✨</span>
         <div class="cat-label">Custom</div>
         <div class="cat-count">33+ sequences</div>
@@ -1265,7 +1286,19 @@
           </div>
           <div class="form-group">
             <label>Category</label>
-            <input type="text" id="categoryInput" placeholder="Christmas, Halloween, Patriotic…" />
+            <select id="categoryInput" style="width:100%;padding:12px 14px;background:#111;border:1px solid #2a2a2a;border-radius:8px;color:#e2e8f0;font-size:15px;font-family:inherit;">
+              <option value="">Select a category…</option>
+              <option value="christmas">Christmas</option>
+              <option value="halloween">Halloween</option>
+              <option value="fourth">4th of July</option>
+              <option value="valentine">Valentine's Day</option>
+              <option value="patriotic">Patriotic</option>
+              <option value="custom">Custom / Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Song Name <span style="color:#666;font-size:12px;">(optional)</span></label>
+            <input type="text" id="songName" placeholder="e.g. All I Want For Christmas Is You" />
           </div>
           <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1326,7 +1359,7 @@
               <div class="pack-price"><sup>$</sup>29</div>
               <div class="pack-price-sub">one-time purchase</div>
             </div>
-            <button class="btn btn-primary" onclick="handleBuy('Holiday Mega Pack', 29)">Buy Now</button>
+            <button class="btn btn-primary" onclick="handleBuy(event,'Holiday Mega Pack',29)">Buy Now</button>
           </div>
         </div>
       </div>
@@ -1364,7 +1397,7 @@
               <div class="pack-price"><sup>$</sup>19</div>
               <div class="pack-price-sub">one-time purchase</div>
             </div>
-            <button class="btn btn-primary" onclick="handleBuy('Patriotic Bundle', 19)">Buy Now</button>
+            <button class="btn btn-primary" onclick="handleBuy(event,'Patriotic Bundle',19)">Buy Now</button>
           </div>
         </div>
       </div>
@@ -1402,12 +1435,23 @@
               <div class="pack-price"><sup>$</sup>24</div>
               <div class="pack-price-sub">one-time purchase</div>
             </div>
-            <button class="btn btn-primary" onclick="handleBuy('Halloween Pack', 24)">Buy Now</button>
+            <button class="btn btn-primary" onclick="handleBuy(event,'Halloween Pack',24)">Buy Now</button>
           </div>
         </div>
       </div>
 
     </div><!-- /premium-grid -->
+  </div>
+</section>
+
+<!-- ─── INSTALL CTA STRIP ──────────────────────────────────────────────── -->
+<section style="background:linear-gradient(135deg,#0e0e0e,#1a1200);border-top:1px solid #2a2a2a;border-bottom:1px solid #2a2a2a;padding:40px 0;">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:24px;">
+    <div>
+      <div style="font-family:'Outfit',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-bottom:6px;">Don't have AFTERGLO installed yet?</div>
+      <div style="color:#94a3b8;font-size:15px;">These shows run on your roofline lights. Get a free quote and be ready for next season.</div>
+    </div>
+    <a href="index.html#cta" class="btn btn-primary" style="white-space:nowrap;">Get a Free Quote →</a>
   </div>
 </section>
 
@@ -1485,11 +1529,11 @@
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 AFTERGLO. All rights reserved. Utah Contractor Lic. #12345678.</p>
+      <p>&copy; 2025 AFTERGLO. All rights reserved. Licensed &amp; Insured in Utah.</p>
       <div style="display:flex; gap:20px;">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
-        <a href="#">Creator Agreement</a>
+        <a href="mailto:info@afterglolighting.org">Privacy</a>
+        <a href="mailto:info@afterglolighting.org">Terms</a>
+        <a href="mailto:info@afterglolighting.org">Creator Agreement</a>
       </div>
     </div>
   </div>
@@ -1680,7 +1724,7 @@
         <div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow} 0%,transparent 70%);"></div>
         <span class="card-badge ${seq.free ? 'badge-free' : 'badge-paid'}">${seq.free ? 'Free' : 'Premium'}</span>
         <span class="card-duration">${seq.duration}</span>
-        <div class="card-play">
+        <div class="card-play" onclick="event.stopPropagation(); showToast('Preview coming soon — visit afterglolighting.org to see show demos');">
           <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
       </div>
@@ -1834,6 +1878,7 @@
     }
     showToast(`"${name}" uploaded successfully! Under review.`);
     document.getElementById('uploadForm').reset();
+    fileInput.value = '';
     dropContent.innerHTML = `
       <div class="drop-zone-icon">📂</div>
       <div class="drop-zone-title">Drop your FSEQ file here</div>
@@ -1892,6 +1937,11 @@
     const spans = hamburger.querySelectorAll('span');
     spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
   }
+
+  // Close mobile menu when tapping outside
+  document.addEventListener('click', e => {
+    if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+  });
 
   /* ─── SCROLL ANIMATIONS ──────────────────────────────────────────── */
   const obs = new IntersectionObserver(entries => {
