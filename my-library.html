@@ -1240,14 +1240,14 @@
   }
 
   /* ─── RUN ──────────────────────────────────────────────────────── */
-  window.addEventListener('DOMContentLoaded', async () => {
-    await new Promise(resolve => setTimeout(resolve, 500)); // wait for Firebase auth
-    const user = getUser();
-    if (!user || !user.uid) {
-      window.location.replace('signin.html?redirect=my-library.html');
-      return;
-    }
-    init();
+  window.addEventListener('DOMContentLoaded', () => {
+    firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+      if (!firebaseUser) {
+        window.location.replace('signin.html?redirect=my-library.html');
+        return;
+      }
+      init();
+    });
   });
 </script>
 </body>
