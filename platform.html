@@ -2473,34 +2473,30 @@
   }
 
   /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
-  function updateNavAuth() {
+  function updateNavAuth(fbUser) {
     const navArea = document.getElementById('navAuthArea');
     const mobArea = document.getElementById('mobileAuthArea');
 
-    // Firebase is the source of truth — don't trust localStorage alone
-    const fbUser = (typeof firebase !== 'undefined') ? firebase.auth().currentUser : null;
-    const user   = fbUser ? getUser() : null;
-
-    if (fbUser && user) {
-      const initial = (user.name || user.email || fbUser.email || 'U')[0].toUpperCase();
-      const displayName = esc(user.name || fbUser.displayName || user.email || fbUser.email);
+    if (fbUser) {
+      const stored = getUser();
+      const name  = (stored && stored.name) || fbUser.displayName || fbUser.email || '';
+      const email = (stored && stored.email) || fbUser.email || '';
+      const initial = (name || email || 'U')[0].toUpperCase();
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
           <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
-          ${displayName}
+          ${esc(name || email)}
         </a>`;
       mobArea.innerHTML = `<a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>`;
     } else {
-      // Clear stale localStorage so it doesn't show signed-in on next load
-      if (!fbUser && getUser()) signOutUser();
       navArea.innerHTML = `<a href="signin.html?redirect=platform.html" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>`;
       mobArea.innerHTML = `<a href="signin.html?redirect=platform.html" style="color:var(--accent);">Sign In / Create Account</a>`;
     }
   }
 
-  // Re-run nav update once Firebase resolves its auth state (async)
+  // Only update nav once Firebase resolves — never call updateNavAuth() before this fires
   if (typeof firebase !== 'undefined') {
-    firebase.auth().onAuthStateChanged(() => updateNavAuth());
+    firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
   }
 
   /* ─── EMAIL CAPTURE MODAL (Change 1) ────────────────────────────────
@@ -2550,7 +2546,7 @@
         isGuest:   true
       };
       saveUser(guestUser);
-      updateNavAuth();
+      updateNavAuth(firebase.auth().currentUser);
     }
     closeCaptureModal();
     if (captureTargetId !== null) {
@@ -2689,8 +2685,7 @@
         updatedAt: Date.now(),
       };
       saveUser(user);
-      // Upload is on upload.html — no inline form to refresh
-      updateNavAuth();
+      updateNavAuth(firebase.auth().currentUser);
       showToast('Signed in as ' + name + '!');
     } catch(err) {
       showToast('Google sign-in failed. Please try again.', true);
@@ -2945,7 +2940,6 @@
 
   /* ─── INIT ───────────────────────────────────────────────────────── */
   render();
-  updateNavAuth();
   // Trigger scrolled state if already scrolled on page load
   if (window.scrollY > 20) navbar.classList.add('scrolled');
 </script>
