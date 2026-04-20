@@ -1445,6 +1445,36 @@
       box-shadow: 0 6px 22px rgba(200,146,30,0.42);
     }
 
+    /* ─── SEQUENCE DETAIL DRAWER ──────────────────────────────────── */
+    .seq-drawer { position:fixed;inset:0;z-index:8000;pointer-events:none; }
+    .seq-drawer.open { pointer-events:all; }
+    .seq-drawer-backdrop { position:absolute;inset:0;background:rgba(0,0,0,0.6);opacity:0;transition:opacity 0.3s; }
+    .seq-drawer.open .seq-drawer-backdrop { opacity:1; }
+    .seq-drawer-panel {
+      position:absolute;top:0;right:0;bottom:0;width:480px;max-width:100vw;
+      background:#111;border-left:1px solid #222;
+      transform:translateX(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);
+      overflow-y:auto;display:flex;flex-direction:column;
+    }
+    .seq-drawer.open .seq-drawer-panel { transform:translateX(0); }
+    .seq-drawer-close {
+      position:sticky;top:0;right:0;align-self:flex-end;margin:16px 16px 0;
+      background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:50%;
+      width:44px;height:44px;font-size:1.1rem;cursor:pointer;z-index:1;
+    }
+    @media(max-width:600px){
+      .seq-drawer-panel { width:100vw; }
+    }
+
+    /* ─── MP3 BADGE ────────────────────────────────────────────────── */
+    .mp3-badge {
+      position:absolute;top:8px;right:8px;
+      background:#c8921e;color:#000;
+      font-size:0.65rem;font-weight:800;
+      padding:3px 8px;border-radius:20px;
+      letter-spacing:0.05em;
+    }
+
     /* ─── RESPONSIVE ───────────────────────────────────────────────── */
     @media (max-width: 900px) {
       .nav-links, .nav-cta { display: none; }
@@ -1537,10 +1567,6 @@
       <div class="hero-stat">
         <div class="hero-stat-num">Free</div>
         <div class="hero-stat-label">Community Shows</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-num">6</div>
-        <div class="hero-stat-label">Categories</div>
       </div>
       <div class="hero-stat">
         <div class="hero-stat-num">New</div>
@@ -2183,12 +2209,15 @@
     const card = document.createElement('div');
     card.className = 'seq-card' + (forRow ? '' : '');
 
+    // Clicking the card opens the detail drawer (buttons stop propagation)
+    card.addEventListener('click', () => openDrawer(seq));
+
     const btnHtml = seq.free
-      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="handleDownload(event,parseInt(this.dataset.seqid))">
+      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="event.stopPropagation();handleDownload(event,parseInt(this.dataset.seqid))">
            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
            Download
          </button>`
-      : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" onclick="handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy $${seq.price.toFixed(2)}</button>`;
+      : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" onclick="event.stopPropagation();handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy $${seq.price.toFixed(2)}</button>`;
 
     const isTrending = seq.downloads >= 450;
     const hotBadge = isTrending
@@ -2197,13 +2226,17 @@
     const starFull = seq.downloads >= 600 ? 5 : seq.downloads >= 350 ? 4 : 3;
     const stars = '\u2605'.repeat(starFull) + '\u2606'.repeat(5 - starFull);
 
+    // MP3 badge — shown when hasMp3 is true (live data from Firestore) or seq.hasMp3 flag set
+    const mp3Badge = seq.hasMp3 ? '<div class="mp3-badge">&#9834; MP3</div>' : '';
+
     // Set data-name after innerHTML to avoid apostrophe breaking onclick string
     card.innerHTML = `
-      <div class="card-thumb" style="background:${seq.gradient};">
-        <div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow} 0%,transparent 70%);"></div>
-        <span class="card-badge ${seq.free ? 'badge-free' : 'badge-paid'}">${seq.free ? 'Free' : 'Premium'}</span>
+      <div class="card-thumb" style="background:${seq.gradient || seq.thumbnailGradient || 'linear-gradient(135deg,#1a1a1a,#333)'};">
+        <div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow || 'rgba(200,146,30,0.2)'} 0%,transparent 70%);"></div>
+        <span class="card-badge ${seq.free || seq.isFree ? 'badge-free' : 'badge-paid'}">${seq.free || seq.isFree ? 'Free' : 'Premium'}</span>
         ${hotBadge}
-        <span class="card-duration">${seq.duration}</span>
+        ${mp3Badge}
+        <span class="card-duration">${seq.duration || (seq.durationSecs ? Math.floor(seq.durationSecs/60)+'m '+((seq.durationSecs%60)+'s') : '')}</span>
         <div class="card-play" onclick="event.stopPropagation(); showToast('Preview coming soon — visit afterglolighting.org to see show demos');">
           <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
@@ -2216,20 +2249,20 @@
           <span class="card-dot">·</span>
           <span class="card-channels">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-            ${seq.channels.toLocaleString()} ch
+            ${(seq.channels || seq.channelCount || 0).toLocaleString()} ch
           </span>
         </div>
         <div class="card-footer">
           <div class="card-downloads">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            ${seq.downloads.toLocaleString()}
+            ${(seq.downloads || seq.downloadCount || 0).toLocaleString()}
           </div>
           ${btnHtml}
         </div>
       </div>
     `;
     // Set data-name via DOM property — safe for apostrophes and special chars
-    if (!seq.free) {
+    if (!seq.free && !seq.isFree) {
       const buyBtn = card.querySelector('.btn-card-paid');
       if (buyBtn) {
         buyBtn.dataset.name  = seq.name;
