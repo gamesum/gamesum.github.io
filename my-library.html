@@ -881,8 +881,25 @@
   }
 
   /* ─── INIT ─────────────────────────────────────────────────────── */
-  async function init() {
+  async function init(firebaseUser) {
+    // Wait for firebase-auth.js to sync the user into localStorage (it's async)
+    // by giving it up to 2s to finish, then fall back to building from firebaseUser
     currentUser = getUser();
+    if (!currentUser && firebaseUser) {
+      // localStorage not yet populated — build a minimal user from Firebase
+      const token = await firebaseUser.getIdToken();
+      currentUser = {
+        name:      firebaseUser.displayName || firebaseUser.email.split('@')[0],
+        email:     firebaseUser.email,
+        picture:   firebaseUser.photoURL || '',
+        uid:       firebaseUser.uid,
+        token,
+        library:   [],
+        purchases: [],
+        uploads:   [],
+      };
+      saveUser(currentUser);
+    }
 
     // Handle purchase redirect from Stripe
     const params = new URLSearchParams(window.location.search);
@@ -1248,7 +1265,7 @@
         window.location.replace('signin.html?redirect=my-library.html');
         return;
       }
-      init();
+      init(firebaseUser);
     });
   });
 </script>
