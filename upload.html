@@ -1630,9 +1630,9 @@
     if (premiumWrap) {
       premiumWrap.addEventListener('click', async (e) => {
         const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
-        if (!fbUser || !fbUser.emailVerified) {
+        if (!fbUser) {
           e.preventDefault();
-          showGateToast('Email verification required. Visit your dashboard to verify.');
+          showGateToast('Please sign in to request Premium upload access.');
           return;
         }
         try {
@@ -1653,15 +1653,15 @@
     const tooltip = document.getElementById('pricePremiumTooltip');
     const creatorHint = document.getElementById('pricePremiumCreatorHint');
     if (!wrap || !radio) return;
-    const emailOk = !!(fbUser && fbUser.emailVerified);
+    const signedIn = !!fbUser;
 
     // Resolve creatorVerified from the ID-token custom claim (authoritative for
     // uploadSequence). Default to false until we read the token asynchronously.
     const applyWithCreator = (creatorVerified) => {
-      if (!emailOk) {
+      if (!signedIn) {
         wrap.classList.add('gated');
         radio.disabled = true; radio.checked = false;
-        if (badge)   { badge.style.display = '';   badge.textContent = 'Verify email'; }
+        if (badge)   { badge.style.display = '';   badge.textContent = 'Sign in'; }
         if (tooltip) { tooltip.style.display = ''; }
         if (creatorHint) creatorHint.style.display = 'none';
       } else if (!creatorVerified) {

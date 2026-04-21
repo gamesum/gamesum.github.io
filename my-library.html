@@ -1664,8 +1664,6 @@
     if (!card) return;
     const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
     if (!fbUser) { card.style.display = 'none'; return; }
-    // Only show once email is confirmed (Premium requires email confirm first).
-    if (!fbUser.emailVerified) { card.style.display = 'none'; return; }
     card.style.display = 'flex';
 
     let status = 'none';
@@ -1786,10 +1784,10 @@
   function renderVerifyCard() {
     const card = document.getElementById('verifyCard');
     if (!card) return;
-    const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
-    // Card only shown to signed-in Firebase users (emailVerified only meaningful there)
-    if (!fbUser) { card.style.display = 'none'; return; }
-    card.style.display = 'flex';
+    // Email verification no longer gates Premium uploads (admin creator
+    // verification is the sole gate). Hide this card everywhere.
+    card.style.display = 'none';
+    return;
 
     const pill        = document.getElementById('verifyPill');
     const pillText    = document.getElementById('verifyPillText');
