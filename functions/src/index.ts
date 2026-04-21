@@ -9,7 +9,27 @@ const db = admin.firestore();
 const STRIPE_SECRET = defineSecret("STRIPE_SECRET");
 const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
 
-const SITE_URL = "https://afterglolighting.github.io";
+const SITE_URL = "https://afterglolighting.org";
+
+const ALLOWED_ORIGINS = new Set<string>([
+  "https://afterglolighting.org",
+  "https://www.afterglolighting.org",
+  "https://afterglolighting.github.io",
+  "https://afterglo-website-fbb89.web.app",
+  "https://afterglo-website-fbb89.firebaseapp.com",
+]);
+
+function applyCors(req: functions.https.Request, res: functions.Response): void {
+  const origin = (req.headers.origin as string) || "";
+  if (ALLOWED_ORIGINS.has(origin)) {
+    res.set("Access-Control-Allow-Origin", origin);
+    res.set("Vary", "Origin");
+  } else {
+    res.set("Access-Control-Allow-Origin", SITE_URL);
+  }
+  res.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+}
 
 // ─── Validation helper ────────────────────────────────────────────────────────
 // FIX 1: prevents path-traversal / injection via sequenceId
@@ -101,9 +121,7 @@ export const purchases = functions.https.onRequest(async (req, res) => {
 export const recordPurchase = functions
   .runWith({ secrets: ["STRIPE_SECRET"] })
   .https.onRequest(async (req, res) => {
-  res.set("Access-Control-Allow-Origin", "https://afterglolighting.github.io");
-  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  applyCors(req, res);
 
   if (req.method === "OPTIONS") { res.status(204).send(""); return; }
   if (req.method !== "POST") { res.status(405).json({ error: "Method not allowed" }); return; }
@@ -193,9 +211,7 @@ export const recordPurchase = functions
 // Stores metadata in Firestore; the actual FSEQ file goes to Firebase Storage
 // (or CDN) separately via a signed upload URL returned from this function.
 export const uploadSequence = functions.https.onRequest(async (req, res) => {
-  res.set("Access-Control-Allow-Origin", "https://afterglolighting.github.io");
-  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  applyCors(req, res);
 
   if (req.method === "OPTIONS") {
     res.status(204).send("");
@@ -377,9 +393,7 @@ export const sequenceList = functions.https.onRequest(async (req, res) => {
 export const createCheckout = functions
   .runWith({ secrets: ["STRIPE_SECRET"] })
   .https.onRequest(async (req, res) => {
-  res.set("Access-Control-Allow-Origin", SITE_URL);
-  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  applyCors(req, res);
 
   if (req.method === "OPTIONS") { res.status(204).send(""); return; }
   if (req.method !== "POST")    { res.status(405).json({ error: "Method not allowed" }); return; }
@@ -629,9 +643,7 @@ export const getDownloadUrl = functions.https.onRequest(async (req, res) => {
 // Header: Authorization: Bearer {Firebase ID token}
 // Verifies the caller owns the sequence, then sets status → "published".
 export const confirmUpload = functions.https.onRequest(async (req, res) => {
-  res.set("Access-Control-Allow-Origin", SITE_URL);
-  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  applyCors(req, res);
 
   if (req.method === "OPTIONS") {
     res.status(204).send("");
