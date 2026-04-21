@@ -690,10 +690,17 @@
   // It prevents the onAuthStateChanged listener from double-redirecting.
   let _signingIn = false;
 
+  // True when this sign-in session arrived with #google in the URL: we stay
+  // on this page after auth and show a "return to Suite" success card rather
+  // than redirecting to my-library.html.
+  const _isSuiteGoogleHandoff = (window.location.hash || '').toLowerCase() === '#google';
+  // Also handle #create to preselect the create-account tab.
+  const _isCreateHash = (window.location.hash || '').toLowerCase() === '#create';
+
   (function() {
-    // Pre-select tab from ?tab=create
+    // Pre-select tab from ?tab=create or #create
     const tab = new URLSearchParams(window.location.search).get('tab');
-    if (tab === 'create') switchTab('create');
+    if (tab === 'create' || _isCreateHash) switchTab('create');
 
     // Wait for Firebase to resolve auth before redirecting.
     // Only redirect if we are NOT currently executing a sign-in action
@@ -702,10 +709,58 @@
       firebase.auth().onAuthStateChanged(function(fbUser) {
         if (_signingIn) return; // active sign-in in progress; let its own handler redirect
         if (fbUser) {
+          if (_isSuiteGoogleHandoff) {
+            // Suite handoff: do not redirect; show the success screen so the
+            // user can return to AFTERGLO Suite and re-enter the same email.
+            showSuiteSuccess(fbUser);
+            return;
+          }
           const redir = new URLSearchParams(window.location.search).get('redirect') || 'platform.html';
           safeRedirect(redir);
         }
       });
+    }
+  })();
+
+  /* ─── SUITE GOOGLE HANDOFF ─────────────────────────────────── */
+  // When signin.html loads with #google, auto-trigger the Google popup so the
+  // user sees the provider picker immediately. On success we stay on this
+  // page and render a "return to AFTERGLO Suite" confirmation card.
+  function showSuiteSuccess(fbUser) {
+    const email = (fbUser && fbUser.email) || '';
+    const name  = (fbUser && (fbUser.displayName || fbUser.email)) || 'there';
+    const card = document.querySelector('.auth-card');
+    if (!card) return;
+    card.innerHTML = `
+      <div style="text-align:center;padding:16px 8px 8px;">
+        <div style="width:64px;height:64px;margin:0 auto 20px;border-radius:50%;background:linear-gradient(135deg,rgba(212,164,58,0.2),rgba(212,164,58,0.05));border:1px solid rgba(212,164,58,0.35);display:flex;align-items:center;justify-content:center;">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#D4A43A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <h2 style="font-family:'Outfit',sans-serif;font-size:1.5rem;font-weight:800;color:#fff;margin-bottom:10px;">Signed in</h2>
+        <p style="color:var(--muted);font-size:0.95rem;line-height:1.55;margin-bottom:8px;">Welcome, ${name.split(' ')[0]}.</p>
+        <p style="color:var(--muted);font-size:0.9rem;line-height:1.55;margin-bottom:24px;">You can return to AFTERGLO Suite and enter this email to sync your library:</p>
+        <div style="background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:12px 14px;font-family:'Inter',sans-serif;font-size:0.95rem;color:var(--accent);font-weight:600;margin-bottom:24px;word-break:break-all;">${email}</div>
+        <a href="my-library.html" class="btn btn-primary btn-full" style="width:100%;justify-content:center;padding:14px;font-size:0.95rem;text-decoration:none;">Open My Library</a>
+      </div>`;
+  }
+
+  // If arriving with #google, fire the Google popup automatically once the
+  // page is ready and Firebase is available.
+  (function autoGoogleIfHashed() {
+    if (!_isSuiteGoogleHandoff) return;
+    // Only fire if the user is not already signed in (onAuthStateChanged
+    // will catch that case and call showSuiteSuccess directly).
+    function fire() {
+      if (typeof firebase === 'undefined') { setTimeout(fire, 150); return; }
+      const u = firebase.auth().currentUser;
+      if (u) { showSuiteSuccess(u); return; }
+      // Trigger the same flow the Google button uses.
+      try { handleGoogle(); } catch (_) {}
+    }
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      setTimeout(fire, 50);
+    } else {
+      document.addEventListener('DOMContentLoaded', () => setTimeout(fire, 50));
     }
   })();
 
@@ -876,7 +931,13 @@
       if (result && result.ok) {
         const firstName = (result.name || getUser()?.name || 'there').split(' ')[0];
         showToast('Welcome, ' + firstName + '!');
-        setTimeout(() => window.location.href = getRedirectUrl(), 900);
+        if (_isSuiteGoogleHandoff) {
+          // Suite handoff: stay on the page and render the success card.
+          const fbUser = (typeof firebase !== 'undefined') ? firebase.auth().currentUser : null;
+          setTimeout(() => showSuiteSuccess(fbUser || { email: result.email, displayName: result.name }), 600);
+        } else {
+          setTimeout(() => window.location.href = getRedirectUrl(), 900);
+        }
       } else {
         _signingIn = false;
         showToast((result && result.message) || 'Google sign-in failed. Please try again.', true);
@@ -897,7 +958,12 @@
       if (result && result.ok) {
         const firstName = (result.name || getUser()?.name || 'there').split(' ')[0];
         showToast('Welcome, ' + firstName + '!');
-        setTimeout(() => window.location.href = getRedirectUrl(), 900);
+        if (_isSuiteGoogleHandoff) {
+          const fbUser = (typeof firebase !== 'undefined') ? firebase.auth().currentUser : null;
+          setTimeout(() => showSuiteSuccess(fbUser || { email: result.email, displayName: result.name }), 600);
+        } else {
+          setTimeout(() => window.location.href = getRedirectUrl(), 900);
+        }
       }
     } catch (_) {}
   })();
