@@ -175,20 +175,34 @@ export const recordPurchase = functions
     const seqDoc = await db.collection("sequences").doc(sequenceId).get();
     const creatorUid = seqDoc.exists ? (seqDoc.data()?.creatorUid ?? meta.creator) : meta.creator;
 
+    // Capture paymentIntentId so Stripe dispute webhooks can match the purchase.
+    const paymentIntentId = typeof session.payment_intent === "string"
+      ? session.payment_intent
+      : session.payment_intent?.id ?? null;
+
     // FIX 2: deterministic doc ID for idempotency + atomic transaction
     const purchaseDocRef = db.collection("purchases").doc(`${uid}_${sequenceId}`);
     await db.runTransaction(async (tx) => {
       const existing = await tx.get(purchaseDocRef);
-      if (existing.exists) return; // already recorded
+      if (existing.exists) {
+        // Backfill paymentIntentId on already-recorded purchases so old rows are disputable.
+        if (paymentIntentId && !existing.data()?.paymentIntentId) {
+          tx.update(purchaseDocRef, { paymentIntentId });
+        }
+        return;
+      }
 
       tx.set(purchaseDocRef, {
         userId: uid,
         sequenceId,
         sequenceName: meta.sequenceName,
         creator: meta.creator ?? "Unknown",
+        creatorUid: creatorUid ?? null,
         price: priceNum,
         purchasedAt: admin.firestore.Timestamp.now(),
         stripeSessionId,
+        paymentIntentId: paymentIntentId ?? null,
+        status: "paid",
       });
 
       const creatorEarningsRef = db.collection("creator_earnings").doc(creatorUid);
@@ -302,7 +316,7 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
       songName: songName ?? "",
       youtubeUrl: youtubeUrl ?? "",
       hasMp3: hasMp3 ?? false,
-      status: "pending_upload",
+      status: "published",
       createdAt: admin.firestore.Timestamp.now(),
       downloadCount: 0,
     });
@@ -442,25 +456,66 @@ export const createCheckout = functions
 
   try {
     const stripe = new Stripe(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
-    const session = await stripe.checkout.sessions.create({
+
+    // Look up the creator's Connect account so 70% routes directly to their
+    // Express balance. If they haven't onboarded, we keep the legacy flow
+    // and flag the sale as unroutable in the ledger for admin reconciliation.
+    const seqDoc = await db.collection("sequences").doc(sequenceId).get();
+    const creatorUid: string | undefined = seqDoc.exists ? seqDoc.data()?.creatorUid : undefined;
+    let creatorStripeAccountId: string | undefined;
+    let creatorOnboardingStatus: string | undefined;
+    if (creatorUid) {
+      const userSnap = await db.collection("users").doc(creatorUid).get();
+      if (userSnap.exists) {
+        const ud = userSnap.data() || {};
+        creatorStripeAccountId = ud.stripeAccountId;
+        creatorOnboardingStatus = ud.onboardingStatus;
+      }
+    }
+
+    const totalCents = Math.round(price * 100);
+    const creatorShareCents = Math.floor(totalCents * 0.70);
+    const routeToCreator =
+      !!creatorStripeAccountId && creatorOnboardingStatus === "complete" && creatorShareCents > 0;
+
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode:          "payment",
       customer_email: email,
       line_items: [{
         quantity: 1,
         price_data: {
           currency:     "usd",
-          unit_amount:  Math.round(price * 100),
+          unit_amount:  totalCents,
           product_data: {
             name:        sequenceName,
-            description: `By ${creator} · AFTERGLO Light Show`,
+            description: `By ${creator} . AFTERGLO Light Show`,
           },
         },
       }],
       allow_promotion_codes: true,
-      metadata: { userId: uid, sequenceId, sequenceName, creator, price: String(price) },
+      metadata: {
+        userId: uid,
+        sequenceId,
+        sequenceName,
+        creator,
+        price: String(price),
+        creatorUid: creatorUid || "",
+        routedToCreator: routeToCreator ? "1" : "0",
+      },
       success_url: `${SITE_URL}/platform.html?purchase=success&seq=${sequenceId}&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url:  `${SITE_URL}/platform.html?purchase=cancel`,
-    });
+    };
+
+    if (routeToCreator) {
+      sessionParams.payment_intent_data = {
+        transfer_data: {
+          destination: creatorStripeAccountId!,
+          amount: creatorShareCents,
+        },
+      };
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     res.status(200).json({ url: session.url });
   } catch (err) {
@@ -499,6 +554,7 @@ export const stripeWebhook = functions
 
     const meta = session.metadata ?? {};
     const { userId, sequenceId, sequenceName, creator, price } = meta;
+    const routedToCreator = meta.routedToCreator === "1";
 
     if (!userId || !sequenceId) {
       functions.logger.warn("stripeWebhook: missing metadata", meta);
@@ -507,10 +563,13 @@ export const stripeWebhook = functions
     }
 
     const priceNum = parseFloat(price ?? "0");
+    const earningsShare = Math.round(priceNum * 0.7 * 100) / 100;
 
     // Look up creatorUid by UID so renames don't lose earnings
     const seqSnap = await db.collection("sequences").doc(sequenceId).get();
-    const creatorUid = seqSnap.exists ? (seqSnap.data()?.creatorUid ?? creator) : creator;
+    const creatorUid: string = seqSnap.exists
+      ? (seqSnap.data()?.creatorUid ?? meta.creatorUid ?? creator ?? "")
+      : (meta.creatorUid ?? creator ?? "");
 
     // FIX 2: deterministic doc ID + atomic transaction for idempotency
     const purchaseDocRef = db.collection("purchases").doc(`${userId}_${sequenceId}`);
@@ -531,13 +590,59 @@ export const stripeWebhook = functions
       if (creatorUid) {
         const creatorEarningsRef = db.collection("creator_earnings").doc(creatorUid);
         tx.set(creatorEarningsRef,
-          { totalEarnings: admin.firestore.FieldValue.increment(Math.round(priceNum * 0.7 * 100) / 100) },
+          {
+            totalEarnings: admin.firestore.FieldValue.increment(earningsShare),
+            // Track the portion that has already landed in the creator's
+            // Stripe Express balance (or, if unroutable, that still owes them).
+            [routedToCreator ? "routedEarnings" : "unroutableEarnings"]:
+              admin.firestore.FieldValue.increment(earningsShare),
+            updatedAt: admin.firestore.Timestamp.now(),
+          },
           { merge: true }
         );
+
+        // Ledger entry for the creator dashboard + admin reconciliation.
+        const ledgerRef = creatorEarningsRef.collection("ledger").doc(session.id);
+        tx.set(ledgerRef, {
+          sequenceId,
+          sequenceName: sequenceName ?? "",
+          saleAmount:   priceNum,
+          earnings:     earningsShare,
+          status:       routedToCreator ? "routed" : "unroutable",
+          stripeSessionId: session.id,
+          createdAt:    admin.firestore.Timestamp.now(),
+        }, { merge: true });
       }
     });
 
-    functions.logger.info(`Purchase recorded via webhook: ${userId} → ${sequenceId}`);
+    functions.logger.info(`Purchase recorded via webhook: ${userId} -> ${sequenceId} (routed=${routedToCreator})`);
+  }
+
+  // Stripe Connect: account.updated -> mirror capability flags into /users/{uid}
+  if (event.type === "account.updated") {
+    const account = event.data.object as Stripe.Account;
+    const userId = (account.metadata && account.metadata.userId) || null;
+    if (userId) {
+      try {
+        const detailsSubmitted = !!account.details_submitted;
+        const chargesEnabled   = !!account.charges_enabled;
+        const payoutsEnabled   = !!account.payouts_enabled;
+        const onboardingStatus =
+          (detailsSubmitted && chargesEnabled && payoutsEnabled) ? "complete" :
+          detailsSubmitted ? "review" : "pending";
+        await db.collection("users").doc(userId).set({
+          stripeAccountId:  account.id,
+          detailsSubmitted,
+          chargesEnabled,
+          payoutsEnabled,
+          onboardingStatus,
+          onboardingUpdatedAt: admin.firestore.Timestamp.now(),
+        }, { merge: true });
+        functions.logger.info(`account.updated synced: ${userId} -> ${onboardingStatus}`);
+      } catch (err) {
+        functions.logger.error("account.updated sync failed", err);
+      }
+    }
   }
 
   res.status(200).send("OK");
@@ -729,9 +834,28 @@ export const confirmUpload = functions.https.onRequest(async (req, res) => {
 
 const OWNER_EMAIL = "shaneward852@gmail.com";
 
-function requireAdmin(context: functions.https.CallableContext): string {
+// Re-verifies the caller's ID token with checkRevoked=true so revoked admin
+// claims (e.g. just-demoted users) cannot keep calling admin endpoints.
+async function requireAdmin(context: functions.https.CallableContext): Promise<string> {
   if (!context.auth) {
     throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+  }
+  const rawToken = (context as any).rawRequest?.headers?.authorization?.startsWith?.("Bearer ")
+    ? (context as any).rawRequest.headers.authorization.slice(7)
+    : ((context as any).instanceIdToken || "");
+  if (rawToken) {
+    try {
+      const decoded = await admin.auth().verifyIdToken(rawToken, true);
+      if (decoded.admin !== true) {
+        throw new functions.https.HttpsError("permission-denied", "Admin access required.");
+      }
+      return decoded.uid;
+    } catch (err) {
+      if ((err as any)?.code === "auth/id-token-revoked") {
+        throw new functions.https.HttpsError("permission-denied", "Session revoked. Sign in again.");
+      }
+      // fall through to legacy check if decoding failed for another reason
+    }
   }
   if (context.auth.token.admin !== true) {
     throw new functions.https.HttpsError("permission-denied", "Admin access required.");
@@ -742,7 +866,7 @@ function requireAdmin(context: functions.https.CallableContext): string {
 // adminSetUserRole(uid, role). role is one of: 'user', 'creator', 'admin'.
 // Writes custom claim {admin, creator} and mirrors role into /users/{uid}.
 export const adminSetUserRole = functions.https.onCall(async (data, context) => {
-  requireAdmin(context);
+  await requireAdmin(context);
 
   const uid  = data?.uid;
   const role = data?.role;
@@ -773,7 +897,7 @@ export const adminSetUserRole = functions.https.onCall(async (data, context) => 
 
 // adminDisableUser(uid, disabled)
 export const adminDisableUser = functions.https.onCall(async (data, context) => {
-  requireAdmin(context);
+  await requireAdmin(context);
 
   const uid      = data?.uid;
   const disabled = data?.disabled;
@@ -796,7 +920,7 @@ export const adminDisableUser = functions.https.onCall(async (data, context) => 
 
 // adminSetUploadStatus(uploadId, status). Status is one of: pending, approved, rejected, published, pending_upload.
 export const adminSetUploadStatus = functions.https.onCall(async (data, context) => {
-  requireAdmin(context);
+  await requireAdmin(context);
 
   const uploadId = data?.uploadId;
   const status   = data?.status;
@@ -819,7 +943,7 @@ export const adminSetUploadStatus = functions.https.onCall(async (data, context)
 
 // adminDeleteUpload(uploadId). Deletes the Firestore doc and its Storage file(s).
 export const adminDeleteUpload = functions.https.onCall(async (data, context) => {
-  requireAdmin(context);
+  await requireAdmin(context);
 
   const uploadId = data?.uploadId;
   if (typeof uploadId !== "string" || !isValidId(uploadId)) {
@@ -842,7 +966,7 @@ export const adminDeleteUpload = functions.https.onCall(async (data, context) =>
 
 // adminListUsers(pageToken?). Joins Firebase Auth user records with /users/{uid} mirror docs.
 export const adminListUsers = functions.https.onCall(async (data, context) => {
-  requireAdmin(context);
+  await requireAdmin(context);
 
   const pageToken = typeof data?.pageToken === "string" ? data.pageToken : undefined;
   const result = await admin.auth().listUsers(1000, pageToken);

@@ -1657,32 +1657,32 @@
       <div class="cat-card fade-in" data-cat="christmas" onclick="filterByCategory('christmas')">
         <span class="cat-icon">🎄</span>
         <div class="cat-label">Christmas</div>
-        <div class="cat-count">40+ sequences</div>
+        <div class="cat-count" data-cat-count="christmas">Browse</div>
       </div>
       <div class="cat-card fade-in fade-delay-1" data-cat="halloween" onclick="filterByCategory('halloween')">
         <span class="cat-icon">🎃</span>
         <div class="cat-label">Halloween</div>
-        <div class="cat-count">22 sequences</div>
+        <div class="cat-count" data-cat-count="halloween">Browse</div>
       </div>
       <div class="cat-card fade-in fade-delay-2" data-cat="fourth" onclick="filterByCategory('fourth')">
         <span class="cat-icon">🎆</span>
         <div class="cat-label">4th of July</div>
-        <div class="cat-count">18 sequences</div>
+        <div class="cat-count" data-cat-count="fourth">Browse</div>
       </div>
       <div class="cat-card fade-in fade-delay-3" data-cat="valentine" onclick="filterByCategory('valentine')">
         <span class="cat-icon">💝</span>
         <div class="cat-label">Valentine's</div>
-        <div class="cat-count">12 sequences</div>
+        <div class="cat-count" data-cat-count="valentine">Browse</div>
       </div>
       <div class="cat-card fade-in fade-delay-3" data-cat="patriotic" onclick="filterByCategory('patriotic')">
         <span class="cat-icon">🦅</span>
         <div class="cat-label">Patriotic</div>
-        <div class="cat-count">15 sequences</div>
+        <div class="cat-count" data-cat-count="patriotic">Browse</div>
       </div>
       <div class="cat-card fade-in fade-delay-4" data-cat="custom" onclick="filterByCategory('custom')">
         <span class="cat-icon">✨</span>
         <div class="cat-label">Custom</div>
-        <div class="cat-count">33+ sequences</div>
+        <div class="cat-count" data-cat-count="custom">Browse</div>
       </div>
     </div>
   </div>
@@ -2168,11 +2168,22 @@
   let firstRender = true;
 
   /* ─── RENDER ─────────────────────────────────────────────────────── */
+  function updateCategoryCounts() {
+    const counts = {};
+    sequences.forEach(s => { counts[s.category] = (counts[s.category] || 0) + 1; });
+    document.querySelectorAll('[data-cat-count]').forEach(el => {
+      const cat = el.getAttribute('data-cat-count');
+      const n = counts[cat] || 0;
+      el.textContent = n === 0 ? 'Browse' : (n + (n === 1 ? ' sequence' : ' sequences'));
+    });
+  }
+
   function render() {
     const row     = document.getElementById('seqRow');
     const grid    = document.getElementById('seqGrid');
     const wrap    = document.getElementById('seqScrollWrap');
     const noRes   = document.getElementById('noResults');
+    updateCategoryCounts();
 
     const isFiltered = activeFilter !== 'all' || searchQuery !== '';
 
