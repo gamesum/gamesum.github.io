@@ -23,6 +23,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/collections.js" defer></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,7 +33,7 @@
       --bg2:      #0e0e0e;
       --bg3:      #141414;
       --bg4:      #1a1a1a;
-      --accent:   #c8921e;
+      --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
       --text:     #e2e8f0;
@@ -125,11 +126,11 @@
     .btn-primary {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+      box-shadow: 0 4px 20px rgba(212,164,58,0.35);
     }
     .btn-primary:hover {
       background: var(--accent2);
-      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+      box-shadow: 0 6px 28px rgba(212,164,58,0.5);
     }
 
     .btn-ghost {
@@ -176,7 +177,7 @@
     }
     .nav-logo span {
       color: var(--accent);
-      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+      text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4);
     }
 
     .nav-links {
@@ -259,9 +260,9 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 70% at 50% 120%, rgba(200,146,30,0.20) 0%, transparent 65%),
-        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(200,146,30,0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(200,146,30,0.06) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 70% at 50% 120%, rgba(212,164,58,0.20) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 40% at 20% 60%, rgba(212,164,58,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 20%, rgba(212,164,58,0.06) 0%, transparent 60%);
       z-index: 0;
     }
 
@@ -271,7 +272,7 @@
       inset: 0;
       z-index: 0;
       background-image:
-        radial-gradient(circle, rgba(200,146,30,0.12) 1px, transparent 1px);
+        radial-gradient(circle, rgba(212,164,58,0.12) 1px, transparent 1px);
       background-size: 48px 48px;
       mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
       -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
@@ -289,8 +290,8 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(200,146,30,0.1);
-      border: 1px solid rgba(200,146,30,0.25);
+      background: rgba(212,164,58,0.1);
+      border: 1px solid rgba(212,164,58,0.25);
       border-radius: 100px;
       padding: 6px 16px;
       font-size: 0.78rem;
@@ -435,8 +436,8 @@
     .filter-tab:hover { color: var(--text); border-color: var(--border); }
     .filter-tab.active {
       color: var(--accent);
-      border-color: rgba(200,146,30,0.4);
-      background: rgba(200,146,30,0.08);
+      border-color: rgba(212,164,58,0.4);
+      background: rgba(212,164,58,0.08);
     }
 
     /* ─── FEATURED SEQUENCES ───────────────────────────────────────── */
@@ -488,8 +489,8 @@
     }
     .seq-card:hover {
       transform: translateY(-4px);
-      border-color: rgba(200,146,30,0.3);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,146,30,0.1);
+      border-color: rgba(212,164,58,0.3);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,164,58,0.1);
     }
 
     .card-thumb {
@@ -523,9 +524,9 @@
       border: 1px solid rgba(34,197,94,0.3);
     }
     .badge-paid {
-      background: rgba(200,146,30,0.15);
+      background: rgba(212,164,58,0.15);
       color: var(--accent);
-      border: 1px solid rgba(200,146,30,0.35);
+      border: 1px solid rgba(212,164,58,0.35);
     }
 
     .card-play {
@@ -542,7 +543,7 @@
       border: 1px solid rgba(255,255,255,0.1);
       transition: background 0.2s;
     }
-    .seq-card:hover .card-play { background: rgba(200,146,30,0.8); }
+    .seq-card:hover .card-play { background: rgba(212,164,58,0.8); }
     .card-play svg { width: 14px; height: 14px; color: #fff; fill: currentColor; }
 
     .card-duration {
@@ -646,7 +647,7 @@
       transition: all 0.25s;
     }
     .cat-card:hover {
-      border-color: rgba(200,146,30,0.4);
+      border-color: rgba(212,164,58,0.4);
       background: var(--bg4);
       transform: translateY(-3px);
       box-shadow: 0 8px 32px rgba(0,0,0,0.3);
@@ -656,7 +657,7 @@
       font-size: 2.4rem;
       margin-bottom: 12px;
       display: block;
-      filter: drop-shadow(0 0 12px rgba(200,146,30,0.4));
+      filter: drop-shadow(0 0 12px rgba(212,164,58,0.4));
     }
 
     .cat-label {
@@ -704,10 +705,10 @@
       display: block;
       width: 18px; height: 18px;
       border-radius: 50%;
-      background: rgba(200,146,30,0.15);
-      border: 1px solid rgba(200,146,30,0.4);
+      background: rgba(212,164,58,0.15);
+      border: 1px solid rgba(212,164,58,0.4);
       flex-shrink: 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23c8921e' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23D4A43A' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
       background-size: 11px 11px;
       background-position: center;
       background-repeat: no-repeat;
@@ -731,7 +732,7 @@
     }
     .drop-zone:hover, .drop-zone.drag-over {
       border-color: var(--accent);
-      background: rgba(200,146,30,0.04);
+      background: rgba(212,164,58,0.04);
     }
     .drop-zone-icon {
       font-size: 2rem;
@@ -753,8 +754,8 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      background: rgba(200,146,30,0.08);
-      border: 1px solid rgba(200,146,30,0.25);
+      background: rgba(212,164,58,0.08);
+      border: 1px solid rgba(212,164,58,0.25);
       border-radius: 8px;
       padding: 10px 14px;
       font-size: 0.85rem;
@@ -839,14 +840,14 @@
       transition: all 0.25s;
     }
     .pack-card:hover {
-      border-color: rgba(200,146,30,0.35);
+      border-color: rgba(212,164,58,0.35);
       transform: translateY(-4px);
       box-shadow: 0 16px 48px rgba(0,0,0,0.4);
     }
 
     .pack-card.featured {
-      border-color: rgba(200,146,30,0.4);
-      background: linear-gradient(180deg, rgba(200,146,30,0.05) 0%, var(--bg3) 40%);
+      border-color: rgba(212,164,58,0.4);
+      background: linear-gradient(180deg, rgba(212,164,58,0.05) 0%, var(--bg3) 40%);
     }
 
     .pack-banner {
@@ -961,7 +962,7 @@
       left: calc(16.67% + 40px);
       right: calc(16.67% + 40px);
       height: 1px;
-      background: linear-gradient(90deg, var(--accent) 0%, rgba(200,146,30,0.3) 50%, var(--accent) 100%);
+      background: linear-gradient(90deg, var(--accent) 0%, rgba(212,164,58,0.3) 50%, var(--accent) 100%);
       z-index: 0;
     }
 
@@ -976,7 +977,7 @@
       width: 80px; height: 80px;
       border-radius: 50%;
       background: var(--bg2);
-      border: 2px solid rgba(200,146,30,0.4);
+      border: 2px solid rgba(212,164,58,0.4);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -988,7 +989,7 @@
       position: absolute;
       inset: -6px;
       border-radius: 50%;
-      border: 1px solid rgba(200,146,30,0.12);
+      border: 1px solid rgba(212,164,58,0.12);
     }
     .step-num-inner {
       font-family: 'Outfit', sans-serif;
@@ -1080,7 +1081,7 @@
 
     /* ─── TRENDING BADGE ──────────────────────────────────────────── */
     .trending-strip {
-      background: linear-gradient(90deg, rgba(200,146,30,0.08) 0%, transparent 100%);
+      background: linear-gradient(90deg, rgba(212,164,58,0.08) 0%, transparent 100%);
       border-left: 3px solid var(--accent);
       padding: 10px 16px;
       border-radius: 0 8px 8px 0;
@@ -1099,8 +1100,8 @@
       display: inline-flex;
       align-items: center;
       gap: 4px;
-      background: rgba(200,146,30,0.1);
-      border: 1px solid rgba(200,146,30,0.2);
+      background: rgba(212,164,58,0.1);
+      border: 1px solid rgba(212,164,58,0.2);
       border-radius: 100px;
       padding: 2px 8px;
       font-size: 0.72rem;
@@ -1192,7 +1193,7 @@
     }
     .capture-card {
       background: var(--bg2);
-      border: 1px solid rgba(200,146,30,0.3);
+      border: 1px solid rgba(212,164,58,0.3);
       border-radius: 18px;
       padding: 36px 32px 28px;
       width: 100%;
@@ -1200,7 +1201,7 @@
       position: relative;
       transform: translateY(24px) scale(0.97);
       transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-      box-shadow: 0 32px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(200,146,30,0.1);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(212,164,58,0.1);
     }
     .capture-overlay.open .capture-card { transform: translateY(0) scale(1); }
     .capture-close {
@@ -1276,7 +1277,7 @@
       outline: none;
       transition: border-color 0.2s;
     }
-    .capture-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(200,146,30,0.1); }
+    .capture-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(212,164,58,0.1); }
     .capture-input::placeholder { color: #555; }
     .capture-submit {
       width: 100%;
@@ -1294,9 +1295,9 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 16px rgba(200,146,30,0.3);
+      box-shadow: 0 4px 16px rgba(212,164,58,0.3);
     }
-    .capture-submit:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(200,146,30,0.45); }
+    .capture-submit:hover { background: var(--accent2); transform: translateY(-2px); box-shadow: 0 6px 24px rgba(212,164,58,0.45); }
     .capture-skip {
       width: 100%;
       margin-top: 8px;
@@ -1322,12 +1323,12 @@
     /* ─── INLINE PACK CARD (in sequence scroll row) ──────────────────── */
     /* Change 2: Featured pack surfaced inside the sequence browse row */
     .seq-card.pack-inline {
-      background: linear-gradient(180deg, rgba(200,146,30,0.08) 0%, var(--bg2) 50%);
-      border-color: rgba(200,146,30,0.4);
+      background: linear-gradient(180deg, rgba(212,164,58,0.08) 0%, var(--bg2) 50%);
+      border-color: rgba(212,164,58,0.4);
     }
     .seq-card.pack-inline:hover {
-      border-color: rgba(200,146,30,0.65);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,146,30,0.2);
+      border-color: rgba(212,164,58,0.65);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(212,164,58,0.2);
     }
     .pack-inline-banner {
       height: 160px;
@@ -1443,12 +1444,12 @@
       cursor: pointer;
       transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
       text-decoration: none;
-      box-shadow: 0 4px 16px rgba(200,146,30,0.28);
+      box-shadow: 0 4px 16px rgba(212,164,58,0.28);
     }
     .btn-request-pack:hover {
       background: var(--accent2);
       transform: translateY(-1px);
-      box-shadow: 0 6px 22px rgba(200,146,30,0.42);
+      box-shadow: 0 6px 22px rgba(212,164,58,0.42);
     }
 
     /* ─── SEQUENCE DETAIL MODAL ──────────────────────────────────── */
@@ -1480,7 +1481,7 @@
     /* ─── MP3 BADGE ────────────────────────────────────────────────── */
     .mp3-badge {
       position:absolute;top:8px;right:8px;
-      background:#c8921e;color:#000;
+      background:#D4A43A;color:#000;
       font-size:0.65rem;font-weight:800;
       padding:3px 8px;border-radius:20px;
       letter-spacing:0.05em;
@@ -1577,17 +1578,6 @@
   <div class="hero-content">
     <div class="hero-badge">✦ Community-Powered Light Shows</div>
     <h1 class="hero-title">The <span class="gold">AFTERGLO</span><br>Light Show Store</h1>
-    <p class="hero-sub">Browse hundreds of ready-to-play Christmas, Halloween, and holiday light shows. Pick a free one or grab a premium pack and watch your roofline come alive. No technical experience needed.</p>
-    <div class="hero-ctas">
-      <a href="#sequences" class="btn btn-primary">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Browse Free Shows
-      </a>
-      <a href="#premium" class="btn btn-ghost">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-        Get Premium Packs
-      </a>
-    </div>
     <div class="hero-stats">
       <div class="hero-stat">
         <div class="hero-stat-num">Free</div>
@@ -1702,7 +1692,7 @@
 <!-- Change 2: Moved premium packs ABOVE the upload section so revenue content reaches mobile users -->
 <section id="premium" class="section-pad">
   <div class="container">
-    <div style="background:rgba(200,146,30,0.07);border:1px solid rgba(200,146,30,0.25);border-radius:12px;padding:14px 20px;margin-bottom:32px;display:flex;align-items:flex-start;gap:12px;" class="fade-in">
+    <div style="background:rgba(212,164,58,0.07);border:1px solid rgba(212,164,58,0.25);border-radius:12px;padding:14px 20px;margin-bottom:32px;display:flex;align-items:flex-start;gap:12px;" class="fade-in">
       <span style="font-size:1.3rem;flex-shrink:0;">💡</span>
       <div>
         <div style="font-family:'Outfit',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:4px;">These shows run on your AFTERGLO controller</div>
@@ -1719,12 +1709,12 @@
       <!-- Holiday Mega Pack -->
       <div class="pack-card featured fade-in">
         <div class="pack-banner" style="background: linear-gradient(135deg, #1a0a00 0%, #3d1f00 40%, #1a0a00 100%);">
-          <div style="position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(200,146,30,0.06) 0px, rgba(200,146,30,0.06) 2px, transparent 2px, transparent 16px);"></div>
+          <div style="position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(212,164,58,0.06) 0px, rgba(212,164,58,0.06) 2px, transparent 2px, transparent 16px);"></div>
           <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3.5rem; opacity:0.6;">🎄🎁🦌</div>
           <div class="pack-badge">MOST POPULAR</div>
           <div class="pack-previews">
             <div class="pack-preview-dot" style="background: linear-gradient(135deg,#c8000a,#007000);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ffffff,#c8921e);"></div>
+            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ffffff,#D4A43A);"></div>
             <div class="pack-preview-dot" style="background: linear-gradient(135deg,#0000a0,#c8000a);"></div>
             <div class="pack-preview-dot" style="background: linear-gradient(135deg,#00a000,#ffd700);"></div>
           </div>
@@ -1897,7 +1887,7 @@
           <div style="font-size:3rem;margin-bottom:16px;">🎄</div>
           <h3 style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:12px;">Share Your Light Show</h3>
           <p style="color:#94a3b8;max-width:480px;margin:0 auto 28px;">Built something amazing in xLights? Upload your show to the AFTERGLO community. Earn revenue, get credit, and help other homeowners light up their neighborhoods.</p>
-          <a href="upload.html" style="display:inline-block;background:#c8921e;color:#000;font-weight:700;font-size:1rem;padding:16px 32px;border-radius:12px;min-height:52px;line-height:1.2;">Upload a Show →</a>
+          <a href="upload.html" style="display:inline-block;background:#D4A43A;color:#000;font-weight:700;font-size:1rem;padding:16px 32px;border-radius:12px;min-height:52px;line-height:1.2;">Upload a Show →</a>
         </div>
       </div>
     </div>
@@ -2099,8 +2089,8 @@
       free: false,
       downloads: 198,
       price: 13.98,
-      gradient: "linear-gradient(135deg, #001a33 0%, #ffffff 40%, #c8921e 100%)",
-      glow: "rgba(200,146,30,0.35)"
+      gradient: "linear-gradient(135deg, #001a33 0%, #ffffff 40%, #D4A43A 100%)",
+      glow: "rgba(212,164,58,0.35)"
     },
     {
       id: 5,
@@ -2177,7 +2167,7 @@
       free: true,
       downloads: 871,
       price: null,
-      gradient: "linear-gradient(135deg, #0a001a 0%, #ffffff 50%, #c8921e 100%)",
+      gradient: "linear-gradient(135deg, #0a001a 0%, #ffffff 50%, #D4A43A 100%)",
       glow: "rgba(200,255,255,0.2)"
     },
     {
@@ -2246,7 +2236,7 @@
     // Set data-name after innerHTML to avoid apostrophe breaking onclick string
     card.innerHTML = `
       <div class="card-thumb" style="background:${seq.gradient || seq.thumbnailGradient || 'linear-gradient(135deg,#1a1a1a,#333)'};">
-        <div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow || 'rgba(200,146,30,0.2)'} 0%,transparent 70%);"></div>
+        <div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow || 'rgba(212,164,58,0.2)'} 0%,transparent 70%);"></div>
         <span class="card-badge ${seq.free || seq.isFree ? 'badge-free' : 'badge-paid'}">${seq.free || seq.isFree ? 'Free' : 'Premium'}</span>
         ${hotBadge}
         ${mp3Badge}
@@ -2297,7 +2287,7 @@
     card.className = 'seq-card pack-inline';
     card.innerHTML = `
       <div class="pack-inline-banner">
-        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(200,146,30,0.06) 0px,rgba(200,146,30,0.06) 2px,transparent 2px,transparent 16px);"></div>
+        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(212,164,58,0.06) 0px,rgba(212,164,58,0.06) 2px,transparent 2px,transparent 16px);"></div>
         <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;opacity:0.55;">🎄🎁🦌</div>
         <span class="pack-inline-label">Pack · Best Value</span>
         <span class="pack-inline-seq-count">12 sequences · 6.5 hrs</span>
@@ -2464,7 +2454,7 @@
         <div style="background:#111;border:1px solid #2a2a2a;border-radius:16px;padding:36px;max-width:360px;width:100%;text-align:center;">
           <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to continue</div>
           <div style="color:#94a3b8;font-size:0.9rem;margin-bottom:28px;">Create a free account to download and purchase light shows.</div>
-          <a href="signin.html?redirect=platform.html" style="display:block;background:#c8921e;color:#000;font-weight:700;padding:14px;border-radius:10px;margin-bottom:12px;font-size:1rem;">Sign In / Create Account</a>
+          <a href="signin.html?redirect=platform.html" style="display:block;background:#D4A43A;color:#000;font-weight:700;padding:14px;border-radius:10px;margin-bottom:12px;font-size:1rem;">Sign In / Create Account</a>
           <button onclick="document.getElementById('authPromptModal').remove()" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:0.9rem;padding:8px;min-height:44px;width:100%;">Cancel</button>
         </div>
       `;
@@ -2488,7 +2478,7 @@
       const initial = (name || email || 'U')[0].toUpperCase();
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
           ${esc(name || email)}
         </a>
         <button onclick="signOut()" style="background:none;border:1px solid #333;color:var(--muted);font-size:0.78rem;cursor:pointer;padding:4px 10px;border-radius:6px;margin-left:4px;">Sign Out</button>`;
@@ -2598,13 +2588,57 @@
     id = parseInt(id, 10);
     const seq = sequences.find(s => s.id === id);
     if (!seq) return;
-    seq.downloads++;
 
-    // Add to user's library if not already there
+    // Already in library. Don't prompt, just confirm.
+    const existing = getUser();
+    if (existing && Array.isArray(existing.library) && existing.library.find(item => item.id === id)) {
+      showToast(`"${seq.name}" is already in your library.`);
+      return;
+    }
+
+    // Force a collection pick before the add succeeds
+    if (!window.AGCollections) {
+      // Collections module not yet loaded. Fall back to legacy add.
+      _legacyAddToLibrary(seq);
+      return;
+    }
+    const userForEnsure = getUser();
+    if (!userForEnsure) return;
+    AGCollections.ensureCollections(userForEnsure);
+    saveUser(userForEnsure);
+
+    AGCollections.openPickerModal({
+      title: 'Add "' + seq.name + '" to.',
+      onPick: function (collectionId) {
+        const user = getUser();
+        if (!user) return;
+        if (!user.library) user.library = [];
+        if (!user.library.find(item => item.id === id)) {
+          user.library.push({
+            id:           seq.id,
+            name:         seq.name,
+            creator:      seq.creator,
+            duration:     seq.duration,
+            gradient:     seq.gradient,
+            addedAt:      Date.now(),
+            collectionId: collectionId
+          });
+          saveUser(user);
+          seq.downloads++;
+        }
+        const col = (user.collections || []).find(c => c.id === collectionId);
+        showToast('Added "' + seq.name + '" to ' + (col ? col.name : 'your library') + '.');
+        render();
+      },
+      onCancel: function () { /* aborted. no push, no toast. */ }
+    });
+  }
+
+  function _legacyAddToLibrary(seq) {
     const user = getUser();
     if (!user) return;
     if (!user.library) user.library = [];
-    if (!user.library.find(item => item.id === id)) {
+    if (!user.library.find(item => item.id === seq.id)) {
       user.library.push({
         id:       seq.id,
         name:     seq.name,
@@ -2614,8 +2648,9 @@
         addedAt:  Date.now()
       });
       saveUser(user);
+      seq.downloads++;
     }
-    showToast(`Added "${seq.name}" to your library!`);
+    showToast('Added "' + seq.name + '" to your library.');
     render();
   }
 
@@ -2744,11 +2779,11 @@
 
     document.getElementById('seqDrawerContent').innerHTML = `
       <div style="height:200px;background:${esc(gradient)};position:relative;">
-        ${seq.hasMp3 ? '<div style="position:absolute;bottom:12px;left:12px;background:#c8921e;color:#000;font-size:0.75rem;font-weight:700;padding:4px 10px;border-radius:20px;">&#9834; MP3 Included</div>' : ''}
+        ${seq.hasMp3 ? '<div style="position:absolute;bottom:12px;left:12px;background:#D4A43A;color:#000;font-size:0.75rem;font-weight:700;padding:4px 10px;border-radius:20px;">&#9834; MP3 Included</div>' : ''}
       </div>
       <div style="padding:24px;">
         <div style="font-family:\'Outfit\',sans-serif;font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:4px;">${esc(seq.name)}</div>
-        <div style="color:#c8921e;font-size:0.9rem;margin-bottom:16px;">by ${esc(seq.creator)}</div>
+        <div style="color:#D4A43A;font-size:0.9rem;margin-bottom:16px;">by ${esc(seq.creator)}</div>
 
         ${seq.songName ? `<div style="background:#0e0e0e;border:1px solid #222;border-radius:10px;padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
           <span style="font-size:1.4rem;">&#9834;</span>
@@ -2782,13 +2817,13 @@
 
         <div style="padding:20px 0;border-top:1px solid #222;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
-            <div style="font-family:\'Outfit\',sans-serif;font-size:1.8rem;font-weight:800;color:${price > 0 ? '#c8921e' : '#4ade80'};">
+            <div style="font-family:\'Outfit\',sans-serif;font-size:1.8rem;font-weight:800;color:${price > 0 ? '#D4A43A' : '#4ade80'};">
               ${price > 0 ? '$' + price.toFixed(2) : 'Free'}
             </div>
             ${seq.hasMp3 && price > 0 ? '<div style="font-size:0.8rem;color:#94a3b8;">Includes FSEQ + MP3</div>' : ''}
           </div>
           ${price > 0
-            ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#c8921e;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy $${price.toFixed(2)}</button>`
+            ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#D4A43A;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy $${price.toFixed(2)}</button>`
             : `<button onclick="handleDownload(event,'${esc(String(seq.id))}');closeDrawer();" style="width:100%;background:#4ade80;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Download Free</button>`
           }
         </div>
@@ -2937,7 +2972,41 @@
       }
       // Sync purchases from Firestore then show toast
       await syncPurchasesFromFirestore();
-      showToast('Purchase successful! Check your library.');
+
+      // Force collection pick for the purchased item, then persist
+      const postUser = getUser();
+      if (postUser && window.AGCollections) {
+        AGCollections.ensureCollections(postUser);
+        saveUser(postUser);
+
+        // Find the newly purchased item (if any) that lacks a non-default collectionId
+        let targetPurchase = null;
+        if (sequenceId && Array.isArray(postUser.purchases)) {
+          targetPurchase = postUser.purchases.find(p => String(p.id) === String(sequenceId)) || null;
+        }
+        if (targetPurchase) {
+          const seqMatch  = sequences.find(s => String(s.id) === String(sequenceId));
+          const seqLabel  = (targetPurchase.name || (seqMatch && seqMatch.name) || 'this pack');
+          AGCollections.openPickerModal({
+            title: 'Add "' + seqLabel + '" to.',
+            onPick: function (collectionId) {
+              const u2 = getUser();
+              if (!u2) return;
+              AGCollections.assignItem(u2, 'purchases', sequenceId, collectionId);
+              saveUser(u2);
+              const col = (u2.collections || []).find(c => c.id === collectionId);
+              showToast('Purchase complete. Added to ' + (col ? col.name : 'your library') + '.');
+            },
+            onCancel: function () {
+              showToast('Purchase successful! Saved to your default collection.');
+            }
+          });
+        } else {
+          showToast('Purchase successful! Check your library.');
+        }
+      } else {
+        showToast('Purchase successful! Check your library.');
+      }
     }
     if (params.get('purchase') === 'cancelled') {
       history.replaceState({}, '', window.location.pathname);

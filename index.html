@@ -11,6 +11,8 @@
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://gamesum.github.io/afterglo-logo-flat.png" />
+  <link rel="icon" type="image/png" href="afterglo-logo-flat.png" />
+  <link rel="apple-touch-icon" href="afterglo-logo-flat.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -26,7 +28,7 @@
       --bg:       #080808;
       --bg2:      #0e0e0e;
       --bg3:      #141414;
-      --accent:   #c8921e;
+      --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
       --text:     #e2e8f0;
@@ -123,11 +125,11 @@
     .btn-primary {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 4px 24px rgba(200,146,30,0.35);
+      box-shadow: 0 4px 24px rgba(212,164,58,0.35);
     }
     .btn-primary:hover {
       background: var(--accent2);
-      box-shadow: 0 6px 32px rgba(200,146,30,0.5);
+      box-shadow: 0 6px 32px rgba(212,164,58,0.5);
     }
 
     .btn-ghost {
@@ -165,14 +167,14 @@
     .nav-logo {
       font-family: 'Outfit', sans-serif;
       font-size: 1.5rem;
-      font-weight: 900;
+      font-weight: 700;
       color: #fff;
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
     .nav-logo span {
       color: var(--accent);
-      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4), 0 0 60px rgba(200,146,30,0.2);
+      text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4), 0 0 60px rgba(212,164,58,0.2);
     }
 
     .nav-links {
@@ -266,8 +268,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 50% 110%, rgba(200,146,30,0.18) 0%, transparent 65%),
-        radial-gradient(ellipse 60% 50% at 20% 80%,  rgba(200,146,30,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 80% 60% at 50% 110%, rgba(212,164,58,0.18) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 50% at 20% 80%,  rgba(212,164,58,0.08) 0%, transparent 60%),
         linear-gradient(180deg, rgba(8,8,8,0.55) 0%, rgba(5,5,8,0.55) 100%);
       z-index: 1;
     }
@@ -275,7 +277,7 @@
     @media (max-width: 768px) {
       .hero-bg {
         background:
-          radial-gradient(ellipse 80% 60% at 50% 110%, rgba(200,146,30,0.12) 0%, transparent 65%),
+          radial-gradient(ellipse 80% 60% at 50% 110%, rgba(212,164,58,0.12) 0%, transparent 65%),
           linear-gradient(180deg, rgba(8,8,8,0.30) 0%, rgba(5,5,8,0.30) 100%);
       }
     }
@@ -290,13 +292,13 @@
     }
     .hero-bg::before {
       width: 500px; height: 500px;
-      background: rgba(200,146,30,0.09);
+      background: rgba(212,164,58,0.09);
       bottom: -100px; left: -100px;
       animation-delay: 0s;
     }
     .hero-bg::after {
       width: 400px; height: 400px;
-      background: rgba(200,146,30,0.06);
+      background: rgba(212,164,58,0.06);
       bottom: -50px; right: 0;
       animation-delay: 4s;
     }
@@ -318,8 +320,8 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(200,146,30,0.1);
-      border: 1px solid rgba(200,146,30,0.25);
+      background: rgba(212,164,58,0.1);
+      border: 1px solid rgba(212,164,58,0.25);
       border-radius: 100px;
       padding: 6px 16px;
       font-size: 0.8rem;
@@ -429,7 +431,7 @@
       pointer-events: none;
       z-index: 0;
       overflow: visible;
-      filter: drop-shadow(0 0 6px rgba(200,146,30,0.8));
+      filter: drop-shadow(0 0 6px rgba(212,164,58,0.8));
     }
 
     /* ─── HOW IT WORKS ─────────────────────────────────────────────── */
@@ -465,7 +467,7 @@
       align-items: center;
       justify-content: center;
       margin: 0 auto 28px;
-      box-shadow: 0 0 0 8px rgba(200,146,30,0.1), 0 0 32px rgba(200,146,30,0.25);
+      box-shadow: 0 0 0 8px rgba(212,164,58,0.1), 0 0 32px rgba(212,164,58,0.25);
     }
 
     .step-title {
@@ -517,7 +519,7 @@
       height: 6px;
       border-radius: 3px;
       background: linear-gradient(90deg, #f59e0b, #fbbf24, #f59e0b, #fbbf24, #f59e0b);
-      box-shadow: 0 0 16px rgba(200,146,30,0.8), 0 0 32px rgba(200,146,30,0.4);
+      box-shadow: 0 0 16px rgba(212,164,58,0.8), 0 0 32px rgba(212,164,58,0.4);
     }
     .led-strip.blue  { background: linear-gradient(90deg, #3b82f6, #60a5fa, #3b82f6); box-shadow: 0 0 16px rgba(59,130,246,0.8), 0 0 32px rgba(59,130,246,0.4); }
     .led-strip.green { background: linear-gradient(90deg, #10b981, #34d399, #10b981); box-shadow: 0 0 16px rgba(16,185,129,0.8), 0 0 32px rgba(16,185,129,0.4); }
@@ -611,7 +613,7 @@
       display: flex;
       flex-direction: column;
     }
-    .testi-card:hover { border-color: rgba(200,146,30,0.25); }
+    .testi-card:hover { border-color: rgba(212,164,58,0.25); }
 
     .stars { color: var(--accent); font-size: 1.1rem; letter-spacing: 2px; margin-bottom: 20px; }
 
@@ -639,7 +641,7 @@
       color: #000;
       flex-shrink: 0;
       overflow: hidden;
-      border: 2px solid rgba(200,146,30,0.3);
+      border: 2px solid rgba(212,164,58,0.3);
     }
     .testi-avatar img {
       width: 100%; height: 100%;
@@ -665,7 +667,7 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 70% 60% at 50% 120%, rgba(200,146,30,0.12) 0%, transparent 65%);
+        radial-gradient(ellipse 70% 60% at 50% 120%, rgba(212,164,58,0.12) 0%, transparent 65%);
       pointer-events: none;
     }
     .cta-inner::after {
@@ -677,7 +679,7 @@
     }
     .cta-tag {
       display: inline-block;
-      background: rgba(200,146,30,0.15);
+      background: rgba(212,164,58,0.15);
       color: var(--accent);
       font-size: 0.8rem;
       font-weight: 600;
@@ -722,7 +724,7 @@
     .footer-logo {
       font-family: 'Outfit', sans-serif;
       font-size: 1.5rem;
-      font-weight: 900;
+      font-weight: 700;
       color: #fff;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -730,7 +732,7 @@
     }
     .footer-logo span {
       color: var(--accent);
-      text-shadow: 0 0 20px rgba(200,146,30,0.7), 0 0 40px rgba(200,146,30,0.3);
+      text-shadow: 0 0 20px rgba(212,164,58,0.7), 0 0 40px rgba(212,164,58,0.3);
     }
 
     .footer-desc {
@@ -761,7 +763,7 @@
     .social-link:hover {
       border-color: var(--accent);
       color: var(--accent);
-      background: rgba(200,146,30,0.08);
+      background: rgba(212,164,58,0.08);
     }
 
     .footer-col-title {
@@ -828,7 +830,7 @@
       border-radius: 16px;
       overflow: hidden;
       cursor: default;
-      box-shadow: 0 40px 120px rgba(0,0,0,0.9), 0 0 0 1px rgba(200,146,30,0.2);
+      box-shadow: 0 40px 120px rgba(0,0,0,0.9), 0 0 0 1px rgba(212,164,58,0.2);
       animation: lbIn 0.25s ease;
     }
     @keyframes lbIn {
@@ -866,7 +868,7 @@
       justify-content: center;
       transition: background 0.2s, border-color 0.2s;
     }
-    .lightbox-close:hover { background: rgba(200,146,30,0.5); border-color: rgba(200,146,30,0.4); }
+    .lightbox-close:hover { background: rgba(212,164,58,0.5); border-color: rgba(212,164,58,0.4); }
 
     /* ─── RESPONSIVE ───────────────────────────────────────────────── */
     @media (max-width: 900px) {
@@ -945,7 +947,7 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(200,146,30,0.08) 0%, transparent 70%);
+      background: radial-gradient(ellipse 80% 60% at 50% 100%, rgba(212,164,58,0.08) 0%, transparent 70%);
       pointer-events: none;
     }
 
@@ -966,7 +968,7 @@
       text-align: center;
       transition: border-color 0.3s;
     }
-    .arch-prop-card:hover { border-color: rgba(200,146,30,0.3); }
+    .arch-prop-card:hover { border-color: rgba(212,164,58,0.3); }
     .arch-prop-icon { font-size: 1.8rem; margin-bottom: 8px; }
     .arch-prop-name { font-size: 0.78rem; font-weight: 600; color: var(--text); }
     .arch-prop-sub  { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
@@ -981,7 +983,7 @@
       border-radius: 36px;
       border: 2px solid #333;
       padding: 12px;
-      box-shadow: 0 0 0 1px #222, 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(200,146,30,0.08);
+      box-shadow: 0 0 0 1px #222, 0 20px 60px rgba(0,0,0,0.6), 0 0 40px rgba(212,164,58,0.08);
       position: relative;
     }
     .phone-notch {
@@ -1033,8 +1035,8 @@
     .app-feat-icon {
       width: 34px; height: 34px;
       border-radius: 8px;
-      background: rgba(200,146,30,0.1);
-      border: 1px solid rgba(200,146,30,0.2);
+      background: rgba(212,164,58,0.1);
+      border: 1px solid rgba(212,164,58,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1225,7 +1227,7 @@
           <div class="pain-item">Same Boring Look</div>
           <!-- Path built dynamically by JS based on real DOM measurements -->
           <svg class="pain-snake" id="painSvg" aria-hidden="true">
-            <path id="painPath" fill="none" stroke="#c8921e" stroke-width="2"
+            <path id="painPath" fill="none" stroke="#D4A43A" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round"/>
             <circle id="painHead" cx="0" cy="0" r="5" fill="#f0b233" opacity="0"/>
           </svg>
@@ -1441,7 +1443,7 @@
 
         <!-- Right: visualizer preview images -->
         <div class="fade-in fade-delay-1" style="position:relative;">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(200,146,30,0.15);">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;border-radius:16px;overflow:hidden;box-shadow:0 0 60px rgba(212,164,58,0.15);">
             <div style="position:relative;overflow:hidden;border-radius:8px;">
               <img src="visualizer-warmwhite.jpg" alt="Warm white permanent LED lighting preview" style="width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.4s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
               <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Warm White</div>
@@ -1459,7 +1461,7 @@
               <div style="position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);color:#fff;font-family:'Outfit',sans-serif;font-size:0.6rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;padding:4px 10px;border-radius:100px;">Patriotic</div>
             </div>
           </div>
-          <div style="position:absolute;top:-14px;right:-14px;background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;box-shadow:0 4px 20px rgba(200,146,30,0.5);">Free Tool</div>
+          <div style="position:absolute;top:-14px;right:-14px;background:var(--accent);color:#000;font-family:'Outfit',sans-serif;font-size:0.7rem;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;padding:6px 14px;border-radius:100px;box-shadow:0 4px 20px rgba(212,164,58,0.5);">Free Tool</div>
         </div>
 
       </div>
@@ -1544,7 +1546,7 @@
           <p class="testi-quote">So impressed with this company! Installers were professional and fun! The system installation is clean. I love how easy the interface is to use and the customization that it allows. We had a small hiccup with using it but the support they offered after installation was top notch!</p>
           <div class="testi-author">
             <div class="testi-avatar">
-              <img src="https://ui-avatars.com/api/?name=Donovan+L&background=c8921e&color=000&size=96&bold=true&font-size=0.45" alt="Donovan L." onerror="this.style.display='none'" />
+              <img src="https://ui-avatars.com/api/?name=Donovan+L&background=D4A43A&color=000&size=96&bold=true&font-size=0.45" alt="Donovan L." onerror="this.style.display='none'" />
             </div>
             <div>
               <div class="testi-name">Donovan L.</div>
@@ -1557,7 +1559,7 @@
           <p class="testi-quote">I love this local permanent lighting company. The owner is so friendly. Him and his team got the job done so fast and so efficiently. If you are thinking about getting permanent lights give these local guys a shot, it's worth it.</p>
           <div class="testi-author">
             <div class="testi-avatar">
-              <img src="https://ui-avatars.com/api/?name=Brianna+L&background=c8921e&color=000&size=96&bold=true&font-size=0.45" alt="Brianna L." onerror="this.style.display='none'" />
+              <img src="https://ui-avatars.com/api/?name=Brianna+L&background=D4A43A&color=000&size=96&bold=true&font-size=0.45" alt="Brianna L." onerror="this.style.display='none'" />
             </div>
             <div>
               <div class="testi-name">Brianna L.</div>
@@ -1570,7 +1572,7 @@
           <p class="testi-quote">This company did an amazing job on our lights. The app is so user friendly and the technician was really great to explain how to use it. Very happy customer!</p>
           <div class="testi-author">
             <div class="testi-avatar">
-              <img src="https://ui-avatars.com/api/?name=Melanie+W&background=c8921e&color=000&size=96&bold=true&font-size=0.45" alt="Melanie W." onerror="this.style.display='none'" />
+              <img src="https://ui-avatars.com/api/?name=Melanie+W&background=D4A43A&color=000&size=96&bold=true&font-size=0.45" alt="Melanie W." onerror="this.style.display='none'" />
             </div>
             <div>
               <div class="testi-name">Melanie W.</div>
@@ -1609,12 +1611,12 @@
           <form id="ctaEmailForm" onsubmit="submitCtaEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
             <input id="ctaEmailInput" type="email" placeholder="Your email address" required
               style="background:#1a1a1a;border:1px solid #555;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:min(220px, 100%);transition:border-color 0.2s;"
-              onfocus="this.style.borderColor='rgba(200,146,30,0.8)'" onblur="this.style.borderColor='#555'">
-            <button type="submit" style="background:rgba(200,146,30,0.15);color:#c8921e;border:1px solid rgba(200,146,30,0.3);border-radius:8px;padding:12px 22px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;">
+              onfocus="this.style.borderColor='rgba(212,164,58,0.8)'" onblur="this.style.borderColor='#555'">
+            <button type="submit" style="background:rgba(212,164,58,0.15);color:#D4A43A;border:1px solid rgba(212,164,58,0.3);border-radius:8px;padding:12px 22px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;">
               Keep Me Posted
             </button>
           </form>
-          <p id="ctaEmailThanks" style="display:none;font-size:0.85rem;color:#c8921e;margin-top:10px;">You're in! We'll be in touch.</p>
+          <p id="ctaEmailThanks" style="display:none;font-size:0.85rem;color:#D4A43A;margin-top:10px;">You're in! We'll be in touch.</p>
           <p style="font-size:0.7rem;color:#64748b;margin-top:10px;">By submitting your email you agree to receive marketing communications from AFTERGLO. We will never sell your information. Unsubscribe at any time.</p>
         </div>
       </div>
@@ -1918,7 +1920,7 @@
           return cfg.pal[Math.floor(pos) % cfg.pal.length];
         }
         if (cfg.type === 'fire') return fireColor(i);
-        return (cfg.leds || [])[i] || {b:'#c8921e', g:'#7a5510'};
+        return (cfg.leds || [])[i] || {b:'#D4A43A', g:'#7a5510'};
       }
 
       function alpha(i) {
@@ -2195,16 +2197,16 @@
 
   <!-- ─── EMAIL GATE MODAL ─────────────────────────────────── -->
   <div id="emailGateModal" style="display:none;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);align-items:center;justify-content:center;padding:24px;">
-    <div style="background:#111;border:1px solid #2a2a2a;border-radius:20px;padding:40px 36px;max-width:440px;width:100%;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.8),0 0 0 1px rgba(200,146,30,0.15);">
+    <div style="background:#111;border:1px solid #2a2a2a;border-radius:20px;padding:40px 36px;max-width:440px;width:100%;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.8),0 0 0 1px rgba(212,164,58,0.15);">
       <button onclick="closeEmailGate()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
-      <div style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:900;color:#fff;margin-bottom:6px;">AFTER<span style="color:#c8921e;">GLO</span></div>
+      <div style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:900;color:#fff;margin-bottom:6px;">AFTER<span style="color:#D4A43A;">GLO</span></div>
       <p style="font-size:0.95rem;color:#94a3b8;margin-bottom:28px;line-height:1.6;">Enter your email below to be the first to hear about new products, light show packages, and seasonal releases from AFTERGLO.</p>
       <form id="emailGateForm" onsubmit="submitEmailGate(event)" style="display:flex;flex-direction:column;gap:12px;">
         <input id="gateEmailInput" type="email" placeholder="Your email address *" required
           style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px 16px;color:#e2e8f0;font-size:0.95rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;"
-          onfocus="this.style.borderColor='rgba(200,146,30,0.5)'" onblur="this.style.borderColor='#2a2a2a'">
+          onfocus="this.style.borderColor='rgba(212,164,58,0.5)'" onblur="this.style.borderColor='#2a2a2a'">
         <button type="submit" id="emailGateSubmitBtn"
-          style="background:#c8921e;color:#000;border:none;border-radius:10px;padding:14px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;letter-spacing:0.04em;transition:background 0.2s;box-shadow:0 4px 24px rgba(200,146,30,0.35);">
+          style="background:#D4A43A;color:#000;border:none;border-radius:10px;padding:14px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;letter-spacing:0.04em;transition:background 0.2s;box-shadow:0 4px 24px rgba(212,164,58,0.35);">
           Connect Me →
         </button>
       </form>
@@ -2329,7 +2331,7 @@
       const initial = (name || email || 'U')[0].toUpperCase();
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
           ${name || email}
         </a>
         <button onclick="signOut()" style="background:none;border:1px solid #333;color:var(--muted);font-size:0.78rem;cursor:pointer;padding:4px 10px;border-radius:6px;margin-left:4px;">Sign Out</button>`;

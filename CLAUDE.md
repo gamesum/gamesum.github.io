@@ -13,7 +13,8 @@ Live at: https://gamesum.github.io
 
 ## Brand / Style
 - Fonts: Outfit (headings, 700–900) · Inter (body) · JetBrains Mono (code/specs)
-- Colors: bg `#070707` · accent amber `#c8921e` · text `#dde4ee` · muted `#607080`
+- Colors: bg `#0F0F11` · accent gold `#D4A43A` (bright-gold sub-14pt `#F0C04A`) · text `#F2F2F4` · muted `#9A9AA2`
+- Canonical brand kit lives in `BRAND.md` at repo root. Keep parity with `AFTERGLO-Suite-Standalone`.
 - Dark industrial aesthetic, no emojis, terse copy
 
 ## circuit-board.html specifics

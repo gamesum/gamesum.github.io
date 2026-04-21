@@ -26,7 +26,7 @@
       --bg2:      #0e0e0e;
       --bg3:      #111111;
       --bg4:      #1a1a1a;
-      --accent:   #c8921e;
+      --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
       --text:     #e2e8f0;
@@ -82,7 +82,7 @@
     }
     .nav-logo span {
       color: var(--accent);
-      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+      text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4);
     }
 
     .nav-links {
@@ -121,11 +121,11 @@
     .btn-primary {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+      box-shadow: 0 4px 20px rgba(212,164,58,0.35);
     }
     .btn-primary:hover {
       background: var(--accent2);
-      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+      box-shadow: 0 6px 28px rgba(212,164,58,0.5);
     }
     .btn-ghost {
       background: transparent;
@@ -193,9 +193,9 @@
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 70% 60% at 50% 90%, rgba(200,146,30,0.15) 0%, transparent 65%),
-        radial-gradient(ellipse 40% 40% at 15% 60%, rgba(200,146,30,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 85% 30%, rgba(200,146,30,0.05) 0%, transparent 60%);
+        radial-gradient(ellipse 70% 60% at 50% 90%, rgba(212,164,58,0.15) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 40% at 15% 60%, rgba(212,164,58,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 85% 30%, rgba(212,164,58,0.05) 0%, transparent 60%);
       pointer-events: none;
       z-index: 0;
     }
@@ -203,7 +203,7 @@
     .page-grid {
       position: fixed;
       inset: 0;
-      background-image: radial-gradient(circle, rgba(200,146,30,0.08) 1px, transparent 1px);
+      background-image: radial-gradient(circle, rgba(212,164,58,0.08) 1px, transparent 1px);
       background-size: 48px 48px;
       mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
       -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
@@ -229,11 +229,11 @@
       justify-content: center;
       width: 56px; height: 56px;
       border-radius: 16px;
-      background: linear-gradient(135deg, rgba(200,146,30,0.15), rgba(200,146,30,0.05));
-      border: 1px solid rgba(200,146,30,0.25);
+      background: linear-gradient(135deg, rgba(212,164,58,0.15), rgba(212,164,58,0.05));
+      border: 1px solid rgba(212,164,58,0.25);
       margin-bottom: 16px;
       font-size: 1.6rem;
-      box-shadow: 0 4px 24px rgba(200,146,30,0.15);
+      box-shadow: 0 4px 24px rgba(212,164,58,0.15);
     }
     .auth-logo-text {
       font-family: 'Outfit', sans-serif;
@@ -245,7 +245,7 @@
     }
     .auth-logo-text span {
       color: var(--accent);
-      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+      text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4);
     }
     .auth-logo-sub {
       font-size: 0.88rem;
@@ -258,7 +258,7 @@
       border: 1px solid var(--border2);
       border-radius: 16px;
       padding: 36px 32px;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,146,30,0.06);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(212,164,58,0.06);
       position: relative;
     }
     /* Subtle top highlight line */
@@ -267,7 +267,7 @@
       position: absolute;
       top: 0; left: 10%; right: 10%;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(200,146,30,0.4), transparent);
+      background: linear-gradient(90deg, transparent, rgba(212,164,58,0.4), transparent);
       border-radius: 50%;
     }
 
@@ -330,7 +330,7 @@
     }
     .form-group input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(200,146,30,0.12);
+      box-shadow: 0 0 0 3px rgba(212,164,58,0.12);
     }
     .form-group input::placeholder { color: #555; }
     .form-group input.error { border-color: #f87171; }
@@ -974,7 +974,7 @@
       const initial = (name || email || 'U')[0].toUpperCase();
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
           ${name || email}
         </a>`;
       if (mobArea) mobArea.innerHTML = `<a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>`;

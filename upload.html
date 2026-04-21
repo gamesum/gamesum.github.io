@@ -13,6 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/collections.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -21,7 +22,7 @@
       --bg2:      #0e0e0e;
       --bg3:      #141414;
       --bg4:      #1a1a1a;
-      --accent:   #c8921e;
+      --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
       --text:     #e2e8f0;
@@ -80,7 +81,7 @@
     }
     .nav-logo span {
       color: var(--accent);
-      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+      text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4);
     }
 
     .nav-links {
@@ -139,11 +140,11 @@
     .btn-primary {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+      box-shadow: 0 4px 20px rgba(212,164,58,0.35);
     }
     .btn-primary:hover {
       background: var(--accent2);
-      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+      box-shadow: 0 6px 28px rgba(212,164,58,0.5);
     }
     .btn-ghost {
       background: transparent;
@@ -263,7 +264,7 @@
       background: var(--accent);
       border-color: var(--accent);
       color: #000;
-      box-shadow: 0 0 0 4px rgba(200,146,30,0.18);
+      box-shadow: 0 0 0 4px rgba(212,164,58,0.18);
     }
     .step-dot.done {
       background: rgba(74,222,128,0.15);
@@ -348,7 +349,7 @@
     }
     .form-input:focus, .form-select:focus, .form-textarea:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(200,146,30,0.12);
+      box-shadow: 0 0 0 3px rgba(212,164,58,0.12);
     }
     .form-input::placeholder, .form-textarea::placeholder { color: #444; }
     .form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
@@ -397,7 +398,7 @@
     .prop-check:has(input:checked) {
       border-color: var(--accent);
       color: #fff;
-      background: rgba(200,146,30,0.08);
+      background: rgba(212,164,58,0.08);
     }
     .prop-icon { font-size: 1.1rem; }
 
@@ -428,7 +429,7 @@
     }
     .drop-zone:hover, .drop-zone.drag-over {
       border-color: var(--accent);
-      background: rgba(200,146,30,0.04);
+      background: rgba(212,164,58,0.04);
     }
     .drop-zone input[type="file"] {
       position: absolute;
@@ -512,7 +513,7 @@
     .price-label:hover { border-color: #444; }
     .price-radio:checked + .price-label {
       border-color: var(--accent);
-      background: rgba(200,146,30,0.07);
+      background: rgba(212,164,58,0.07);
     }
     .price-label-icon { font-size: 1.6rem; }
     .price-label-title {
@@ -551,7 +552,7 @@
     }
     .price-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(200,146,30,0.12);
+      box-shadow: 0 0 0 3px rgba(212,164,58,0.12);
     }
     .price-input::placeholder { color: #333; font-size: 1.5rem; }
 
@@ -801,12 +802,12 @@
       gap: 8px;
       font-family: 'Inter', sans-serif;
       transition: all 0.2s;
-      box-shadow: 0 4px 20px rgba(200,146,30,0.3);
+      box-shadow: 0 4px 20px rgba(212,164,58,0.3);
     }
     .btn-next:hover:not(:disabled) {
       background: var(--accent2);
       transform: translateY(-2px);
-      box-shadow: 0 6px 28px rgba(200,146,30,0.45);
+      box-shadow: 0 6px 28px rgba(212,164,58,0.45);
     }
     .btn-next:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
@@ -959,7 +960,7 @@
       pointer-events: none;
     }
     #toast.show { transform: translateY(0); opacity: 1; }
-    #toast.warning { background: #2a1a0a; border-color: rgba(200,146,30,0.35); color: var(--accent); }
+    #toast.warning { background: #2a1a0a; border-color: rgba(212,164,58,0.35); color: var(--accent); }
     #toast.error   { background: #2a0a0a; border-color: rgba(248,113,113,0.35); color: #f87171; }
 
     /* ─── RESPONSIVE ──────────────────────────────────────────────── */
@@ -1376,7 +1377,7 @@
       const initial = (name || email || 'U')[0].toUpperCase();
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
           ${name || email}
         </a>
         <button onclick="signOut()" style="background:none;border:1px solid #333;color:var(--muted);font-size:0.78rem;cursor:pointer;padding:4px 10px;border-radius:6px;margin-left:4px;">Sign Out</button>`;
@@ -1723,7 +1724,46 @@
     return { blocked: false, flagged: false };
   }
 
+  /* ─── LOCAL UPLOAD MIRROR ────────────────────────────────
+     Mirror a just-submitted upload into user.uploads so the library
+     page can group it under the chosen collection immediately. The
+     canonical upload still lives server-side. ───────────────────── */
+  function mirrorUploadLocally(payload, collectionId) {
+    try {
+      if (typeof getUser !== 'function' || typeof saveUser !== 'function') return;
+      const user = getUser();
+      if (!user) return;
+      if (window.AGCollections) AGCollections.ensureCollections(user);
+      if (!Array.isArray(user.uploads)) user.uploads = [];
+      const cid = collectionId || (window.AGCollections ? window.AGCollections.DEFAULT_ID : 'default');
+      const existing = user.uploads.find(u => String(u.id) === String(payload.sequenceId));
+      if (existing) {
+        existing.collectionId = cid;
+      } else {
+        user.uploads.push({
+          id:           payload.sequenceId,
+          name:         payload.name,
+          creator:      user.name || user.email || 'You',
+          duration:     payload.durationSecs
+                          ? Math.round(payload.durationSecs / 60) + ':' +
+                            String(payload.durationSecs % 60).padStart(2, '0')
+                          : '',
+          category:     payload.category,
+          price:        payload.price || 0,
+          addedAt:      Date.now(),
+          collectionId: cid
+        });
+      }
+      saveUser(user);
+    } catch (err) {
+      console.warn('mirrorUploadLocally failed:', err);
+    }
+  }
+
   /* ─── SUBMIT UPLOAD ─────────────────────────────────── */
+  // Holds the collection chosen by the picker for the current submission.
+  let pendingCollectionId = null;
+
   async function submitUpload() {
     const btn            = document.getElementById('publishBtn');
     const backBtn        = document.getElementById('step3BackBtn');
@@ -1737,6 +1777,31 @@
       return;
     }
     contentErrorEl.classList.remove('show');
+
+    // Force collection pick before the upload starts. Cancel aborts the submit.
+    if (!pendingCollectionId) {
+      if (!window.AGCollections) {
+        // Module missing. Continue without collection assignment.
+        pendingCollectionId = 'default';
+      } else {
+        const showNameEl = document.getElementById('showName');
+        const seqLabel   = (showNameEl && showNameEl.value.trim()) || 'this show';
+        const user = (typeof getUser === 'function') ? getUser() : null;
+        if (user) {
+          AGCollections.ensureCollections(user);
+          if (typeof saveUser === 'function') saveUser(user);
+        }
+        AGCollections.openPickerModal({
+          title:    'Add "' + seqLabel + '" to.',
+          onPick:   function (collectionId) {
+            pendingCollectionId = collectionId;
+            submitUpload();   // re-enter now that the collection is set
+          },
+          onCancel: function () { /* aborted. leave the publish button untouched. */ }
+        });
+        return;
+      }
+    }
 
     btn.disabled     = true;
     backBtn.disabled = true;
@@ -1827,6 +1892,8 @@
         document.querySelector('#successState .success-title').textContent = 'Submission Received!';
         document.querySelector('#successState .success-sub').textContent =
           'Upload processing. You\u2019ll receive a confirmation email within 24 hours once your show is live.';
+        mirrorUploadLocally(payload, pendingCollectionId);
+        pendingCollectionId = null;
         showSuccessView();
         return;
       }
@@ -1867,6 +1934,8 @@
       }
 
       setProgress(100, 'Complete!');
+      mirrorUploadLocally(payload, pendingCollectionId);
+      pendingCollectionId = null;
       showSuccessView();
 
     } catch (err) {
@@ -1949,7 +2018,7 @@
       const email = stored.email || fbUser.email || '';
       const initial = (name || email || 'U')[0].toUpperCase();
       navArea.innerHTML = '<a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">'
-        + '<span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">' + initial + '</span>'
+        + '<span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">' + initial + '</span>'
         + (name || email) + '</a>';
       if (mobArea) mobArea.innerHTML = '<a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>';
     } else {

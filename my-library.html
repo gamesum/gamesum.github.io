@@ -13,6 +13,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/collections.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -21,7 +22,7 @@
       --bg2:      #0e0e0e;
       --bg3:      #111111;
       --bg4:      #1a1a1a;
-      --accent:   #c8921e;
+      --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
       --text:     #e2e8f0;
@@ -65,11 +66,11 @@
     .btn-primary {
       background: var(--accent);
       color: #000;
-      box-shadow: 0 4px 20px rgba(200,146,30,0.35);
+      box-shadow: 0 4px 20px rgba(212,164,58,0.35);
     }
     .btn-primary:hover {
       background: var(--accent2);
-      box-shadow: 0 6px 28px rgba(200,146,30,0.5);
+      box-shadow: 0 6px 28px rgba(212,164,58,0.5);
     }
     .btn-ghost {
       background: transparent;
@@ -113,7 +114,7 @@
     }
     .nav-logo span {
       color: var(--accent);
-      text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4);
+      text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4);
     }
 
     .nav-links {
@@ -222,7 +223,7 @@
       font-size: 1.8rem;
       color: #000;
       flex-shrink: 0;
-      box-shadow: 0 0 0 3px rgba(200,146,30,0.2), 0 8px 32px rgba(200,146,30,0.2);
+      box-shadow: 0 0 0 3px rgba(212,164,58,0.2), 0 8px 32px rgba(212,164,58,0.2);
     }
 
     .profile-info h1 {
@@ -372,7 +373,7 @@
       font-size: 1.2rem;
     }
     .icon-downloads { background: rgba(74,222,128,0.1); border: 1px solid rgba(74,222,128,0.2); }
-    .icon-purchases  { background: rgba(200,146,30,0.1); border: 1px solid rgba(200,146,30,0.25); }
+    .icon-purchases  { background: rgba(212,164,58,0.1); border: 1px solid rgba(212,164,58,0.25); }
     .icon-uploads    { background: rgba(99,102,241,0.1);  border: 1px solid rgba(99,102,241,0.25); }
 
     .lib-section-title {
@@ -388,6 +389,255 @@
       border: 1px solid var(--border);
       border-radius: 100px;
       padding: 3px 10px;
+    }
+
+    /* ─── COLLECTIONS TOOLBAR ─────────────────────────────────────── */
+    .collections-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 16px 0 24px;
+      margin-bottom: 32px;
+      border-bottom: 1px solid var(--border);
+    }
+    .collections-bar-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-right: 6px;
+      font-weight: 700;
+    }
+    .col-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border: 1px solid #3A3A42;
+      background: transparent;
+      color: #F2F2F4;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
+    }
+    .col-chip:hover { background: #17171A; }
+    .col-chip.active {
+      background: rgba(212,164,58,0.18);
+      color: #F0C04A;
+      border-color: rgba(212,164,58,0.45);
+    }
+    .col-chip .count {
+      color: #9A9AA2;
+      font-size: 0.72rem;
+    }
+    .col-chip.active .count { color: #F0C04A; }
+
+    .btn-new-collection {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #D4A43A;
+      color: #000;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+    }
+    .btn-new-collection:hover { background: #F0C04A; }
+
+    .btn-manage-col {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      color: #9A9AA2;
+      border: 1px solid #3A3A42;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+    }
+    .btn-manage-col:hover { color: #F2F2F4; border-color: #D4A43A; }
+
+    .col-inline-form {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      background: #17171A;
+      border: 1px solid #3A3A42;
+      border-radius: 999px;
+      padding: 4px 6px 4px 12px;
+    }
+    .col-inline-form input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #F2F2F4;
+      font-size: 0.85rem;
+      width: 180px;
+      height: 28px;
+      font-family: 'Inter', sans-serif;
+    }
+    .col-inline-form .save-btn {
+      background: #D4A43A;
+      color: #000;
+      border: none;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .col-inline-form .cancel-btn {
+      background: transparent;
+      color: #9A9AA2;
+      border: none;
+      font-size: 0.78rem;
+      cursor: pointer;
+      padding: 5px 8px;
+    }
+    .col-inline-err {
+      width: 100%;
+      color: #f87171;
+      font-size: 0.78rem;
+      padding: 4px 2px 0;
+    }
+
+    /* ─── PER-COLLECTION SUB-HEADERS ───────────────────────────────── */
+    .col-subsection { margin-bottom: 32px; }
+    .col-subsection-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding: 8px 0 10px;
+      border-bottom: 1px dashed rgba(58,58,66,0.6);
+    }
+    .col-subsection-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.98rem;
+      color: #F2F2F4;
+    }
+    .col-subsection-title .count-pill {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      color: #9A9AA2;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid #3A3A42;
+      border-radius: 100px;
+      padding: 2px 8px;
+      font-weight: 500;
+    }
+    .col-subsection-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .col-icon-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #9A9AA2;
+      border-radius: 6px;
+      padding: 4px 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .col-icon-btn:hover { color: #D4A43A; border-color: #3A3A42; }
+    .col-icon-btn.danger:hover { color: #f87171; border-color: #3A3A42; }
+
+    /* ─── MANAGE COLLECTIONS MODAL ─────────────────────────────────── */
+    .col-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.75);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .col-modal-overlay.open { display: flex; }
+    .col-modal {
+      background: #17171A;
+      border: 1px solid #3A3A42;
+      border-radius: 12px;
+      padding: 24px;
+      width: 460px;
+      max-width: 100%;
+      color: #F2F2F4;
+    }
+    .col-modal h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin: 0 0 14px;
+    }
+    .col-manage-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      border: 1px solid #3A3A42;
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: #0F0F11;
+    }
+    .col-manage-row .name-wrap { display: flex; align-items: center; gap: 10px; font-weight: 600; }
+    .col-manage-row input.rename-input {
+      background: #17171A;
+      border: 1px solid #3A3A42;
+      color: #F2F2F4;
+      font-size: 0.88rem;
+      border-radius: 6px;
+      padding: 6px 8px;
+      height: 32px;
+      outline: none;
+    }
+    .col-manage-row input.rename-input:focus { border-color: #D4A43A; }
+    .col-manage-row .row-actions { display: flex; gap: 6px; }
+    .col-manage-row .row-actions button {
+      background: transparent;
+      border: 1px solid #3A3A42;
+      color: #9A9AA2;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      cursor: pointer;
+    }
+    .col-manage-row .row-actions button:hover { color: #F2F2F4; border-color: #D4A43A; }
+    .col-manage-row .row-actions button.danger:hover { color: #f87171; border-color: #f87171; }
+
+    .col-modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+      border-top: 1px solid #3A3A42;
+      padding-top: 14px;
+    }
+    .col-modal-footer .close-btn {
+      background: #D4A43A;
+      color: #000;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     /* ─── SEQUENCE CARDS GRID ─────────────────────────────────────── */
@@ -406,7 +656,7 @@
     }
     .lib-card:hover {
       transform: translateY(-3px);
-      border-color: rgba(200,146,30,0.3);
+      border-color: rgba(212,164,58,0.3);
       box-shadow: 0 12px 40px rgba(0,0,0,0.4);
     }
 
@@ -428,7 +678,7 @@
       text-transform: uppercase;
     }
     .badge-dl  { background: rgba(74,222,128,0.15); color: #4ade80; border: 1px solid rgba(74,222,128,0.3); }
-    .badge-purchased { background: rgba(200,146,30,0.15); color: var(--accent); border: 1px solid rgba(200,146,30,0.35); }
+    .badge-purchased { background: rgba(212,164,58,0.15); color: var(--accent); border: 1px solid rgba(212,164,58,0.35); }
     .badge-upload { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.35); }
 
     .lib-card-body {
@@ -484,11 +734,11 @@
     .btn-lib-dl:hover { background: rgba(74,222,128,0.2); }
 
     .btn-lib-send {
-      background: rgba(200,146,30,0.12);
+      background: rgba(212,164,58,0.12);
       color: var(--accent);
-      border: 1px solid rgba(200,146,30,0.25);
+      border: 1px solid rgba(212,164,58,0.25);
     }
-    .btn-lib-send:hover { background: rgba(200,146,30,0.22); }
+    .btn-lib-send:hover { background: rgba(212,164,58,0.22); }
 
     /* ─── EMPTY STATE ─────────────────────────────────────────────── */
     .empty-state {
@@ -597,7 +847,7 @@
     }
     .modal-input:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(200,146,30,0.12);
+      box-shadow: 0 0 0 3px rgba(212,164,58,0.12);
     }
     .modal-input::placeholder { color: #555; }
     .modal-hint {
@@ -664,7 +914,7 @@
       gap: 10px;
       transition: border-color 0.2s;
     }
-    .controller-row:hover { border-color: rgba(200,146,30,0.4); }
+    .controller-row:hover { border-color: rgba(212,164,58,0.4); }
     .controller-row-info {
       display: flex;
       flex-direction: column;
@@ -689,16 +939,16 @@
       min-height: 36px;
       font-size: 0.8rem;
       border-radius: 6px;
-      background: rgba(200,146,30,0.12);
+      background: rgba(212,164,58,0.12);
       color: var(--accent);
-      border: 1px solid rgba(200,146,30,0.25);
+      border: 1px solid rgba(212,164,58,0.25);
       font-family: 'Inter', sans-serif;
       font-weight: 600;
       cursor: pointer;
       flex-shrink: 0;
       transition: background 0.2s;
     }
-    .controller-row-send:hover { background: rgba(200,146,30,0.25); }
+    .controller-row-send:hover { background: rgba(212,164,58,0.25); }
     .manual-divider {
       display: flex;
       align-items: center;
@@ -771,7 +1021,7 @@
     }
     #toast.warning {
       background: #2a1a0a;
-      border-color: rgba(200,146,30,0.35);
+      border-color: rgba(212,164,58,0.35);
       color: var(--accent);
     }
 
@@ -910,6 +1160,20 @@
 
   <div class="container">
 
+    <!-- Collections toolbar -->
+    <div class="collections-bar" id="collectionsBar">
+      <span class="collections-bar-label">Collections</span>
+      <div id="collectionChips" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+      <button class="btn-new-collection" id="newCollectionBtn" onclick="toggleNewCollectionForm()">+ New Collection</button>
+      <div id="newCollectionForm" class="col-inline-form" style="display:none;">
+        <input type="text" id="newCollectionInput" maxlength="40" placeholder="Collection name" />
+        <button type="button" class="save-btn" onclick="createCollectionInline()">Save</button>
+        <button type="button" class="cancel-btn" onclick="cancelNewCollectionForm()">Cancel</button>
+        <div id="newCollectionErr" class="col-inline-err" style="display:none;"></div>
+      </div>
+      <button class="btn-manage-col" onclick="openManageModal()">Manage collections</button>
+    </div>
+
     <!-- My Downloads -->
     <div class="lib-section">
       <div class="lib-section-header">
@@ -965,6 +1229,29 @@
   </div>
 </div>
 
+<!-- ─── MANAGE COLLECTIONS MODAL ───────────────────────────────────── -->
+<div class="col-modal-overlay" id="manageModal" onclick="if(event.target===this)closeManageModal()">
+  <div class="col-modal">
+    <h3>Manage Collections</h3>
+    <div id="manageRows"></div>
+    <div class="col-modal-footer">
+      <button type="button" class="close-btn" onclick="closeManageModal()">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── DELETE COLLECTION MODAL ────────────────────────────────────── -->
+<div class="col-modal-overlay" id="deleteColModal" onclick="if(event.target===this)closeDeleteColModal()">
+  <div class="col-modal">
+    <h3 id="deleteColTitle">Delete Collection</h3>
+    <div id="deleteColBody" style="font-size:0.9rem;color:#9A9AA2;margin-bottom:16px;"></div>
+    <div id="deleteColOptions" style="display:flex;flex-direction:column;gap:10px;"></div>
+    <div class="col-modal-footer">
+      <button type="button" class="close-btn" style="background:transparent;color:#9A9AA2;border:1px solid #3A3A42;" onclick="closeDeleteColModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <!-- ─── TOAST ──────────────────────────────────────────────────────── -->
 <div id="toast">
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" id="toastIcon"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -993,13 +1280,13 @@
     1:  "linear-gradient(135deg, #c8000a 0%, #ffffff 50%, #c8000a 100%)",
     2:  "linear-gradient(135deg, #3c3b6e 0%, #b22234 50%, #ffffff 100%)",
     3:  "linear-gradient(135deg, #1a0030 0%, #ff6600 60%, #000000 100%)",
-    4:  "linear-gradient(135deg, #001a33 0%, #ffffff 40%, #c8921e 100%)",
+    4:  "linear-gradient(135deg, #001a33 0%, #ffffff 40%, #D4A43A 100%)",
     5:  "linear-gradient(135deg, #ff0000 0%, #ffffff 50%, #0000cc 100%)",
     6:  "linear-gradient(135deg, #2a0000 0%, #ff6600 45%, #3d0066 100%)",
     7:  "linear-gradient(135deg, #3d001a 0%, #ff1a6b 50%, #ffffff 100%)",
     8:  "linear-gradient(135deg, #001a00 0%, #00ff88 40%, #0066ff 100%)",
     9:  "linear-gradient(135deg, #b22234 0%, #ffffff 35%, #3c3b6e 100%)",
-    10: "linear-gradient(135deg, #0a001a 0%, #ffffff 50%, #c8921e 100%)",
+    10: "linear-gradient(135deg, #0a001a 0%, #ffffff 50%, #D4A43A 100%)",
     11: "linear-gradient(135deg, #ff0000 0%, #ffff00 50%, #ff0000 100%)",
     12: "linear-gradient(135deg, #0d0005 0%, #6600aa 50%, #1a0000 100%)"
   };
@@ -1118,8 +1405,236 @@
     setProfileNameDisplay(currentUser.name || 'My Account');
   }
 
+  /* ─── COLLECTIONS UI ─────────────────────────────────────────── */
+  function toggleNewCollectionForm() {
+    const form = document.getElementById('newCollectionForm');
+    const btn  = document.getElementById('newCollectionBtn');
+    if (!form) return;
+    const showing = form.style.display !== 'none';
+    if (showing) {
+      cancelNewCollectionForm();
+    } else {
+      form.style.display = 'inline-flex';
+      btn.style.display  = 'none';
+      const input = document.getElementById('newCollectionInput');
+      input.value = '';
+      input.focus();
+      input.onkeydown = function (e) {
+        if (e.key === 'Enter')  { e.preventDefault(); createCollectionInline(); }
+        if (e.key === 'Escape') { e.preventDefault(); cancelNewCollectionForm(); }
+      };
+    }
+  }
+  function cancelNewCollectionForm() {
+    const form = document.getElementById('newCollectionForm');
+    const btn  = document.getElementById('newCollectionBtn');
+    const err  = document.getElementById('newCollectionErr');
+    if (form) form.style.display = 'none';
+    if (btn)  btn.style.display  = 'inline-flex';
+    if (err)  { err.textContent = ''; err.style.display = 'none'; }
+  }
+  function createCollectionInline() {
+    if (!window.AGCollections || !currentUser) return;
+    const input = document.getElementById('newCollectionInput');
+    const err   = document.getElementById('newCollectionErr');
+    err.style.display = 'none';
+    try {
+      AGCollections.createCollection(currentUser, input.value);
+      saveUser(currentUser);
+      cancelNewCollectionForm();
+      renderSections();
+      showToast('Collection created.');
+    } catch (e) {
+      err.textContent = e.message;
+      err.style.display = 'block';
+      input.focus();
+    }
+  }
+
+  function inlineRenameCollection(colId, triggerBtn) {
+    if (!window.AGCollections || !currentUser) return;
+    const col = (currentUser.collections || []).find(c => c.id === colId);
+    if (!col) return;
+    const newName = window.prompt('Rename collection:', col.name);
+    if (newName === null) return;
+    try {
+      AGCollections.renameCollection(currentUser, colId, newName);
+      saveUser(currentUser);
+      renderSections();
+      showToast('Collection renamed.');
+    } catch (e) {
+      window.alert(e.message);
+    }
+  }
+
+  function requestDeleteCollection(colId) {
+    if (!window.AGCollections || !currentUser) return;
+    if (colId === AGCollections.DEFAULT_ID) return;
+    const col = (currentUser.collections || []).find(c => c.id === colId);
+    if (!col) return;
+    const total =
+      (currentUser.library   || []).filter(i => i.collectionId === colId).length +
+      (currentUser.purchases || []).filter(i => i.collectionId === colId).length +
+      (currentUser.uploads   || []).filter(i => i.collectionId === colId).length;
+
+    const overlay = document.getElementById('deleteColModal');
+    document.getElementById('deleteColTitle').textContent = 'Delete "' + col.name + '"';
+    const body = document.getElementById('deleteColBody');
+    const opts = document.getElementById('deleteColOptions');
+    opts.innerHTML = '';
+
+    if (total === 0) {
+      body.textContent = 'This collection is empty. Deleting it will not remove any items.';
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'close-btn';
+      del.style.cssText = 'background:#f87171;color:#000;';
+      del.textContent = 'Delete Collection';
+      del.onclick = function () {
+        AGCollections.deleteCollection(currentUser, colId);
+        saveUser(currentUser);
+        closeDeleteColModal();
+        renderSections();
+        showToast('Collection deleted.');
+      };
+      opts.appendChild(del);
+    } else {
+      body.textContent = 'This collection has ' + total + ' item' + (total === 1 ? '' : 's') +
+        '. Choose what to do with them.';
+      const others = (currentUser.collections || []).filter(c => c.id !== colId);
+
+      // Move to another collection. Default to the first other collection.
+      const moveWrap = document.createElement('div');
+      moveWrap.style.cssText = 'display:flex;gap:8px;align-items:center;';
+      const sel = document.createElement('select');
+      sel.style.cssText = 'flex:1;background:#0F0F11;color:#F2F2F4;border:1px solid #3A3A42;border-radius:6px;padding:8px;font-family:Inter,sans-serif;';
+      others.forEach(c => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = c.name;
+        sel.appendChild(opt);
+      });
+      const moveBtn = document.createElement('button');
+      moveBtn.type = 'button';
+      moveBtn.className = 'close-btn';
+      moveBtn.textContent = 'Move and Delete';
+      moveBtn.onclick = function () {
+        AGCollections.deleteCollection(currentUser, colId, { reassignTo: sel.value });
+        saveUser(currentUser);
+        closeDeleteColModal();
+        renderSections();
+        showToast('Items moved. Collection deleted.');
+      };
+      moveWrap.appendChild(sel);
+      moveWrap.appendChild(moveBtn);
+      opts.appendChild(moveWrap);
+
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'close-btn';
+      del.style.cssText = 'background:#f87171;color:#000;';
+      del.textContent = 'Delete Items Permanently';
+      del.onclick = function () {
+        if (!window.confirm('Delete ' + total + ' item' + (total === 1 ? '' : 's') + ' permanently? This cannot be undone.')) return;
+        AGCollections.deleteCollection(currentUser, colId);
+        saveUser(currentUser);
+        closeDeleteColModal();
+        renderSections();
+        showToast('Collection and items deleted.');
+      };
+      opts.appendChild(del);
+    }
+
+    overlay.classList.add('open');
+  }
+
+  function closeDeleteColModal() {
+    const overlay = document.getElementById('deleteColModal');
+    if (overlay) overlay.classList.remove('open');
+  }
+
+  function openManageModal() {
+    if (!window.AGCollections || !currentUser) return;
+    const overlay = document.getElementById('manageModal');
+    const rows    = document.getElementById('manageRows');
+    rows.innerHTML = '';
+    const cols = AGCollections.listCollections(currentUser);
+    cols.forEach(col => {
+      const total =
+        (currentUser.library   || []).filter(i => i.collectionId === col.id).length +
+        (currentUser.purchases || []).filter(i => i.collectionId === col.id).length +
+        (currentUser.uploads   || []).filter(i => i.collectionId === col.id).length;
+      const row = document.createElement('div');
+      row.className = 'col-manage-row';
+      const isDefault = col.id === AGCollections.DEFAULT_ID;
+      row.innerHTML =
+        '<div class="name-wrap">' +
+          '<span class="col-manage-name">' + esc(col.name) + '</span>' +
+          '<span class="count-pill" style="font-family:Inter,sans-serif;font-size:0.72rem;color:#9A9AA2;background:rgba(255,255,255,0.04);border:1px solid #3A3A42;border-radius:100px;padding:2px 8px;font-weight:500;">' + total + '</span>' +
+        '</div>' +
+        '<div class="row-actions">' +
+          '<button type="button" class="rename-btn">Rename</button>' +
+          (isDefault ? '' : '<button type="button" class="danger del-btn">Delete</button>') +
+        '</div>';
+
+      row.querySelector('.rename-btn').addEventListener('click', function () {
+        const nameEl = row.querySelector('.col-manage-name');
+        const actions = row.querySelector('.row-actions');
+        nameEl.outerHTML =
+          '<input type="text" class="rename-input" value="' + esc(col.name) + '" maxlength="40" />';
+        actions.innerHTML =
+          '<button type="button" class="save-rename">Save</button>' +
+          '<button type="button" class="cancel-rename">Cancel</button>';
+        const input = row.querySelector('.rename-input');
+        input.focus();
+        input.select();
+
+        function doSave() {
+          try {
+            AGCollections.renameCollection(currentUser, col.id, input.value);
+            saveUser(currentUser);
+            openManageModal();
+            renderSections();
+            showToast('Collection renamed.');
+          } catch (e) {
+            window.alert(e.message);
+            input.focus();
+          }
+        }
+        row.querySelector('.save-rename').addEventListener('click', doSave);
+        row.querySelector('.cancel-rename').addEventListener('click', openManageModal);
+        input.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter')  { e.preventDefault(); doSave(); }
+          if (e.key === 'Escape') { e.preventDefault(); openManageModal(); }
+        });
+      });
+
+      const delBtn = row.querySelector('.del-btn');
+      if (delBtn) {
+        delBtn.addEventListener('click', function () {
+          closeManageModal();
+          requestDeleteCollection(col.id);
+        });
+      }
+
+      rows.appendChild(row);
+    });
+    overlay.classList.add('open');
+  }
+
+  function closeManageModal() {
+    const overlay = document.getElementById('manageModal');
+    if (overlay) overlay.classList.remove('open');
+  }
+
   /* ─── RENDER ───────────────────────────────────────────────────── */
   function renderSections() {
+    // Ensure collections exist and migrate legacy items
+    if (window.AGCollections) {
+      AGCollections.ensureCollections(currentUser);
+      saveUser(currentUser);
+    }
+
     const lib = currentUser.library   || [];
     const pur = currentUser.purchases || [];
     const upl = currentUser.uploads   || [];
@@ -1132,20 +1647,113 @@
     document.getElementById('countPurchases').textContent = pur.length + ' pack' + (pur.length !== 1 ? 's' : '');
     document.getElementById('countUploads').textContent   = upl.length + ' sequence' + (upl.length !== 1 ? 's' : '');
 
-    renderGrid('downloadsGrid', lib, 'download');
-    renderGrid('purchasesGrid', pur, 'purchase');
-    renderGrid('uploadsGrid',   upl, 'upload');
+    renderCollectionChips();
+    renderGroupedSection('downloadsGrid', lib, 'download');
+    renderGroupedSection('purchasesGrid', pur, 'purchase');
+    renderGroupedSection('uploadsGrid',   upl, 'upload');
   }
 
-  function renderGrid(gridId, items, type) {
+  function renderCollectionChips() {
+    const chipWrap = document.getElementById('collectionChips');
+    if (!chipWrap) return;
+    chipWrap.innerHTML = '';
+    if (!window.AGCollections) return;
+    const cols = AGCollections.listCollections(currentUser);
+    cols.forEach(col => {
+      const total =
+        (currentUser.library   || []).filter(i => i.collectionId === col.id).length +
+        (currentUser.purchases || []).filter(i => i.collectionId === col.id).length +
+        (currentUser.uploads   || []).filter(i => i.collectionId === col.id).length;
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'col-chip';
+      chip.dataset.collectionId = col.id;
+      chip.innerHTML = esc(col.name) + ' <span class="count">(' + total + ')</span>';
+      chip.addEventListener('click', () => scrollToCollection(col.id));
+      chipWrap.appendChild(chip);
+    });
+  }
+
+  function scrollToCollection(collectionId) {
+    // Prefer the Downloads section's anchor; fall back through purchases, uploads.
+    const ids = [
+      'col-download-'  + collectionId,
+      'col-purchase-'  + collectionId,
+      'col-upload-'    + collectionId
+    ];
+    for (let i = 0; i < ids.length; i++) {
+      const el = document.getElementById(ids[i]);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        document.querySelectorAll('.col-chip').forEach(c => c.classList.remove('active'));
+        const activeChip = document.querySelector('#collectionChips .col-chip[data-collection-id="' + collectionId + '"]');
+        if (activeChip) activeChip.classList.add('active');
+        setTimeout(() => {
+          document.querySelectorAll('.col-chip').forEach(c => c.classList.remove('active'));
+        }, 2000);
+        return;
+      }
+    }
+  }
+
+  function renderGroupedSection(gridId, items, type) {
     const grid = document.getElementById(gridId);
+    if (!grid) return;
     grid.innerHTML = '';
+    // Restore grid flow for legacy behavior. We replace its contents
+    // with stacked collection sub-sections, so switch display to block.
+    grid.style.display = 'block';
+
     if (!items.length) {
+      grid.style.display = 'grid';
       grid.appendChild(buildEmptyState(type));
       return;
     }
-    items.forEach(item => grid.appendChild(buildCard(item, type)));
+
+    const cols = window.AGCollections
+      ? AGCollections.listCollections(currentUser)
+      : [{ id: 'default', name: 'My Shows', createdAt: 0 }];
+
+    let renderedAny = false;
+    cols.forEach(col => {
+      const colItems = items.filter(it => (it.collectionId || 'default') === col.id);
+      if (!colItems.length) return;
+      renderedAny = true;
+
+      const sub = document.createElement('div');
+      sub.className = 'col-subsection';
+      sub.id = 'col-' + type + '-' + col.id;
+
+      const isDefault = col.id === 'default';
+      const deleteBtn = isDefault
+        ? ''
+        : '<button class="col-icon-btn danger" title="Delete collection" onclick="requestDeleteCollection(\'' + escAttr(col.id) + '\')">Delete</button>';
+
+      sub.innerHTML =
+        '<div class="col-subsection-header">' +
+          '<div class="col-subsection-title">' +
+            esc(col.name) +
+            '<span class="count-pill">' + colItems.length + ' item' + (colItems.length === 1 ? '' : 's') + '</span>' +
+          '</div>' +
+          '<div class="col-subsection-actions">' +
+            '<button class="col-icon-btn" title="Rename" onclick="inlineRenameCollection(\'' + escAttr(col.id) + '\',this)">Rename</button>' +
+            deleteBtn +
+          '</div>' +
+        '</div>' +
+        '<div class="lib-grid col-grid"></div>';
+
+      const innerGrid = sub.querySelector('.lib-grid');
+      colItems.forEach(item => innerGrid.appendChild(buildCard(item, type)));
+      grid.appendChild(sub);
+    });
+
+    if (!renderedAny) {
+      grid.style.display = 'grid';
+      grid.appendChild(buildEmptyState(type));
+    }
   }
+
+  function escAttr(s) { return String(s).replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
 
   function buildCard(item, type) {
     const card = document.createElement('div');
@@ -1514,7 +2122,7 @@
       const initial = (name || email || 'U')[0].toUpperCase();
       navArea.innerHTML = `
         <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
           ${esc(name || email)}
         </a>
         <button onclick="signOut()" style="background:none;border:1px solid #333;color:var(--muted);font-size:0.78rem;cursor:pointer;padding:4px 10px;border-radius:6px;margin-left:4px;">Sign Out</button>`;
