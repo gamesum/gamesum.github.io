@@ -1199,9 +1199,9 @@
             <input type="text" class="form-input" id="songName" placeholder="e.g. All I Want For Christmas Is You by Mariah Carey" maxlength="120" />
           </div>
           <div class="form-group">
-            <label class="form-label">Show Duration (seconds)<span class="req">*</span></label>
-            <input type="number" class="form-input" id="duration" placeholder="e.g. 215" min="1" max="7200" id="durationInput" />
-            <div class="form-hint" id="durationHint"></div>
+            <label class="form-label">Show Duration</label>
+            <input type="number" class="form-input" id="duration" placeholder="Upload your FSEQ above to auto-fill" min="1" max="7200" readonly style="background:#17171A;color:#9A9AA2;cursor:not-allowed;" />
+            <div class="form-hint" id="durationHint">Read automatically from the FSEQ file you upload. No need to count it yourself.</div>
           </div>
         </div>
 
@@ -1459,7 +1459,7 @@
     if (!name) { showToast('Please enter a show name.', 'warning'); document.getElementById('showName').focus(); return false; }
     if (!cat)  { showToast('Please select a category.', 'warning'); document.getElementById('category').focus(); return false; }
     if (!song) { showToast('Please enter a song name.', 'warning'); document.getElementById('songName').focus(); return false; }
-    if (!dur || parseFloat(dur) <= 0) { showToast('Please enter the show duration in seconds.', 'warning'); document.getElementById('duration').focus(); return false; }
+    if (!dur || parseFloat(dur) <= 0) { showToast('We could not read the duration from your FSEQ file. Please re-upload it.', 'warning'); return false; }
     if (!musicUrl || !isValidYouTubeUrl(musicUrl)) {
       showToast('Please enter a valid YouTube Music link (youtube.com or youtu.be).', 'warning');
       document.getElementById('youtubeMusicUrl').focus();
