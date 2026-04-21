@@ -13,7 +13,9 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/avatar.js"></script>
   <script src="js/collections.js" defer></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1226,11 +1228,10 @@
         <li><a href="index.html#gallery">Gallery</a></li>
         <li><a href="index.html#testimonials">Reviews</a></li>
         <li><a href="platform.html">Light Show Store</a></li>
-        <li><a href="my-library.html" class="active">My Library</a></li>
         <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
-      <a id="navAccountBtn" href="my-library.html" class="btn btn-ghost nav-cta">My Library</a>
+      <a id="navAccountBtn" href="signin.html" class="btn btn-ghost nav-cta active">Account</a>
       <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
 
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -1243,9 +1244,8 @@
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
     <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
     <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
-    <a href="my-library.html" onclick="closeMenu()" style="color:var(--accent);">My Library</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
-    <a id="mobileAccountBtn" href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()">Account</a>
     <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
   </div>
 </nav>
@@ -1306,7 +1306,14 @@
     <div class="container">
       <div class="profile-inner">
         <div class="profile-left">
-          <div class="profile-avatar" id="profileAvatar">?</div>
+          <div class="profile-avatar-wrap" style="position:relative;flex-shrink:0;">
+            <div class="profile-avatar" id="profileAvatar" style="width:96px;height:96px;font-size:2.2rem;background-size:cover;background-position:center;">?</div>
+            <button type="button" id="profilePicBtn" onclick="document.getElementById('profilePicInput').click()" title="Change picture" aria-label="Change profile picture"
+              style="position:absolute;right:-4px;bottom:-4px;width:32px;height:32px;border-radius:50%;border:2px solid var(--bg2);background:#000;color:var(--accent);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </button>
+            <input type="file" id="profilePicInput" accept="image/png,image/jpeg,image/webp" style="display:none;" onchange="onProfilePicSelected(event)" />
+          </div>
           <div class="profile-info">
             <h1 id="profileName">Loading…<button class="edit-name-btn" onclick="startEditName()" title="Edit display name" aria-label="Edit display name"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button></h1>
             <p id="profileEmail"></p>
@@ -1358,6 +1365,46 @@
       </div>
     </div>
 
+    <!-- Premium-upload gate (creator verification) -->
+    <a id="creator-verify" style="position:relative;top:-80px;visibility:hidden;"></a>
+    <div class="verify-card" id="creatorVerifyCard" style="display:none;" data-state="none">
+      <div class="verify-card-body">
+        <div class="verify-card-head">
+          <span class="verify-pill unverified" id="creatorVerifyPill">
+            <span class="verify-pill-dot"></span>
+            <span id="creatorVerifyPillText">Not verified</span>
+          </span>
+        </div>
+        <h3 id="creatorVerifyHeading">Want to sell Premium ($) shows?</h3>
+        <p id="creatorVerifyBody">Request creator verification. An AFTERGLO admin will review and approve. Free uploads do not require verification.</p>
+        <div id="creatorVerifyRejectNote" style="display:none;margin-top:8px;padding:10px 12px;border-left:3px solid #F05A4A;background:rgba(240,90,74,0.08);border-radius:6px;font-size:0.85rem;color:#F05A4A;"></div>
+
+        <form id="creatorVerifyForm" style="display:none;margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.78rem;color:#94a3b8;grid-column:1/-1;">
+            <span>Display / payout name</span>
+            <input type="text" id="creatorVerifyName" maxlength="120" style="background:#0f0f11;border:1px solid #2A2A32;border-radius:6px;padding:8px 10px;color:#fff;font-size:0.92rem;" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.78rem;color:#94a3b8;">
+            <span>Country</span>
+            <input type="text" id="creatorVerifyCountry" maxlength="60" placeholder="US, CA, UK." style="background:#0f0f11;border:1px solid #2A2A32;border-radius:6px;padding:8px 10px;color:#fff;font-size:0.92rem;" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.78rem;color:#94a3b8;">
+            <span>Stripe account id (optional)</span>
+            <input type="text" id="creatorVerifyStripe" maxlength="64" placeholder="acct_." style="background:#0f0f11;border:1px solid #2A2A32;border-radius:6px;padding:8px 10px;color:#fff;font-size:0.92rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:4px;font-size:0.78rem;color:#94a3b8;grid-column:1/-1;">
+            <span>Notes (optional)</span>
+            <textarea id="creatorVerifyNotes" maxlength="500" rows="2" style="background:#0f0f11;border:1px solid #2A2A32;border-radius:6px;padding:8px 10px;color:#fff;font-size:0.92rem;resize:vertical;"></textarea>
+          </label>
+        </form>
+      </div>
+      <div class="verify-actions">
+        <button type="button" class="verify-btn-primary" id="creatorVerifyStartBtn">Request verification</button>
+        <button type="button" class="verify-btn-primary" id="creatorVerifySubmitBtn" style="display:none;">Submit request</button>
+        <button type="button" class="verify-btn-ghost" id="creatorVerifyCancelBtn" style="display:none;">Cancel</button>
+      </div>
+    </div>
+
     <!-- Collections toolbar -->
     <div class="collections-bar" id="collectionsBar">
       <span class="collections-bar-label">Collections</span>
@@ -1400,28 +1447,14 @@
       <div id="purchasesGrid" class="lib-grid"></div>
     </div>
 
-    <!-- Your uploads (status) -->
-    <div class="lib-section">
-      <div class="lib-section-header">
-        <div class="lib-section-left">
-          <div class="lib-section-icon icon-uploads">📡</div>
-          <div>
-            <div class="lib-section-title">Your uploads</div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Track the status of shows you've submitted to the Store.</div>
-          </div>
-        </div>
-        <span class="lib-section-count" id="countUploadStatus">0 submissions</span>
-      </div>
-      <div id="uploadStatusList" class="status-list"></div>
-    </div>
-
-    <!-- My Uploads -->
+    <!-- My Uploads (single section: submission status + creator uploads combined) -->
     <div class="lib-section">
       <div class="lib-section-header">
         <div class="lib-section-left">
           <div class="lib-section-icon icon-uploads">🚀</div>
           <div>
-            <div class="lib-section-title">My Uploads <span style="font-size:0.72rem;background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);border-radius:100px;padding:2px 8px;font-weight:600;letter-spacing:0.05em;vertical-align:middle;">FOR CREATORS</span></div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Share your own light show designs with the AFTERGLO community</div>
+            <div class="lib-section-title">My Uploads</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Shows you have submitted to the Store. Each card shows its review status.</div>
           </div>
         </div>
         <div style="display:flex;align-items:center;gap:8px;">
@@ -1429,7 +1462,9 @@
           <span class="lib-section-count" id="countUploads">0 sequences</span>
         </div>
       </div>
+      <div id="uploadStatusList" class="status-list" style="margin-bottom:14px;"></div>
       <div id="uploadsGrid" class="lib-grid"></div>
+      <span id="countUploadStatus" style="display:none;"></span>
     </div>
 
     <!-- ─── Privacy & Data Rights ─────────────────────────────────── -->
@@ -1634,13 +1669,135 @@
     document.getElementById('navSignOut').style.display = 'inline-flex';
 
     // Profile header
-    document.getElementById('profileAvatar').textContent = initial;
+    applyProfileAvatarDisplay(currentUser.picture || '');
     setProfileNameDisplay(currentUser.name || 'My Account');
     document.getElementById('profileEmail').textContent  = currentUser.email || '';
 
     renderSections();
     renderVerifyCard();
+    renderCreatorVerifyCard();
   }
+
+  /* ─── CREATOR VERIFICATION CARD ───────────────────────────────── */
+  async function renderCreatorVerifyCard() {
+    const card = document.getElementById('creatorVerifyCard');
+    if (!card) return;
+    const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    if (!fbUser) { card.style.display = 'none'; return; }
+    // Only show once email is confirmed (Premium requires email confirm first).
+    if (!fbUser.emailVerified) { card.style.display = 'none'; return; }
+    card.style.display = 'flex';
+
+    let status = 'none';
+    let rejectionReason = '';
+    let claimVerified = false;
+    try {
+      const tok = await fbUser.getIdTokenResult();
+      claimVerified = tok.claims && tok.claims.creatorVerified === true;
+    } catch (e) { /* ignore */ }
+    try {
+      const doc = await firebase.firestore().collection('users').doc(fbUser.uid).get();
+      const data = doc.exists ? doc.data() : {};
+      status = data.creatorVerificationStatus || 'none';
+      rejectionReason = data.rejectionReason || '';
+      if (data.creatorVerified === true) claimVerified = true;
+    } catch (e) { /* ignore */ }
+
+    const pill   = document.getElementById('creatorVerifyPill');
+    const pillT  = document.getElementById('creatorVerifyPillText');
+    const head   = document.getElementById('creatorVerifyHeading');
+    const body   = document.getElementById('creatorVerifyBody');
+    const rejNote= document.getElementById('creatorVerifyRejectNote');
+    const form   = document.getElementById('creatorVerifyForm');
+    const startBtn  = document.getElementById('creatorVerifyStartBtn');
+    const submitBtn = document.getElementById('creatorVerifySubmitBtn');
+    const cancelBtn = document.getElementById('creatorVerifyCancelBtn');
+
+    rejNote.style.display = 'none';
+    form.style.display    = 'none';
+    startBtn.style.display  = 'none';
+    submitBtn.style.display = 'none';
+    cancelBtn.style.display = 'none';
+
+    if (claimVerified || status === 'approved') {
+      card.dataset.state = 'approved';
+      pill.classList.remove('unverified'); pill.classList.add('verified');
+      pillT.textContent = 'Creator verified';
+      head.textContent  = 'Premium uploads unlocked';
+      body.textContent  = 'You can now publish Premium ($) shows on the Store.';
+    } else if (status === 'pending') {
+      card.dataset.state = 'pending';
+      pill.classList.remove('verified'); pill.classList.add('unverified');
+      pillT.textContent = 'Under review';
+      head.textContent  = 'Verification request received';
+      body.textContent  = "Under review. We'll email you when approved.";
+    } else if (status === 'rejected') {
+      card.dataset.state = 'rejected';
+      pill.classList.remove('verified'); pill.classList.add('unverified');
+      pillT.textContent = 'Not approved';
+      head.textContent  = 'Verification not approved';
+      body.textContent  = 'You can update your info and request again.';
+      if (rejectionReason) {
+        rejNote.textContent = 'Reason: ' + rejectionReason;
+        rejNote.style.display = 'block';
+      }
+      startBtn.textContent = 'Request again';
+      startBtn.style.display = '';
+    } else {
+      card.dataset.state = 'none';
+      pill.classList.remove('verified'); pill.classList.add('unverified');
+      pillT.textContent = 'Not verified';
+      head.textContent  = 'Want to sell Premium ($) shows?';
+      body.textContent  = 'Request creator verification. An AFTERGLO admin will review and approve. Free uploads do not require verification.';
+      startBtn.textContent = 'Request verification';
+      startBtn.style.display = '';
+    }
+  }
+
+  (function wireCreatorVerifyCard(){
+    document.addEventListener('DOMContentLoaded', () => {
+      const startBtn  = document.getElementById('creatorVerifyStartBtn');
+      const submitBtn = document.getElementById('creatorVerifySubmitBtn');
+      const cancelBtn = document.getElementById('creatorVerifyCancelBtn');
+      const form      = document.getElementById('creatorVerifyForm');
+      if (!startBtn || !submitBtn || !cancelBtn || !form) return;
+
+      startBtn.addEventListener('click', () => {
+        form.style.display      = 'grid';
+        startBtn.style.display  = 'none';
+        submitBtn.style.display = '';
+        cancelBtn.style.display = '';
+        const nm = document.getElementById('creatorVerifyName');
+        if (nm && !nm.value) nm.value = (currentUser && currentUser.name) || '';
+      });
+
+      cancelBtn.addEventListener('click', () => {
+        form.style.display      = 'none';
+        submitBtn.style.display = 'none';
+        cancelBtn.style.display = 'none';
+        startBtn.style.display  = '';
+      });
+
+      submitBtn.addEventListener('click', async () => {
+        submitBtn.disabled = true; submitBtn.textContent = 'Submitting.';
+        try {
+          await callFn('requestCreatorVerification', {
+            payoutName:      (document.getElementById('creatorVerifyName').value    || '').trim(),
+            country:         (document.getElementById('creatorVerifyCountry').value || '').trim(),
+            stripeAccountId: (document.getElementById('creatorVerifyStripe').value  || '').trim(),
+            notes:           (document.getElementById('creatorVerifyNotes').value   || '').trim(),
+          });
+          showToast('Verification request submitted.', 'success');
+          form.style.display = 'none';
+          await renderCreatorVerifyCard();
+        } catch (err) {
+          showToast('Failed: ' + (err.message || 'error'), 'warning');
+        } finally {
+          submitBtn.disabled = false; submitBtn.textContent = 'Submit request';
+        }
+      });
+    });
+  })();
 
   /* ─── EMAIL VERIFICATION (self-serve) ─────────────────────────── */
   let _verifyPollTimer = null;
@@ -2622,6 +2779,73 @@
   function signOut() {
     signOutUser(); // clears localStorage + Firebase auth session
     window.location.href = 'index.html';
+  }
+
+  /* ─── PROFILE PICTURE UPLOAD ──────────────────────────────────── */
+  function applyProfileAvatarDisplay(photoURL) {
+    const el = document.getElementById('profileAvatar');
+    if (!el) return;
+    const initial = ((currentUser && (currentUser.name || currentUser.email)) || 'U')[0].toUpperCase();
+    if (photoURL) {
+      el.textContent = '';
+      el.style.backgroundImage = 'url("' + photoURL.replace(/"/g, '%22') + '")';
+    } else {
+      el.style.backgroundImage = '';
+      el.textContent = initial;
+    }
+  }
+
+  async function onProfilePicSelected(ev) {
+    const file = ev.target.files && ev.target.files[0];
+    ev.target.value = ''; // reset input
+    if (!file) return;
+    if (!/^image\/(png|jpeg|webp)$/.test(file.type)) {
+      showToast('Please choose a PNG, JPEG, or WebP image.', 'warning');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      showToast('Image must be under 2 MB.', 'warning');
+      return;
+    }
+    const fbUser = firebase.auth().currentUser;
+    if (!fbUser) { showToast('Please sign in again.', 'warning'); return; }
+
+    const ext = file.type === 'image/png' ? 'png'
+              : file.type === 'image/webp' ? 'webp' : 'jpg';
+    const path = 'profile_pictures/' + fbUser.uid + '.' + ext;
+    const btn = document.getElementById('profilePicBtn');
+    const prevHTML = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '.'; }
+
+    try {
+      const ref = firebase.storage().ref().child(path);
+      const snap = await ref.put(file, { contentType: file.type, cacheControl: 'public,max-age=300' });
+      const url = await snap.ref.getDownloadURL();
+
+      await fbUser.updateProfile({ photoURL: url });
+
+      // Mirror to Firestore /users/{uid} for admin surfaces.
+      try {
+        await firebase.firestore().collection('users').doc(fbUser.uid)
+          .set({ photoURL: url }, { merge: true });
+      } catch (e) {
+        // Non-fatal: rules may block on first create; Auth photoURL is canonical.
+        console.warn('users doc photoURL write failed:', e);
+      }
+
+      // Update local cache + UI.
+      const stored = getUser() || {};
+      stored.picture = url;
+      saveUser(stored);
+      if (currentUser) currentUser.picture = url;
+      applyProfileAvatarDisplay(url);
+      showToast('Profile picture updated.');
+    } catch (err) {
+      console.error(err);
+      showToast('Upload failed. ' + (err.message || ''), 'warning');
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = prevHTML; }
+    }
   }
 
   /* ─── TOAST ────────────────────────────────────────────────────── */
