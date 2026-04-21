@@ -1782,28 +1782,24 @@
     }
     contentErrorEl.classList.remove('show');
 
-    // Force collection pick before the upload starts. Cancel aborts the submit.
+    // Uploads auto-file into the "Uploaded by me" collection in the Uploads
+    // tab. Users can move them later from the library if they want.
     if (!pendingCollectionId) {
-      if (!window.AGCollections) {
-        // Module missing. Continue without collection assignment.
-        pendingCollectionId = 'default';
-      } else {
-        const showNameEl = document.getElementById('showName');
-        const seqLabel   = (showNameEl && showNameEl.value.trim()) || 'this show';
-        const user = (typeof getUser === 'function') ? getUser() : null;
-        if (user) {
-          AGCollections.ensureCollections(user);
-          if (typeof saveUser === 'function') saveUser(user);
-        }
-        AGCollections.openPickerModal({
-          title:    'Add "' + seqLabel + '" to.',
-          onPick:   function (collectionId) {
-            pendingCollectionId = collectionId;
-            submitUpload();   // re-enter now that the collection is set
-          },
-          onCancel: function () { /* aborted. leave the publish button untouched. */ }
+      const user = (typeof getUser === 'function') ? getUser() : null;
+      if (user && window.AGCollections) {
+        AGCollections.ensureCollections(user);
+        var existing = (user.collections || []).find(function (c) {
+          return c && c.name === 'Uploaded by me';
         });
-        return;
+        if (existing) {
+          pendingCollectionId = existing.id;
+        } else {
+          var created = AGCollections.createCollection(user, 'Uploaded by me');
+          pendingCollectionId = created ? created.id : 'default';
+        }
+        if (typeof saveUser === 'function') saveUser(user);
+      } else {
+        pendingCollectionId = 'uploaded-by-me';
       }
     }
 
