@@ -26,11 +26,19 @@ let _firebaseAuth = null;
 
 if (FIREBASE_ENABLED) {
   // Firebase v9 compat build (loaded via CDN in the HTML)
-  _firebaseApp  = firebase.initializeApp(firebaseConfig);
-  _firebaseAuth = firebase.auth();
+  // Guard against duplicate-app errors if the module is loaded more than once.
+  try {
+    _firebaseApp = firebase.apps.length
+      ? firebase.apps[0]
+      : firebase.initializeApp(firebaseConfig);
+  } catch (e) {
+    _firebaseApp = firebase.apps[0] || null;
+  }
+  _firebaseAuth = _firebaseApp ? firebase.auth(_firebaseApp) : null;
 
+  if (!_firebaseAuth) { /* auth unavailable — will fall back to localStorage */ }
+  else {
   // Explicitly set LOCAL persistence so the session survives page navigations
-  // and is stored in IndexedDB rather than sessionStorage.
   _firebaseAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL).catch(() => {});
 
   // Keep localStorage in sync whenever the Firebase auth state changes
@@ -52,6 +60,7 @@ if (FIREBASE_ENABLED) {
     });
     saveUser(merged);
   });
+  } // end if (_firebaseAuth)
 }
 
 // ─── Shared localStorage helpers (used by all pages) ─────────────────────────
@@ -64,13 +73,13 @@ function saveUser(u) {
 }
 function signOutUser() {
   localStorage.removeItem('afterglo_user');
-  if (FIREBASE_ENABLED) _firebaseAuth.signOut();
+  if (FIREBASE_ENABLED && _firebaseAuth) _firebaseAuth.signOut();
 }
 
 // Returns an ID token string for API calls, or the stored token as fallback.
 // Does NOT force-refresh to avoid failures on slow networks.
 async function getIdToken() {
-  if (FIREBASE_ENABLED && _firebaseAuth.currentUser) {
+  if (FIREBASE_ENABLED && _firebaseAuth && _firebaseAuth.currentUser) {
     return _firebaseAuth.currentUser.getIdToken(false).catch(() => getUser()?.token ?? null);
   }
   return getUser()?.token ?? null;

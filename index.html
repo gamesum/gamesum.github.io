@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AFTERGLO — Best Permanent Christmas & LED Lighting in Utah</title>
+  <title>AFTERGLO | Best Permanent Christmas &amp; LED Lighting in Utah</title>
   <meta name="description" content="Utah's #1 permanent outdoor LED lighting company. AFTERGLO installs roofline lighting, music-synchronized Christmas light shows, arches, and yard props statewide. Starting at $1,500. Call (385) 337-4144." />
-  <meta property="og:title" content="AFTERGLO — Best Permanent Christmas & LED Lighting in Utah" />
+  <meta property="og:title" content="AFTERGLO | Best Permanent Christmas &amp; LED Lighting in Utah" />
   <meta property="og:description" content="Utah's #1 permanent outdoor LED lighting company. Roofline lighting, music-synchronized Christmas light shows, arches, and yard props statewide. Starting at $1,500." />
   <meta property="og:image" content="https://gamesum.github.io/afterglo-logo-flat.png" />
   <meta property="og:type" content="website" />
@@ -14,6 +14,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="js/firebase-auth.js"></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -1101,7 +1105,7 @@
               "itemOffered": {
                 "@type": "Service",
                 "name": "Permanent Roofline LED Lighting",
-                "description": "Flush-mounted RGBW permanent LED lighting installed along your home's roofline and eaves. Above 1-watt per pixel, individually addressable, with a dedicated warm white channel for security lighting. Controlled by the easiest smart lighting app available — so simple anyone can use it. Starting at $1,500 installed."
+                "description": "Flush-mounted RGBW permanent LED lighting installed along your home's roofline and eaves. Above 1-watt per pixel, individually addressable, with a dedicated warm white channel for security lighting. Controlled by the easiest smart lighting app available. So simple anyone can use it. Starting at $1,500 installed."
               }
             },
             {
@@ -1109,7 +1113,7 @@
               "itemOffered": {
                 "@type": "Service",
                 "name": "Music-Synchronized Christmas Light Shows",
-                "description": "AFTERGLO is the only company in the United States that professionally installs full-scale, music-synchronized Christmas light shows for residential homes. Includes pixel-addressable LED arches, giant Christmas trees, and candy cane props — all choreographed to music using xLights and AFTERGLO's proprietary software, and controlled through one app."
+                "description": "AFTERGLO is the only company in the United States that professionally installs full-scale, music-synchronized Christmas light shows for residential homes. Includes pixel-addressable LED arches, giant Christmas trees, and candy cane props. All choreographed to music using xLights and AFTERGLO's proprietary software, and controlled through one app."
               }
             },
             {
@@ -1134,18 +1138,19 @@
   <nav id="navbar">
     <div class="container">
       <div class="nav-inner">
-        <a href="#hero" class="nav-logo">AFTER<span>GLO</span></a>
+        <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
 
         <ul class="nav-links">
           <li><a href="arches.html">Light Shows</a></li>
-          <li><a href="#gallery">Gallery</a></li>
-          <li><a href="#testimonials">Reviews</a></li>
-          <li><a href="platform.html" style="color:var(--accent);">Platform</a></li>
-          <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
-          <li id="myLibNavItem" style="display:none;"><a href="my-library.html" style="color:var(--accent);">My Library</a></li>
+          <li><a href="index.html#gallery">Gallery</a></li>
+          <li><a href="index.html#testimonials">Reviews</a></li>
+          <li><a href="platform.html">Light Show Store</a></li>
+          <li><a href="my-library.html">My Library</a></li>
+          <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
         </ul>
 
-        <a href="#cta" class="btn btn-primary nav-cta">Get a Quote</a>
+        <div id="navAuthArea" style="display:flex;align-items:center;gap:10px;margin-left:16px;"></div>
+        <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
 
         <button class="hamburger" id="hamburger" aria-label="Toggle menu">
           <span></span><span></span><span></span>
@@ -1153,14 +1158,14 @@
       </div>
     </div>
     <div class="mobile-menu" id="mobileMenu">
-      <a href="arches.html"   onclick="closeMenu()">Light Shows</a>
-      <a href="#tech"         onclick="closeMenu()">Products</a>
-      <a href="#gallery"      onclick="closeMenu()">Gallery</a>
-      <a href="#testimonials" onclick="closeMenu()">Reviews</a>
-      <a href="platform.html" style="color:var(--accent);font-weight:700;" onclick="closeMenu()">Platform</a>
-      <a href="afterglo-visualizer.html" style="color:var(--accent);font-weight:700;" onclick="closeMenu()">✦ Try the Visualizer</a>
-      <a href="my-library.html" id="myLibMobileLink" style="display:none;color:var(--accent);font-weight:700;" onclick="closeMenu()">My Library</a>
-      <a href="#cta" class="btn btn-primary" style="text-align:center" onclick="closeMenu()">Get a Free Quote</a>
+      <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+      <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+      <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
+      <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
+      <a href="my-library.html" onclick="closeMenu()">My Library</a>
+      <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
+      <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
+      <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
     </div>
   </nav>
 
@@ -1263,9 +1268,9 @@
   <section id="lightshow" class="section-pad" style="padding-bottom:96px;">
     <div class="container">
       <div style="text-align:center;max-width:680px;margin:0 auto 56px;">
-        <div class="section-label">Only in Utah — Only AFTERGLO</div>
+        <div class="section-label">Only in Utah. Only AFTERGLO</div>
         <h2 class="section-title">Full-Scale Christmas<br>Light Shows. In Your Yard.</h2>
-        <p class="section-sub" style="margin:0 auto;">The only company in the country bringing full-scale, music-synchronized Christmas light shows to residential homes. Arches, giant trees, candy canes — choreographed to music, controlled from one app.</p>
+        <p class="section-sub" style="margin:0 auto;">The only company in the country bringing full-scale, music-synchronized Christmas light shows to residential homes. Arches, giant trees, candy canes: choreographed to music, controlled from one app.</p>
       </div>
 
       <div class="arches-split">
@@ -1274,7 +1279,7 @@
         <div class="arch-visual fade-in">
           <div class="arch-scene">
             <canvas id="archCanvas" class="arch-canvas" width="480" height="315"></canvas>
-            <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch — music-synced, app-controlled</div>
+            <div style="font-family:'Outfit',sans-serif;font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);">Pixel-Addressable LED Arch, music-synced, app-controlled</div>
           </div>
           <!-- Show elements -->
           <div class="arch-props-row">
@@ -1364,7 +1369,7 @@
                 <div class="app-feat-icon">📱</div>
                 <div class="app-feat-text">
                   <strong>One App, Everything</strong>
-                  <span>Roofline, arches, trees, and candy canes — all connected and controlled together</span>
+                  <span>Roofline, arches, trees, and candy canes: all connected and controlled together</span>
                 </div>
               </li>
               <li>
@@ -1385,7 +1390,7 @@
                 <div class="app-feat-icon">🔒</div>
                 <div class="app-feat-text">
                   <strong>Security Lighting</strong>
-                  <span>Dedicated white channel floods your roofline with bright white — one tap</span>
+                  <span>Dedicated white channel floods your roofline with bright white. One tap.</span>
                 </div>
               </li>
             </ul>
@@ -1413,7 +1418,7 @@
         <div class="fade-in">
           <div class="section-label">Try Before You Buy</div>
           <h2 class="section-title">See It On Your<br>Home First.</h2>
-          <p class="section-sub" style="margin-bottom:32px;">Upload a photo of your home, draw where you want the lights, and watch it come to life — warm white, full color, holiday mode. Takes 60 seconds and costs nothing.</p>
+          <p class="section-sub" style="margin-bottom:32px;">Upload a photo of your home, draw where you want the lights, and watch it come to life: warm white, full color, holiday mode. Takes 60 seconds and costs nothing.</p>
           <a href="afterglo-visualizer.html" class="btn btn-primary" style="font-size:1rem;padding:16px 36px;">
             <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.64-6.36-1.42 1.42M5.05 18.95l-1.41 1.41M18.95 18.95l-1.41-1.41M5.05 5.05 3.64 3.64"/></svg>
             Open the Visualizer
@@ -1471,10 +1476,10 @@
         <div class="fade-in fade-delay-1">
           <div class="section-label">The Hardware</div>
           <h2 class="section-title">Commercial-Grade Fixtures, Residential Price</h2>
-          <p class="section-sub">Professional components. Built to last. And unlike most LED systems, ours have four color channels — not three.</p>
+          <p class="section-sub">Professional components. Built to last. And unlike most LED systems, ours have four color channels, not three.</p>
           <ul class="tech-list">
-            <li><div><strong>Real Warm White — Not a Fake</strong> — most LED systems "mix" colors to fake white, which looks cold and blue. Ours has a dedicated white bulb built in, so warm white actually looks warm</div></li>
-            <li><div><strong>Built-In Security Lighting</strong> — that same dedicated white channel pulls double duty. Flip it on and your entire roofline floods with bright, clean white light. No separate fixtures, no extra wiring — security lighting that's already installed</div></li>
+            <li><div><strong>Real Warm White. Not a Fake.</strong> Most LED systems "mix" colors to fake white, which looks cold and blue. Ours has a dedicated white bulb built in, so warm white actually looks warm</div></li>
+            <li><div><strong>Built-In Security Lighting.</strong> That same dedicated white channel pulls double duty. Flip it on and your entire roofline floods with bright, clean white light. No separate fixtures, no extra wiring. Security lighting that's already installed.</div></li>
           </ul>
         </div>
       </div>
@@ -1492,35 +1497,35 @@
       <div class="gallery-grid">
         <div class="g-item fade-in">
           <img src="Resources/House%20Images/thumbs/20251226_224806(0).jpg" data-full="Resources/House%20Images/20251226_224806(0).jpg" alt="Warm white RGBW roofline on brick home at night">
-          <div class="g-caption">Warm White Roofline — Brick Two-Story</div>
+          <div class="g-caption">Warm White Roofline, Brick Two-Story</div>
         </div>
         <div class="g-item g-vertical fade-in fade-delay-1">
           <img src="Resources/House%20Images/thumbs/20260131_164616.jpg" data-full="Resources/House%20Images/20260131_164616.jpg" alt="Close-up of RGBW LED channel mounted on fascia">
-          <div class="g-caption">RGBW LED Channel — Fascia Mount</div>
+          <div class="g-caption">RGBW LED Channel, Fascia Mount</div>
         </div>
         <div class="g-item fade-in fade-delay-1">
           <img src="Resources/House%20Images/thumbs/20260131_233040.jpg" data-full="Resources/House%20Images/20260131_233040.jpg" alt="Full warm white roofline install at night">
-          <div class="g-caption">Full Roofline Install — Warm White</div>
+          <div class="g-caption">Full Roofline Install, Warm White</div>
         </div>
         <div class="g-item fade-in fade-delay-2">
           <img src="Resources/House%20Images/thumbs/20260130_223252.jpg" data-full="Resources/House%20Images/20260130_223252.jpg" alt="Custom red and blue LED roofline at night">
-          <div class="g-caption">Custom Color Scene — Full Roofline</div>
+          <div class="g-caption">Custom Color Scene, Full Roofline</div>
         </div>
         <div class="g-item fade-in fade-delay-2">
           <img src="Resources/House%20Images/thumbs/20251227_072523.jpg" data-full="Resources/House%20Images/20251227_072523.jpg" alt="LED roofline install detail" style="object-position: center 35%;">
-          <div class="g-caption">Roofline Install — Detail Shot</div>
+          <div class="g-caption">Roofline Install, Detail Shot</div>
         </div>
         <div class="g-item g-vertical fade-in fade-delay-3">
           <img src="Resources/House%20Images/thumbs/20260203_150434.jpg" data-full="Resources/House%20Images/20260203_150434.jpg" alt="Daytime roofline LED channel install" style="object-position: center 35%;">
-          <div class="g-caption">Clean Daytime Install — Eave Detail</div>
+          <div class="g-caption">Clean Daytime Install, Eave Detail</div>
         </div>
         <div class="g-item fade-in fade-delay-3">
           <img src="Resources/House%20Images/thumbs/20260306_184759.jpg" data-full="Resources/House%20Images/20260306_184759.jpg" alt="LED roofline lighting at dusk">
-          <div class="g-caption">Roofline Lighting — Dusk View</div>
+          <div class="g-caption">Roofline Lighting, Dusk View</div>
         </div>
         <div class="g-item g-vertical fade-in fade-delay-3">
           <img src="Resources/House%20Images/thumbs/20260227_214611~2.jpg" data-full="Resources/House%20Images/20260227_214611~2.jpg" alt="LED roofline night shot">
-          <div class="g-caption">Night Roofline — Close Up</div>
+          <div class="g-caption">Night Roofline, Close Up</div>
         </div>
       </div>
     </div>
@@ -1600,7 +1605,7 @@
 
         <!-- Email signup -->
         <div style="margin-top:36px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.07);">
-          <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:14px;letter-spacing:0.02em;">We'll let you know when new light show packs drop and when install slots open up — we book fast.</p>
+          <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:14px;letter-spacing:0.02em;">We'll let you know when new light show packs drop and when install slots open up. We book fast.</p>
           <form id="ctaEmailForm" onsubmit="submitCtaEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
             <input id="ctaEmailInput" type="email" placeholder="Your email address" required
               style="background:#1a1a1a;border:1px solid #555;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:min(220px, 100%);transition:border-color 0.2s;"
@@ -1705,18 +1710,6 @@
       navbar.classList.toggle('scrolled', window.scrollY > 20);
     }, { passive: true });
 
-    // My Library nav link — show if signed in
-    (function() {
-      try {
-        const user = JSON.parse(localStorage.getItem('afterglo_user'));
-        if (user && user.token) {
-          const desktopItem = document.getElementById('myLibNavItem');
-          const mobileLink  = document.getElementById('myLibMobileLink');
-          if (desktopItem) desktopItem.style.display = '';
-          if (mobileLink)  mobileLink.style.display  = '';
-        }
-      } catch(e) {}
-    })();
 
     // Mobile hamburger
     const hamburger = document.getElementById('hamburger');
@@ -2319,6 +2312,39 @@
       document.getElementById('ctaEmailForm').style.display = 'none';
       document.getElementById('ctaEmailThanks').style.display = 'block';
     }
+  </script>
+
+  <script>
+  /* ─── NAV AUTH STATE ──────────────────────────────────────────────── */
+  function signOut() { signOutUser(); window.location.href = 'index.html'; }
+
+  function updateNavAuth(fbUser) {
+    const navArea = document.getElementById('navAuthArea');
+    const mobArea = document.getElementById('mobileAuthArea');
+    if (!navArea) return;
+    if (fbUser) {
+      const stored = (typeof getUser === 'function') ? (getUser() || {}) : {};
+      const name  = stored.name  || fbUser.displayName || fbUser.email || '';
+      const email = stored.email || fbUser.email || '';
+      const initial = (name || email || 'U')[0].toUpperCase();
+      navArea.innerHTML = `
+        <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
+          ${name || email}
+        </a>
+        <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;padding:4px 8px;">Sign Out</button>`;
+      if (mobArea) mobArea.innerHTML = `
+        <a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>
+        <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;text-align:left;padding:0;">Sign Out</button>`;
+    } else {
+      navArea.innerHTML = `<a href="signin.html" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>`;
+      if (mobArea) mobArea.innerHTML = `<a href="signin.html" style="color:var(--accent);">Sign In / Create Account</a>`;
+    }
+  }
+
+  if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
+  }
   </script>
 </body>
 </html>

@@ -31,6 +31,7 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    padding-top: 57px;
   }
 
   /* ── HEADER ── */
@@ -97,7 +98,7 @@
     display: flex;
     flex: 1;
     overflow: hidden;
-    height: calc(100vh - 57px);
+    height: calc(100vh - 57px); /* accounts for fixed nav via body padding-top */
   }
 
   /* ── LEFT PANEL ── */
@@ -527,17 +528,51 @@
   .close-btn:hover { color: white; }
 
   /* Spline node dots on interact canvas are drawn by JS */
+
+  @media (max-width: 900px) {
+    #vizNavLinks { display: none !important; }
+    #hamburger { display: flex !important; }
+  }
 </style>
 </head>
 <body>
 
-<header>
-  <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
-  <div class="header-right">
-    <span class="header-tag">Light Visualizer</span>
-    <button class="header-cta" onclick="openLeadForm()">Get Free Quote →</button>
+<nav id="navbar" style="position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(13,17,23,0.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 1px 0 #222222;">
+  <div style="max-width:1200px;margin:0 auto;padding:0 24px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;height:57px;">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+
+      <ul style="display:flex;align-items:center;gap:28px;list-style:none;" id="vizNavLinks">
+        <li><a href="arches.html" style="font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;">Light Shows</a></li>
+        <li><a href="index.html#gallery" style="font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;">Gallery</a></li>
+        <li><a href="index.html#testimonials" style="font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;">Reviews</a></li>
+        <li><a href="platform.html" style="font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;">Light Show Store</a></li>
+        <li><a href="my-library.html" style="font-size:0.88rem;font-weight:500;color:var(--muted);text-decoration:none;">My Library</a></li>
+        <li><a href="afterglo-visualizer.html" style="font-size:0.88rem;font-weight:500;color:var(--accent);text-decoration:none;">✶ Visualizer</a></li>
+      </ul>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div id="navAuthArea" style="display:flex;align-items:center;gap:10px;"></div>
+        <button class="header-cta" onclick="openLeadForm()">Get Free Quote</button>
+        <button id="hamburger" aria-label="Toggle menu" style="display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:10px;min-width:44px;min-height:44px;align-items:center;justify-content:center;">
+          <span style="display:block;width:24px;height:2px;background:var(--text);border-radius:2px;"></span>
+          <span style="display:block;width:24px;height:2px;background:var(--text);border-radius:2px;"></span>
+          <span style="display:block;width:24px;height:2px;background:var(--text);border-radius:2px;"></span>
+        </button>
+      </div>
+    </div>
   </div>
-</header>
+  <div id="mobileMenu" style="display:none;position:fixed;top:57px;left:0;right:0;background:rgba(13,17,23,0.98);backdrop-filter:blur(16px);padding:24px;flex-direction:column;gap:24px;z-index:199;border-bottom:1px solid #222;">
+    <a href="arches.html" onclick="closeMenu()" style="font-size:1.1rem;font-weight:500;color:var(--text);padding:14px 0;border-bottom:1px solid #222;display:flex;align-items:center;">Light Shows</a>
+    <a href="index.html#gallery" onclick="closeMenu()" style="font-size:1.1rem;font-weight:500;color:var(--text);padding:14px 0;border-bottom:1px solid #222;display:flex;align-items:center;">Gallery</a>
+    <a href="index.html#testimonials" onclick="closeMenu()" style="font-size:1.1rem;font-weight:500;color:var(--text);padding:14px 0;border-bottom:1px solid #222;display:flex;align-items:center;">Reviews</a>
+    <a href="platform.html" onclick="closeMenu()" style="font-size:1.1rem;font-weight:500;color:var(--text);padding:14px 0;border-bottom:1px solid #222;display:flex;align-items:center;">Light Show Store</a>
+    <a href="my-library.html" onclick="closeMenu()" style="font-size:1.1rem;font-weight:500;color:var(--text);padding:14px 0;border-bottom:1px solid #222;display:flex;align-items:center;">My Library</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()" style="font-size:1.1rem;font-weight:500;color:var(--text);padding:14px 0;border-bottom:1px solid #222;display:flex;align-items:center;">✶ Visualizer</a>
+    <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
+    <a href="index.html#cta" onclick="closeMenu()" style="background:var(--accent);color:#000;padding:13px 26px;border-radius:8px;font-weight:600;text-align:center;">Get a Quote</a>
+  </div>
+</nav>
 
 <div class="app-body">
 
@@ -1855,6 +1890,28 @@ document.addEventListener('keydown', e => {
 
 // Boot
 init();
+
+/* ─── HAMBURGER ─── */
+(function() {
+  const hb = document.getElementById("hamburger");
+  const mm = document.getElementById("mobileMenu");
+  let open = false;
+  if (hb) {
+    hb.addEventListener("click", () => {
+      open = !open;
+      mm.style.display = open ? "flex" : "none";
+      const spans = hb.querySelectorAll("span");
+      if (open) { spans[0].style.transform="rotate(45deg) translate(5px,5px)"; spans[1].style.opacity="0"; spans[2].style.transform="rotate(-45deg) translate(5px,-5px)"; }
+      else { spans.forEach(s => { s.style.transform=""; s.style.opacity=""; }); }
+    });
+    document.addEventListener("click", e => { if (open && !mm.contains(e.target) && !hb.contains(e.target)) closeMenu(); });
+  }
+  function closeMenu() {
+    open = false;
+    if (mm) mm.style.display = "none";
+    if (hb) hb.querySelectorAll("span").forEach(s => { s.style.transform=""; s.style.opacity=""; });
+  }
+})();
 </script>
 <iframe name="mc_iframe" style="display:none;" title="mc"></iframe>
 </body>

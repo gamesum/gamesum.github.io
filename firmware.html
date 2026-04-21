@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Firmware Update — AFTERGLO Controller</title>
+  <title>Firmware Update | AFTERGLO Controller</title>
   <meta name="description" content="Update your AFTERGLO permanent LED controller firmware directly from your browser. No software required." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -30,28 +30,62 @@
 
     html, body { height: 100%; background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; }
 
-    /* ─── NAV ─── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      background: rgba(8,8,8,0.95); backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px; height: 60px;
+    /* ─── NAVBAR ─── */
+    :root { --nav-h: 72px; }
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
     }
-    .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .nav-logo img { height: 28px; }
-    .nav-logo span { font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 1.1rem;
-                     background: linear-gradient(135deg, #c8921e, #d4a843); -webkit-background-clip: text;
-                     -webkit-text-fill-color: transparent; letter-spacing: 0.04em; }
-    .nav-links { display: flex; gap: 28px; }
-    .nav-links a { color: var(--silver); text-decoration: none; font-size: 0.88rem; font-weight: 500;
-                   transition: color .2s; }
-    .nav-links a:hover { color: var(--accent2); }
-    .nav-links a.active { color: var(--accent2); }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between; height: var(--nav-h);
+    }
+    .nav-logo {
+      font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900;
+      color: #fff; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); text-shadow: 0 0 20px rgba(200,146,30,0.8), 0 0 40px rgba(200,146,30,0.4); }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--muted); transition: color 0.2s; text-decoration: none; }
+    .nav-links a:hover { color: #fff; }
+    .nav-links a.active { color: var(--accent); }
+    .nav-cta { margin-left: 16px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px;
+      border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; border: none; text-decoration: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 20px rgba(200,146,30,0.35); }
+    .btn-primary:hover { background: var(--accent2); box-shadow: 0 6px 28px rgba(200,146,30,0.5); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1.5px solid #222222; }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none;
+      padding: 10px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center;
+    }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+    .mobile-menu {
+      display: none; position: fixed; top: var(--nav-h); left: 0; right: 0;
+      background: rgba(13,17,23,0.98); backdrop-filter: blur(16px);
+      padding: 24px; flex-direction: column; gap: 24px;
+      z-index: 999; border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--border); min-height: 44px; display: flex; align-items: center; }
+    @media (max-width: 900px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+    }
 
     /* ─── HERO ─── */
     .hero {
-      text-align: center; padding: 64px 24px 48px;
+      text-align: center; padding: calc(var(--nav-h) + 40px) 24px 48px;
       background: radial-gradient(ellipse 700px 300px at 50% 0%, rgba(200,146,30,0.08) 0%, transparent 70%);
     }
     .hero-badge {
@@ -318,17 +352,38 @@
 </head>
 <body>
 
-<!-- ─── NAV ──────────────────────────────────────────────────────────────── -->
-<nav>
-  <a href="index.html" class="nav-logo">
-    <img src="afterglo-logo-flat.png" alt="AFTERGLO" onerror="this.style.display='none'" />
-    <span>AFTERGLO</span>
-  </a>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="platform.html">Store</a>
-    <a href="firmware.html" class="active">Firmware</a>
-    <a href="my-library.html">Library</a>
+<!-- ─── NAVBAR ──────────────────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#testimonials">Reviews</a></li>
+        <li><a href="platform.html">Light Show Store</a></li>
+        <li><a href="my-library.html">My Library</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✶ Visualizer</a></li>
+      </ul>
+
+      <div id="navAuthArea" style="display:flex;align-items:center;gap:10px;margin-left:16px;"></div>
+      <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+    <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+    <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
+    <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
+    <a href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()">✶ Visualizer</a>
+    <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
+    <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
   </div>
 </nav>
 
@@ -339,7 +394,7 @@
     Browser-Based Flasher
   </div>
   <h1>Update Your<br><span>Controller Firmware</span></h1>
-  <p>Flash the latest AFTERGLO firmware directly from Chrome or Edge — no software to install, no drivers required.</p>
+  <p>Flash the latest AFTERGLO firmware directly from Chrome or Edge. No software to install, no drivers required.</p>
   <div class="browser-warning" id="browserWarning">
     <strong>Browser not supported.</strong> This tool requires Google Chrome or Microsoft Edge (desktop).
     <a href="https://www.google.com/chrome" style="color:inherit;font-weight:700;"> Download Chrome →</a>
@@ -372,7 +427,7 @@
         </div>
         <div class="connect-visual-text">
           <h3>ESP32-S3 Controller</h3>
-          <p>Uses the native USB-C port — no UART adapter needed. Chrome / Edge only.</p>
+          <p>Uses the native USB-C port. No UART adapter needed. Chrome / Edge only.</p>
         </div>
       </div>
 
@@ -395,7 +450,7 @@
           <div class="step-icon">3</div>
           <div class="step-text">
             <strong>Click Connect below</strong>
-            <span>A browser dialog will ask you to pick the serial port — select the AFTERGLO / CP210x / USB Serial entry.</span>
+            <span>A browser dialog will ask you to pick the serial port. Select the AFTERGLO / CP210x / USB Serial entry.</span>
           </div>
         </li>
       </ul>
@@ -520,7 +575,7 @@
         Why don't I see a serial port in the browser dialog?
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
-      <div class="faq-a">Make sure you're in <strong>bootloader mode</strong>: hold BOOT, tap RST, release BOOT. The LED should go off. Also check you're using a <strong>data-capable USB-C cable</strong> — charge-only cables won't show a port. Try a different USB port on your computer.</div>
+      <div class="faq-a">Make sure you're in <strong>bootloader mode</strong>: hold BOOT, tap RST, release BOOT. The LED should go off. Also check you're using a <strong>data-capable USB-C cable</strong>. Charge-only cables won't show a port. Try a different USB port on your computer.</div>
     </div>
 
     <div class="faq-item" onclick="toggleFaq(this)">
@@ -533,7 +588,7 @@
 
     <div class="faq-item" onclick="toggleFaq(this)">
       <div class="faq-q">
-        The flash failed partway through — is my controller bricked?
+        The flash failed partway through. Is my controller bricked?
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="faq-a">Almost certainly not. The ESP32-S3 bootloader lives in a protected region and cannot be overwritten by this tool. Put the board back into bootloader mode and try again. If it still fails, try a slower baud rate by holding Shift when clicking Start Flash.</div>
@@ -552,7 +607,7 @@
         Can I flash over Wi-Fi instead of USB?
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
-      <div class="faq-a">Yes — once the controller is running AFTERGLO firmware and connected to your network, visit <strong>http://&lt;controller-ip&gt;/update</strong> in your browser to upload a .bin file via the built-in OTA updater. Future releases will appear as an in-app notification on your controller's web UI.</div>
+      <div class="faq-a">Yes. Once the controller is running AFTERGLO firmware and connected to your network, visit <strong>http://&lt;controller-ip&gt;/update</strong> in your browser to upload a .bin file via the built-in OTA updater. Future releases will appear as an in-app notification on your controller's web UI.</div>
     </div>
   </div>
 
@@ -571,7 +626,7 @@ const FIRMWARE_BASE = "https://github.com/afterglo-lighting/afterglo-firmware/re
 const FIRMWARE_VERSIONS = [
   {
     version: "v1.2.0",
-    label:   "v1.2.0 — Latest Stable",
+    label:   "v1.2.0: Latest Stable",
     badge:   "latest",
     date:    "April 2026",
     size:    "1.4 MB",
@@ -591,7 +646,7 @@ const FIRMWARE_VERSIONS = [
   },
   {
     version: "v1.1.3",
-    label:   "v1.1.3 — Previous Stable",
+    label:   "v1.1.3: Previous Stable",
     badge:   "stable",
     date:    "March 2026",
     size:    "1.3 MB",
@@ -726,7 +781,7 @@ async function doConnect() {
     // Disconnect serial port — esptool-js reopens at higher baud during flash
     await espLoader.transport.disconnect();
 
-    btn.innerHTML = `✓ Connected — ${chip}`;
+    btn.innerHTML = `✓ Connected: ${chip}`;
     btn.style.background = 'rgba(34,197,94,0.15)';
     btn.style.color = '#4ade80';
     btn.style.border = '1.5px solid rgba(34,197,94,0.3)';

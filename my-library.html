@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Light Shows — AFTERGLO</title>
-  <meta name="description" content="Your AFTERGLO light show library — downloads, purchases, and uploaded sequences." />
+  <title>My Light Shows | AFTERGLO</title>
+  <meta name="description" content="Your AFTERGLO light show library: downloads, purchases, and uploaded sequences." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -92,6 +92,7 @@
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 1px 0 var(--border);
+      transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
     }
 
     .nav-inner {
@@ -108,6 +109,7 @@
       color: #fff;
       letter-spacing: 0.06em;
       text-transform: uppercase;
+      text-decoration: none;
     }
     .nav-logo span {
       color: var(--accent);
@@ -125,30 +127,12 @@
       font-weight: 500;
       color: var(--muted);
       transition: color 0.2s;
+      text-decoration: none;
     }
     .nav-links a:hover { color: #fff; }
     .nav-links a.active { color: var(--accent); }
 
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-avatar {
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Outfit', sans-serif;
-      font-weight: 800;
-      font-size: 0.9rem;
-      color: #000;
-      cursor: pointer;
-      position: relative;
-    }
+    .nav-cta { margin-left: 16px; }
 
     .hamburger {
       display: none;
@@ -193,6 +177,7 @@
       min-height: 44px;
       display: flex;
       align-items: center;
+      text-decoration: none;
     }
 
     /* ─── PAGE ────────────────────────────────────────────────────── */
@@ -691,18 +676,14 @@
       <ul class="nav-links">
         <li><a href="arches.html">Light Shows</a></li>
         <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#testimonials">Reviews</a></li>
         <li><a href="platform.html">Light Show Store</a></li>
         <li><a href="my-library.html" class="active">My Library</a></li>
         <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
-      <div class="nav-right">
-        <div class="nav-avatar" id="navAvatar" title="My Library" style="display:none;"></div>
-        <button class="sign-out-btn" onclick="signOut()" style="display:none;" id="navSignOut">
-          Sign Out
-        </button>
-        <a href="index.html#cta" class="btn btn-primary btn-sm">Get a Quote</a>
-      </div>
+      <div id="navAuthArea" style="display:flex;align-items:center;gap:10px;margin-left:16px;"></div>
+      <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
 
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
         <span></span><span></span><span></span>
@@ -712,10 +693,12 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="arches.html" onclick="closeMenu()">Light Shows</a>
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
-    <a href="platform.html" onclick="closeMenu()" style="color:var(--accent);">Light Show Store</a>
-    <a href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
+    <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
+    <a href="my-library.html" onclick="closeMenu()" style="color:var(--accent);">My Library</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
-    <button class="sign-out-btn" onclick="signOut()" style="text-align:left;">Sign Out</button>
+    <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
+    <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
   </div>
 </nav>
 
@@ -730,7 +713,7 @@
       <label for="controllerIP">Controller Address</label>
       <input type="text" id="controllerIP" class="modal-input" placeholder="e.g. 192.168.1.105" autocomplete="off" inputmode="decimal" />
       <div class="modal-hint">Not sure what this is? <button onclick="var h=document.getElementById('ipHelp');h.style.display=h.style.display==='none'?'block':'none'" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;padding:0;text-decoration:underline;">Tap here for step-by-step help</button></div>
-      <div id="ipHelp" style="display:none;margin-top:10px;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;font-size:0.8rem;color:var(--muted);line-height:1.7;"><strong style="color:var(--silver);">Option 1 — Check your controller's screen:</strong> When your AFTERGLO controller starts up, a number like 192.168.1.105 appears on its screen. Type that number here.<br><br><strong style="color:var(--silver);">Option 2 — Check your router:</strong> Type 192.168.1.1 into your browser address bar. Look for a page with a list of connected devices and find "AFTERGLO."<br><br><strong style="color:var(--silver);">Can't find it?</strong> Use the "Download Show File" button instead — then drag that file onto your controller's web page.</div>
+      <div id="ipHelp" style="display:none;margin-top:10px;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;font-size:0.8rem;color:var(--muted);line-height:1.7;"><strong style="color:var(--silver);">Option 1: Check your controller's screen.</strong> When your AFTERGLO controller starts up, a number like 192.168.1.105 appears on its screen. Type that number here.<br><br><strong style="color:var(--silver);">Option 2: Check your router.</strong> Type 192.168.1.1 into your browser address bar. Look for a page with a list of connected devices and find "AFTERGLO."<br><br><strong style="color:var(--silver);">Can't find it?</strong> Use the "Download Show File" button instead, then drag that file onto your controller's web page.</div>
     </div>
 
     <div style="font-size:0.78rem;color:var(--muted);margin-bottom:16px;line-height:1.6;">💡 <strong style="color:var(--silver);">Tip:</strong> Make sure your phone or computer is connected to your home Wi-Fi (not mobile data) before sending.</div>
@@ -813,7 +796,7 @@
         <div class="lib-section-left">
           <div class="lib-section-icon icon-purchases">⭐</div>
           <div>
-            <div class="lib-section-title">My Purchased Packs</div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Premium packs you've bought — yours to keep and replay every year</div>
+            <div class="lib-section-title">My Purchased Packs</div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Premium packs you've bought. Yours to keep and replay every year.</div>
           </div>
         </div>
         <span class="lib-section-count" id="countPurchases">0 packs</span>
@@ -843,7 +826,7 @@
   <div style="text-align:center;padding:40px 24px;">
     <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
     <div style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;margin-bottom:8px;">Sign in to see your saved light shows</div>
-    <div style="font-size:0.9rem;color:#94a3b8;margin-bottom:24px;">It's free to create an account — your shows will be saved and ready whenever you need them.</div>
+    <div style="font-size:0.9rem;color:#94a3b8;margin-bottom:24px;">It's free to create an account. Your shows will be saved and ready whenever you need them.</div>
     <a href="signin.html?redirect=my-library.html" class="btn btn-primary">Sign In or Create Free Account</a>
   </div>
 </div>
@@ -1072,14 +1055,14 @@
       download: {
         icon:  '⬇️',
         title: 'No downloads yet',
-        text:  'Head to the Light Show Store and tap "Save Free Show" on any show you like — it will appear here, ready to use anytime.',
+        text:  'Head to the Light Show Store and tap "Save Free Show" on any show you like. It will appear here, ready to use anytime.',
         cta:   'Go to the Light Show Store',
         link:  'platform.html#sequences'
       },
       purchase: {
         icon:  '⭐',
         title: 'No purchases yet',
-        text:  'Browse premium show packs built by AFTERGLO's animation team — one-time purchase, no subscription.',
+        text:  'Browse premium show packs built by AFTERGLO\u2019s animation team. One-time purchase, no subscription.',
         cta:   'Browse Premium Packs',
         link:  'platform.html#premium'
       },
@@ -1122,7 +1105,7 @@
       showToast('Download started!');
     } catch (err) {
       console.error('downloadFseq error:', err);
-      showToast('Download unavailable — please try again shortly.', 'warning');
+      showToast('Download unavailable. Please try again shortly.', 'warning');
     }
   }
 
@@ -1213,7 +1196,7 @@
       console.error('sendToController error:', err);
       // If it's a network error (CORS or controller unreachable), still note it clearly
       if (err.name === 'TypeError' || err.message.includes('fetch')) {
-        showToast('Could not reach controller — check that you\'re on the same Wi-Fi network.', 'warning');
+        showToast('Could not reach controller. Check that you\'re on the same Wi-Fi network.', 'warning');
       } else {
         showToast('Send failed: ' + err.message, 'warning');
       }
@@ -1223,7 +1206,7 @@
   /* ─── SIGN OUT ─────────────────────────────────────────────────── */
   function signOut() {
     signOutUser(); // clears localStorage + Firebase auth session
-    window.location.href = 'signin.html';
+    window.location.href = 'index.html';
   }
 
   /* ─── TOAST ────────────────────────────────────────────────────── */
@@ -1277,72 +1260,113 @@
     return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  /* ─── NAV AUTH AREA (matches platform.html pattern) ───────────── */
+  function updateNavAuth(fbUser) {
+    const navArea = document.getElementById('navAuthArea');
+    const mobArea = document.getElementById('mobileAuthArea');
+    if (!navArea) return;
+    if (fbUser) {
+      const stored = getUser() || {};
+      const name  = stored.name  || fbUser.displayName || fbUser.email || '';
+      const email = stored.email || fbUser.email || '';
+      const initial = (name || email || 'U')[0].toUpperCase();
+      navArea.innerHTML = `
+        <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
+          ${esc(name || email)}
+        </a>
+        <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;padding:4px 8px;">Sign Out</button>`;
+      if (mobArea) mobArea.innerHTML = `
+        <a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>
+        <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;text-align:left;padding:0;">Sign Out</button>`;
+    } else {
+      navArea.innerHTML = `<a href="signin.html?redirect=my-library.html" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>`;
+      if (mobArea) mobArea.innerHTML = `<a href="signin.html?redirect=my-library.html" style="color:var(--accent);">Sign In / Create Account</a>`;
+    }
+  }
+
   /* ─── RUN ──────────────────────────────────────────────────────── */
   window.addEventListener('DOMContentLoaded', () => {
-    // Step 1: render from localStorage immediately (no wait, no flash)
-    const stored = getUser();
-    if (stored && stored.uid) {
-      currentUser = stored;
-      document.getElementById('authLoading').style.display = 'none';
-      document.getElementById('authCheck').style.display = 'none';
-      document.getElementById('pageContent').style.display = 'block';
-      const initial = (stored.name || stored.email || 'U')[0].toUpperCase();
-      const navAv = document.getElementById('navAvatar');
-      navAv.textContent = initial;
-      navAv.style.display = '';
-      document.getElementById('navSignOut').style.display = 'inline-flex';
-      document.getElementById('profileAvatar').textContent = initial;
-      setProfileNameDisplay(stored.name || 'My Account');
-      document.getElementById('profileEmail').textContent = stored.email || '';
-      renderSections();
-    } else {
-      // No stored session at all — show auth gate immediately
+    // Failsafe: if something errors and the spinner is still visible after 6s,
+    // force it to hide and show the auth gate so the user is never stuck.
+    const spinnerGuard = setTimeout(() => {
+      const el = document.getElementById('authLoading');
+      if (el && el.style.display !== 'none') {
+        el.style.display = 'none';
+        document.getElementById('authCheck').style.display = 'flex';
+      }
+    }, 6000);
+
+    try {
+      // Step 1: render from localStorage immediately — no spinner wait, no flash
+      const stored = (typeof getUser === 'function') ? getUser() : null;
+      if (stored && stored.uid) {
+        currentUser = stored;
+        clearTimeout(spinnerGuard);
+        document.getElementById('authLoading').style.display = 'none';
+        document.getElementById('authCheck').style.display = 'none';
+        document.getElementById('pageContent').style.display = 'block';
+        document.getElementById('profileAvatar').textContent = (stored.name || stored.email || 'U')[0].toUpperCase();
+        setProfileNameDisplay(stored.name || 'My Account');
+        document.getElementById('profileEmail').textContent = stored.email || '';
+        renderSections();
+      } else {
+        // No stored session — show auth gate immediately, no wait
+        clearTimeout(spinnerGuard);
+        document.getElementById('authLoading').style.display = 'none';
+        document.getElementById('authCheck').style.display = 'flex';
+      }
+    } catch (e) {
+      // Safety net: any unexpected error should never leave the spinner visible
+      clearTimeout(spinnerGuard);
       document.getElementById('authLoading').style.display = 'none';
       document.getElementById('authCheck').style.display = 'flex';
+      console.error('Library init error:', e);
     }
 
-    // Step 2: Firebase verifies in background — refresh token, update display name/photo
-    firebase.auth().onAuthStateChanged(async (firebaseUser) => {
-      if (firebaseUser) {
-        // Firebase confirmed the user — refresh token silently
-        const token = await firebaseUser.getIdToken(false).catch(() => stored && stored.token || null);
-        const base = getUser() || {};
-        currentUser = {
-          name:      firebaseUser.displayName || base.name || firebaseUser.email.split('@')[0],
-          email:     firebaseUser.email,
-          picture:   firebaseUser.photoURL || base.picture || '',
-          uid:       firebaseUser.uid,
-          token:     token || base.token || '',
-          library:   base.library   || [],
-          purchases: base.purchases || [],
-          uploads:   base.uploads   || [],
-        };
-        saveUser(currentUser);
-        // Update nav and profile with fresh data
-        const initial = (currentUser.name || currentUser.email || 'U')[0].toUpperCase();
-        const navAv = document.getElementById('navAvatar');
-        navAv.textContent = initial;
-        navAv.style.display = '';
-        document.getElementById('navSignOut').style.display = 'inline-flex';
-        // Show content if it wasn't shown yet (e.g. localStorage was empty but Firebase has user)
-        if (document.getElementById('pageContent').style.display === 'none') {
-          document.getElementById('authLoading').style.display = 'none';
-          document.getElementById('authCheck').style.display = 'none';
-          document.getElementById('pageContent').style.display = 'block';
-          document.getElementById('profileAvatar').textContent = initial;
-          setProfileNameDisplay(currentUser.name || 'My Account');
-          document.getElementById('profileEmail').textContent = currentUser.email || '';
-          renderSections();
-        }
-      } else {
-        // Firebase says no session — only hide content if it was already showing
-        if (currentUser) {
-          currentUser = null;
-          document.getElementById('pageContent').style.display = 'none';
-          document.getElementById('authCheck').style.display = 'flex';
-        }
+    // Step 2: Firebase confirms auth state in background and refreshes token
+    try {
+      if (typeof firebase !== 'undefined') {
+        firebase.auth().onAuthStateChanged(async (firebaseUser) => {
+          updateNavAuth(firebaseUser);
+          if (firebaseUser) {
+            const base = (typeof getUser === 'function') ? (getUser() || {}) : {};
+            const token = await firebaseUser.getIdToken(false).catch(() => base.token || null);
+            currentUser = {
+              name:      firebaseUser.displayName || base.name || firebaseUser.email.split('@')[0],
+              email:     firebaseUser.email,
+              picture:   firebaseUser.photoURL || base.picture || '',
+              uid:       firebaseUser.uid,
+              token:     token || base.token || '',
+              library:   base.library   || [],
+              purchases: base.purchases || [],
+              uploads:   base.uploads   || [],
+            };
+            if (typeof saveUser === 'function') saveUser(currentUser);
+            const initial = (currentUser.name || currentUser.email || 'U')[0].toUpperCase();
+            document.getElementById('profileAvatar').textContent = initial;
+            setProfileNameDisplay(currentUser.name || 'My Account');
+            document.getElementById('profileEmail').textContent = currentUser.email || '';
+            // Show content if localStorage was empty but Firebase has a valid user
+            if (document.getElementById('pageContent').style.display === 'none') {
+              document.getElementById('authLoading').style.display = 'none';
+              document.getElementById('authCheck').style.display = 'none';
+              document.getElementById('pageContent').style.display = 'block';
+              renderSections();
+            }
+          } else {
+            // Firebase says no active session
+            if (currentUser) {
+              currentUser = null;
+              document.getElementById('pageContent').style.display = 'none';
+              document.getElementById('authCheck').style.display = 'flex';
+            }
+          }
+        });
       }
-    });
+    } catch (e) {
+      console.error('Firebase auth error:', e);
+    }
   });
 </script>
 </body>

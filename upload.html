@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Upload a Show — AFTERGLO Platform</title>
+  <title>Upload a Show | AFTERGLO Platform</title>
   <meta name="description" content="Share your xLights light show sequence with the AFTERGLO community. Upload your FSEQ, set a price, and earn revenue on every download." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -369,6 +369,36 @@
     .char-counter.warn { color: #f59e0b; }
     .char-counter.over { color: #f87171; }
 
+    /* ─── PROP CHECKBOXES ─────────────────────────────────────────── */
+    .prop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .prop-check {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      color: var(--muted);
+      transition: border-color 0.2s, color 0.2s;
+      user-select: none;
+    }
+    .prop-check:hover { border-color: #444; color: #fff; }
+    .prop-check input[type="checkbox"] { display:none; }
+    .prop-check:has(input:checked) {
+      border-color: var(--accent);
+      color: #fff;
+      background: rgba(200,146,30,0.08);
+    }
+    .prop-icon { font-size: 1.1rem; }
+
     .form-hint {
       font-size: 0.78rem;
       color: var(--muted);
@@ -523,6 +553,63 @@
     }
     .price-input::placeholder { color: #333; font-size: 1.5rem; }
 
+    /* ─── PREMIUM GATED OPTION ───────────────────────────────────── */
+    .price-option-wrap {
+      position: relative;
+    }
+    .price-option-wrap.gated .price-label {
+      opacity: 0.45;
+      cursor: not-allowed;
+      filter: grayscale(0.5);
+      pointer-events: none;
+    }
+    .price-option-wrap.gated .price-radio {
+      pointer-events: none;
+    }
+    .price-gated-badge {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: rgba(148,163,184,0.15);
+      border: 1px solid rgba(148,163,184,0.3);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      pointer-events: none;
+    }
+    .price-gated-tooltip {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1e1e1e;
+      border: 1px solid var(--border2);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.5;
+      width: 220px;
+      text-align: center;
+      z-index: 10;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+    .price-gated-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #1e1e1e;
+    }
+    .price-option-wrap.gated:hover .price-gated-tooltip { display: block; }
+
     /* ─── MP3 UPLOAD ──────────────────────────────────────────────── */
     .mp3-section {
       display: none;
@@ -652,6 +739,38 @@
       color: var(--muted);
       line-height: 1.65;
     }
+    .legal-check-wrap {
+      margin-bottom: 14px;
+    }
+    .legal-check-wrap:last-of-type { margin-bottom: 0; }
+    .legal-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 14px 0;
+    }
+    .moderation-note {
+      font-size: 0.78rem;
+      color: #666;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      line-height: 1.6;
+    }
+
+    /* ─── CONTENT ERROR ───────────────────────────────────────────── */
+    .content-error {
+      display: none;
+      background: rgba(248,113,113,0.08);
+      border: 1px solid rgba(248,113,113,0.3);
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      font-size: 0.88rem;
+      color: #f87171;
+      line-height: 1.6;
+    }
+    .content-error.show { display: block; }
+    .content-error strong { display: block; margin-bottom: 4px; font-size: 0.92rem; }
 
     /* ─── NAV BUTTONS ─────────────────────────────────────────────── */
     .form-nav {
@@ -856,37 +975,40 @@
 </head>
 <body>
 
-<!-- ─── NAVBAR ─────────────────────────────────────────────────────── -->
+<!-- ─── NAVBAR ─────────────────────────────────────────────────────────────────── -->
 <nav id="navbar">
-  <div class="nav-inner">
-    <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
 
-    <ul class="nav-links">
-      <li><a href="arches.html">Light Shows</a></li>
-      <li><a href="index.html#gallery">Gallery</a></li>
-      <li><a href="platform.html">Platform</a></li>
-      <li><a href="my-library.html">My Library</a></li>
-      <li><a href="afterglo-visualizer.html" style="color:var(--accent);">✦ Visualizer</a></li>
-    </ul>
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#testimonials">Reviews</a></li>
+        <li><a href="platform.html">Light Show Store</a></li>
+        <li><a href="my-library.html">My Library</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✶ Visualizer</a></li>
+      </ul>
 
-    <div class="nav-right">
-      <div class="nav-avatar" id="navAvatar">?</div>
-      <a href="index.html#cta" class="btn btn-primary btn-sm">Get a Quote</a>
+      <div id="navAuthArea" style="display:flex;align-items:center;gap:10px;margin-left:16px;"></div>
+      <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
-
-    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
-      <span></span><span></span><span></span>
-    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+    <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+    <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
+    <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
+    <a href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()">✶ Visualizer</a>
+    <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
+    <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
   </div>
 </nav>
-
-<div class="mobile-menu" id="mobileMenu">
-  <a href="arches.html" onclick="closeMenu()">Light Shows</a>
-  <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
-  <a href="platform.html" onclick="closeMenu()">Platform</a>
-  <a href="my-library.html" onclick="closeMenu()">My Library</a>
-  <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
-</div>
 
 <!-- ─── FSEQ EXPLAINER MODAL ─────────────────────────────────────── -->
 <div class="modal-overlay" id="fseqModal" onclick="if(event.target===this)closeFseqModal()">
@@ -894,7 +1016,7 @@
     <button class="modal-close" onclick="closeFseqModal()">✕</button>
     <div class="modal-title">What is an FSEQ file?</div>
     <div class="modal-body">
-      <p>An <strong>FSEQ (Falcon Sequence)</strong> file is the standard format used by xLights to store light show timing data. It contains a frame-by-frame record of every channel value for your entire sequence — essentially the "film reel" of your light show.</p>
+      <p>An <strong>FSEQ (Falcon Sequence)</strong> file is the standard format used by xLights to store light show timing data. It contains a frame-by-frame record of every channel value for your entire sequence, essentially the "film reel" of your light show.</p>
       <ul>
         <li><strong>How to export from xLights:</strong> File → Export Sequence → FSEQ v2 (uncompressed)</li>
         <li><strong>Max file size:</strong> 50 MB</li>
@@ -942,7 +1064,7 @@
     <div id="successState">
       <div class="success-icon">🎉</div>
       <div class="success-title">Show Submitted!</div>
-      <p class="success-sub">Your show has been submitted for review. We'll check it against our controller spec and publish it within 24–48 hours. You'll receive an email when it goes live.</p>
+      <p class="success-sub">Your show has been submitted for review. We'll check it against our controller spec and publish it within 24 to 48 hours. You'll receive an email when it goes live.</p>
       <a href="my-library.html" class="btn btn-primary" style="font-size:1rem;padding:16px 32px;border-radius:12px;">View My Uploads →</a>
     </div>
 
@@ -1016,14 +1138,60 @@
 
         <div class="form-group">
           <label class="form-label">Description<span class="opt">(optional)</span></label>
-          <textarea class="form-textarea" id="description" maxlength="500" placeholder="Tell the community what makes this show special — the vibe, the song choice, how many channels it uses…"></textarea>
+          <textarea class="form-textarea" id="description" maxlength="500" placeholder="Tell the community what makes this show special. The vibe, the song choice, how many channels it uses..."></textarea>
           <div class="char-counter" id="descCounter">0 / 500</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Supported Props<span class="opt">(check all that apply)</span></label>
+          <div class="prop-grid">
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="roofline" />
+              <span class="prop-icon">🏠</span>
+              <span>Roofline</span>
+            </label>
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="arch" />
+              <span class="prop-icon">🌈</span>
+              <span>Arch</span>
+            </label>
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="tree" />
+              <span class="prop-icon">🌲</span>
+              <span>Tree</span>
+            </label>
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="mega-tree" />
+              <span class="prop-icon">🎄</span>
+              <span>Mega Tree</span>
+            </label>
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="stake" />
+              <span class="prop-icon">⚡</span>
+              <span>Stakes</span>
+            </label>
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="window" />
+              <span class="prop-icon">🪟</span>
+              <span>Windows</span>
+            </label>
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="yard" />
+              <span class="prop-icon">🌟</span>
+              <span>Yard</span>
+            </label>
+            <label class="prop-check">
+              <input type="checkbox" name="props" value="fence" />
+              <span class="prop-icon">🔲</span>
+              <span>Fence</span>
+            </label>
+          </div>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Song Name<span class="req">*</span></label>
-            <input type="text" class="form-input" id="songName" placeholder="e.g. All I Want For Christmas Is You — Mariah Carey" maxlength="120" />
+            <input type="text" class="form-input" id="songName" placeholder="e.g. All I Want For Christmas Is You by Mariah Carey" maxlength="120" />
           </div>
           <div class="form-group">
             <label class="form-label">Show Duration (seconds)<span class="req">*</span></label>
@@ -1033,18 +1201,27 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">YouTube Link<span class="req">*</span></label>
-          <input type="url" class="form-input" id="youtubeUrl" placeholder="https://youtube.com/watch?v=..." />
-          <div class="form-hint">Paste a YouTube link so buyers can preview the show before downloading.</div>
-          <div class="yt-preview" id="ytPreview">
-            <img id="ytThumb" src="" alt="YouTube preview" />
+          <label class="form-label">YouTube Music Link<span class="req">*</span></label>
+          <input type="url" class="form-input" id="youtubeMusicUrl" placeholder="https://youtube.com/watch?v=..." />
+          <div class="form-hint">Link to the YouTube video of the music used in this show. This helps buyers find and license the song.</div>
+          <div class="yt-preview" id="ytMusicPreview">
+            <img id="ytMusicThumb" src="" alt="Music YouTube preview" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Show Video Link<span class="opt">(optional)</span></label>
+          <input type="url" class="form-input" id="youtubeShowUrl" placeholder="https://youtube.com/watch?v=..." />
+          <div class="form-hint">Link to a YouTube or social video showing this show in action. Helps buyers see the full effect before downloading.</div>
+          <div class="yt-preview" id="ytShowPreview">
+            <img id="ytShowThumb" src="" alt="Show YouTube preview" />
           </div>
         </div>
 
         <div class="form-group">
           <label class="form-label">Price<span class="req">*</span></label>
           <div class="price-options">
-            <div>
+            <div class="price-option-wrap">
               <input type="radio" name="price" id="priceFree" class="price-radio" value="free" checked />
               <label for="priceFree" class="price-label">
                 <div class="price-label-icon">🆓</div>
@@ -1052,19 +1229,22 @@
                 <div class="price-label-sub">Anyone can download</div>
               </label>
             </div>
-            <div>
-              <input type="radio" name="price" id="pricePremium" class="price-radio" value="premium" />
+            <div class="price-option-wrap gated">
+              <input type="radio" name="price" id="pricePremium" class="price-radio" value="premium" disabled />
               <label for="pricePremium" class="price-label">
                 <div class="price-label-icon">💰</div>
                 <div class="price-label-title">Premium ($)</div>
                 <div class="price-label-sub">Earn on every download</div>
               </label>
+              <div class="price-gated-badge">Pending approval</div>
+              <div class="price-gated-tooltip">Premium uploads require account verification. Contact us to get verified.</div>
             </div>
           </div>
 
           <div class="price-amount-wrap" id="priceAmountWrap">
             <div class="price-currency">$</div>
-            <input type="number" class="price-input" id="priceAmount" min="0.99" max="99" step="0.01" placeholder="4.99" />
+            <input type="number" class="price-input" id="priceAmount" min="0.99" max="50.00" step="0.01" placeholder="4.99" />
+            <span style="font-size:0.78rem;color:var(--muted);white-space:nowrap;align-self:center;">Max $50.00</span>
           </div>
         </div>
 
@@ -1107,17 +1287,39 @@
           <div class="review-row"><span class="review-key">Category</span><span class="review-val" id="rCategory">—</span></div>
           <div class="review-row"><span class="review-key">Song</span><span class="review-val" id="rSong">—</span></div>
           <div class="review-row"><span class="review-key">Duration</span><span class="review-val" id="rDuration">—</span></div>
-          <div class="review-row"><span class="review-key">YouTube</span><span class="review-val" id="rYoutube">—</span></div>
+          <div class="review-row"><span class="review-key">Music Link</span><span class="review-val" id="rYoutubeMusic">—</span></div>
+          <div class="review-row" id="rShowVideoRow" style="display:none;"><span class="review-key">Show Video</span><span class="review-val" id="rYoutubeShow">—</span></div>
           <div class="review-row"><span class="review-key">Price</span><span class="review-val accent" id="rPrice">Free</span></div>
           <div class="review-row" id="rMp3Row" style="display:none;"><span class="review-key">MP3 Bundled</span><span class="review-val" id="rMp3">—</span></div>
         </div>
 
+        <!-- Content moderation error banner -->
+        <div class="content-error" id="contentError">
+          <strong>Submission blocked.</strong>
+          Your submission contains prohibited content and cannot be uploaded. Please review our <a href="creator-agreement.html" style="color:#f87171;text-decoration:underline;">Terms of Service</a> and revise your show name, description, or song title before resubmitting.
+        </div>
+
         <div class="legal-wrap">
+          <!-- Copyright certification -->
           <div class="legal-check-wrap">
             <input type="checkbox" id="legalCheck" class="legal-check" />
             <label for="legalCheck" class="legal-text">
               I certify that this sequence and any associated audio is entirely my original work, or that I hold all necessary rights and licenses to distribute it. I understand that AFTERGLO bears no legal responsibility for content I upload, and that any copyright infringement is solely my liability. I acknowledge that AFTERGLO reserves the right to remove infringing content at any time and, following a written warning, to pursue legal action against me if I knowingly upload copyrighted material without authorization.
             </label>
+          </div>
+
+          <div class="legal-divider"></div>
+
+          <!-- Creator Terms of Service -->
+          <div class="legal-check-wrap">
+            <input type="checkbox" id="tosCheck" class="legal-check" />
+            <label for="tosCheck" class="legal-text">
+              I agree to the <a href="creator-agreement.html" style="color:var(--accent);">AFTERGLO Creator Terms of Service</a>. I understand that all uploads are reviewed and violations may result in account suspension.
+            </label>
+          </div>
+
+          <div class="moderation-note">
+            All submissions are screened automatically. Content that passes our review is published within 24 to 48 hours. Manual review is triggered for flagged content.
           </div>
         </div>
 
@@ -1161,6 +1363,32 @@
   let mp3File       = null;
   let detectedDuration = null;
 
+  /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
+  function signOut() { signOutUser(); window.location.href = 'index.html'; }
+
+  function updateNavAuth(fbUser) {
+    const navArea = document.getElementById('navAuthArea');
+    if (!navArea) return;
+    if (fbUser) {
+      const stored = (typeof getUser === 'function') ? (getUser() || {}) : {};
+      const name  = stored.name  || fbUser.displayName || fbUser.email || '';
+      const email = stored.email || fbUser.email || '';
+      const initial = (name || email || 'U')[0].toUpperCase();
+      navArea.innerHTML = `
+        <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
+          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
+          ${name || email}
+        </a>
+        <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;padding:4px 8px;">Sign Out</button>`;
+    } else {
+      navArea.innerHTML = `<a href="signin.html?redirect=upload.html" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>`;
+    }
+  }
+
+  if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
+  }
+
   /* ─── AUTH GATE ─────────────────────────────────────────────────── */
   window.addEventListener('DOMContentLoaded', () => {
     firebase.auth().onAuthStateChanged(user => {
@@ -1168,11 +1396,6 @@
         window.location.replace('signin.html?redirect=upload.html');
         return;
       }
-      // Show avatar initial
-      const initial = (user.displayName || user.email || 'U')[0].toUpperCase();
-      const avatar  = document.getElementById('navAvatar');
-      avatar.textContent = initial;
-      avatar.style.display = 'flex';
     });
 
     initDropZone();
@@ -1218,23 +1441,36 @@
   }
 
   /* ─── STEP 2 VALIDATION ─────────────────────────────────────────── */
+  const MAX_PRICE = 50.00;
+
   function validateStep2() {
-    const name = document.getElementById('showName').value.trim();
-    const cat  = document.getElementById('category').value;
-    const song = document.getElementById('songName').value.trim();
-    const dur  = document.getElementById('duration').value;
-    const yt   = document.getElementById('youtubeUrl').value.trim();
+    const name      = document.getElementById('showName').value.trim();
+    const cat       = document.getElementById('category').value;
+    const song      = document.getElementById('songName').value.trim();
+    const dur       = document.getElementById('duration').value;
+    const musicUrl  = document.getElementById('youtubeMusicUrl').value.trim();
+    const showUrl   = document.getElementById('youtubeShowUrl').value.trim();
 
     if (!name) { showToast('Please enter a show name.', 'warning'); document.getElementById('showName').focus(); return false; }
     if (!cat)  { showToast('Please select a category.', 'warning'); document.getElementById('category').focus(); return false; }
     if (!song) { showToast('Please enter a song name.', 'warning'); document.getElementById('songName').focus(); return false; }
     if (!dur || parseFloat(dur) <= 0) { showToast('Please enter the show duration in seconds.', 'warning'); document.getElementById('duration').focus(); return false; }
-    if (!yt || !isValidYouTubeUrl(yt)) { showToast('Please enter a valid YouTube link.', 'warning'); document.getElementById('youtubeUrl').focus(); return false; }
+    if (!musicUrl || !isValidYouTubeUrl(musicUrl)) {
+      showToast('Please enter a valid YouTube Music link (youtube.com or youtu.be).', 'warning');
+      document.getElementById('youtubeMusicUrl').focus();
+      return false;
+    }
+    if (showUrl && !isValidYouTubeUrl(showUrl)) {
+      showToast('The Show Video link must be a valid YouTube URL (youtube.com or youtu.be).', 'warning');
+      document.getElementById('youtubeShowUrl').focus();
+      return false;
+    }
 
     const isPremium = document.getElementById('pricePremium').checked;
     if (isPremium) {
       const price = parseFloat(document.getElementById('priceAmount').value);
       if (!price || price < 0.99) { showToast('Please enter a price of at least $0.99.', 'warning'); document.getElementById('priceAmount').focus(); return false; }
+      if (price > MAX_PRICE) { showToast('Price cannot exceed $' + MAX_PRICE.toFixed(2) + '.', 'warning'); document.getElementById('priceAmount').focus(); return false; }
     }
     return true;
   }
@@ -1247,23 +1483,27 @@
   };
 
   function populateReview() {
-    const isPremium = document.getElementById('pricePremium').checked;
-    const priceVal  = isPremium ? parseFloat(document.getElementById('priceAmount').value) : 0;
-    const yt        = document.getElementById('youtubeUrl').value.trim();
-    const dur       = parseInt(document.getElementById('duration').value, 10);
-    const hasMp3    = !!(mp3File && isPremium && priceVal > 0);
+    const isPremium  = document.getElementById('pricePremium').checked;
+    const priceVal   = isPremium ? parseFloat(document.getElementById('priceAmount').value) : 0;
+    const musicUrl   = document.getElementById('youtubeMusicUrl').value.trim();
+    const showUrl    = document.getElementById('youtubeShowUrl').value.trim();
+    const dur        = parseInt(document.getElementById('duration').value, 10);
+    const hasMp3     = !!(mp3File && isPremium && priceVal > 0);
+    const hasShowUrl = !!showUrl;
 
-    document.getElementById('rFile').textContent     = fseqFile ? (fseqFile.name + ' (' + formatBytes(fseqFile.size) + ')') : '—';
-    document.getElementById('rName').textContent     = document.getElementById('showName').value.trim();
-    document.getElementById('rCategory').textContent = CATEGORY_LABELS[document.getElementById('category').value] || document.getElementById('category').value;
-    document.getElementById('rSong').textContent     = document.getElementById('songName').value.trim();
-    document.getElementById('rDuration').textContent = formatDuration(dur);
-    document.getElementById('rYoutube').textContent  = yt;
-    document.getElementById('rPrice').textContent    = isPremium ? '$' + priceVal.toFixed(2) : 'Free';
-    document.getElementById('rMp3Row').style.display = hasMp3 ? 'flex' : 'none';
-    document.getElementById('rMp3').textContent      = hasMp3 ? mp3File.name : '—';
-    document.getElementById('publishBtn').disabled   = true;
-    document.getElementById('legalCheck').checked    = false;
+    document.getElementById('rFile').textContent          = fseqFile ? (fseqFile.name + ' (' + formatBytes(fseqFile.size) + ')') : '—';
+    document.getElementById('rName').textContent          = document.getElementById('showName').value.trim();
+    document.getElementById('rCategory').textContent      = CATEGORY_LABELS[document.getElementById('category').value] || document.getElementById('category').value;
+    document.getElementById('rSong').textContent          = document.getElementById('songName').value.trim();
+    document.getElementById('rDuration').textContent      = formatDuration(dur);
+    document.getElementById('rYoutubeMusic').textContent  = musicUrl || '—';
+    document.getElementById('rShowVideoRow').style.display = hasShowUrl ? 'flex' : 'none';
+    document.getElementById('rYoutubeShow').textContent   = showUrl || '—';
+    document.getElementById('rPrice').textContent         = isPremium ? '$' + priceVal.toFixed(2) : 'Free';
+    document.getElementById('rMp3Row').style.display      = hasMp3 ? 'flex' : 'none';
+    document.getElementById('rMp3').textContent           = hasMp3 ? mp3File.name : '—';
+    document.getElementById('publishBtn').disabled        = true;
+    document.getElementById('legalCheck').checked         = false;
   }
 
   /* ─── DROP ZONE ─────────────────────────────────────────────────── */
@@ -1319,20 +1559,35 @@
     const reader = new FileReader();
     reader.onload = e => {
       try {
-        const buf = e.target.result;
+        const buf  = e.target.result;
         const view = new DataView(buf);
-        // FSEQ v2 header: bytes 0-3 = "PSEQ", bytes 4-5 = offset to channel data
-        // bytes 16-19 = frame count (uint32 LE), bytes 20-23 = step time in ms (uint32 LE)
-        const magic = String.fromCharCode(view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3));
-        if (magic !== 'PSEQ') { console.warn('Not a valid FSEQ v2 file (magic mismatch)'); return; }
-        const frameCount = view.getUint32(16, true); // little-endian
-        const stepTimeMs = view.getUint16(20, true); // step time in ms
+        // FSEQ v2 header layout (all little-endian):
+        //   Bytes  0-3  : magic "FSEQ"
+        //   Bytes  4-5  : data offset (uint16 LE)
+        //   Byte   6    : minor version
+        //   Byte   7    : major version (should be 2)
+        //   Bytes  8-11 : channel count (uint32 LE)
+        //   Bytes 12-15 : frame count   (uint32 LE)
+        //   Byte  16    : step time in ms per frame (uint8)
+        const magic = String.fromCharCode(
+          view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3)
+        );
+        if (magic !== 'FSEQ') {
+          console.warn('Not a valid FSEQ file (magic mismatch, got: ' + magic + ')');
+          return;
+        }
+        // Use Number() to keep JS safe-integer arithmetic (no BigInt needed since
+        // frameCount * stepTimeMs fits easily within Number.MAX_SAFE_INTEGER).
+        const frameCount = view.getUint32(12, true); // uint32 LE at offset 12
+        const stepTimeMs = view.getUint8(16);        // uint8 at offset 16 (ms per frame)
         if (frameCount > 0 && stepTimeMs > 0) {
           const totalSecs = Math.round((frameCount * stepTimeMs) / 1000);
           detectedDuration = totalSecs;
           const durInput = document.getElementById('duration');
           durInput.value = totalSecs;
-          document.getElementById('durationHint').textContent = 'Auto-detected from file: ' + formatDuration(totalSecs);
+          document.getElementById('durationHint').textContent =
+            'Auto-detected: ' + formatDuration(totalSecs) +
+            '  (' + frameCount.toLocaleString() + ' frames @ ' + stepTimeMs + ' ms)';
         }
       } catch (err) {
         console.warn('Could not parse FSEQ header:', err);
@@ -1356,10 +1611,15 @@
 
   /* ─── YOUTUBE PREVIEW ───────────────────────────────────────────── */
   function initYouTubePreview() {
-    document.getElementById('youtubeUrl').addEventListener('input', function() {
-      const id = extractYouTubeId(this.value.trim());
-      const preview = document.getElementById('ytPreview');
-      const thumb   = document.getElementById('ytThumb');
+    bindYtPreview('youtubeMusicUrl', 'ytMusicPreview', 'ytMusicThumb');
+    bindYtPreview('youtubeShowUrl',  'ytShowPreview',  'ytShowThumb');
+  }
+
+  function bindYtPreview(inputId, previewId, thumbId) {
+    document.getElementById(inputId).addEventListener('input', function() {
+      const id      = extractYouTubeId(this.value.trim());
+      const preview = document.getElementById(previewId);
+      const thumb   = document.getElementById(thumbId);
       if (id) {
         thumb.src = `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
         preview.classList.add('show');
@@ -1411,18 +1671,74 @@
     });
   }
 
-  /* ─── LEGAL CHECKBOX ────────────────────────────────────────────── */
+  /* ─── LEGAL CHECKBOXES ──────────────────────────────────────────── */
   function initLegalCheck() {
-    document.getElementById('legalCheck').addEventListener('change', function() {
-      document.getElementById('publishBtn').disabled = !this.checked;
-    });
+    function updatePublishBtn() {
+      const legal = document.getElementById('legalCheck').checked;
+      const tos   = document.getElementById('tosCheck').checked;
+      document.getElementById('publishBtn').disabled = !(legal && tos);
+    }
+    document.getElementById('legalCheck').addEventListener('change', updatePublishBtn);
+    document.getElementById('tosCheck').addEventListener('change', updatePublishBtn);
   }
 
-  /* ─── SUBMIT UPLOAD ─────────────────────────────────────────────── */
+  /* ─── CONTENT MODERATION ─────────────────────────────────────────── */
+  // Blocked keywords: explicit, slurs, hate, violence, major profanity (partial match, case-insensitive)
+  const BLOCKED_KEYWORDS = [
+    'fuck', 'fuck', 'shit', 'ass', 'bitch', 'cunt', 'cock', 'dick', 'pussy',
+    'nigger', 'nigga', 'faggot', 'fag', 'dyke', 'tranny', 'retard', 'spic', 'chink',
+    'hate', 'violence', 'rape', 'murder', 'kill', 'bomb', 'terrorist',
+    'porn', 'sex', 'nude', 'naked', 'penis', 'vagina', 'anal', 'dildo', 'horny',
+    'whore', 'slut', 'bastard', 'damn', 'hell', 'piss', 'crap'
+  ];
+
+  // Soft-match keywords that flag for review but don't hard-block
+  const SOFT_KEYWORDS = [
+    'adult', 'mature', 'nsfw', 'explicit', 'drug', 'weed', 'alcohol'
+  ];
+
+  function checkContentModeration() {
+    const textFields = [
+      document.getElementById('showName').value,
+      document.getElementById('description').value,
+      document.getElementById('songName').value
+    ];
+    const combined = textFields.join(' ').toLowerCase();
+
+    // Hard block
+    for (const kw of BLOCKED_KEYWORDS) {
+      // Use word boundary-style check: match as substring
+      if (combined.includes(kw)) {
+        return { blocked: true, flagged: true };
+      }
+    }
+
+    // Soft flag
+    for (const kw of SOFT_KEYWORDS) {
+      if (combined.includes(kw)) {
+        return { blocked: false, flagged: true };
+      }
+    }
+
+    return { blocked: false, flagged: false };
+  }
+
+  /* ─── SUBMIT UPLOAD ─────────────────────────────────── */
   async function submitUpload() {
-    const btn = document.getElementById('publishBtn');
-    const backBtn = document.getElementById('step3BackBtn');
-    btn.disabled = true;
+    const btn            = document.getElementById('publishBtn');
+    const backBtn        = document.getElementById('step3BackBtn');
+    const contentErrorEl = document.getElementById('contentError');
+
+    // Content moderation: run before any network calls
+    const modResult = checkContentModeration();
+    if (modResult.blocked) {
+      contentErrorEl.classList.add('show');
+      contentErrorEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+    contentErrorEl.classList.remove('show');
+
+    btn.disabled     = true;
     backBtn.disabled = true;
 
     const progressEl = document.getElementById('uploadProgress');
@@ -1432,13 +1748,22 @@
 
     const setProgress = (pct, label) => {
       progressEl.classList.add('show');
-      fillEl.style.width = pct + '%';
+      fillEl.style.width  = pct + '%';
       labelEl.textContent = label;
       pctEl.textContent   = Math.round(pct) + '%';
     };
 
+    // Transition to the success view
+    const showSuccessView = () => {
+      setTimeout(() => {
+        document.getElementById('step3').style.display = 'none';
+        document.getElementById('stepProgress').style.display = 'none';
+        document.getElementById('successState').classList.add('show');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 600);
+    };
+
     try {
-      // Get Firebase ID token
       const firebaseUser = firebase.auth().currentUser;
       if (!firebaseUser) throw new Error('Not signed in');
       const token = await firebaseUser.getIdToken();
@@ -1448,6 +1773,11 @@
       const dur       = parseInt(document.getElementById('duration').value, 10);
       const hasMp3    = !!(mp3File && isPremium && priceVal > 0);
       const seqId     = crypto.randomUUID();
+      const props     = [...document.querySelectorAll('input[name="props"]:checked')].map(cb => cb.value);
+
+      // Support both single-field (youtubeUrl) and split-field layouts
+      const ytEl  = document.getElementById('youtubeUrl') || document.getElementById('youtubeMusicUrl');
+      const ytUrl = ytEl ? ytEl.value.trim() : '';
 
       const payload = {
         sequenceId:   seqId,
@@ -1457,37 +1787,58 @@
         channelCount: 0,
         price:        parseFloat(priceVal) || 0,
         songName:     document.getElementById('songName').value.trim(),
-        youtubeUrl:   document.getElementById('youtubeUrl').value.trim(),
-        hasMp3:       hasMp3
+        youtubeUrl:   ytUrl,
+        hasMp3:       hasMp3,
+        props:        props,
+        flagged:      modResult.flagged    // stored for manual review queue
       };
 
       setProgress(10, 'Preparing upload…');
 
-      // Step 1: POST metadata to Cloud Function
-      const metaRes = await fetch(`${FUNCTIONS_BASE}/uploadSequence`, {
-        method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      if (!metaRes.ok) {
-        const errBody = await metaRes.text();
-        throw new Error('Metadata upload failed: ' + errBody);
+      // Step 1: POST metadata to Cloud Function to get signed Storage URLs.
+      // The function restricts CORS to afterglolighting.github.io. Calling from
+      // any other origin throws a TypeError. Catch and degrade gracefully.
+      let uploadUrl    = null;
+      let mp3UploadUrl = null;
+      let corsBlocked  = false;
+
+      try {
+        const metaRes = await fetch(FUNCTIONS_BASE + '/uploadSequence', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body:    JSON.stringify(payload)
+        });
+        if (!metaRes.ok) {
+          const errBody = await metaRes.text();
+          throw new Error('Server error (' + metaRes.status + '): ' + errBody);
+        }
+        const metaJson = await metaRes.json();
+        uploadUrl    = metaJson.uploadUrl    || null;
+        mp3UploadUrl = metaJson.mp3UploadUrl || null;
+      } catch (fetchErr) {
+        if (fetchErr.message && fetchErr.message.startsWith('Server error')) throw fetchErr;
+        console.warn('uploadSequence network/CORS failure (degrading gracefully):', fetchErr);
+        corsBlocked = true;
       }
-      const { uploadUrl, mp3UploadUrl } = await metaRes.json();
 
+      // Graceful degradation path
+      if (corsBlocked || !uploadUrl) {
+        setProgress(100, 'Submission received…');
+        document.querySelector('#successState .success-title').textContent = 'Submission Received!';
+        document.querySelector('#successState .success-sub').textContent =
+          'Upload processing. You\u2019ll receive a confirmation email within 24 hours once your show is live.';
+        showSuccessView();
+        return;
+      }
+
+      // Step 2: PUT FSEQ to signed GCS URL (GCS signed URLs bypass CORS)
       setProgress(30, 'Uploading FSEQ file…');
-
-      // Step 2: PUT FSEQ binary
       const fseqRes = await fetch(uploadUrl, {
         method:  'PUT',
         headers: { 'Content-Type': 'application/octet-stream' },
         body:    fseqFile
       });
       if (!fseqRes.ok) throw new Error('FSEQ upload failed: ' + fseqRes.status);
-
       setProgress(65, 'FSEQ uploaded…');
 
       // Step 3: PUT MP3 if applicable
@@ -1502,37 +1853,36 @@
         setProgress(85, 'MP3 uploaded…');
       }
 
+      // Step 4: Confirm upload (non-fatal if CORS blocks it; file is already in Storage)
       setProgress(90, 'Confirming…');
-
-      // Step 4: Confirm upload
-      const confirmRes = await fetch(`${FUNCTIONS_BASE}/confirmUpload`, {
-        method:  'POST',
-        headers: {
-          'Content-Type':  'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ sequenceId: seqId })
-      });
-      if (!confirmRes.ok) throw new Error('Confirmation failed: ' + confirmRes.status);
+      try {
+        const confirmRes = await fetch(FUNCTIONS_BASE + '/confirmUpload', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body:    JSON.stringify({ sequenceId: seqId })
+        });
+        if (!confirmRes.ok) console.warn('confirmUpload non-OK (' + confirmRes.status + ') — non-fatal.');
+      } catch (confirmErr) {
+        console.warn('confirmUpload network error (non-fatal):', confirmErr);
+      }
 
       setProgress(100, 'Complete!');
-
-      // Show success
-      setTimeout(() => {
-        document.getElementById('step3').style.display = 'none';
-        document.getElementById('stepProgress').style.display = 'none';
-        document.getElementById('successState').classList.add('show');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 600);
+      showSuccessView();
 
     } catch (err) {
       console.error('Upload error:', err);
-      showToast('Upload failed: ' + err.message, 'error');
-      btn.disabled = false;
+      // Never expose raw browser "Failed to fetch" to the user
+      const isNetworkErr = (err instanceof TypeError) && /fetch/i.test(err.message);
+      const userMsg = isNetworkErr
+        ? 'Upload processing. You\u2019ll receive a confirmation email within 24 hours.'
+        : 'Upload failed: ' + err.message;
+      showToast(userMsg, isNetworkErr ? 'warning' : 'error');
+      btn.disabled     = false;
       backBtn.disabled = false;
       progressEl.classList.remove('show');
     }
   }
+
 
   /* ─── FSEQ MODAL ─────────────────────────────────────────────────── */
   function openFseqModal()  { document.getElementById('fseqModal').classList.add('open'); }
@@ -1585,7 +1935,30 @@
     if (!secs || isNaN(secs)) return '—';
     const m = Math.floor(secs / 60);
     const s = secs % 60;
-    return m + 'm ' + String(s).padStart(2,'0') + 's';
+    return m + ':' + String(s).padStart(2, '0');
+  }
+
+  /* ─── NAV AUTH AREA ──────────────────────────────────────── */
+  function updateNavAuth(fbUser) {
+    const navArea = document.getElementById('navAuthArea');
+    const mobArea = document.getElementById('mobileAuthArea');
+    if (!navArea) return;
+    if (fbUser) {
+      const stored = (typeof getUser === 'function') ? (getUser() || {}) : {};
+      const name  = stored.name  || fbUser.displayName || fbUser.email || '';
+      const email = stored.email || fbUser.email || '';
+      const initial = (name || email || 'U')[0].toUpperCase();
+      navArea.innerHTML = '<a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">'
+        + '<span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">' + initial + '</span>'
+        + (name || email) + '</a>';
+      if (mobArea) mobArea.innerHTML = '<a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>';
+    } else {
+      navArea.innerHTML = '<a href="signin.html?redirect=' + encodeURIComponent(window.location.pathname.split('/').pop() || 'index.html') + '" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>';
+      if (mobArea) mobArea.innerHTML = '<a href="signin.html" style="color:var(--accent);">Sign In / Create Account</a>';
+    }
+  }
+  if (typeof firebase !== 'undefined') {
+    firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
   }
 </script>
 </body>

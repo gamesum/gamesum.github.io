@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
+exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -280,6 +280,46 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
     }
     catch (err) {
         functions.logger.error("uploadSequence error", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+// ─── GET /getListings ─────────────────────────────────────────────────────────
+// Public endpoint: returns both published sequences AND packs from Firestore.
+// Used by the Android app and future website versions as the single source of truth.
+// Response: { sequences: [...], packs: [...] }
+exports.getListings = functions.https.onRequest(async (req, res) => {
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") {
+        res.status(204).send("");
+        return;
+    }
+    if (req.method !== "GET") {
+        res.status(405).json({ error: "Method not allowed" });
+        return;
+    }
+    try {
+        const [seqSnap, packSnap] = await Promise.all([
+            db
+                .collection("sequences")
+                .where("status", "==", "published")
+                .orderBy("downloadCount", "desc")
+                .limit(200)
+                .get(),
+            db
+                .collection("packs")
+                .orderBy("createdAt", "desc")
+                .limit(50)
+                .get(),
+        ]);
+        const sequences = seqSnap.docs.map((doc) => doc.data());
+        const packs = packSnap.docs.map((doc) => doc.data());
+        res.set("Cache-Control", "public, max-age=60, s-maxage=60");
+        res.status(200).json({ sequences, packs });
+    }
+    catch (err) {
+        functions.logger.error("getListings error", err);
         res.status(500).json({ error: "Internal server error" });
     }
 });

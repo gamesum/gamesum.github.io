@@ -1,5 +1,8 @@
 node_modules/
 logo-export/node_modules/
 functions/node_modules/
+scripts/node_modules/
 .env
 *.local
+service-account.json
+afterglo-website-fbb89-firebase-adminsdk-fbsvc-c5db700ceb.json
