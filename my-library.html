@@ -1467,29 +1467,9 @@
       <span id="countUploadStatus" style="display:none;"></span>
     </div>
 
-    <!-- ─── Privacy & Data Rights ─────────────────────────────────── -->
-    <div class="lib-section" id="privacySection" style="margin-top:40px;">
-      <div class="lib-section-header">
-        <div class="lib-section-left">
-          <div class="lib-section-icon" style="background:rgba(154,154,162,0.15);color:#c9c9d0;">🛡️</div>
-          <div>
-            <div class="lib-section-title">Privacy &amp; Data Rights</div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Export or delete your personal data (GDPR / CCPA).</div>
-          </div>
-        </div>
-      </div>
-      <div style="background:var(--bg2,#0e0e0e);border:1px solid var(--border,#222);border-radius:12px;padding:24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
-        <div style="max-width:560px;">
-          <div style="font-family:'Outfit',sans-serif;font-weight:800;color:#fff;font-size:1.05rem;margin-bottom:6px;">Your data, your control.</div>
-          <p style="font-size:0.88rem;color:#94a3b8;margin:0;">Download a machine-readable JSON of everything we store about you, or request account deletion. Deletion takes effect after a 30-day grace period, during which you can cancel.</p>
-          <div id="privacyDeletionNotice" style="display:none;margin-top:10px;padding:10px 12px;border-left:3px solid #F05A4A;background:rgba(240,90,74,0.08);border-radius:6px;font-size:0.85rem;color:#F05A4A;"></div>
-        </div>
-        <div style="display:flex;gap:10px;flex-wrap:wrap;">
-          <button class="btn btn-primary" id="btnExportData">Export my data</button>
-          <button class="btn" style="background:transparent;border:1px solid #F05A4A;color:#F05A4A;" id="btnDeleteAccount">Delete my account</button>
-          <button class="btn" id="btnCancelDeletion" style="display:none;">Cancel deletion</button>
-        </div>
-      </div>
+    <!-- ─── Account settings link ─────────────────────────────────── -->
+    <div style="margin-top:40px;display:flex;justify-content:center;">
+      <a href="account.html" class="btn btn-ghost" style="font-size:0.85rem;">⚙️ Account settings &amp; privacy</a>
     </div>
 
   </div><!-- /container -->
@@ -3034,6 +3014,7 @@
       const notice = document.getElementById('privacyDeletionNotice');
       const cancelBtn = document.getElementById('btnCancelDeletion');
       const delBtn = document.getElementById('btnDeleteAccount');
+      if (!notice || !cancelBtn || !delBtn) return; // UI moved to account.html
       if (data.deletionScheduledFor) {
         const d = data.deletionScheduledFor.toDate ? data.deletionScheduledFor.toDate() : new Date(data.deletionScheduledFor);
         notice.textContent = 'Deletion scheduled for ' + d.toLocaleDateString() + '. Click "Cancel deletion" below to keep your account.';

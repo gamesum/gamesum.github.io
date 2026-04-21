@@ -26,6 +26,12 @@ service cloud.firestore {
     match /users/{uid} {
       allow read:  if request.auth != null && (request.auth.uid == uid || isAdminRead());
       allow write: if isAdmin();
+      // Owner may self-update their photoURL (and only photoURL) so the
+      // profile-picture upload flow can persist the image without an admin
+      // round-trip. Doc must already exist.
+      allow update: if request.auth != null
+                    && request.auth.uid == uid
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['photoURL']);
 
       // Download tokens are written by Cloud Functions only; user may read own.
       match /download_tokens/{tokenId} {

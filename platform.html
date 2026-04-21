@@ -23,6 +23,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/avatar.js"></script>
   <script src="js/collections.js" defer></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
@@ -2072,7 +2073,7 @@
     const mp3Badge = seq.hasMp3 ? '<div class="mp3-badge">&#9834; MP3</div>' : '';
 
     // Prop icons
-    const PROP_ICONS = { roofline:'🏠', arch:'🌈', tree:'🌲', 'mega-tree':'🎄', stake:'⚡', window:'🪟', yard:'🌟', fence:'🔲' };
+    const PROP_ICONS = { roofline:'🏠', arch:'🌈', tree:'🌲', 'mega-tree':'🎄', stake:'⚡', window:'🪟', yard:'🌟', 'candy-cane':'🍬', other:'✨' };
     const propIcons = (seq.props && seq.props.length)
       ? `<div class="card-props">${seq.props.map(p => `<span class="card-prop" title="${p}">${PROP_ICONS[p] || '💡'}</span>`).join('')}</div>`
       : '';
@@ -2093,7 +2094,7 @@
         <div class="card-stars">${stars}</div>
         <div class="card-title">${esc(seq.name)}</div>
         <div class="card-meta">
-          <span class="card-creator">${esc(seq.creator)}</span>
+          <span class="card-creator" style="display:inline-flex;align-items:center;gap:6px;">${(typeof avatarHtml==='function'? avatarHtml({displayName:seq.creator, email:seq.creatorEmail||'', photoURL:seq.creatorPhotoURL||seq.creatorPhoto||''}, 20):'')}${esc(seq.creator)}</span>
           <span class="card-dot">·</span>
           <span class="card-channels">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>

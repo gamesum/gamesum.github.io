@@ -15,6 +15,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/avatar.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -1012,8 +1013,11 @@
       const disableKind  = u.disabled ? 'btn-success' : 'btn-danger';
       acts.push('<button class="btn btn-sm '+disableKind+'" onclick="toggleDisable(\''+esc(u.uid)+'\','+(!u.disabled)+')">'+disableLabel+'</button>');
 
+      var avatar = (typeof avatarHtml === 'function')
+        ? avatarHtml({ displayName: u.displayName, email: u.email, photoURL: u.photoURL }, 28)
+        : '';
       return '<tr>'
-        + '<td><div class="cell-email">'+esc(u.email || '.')+'</div><div class="cell-sub mono">'+esc(u.uid)+'</div></td>'
+        + '<td><div class="cell-email" style="display:flex;align-items:center;gap:8px;">'+avatar+'<span>'+esc(u.email || '.')+'</span></div><div class="cell-sub mono">'+esc(u.uid)+'</div></td>'
         + '<td>'+esc(u.displayName || '.')+disabledNote+'</td>'
         + '<td>'+esc(fmtDate(u.createdAt))+'</td>'
         + '<td>'+verified+'</td>'
