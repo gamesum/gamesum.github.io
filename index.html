@@ -1152,7 +1152,7 @@
           <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
         </ul>
 
-        <div id="navAuthArea" style="display:flex;align-items:center;gap:10px;margin-left:16px;"></div>
+        <a id="navAccountBtn" href="signin.html" class="btn btn-ghost nav-cta">Account</a>
         <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
 
         <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -1166,7 +1166,7 @@
       <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
       <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
       <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
-      <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
+      <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()">Account</a>
       <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
     </div>
   </nav>
@@ -2348,5 +2348,6 @@
     firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
   }
   </script>
+  <script src="js/nav-account.js"></script>
 </body>
 </html>

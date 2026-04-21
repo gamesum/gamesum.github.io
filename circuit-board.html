@@ -47,23 +47,31 @@
       background-size:56px 56px;
     }
 
-    /* ── NAV ── */
-    nav {
-      position:fixed; top:0; left:0; right:0; z-index:200;
-      height:58px; display:flex; align-items:center; justify-content:space-between;
-      padding:0 32px;
-      background:rgba(7,7,7,0.9); backdrop-filter:blur(20px);
-      border-bottom:1px solid var(--border);
+    /* ── NAV ── (canonical AFTERGLO top navbar) */
+    #navbar {
+      position:fixed; top:0; left:0; right:0; z-index:1000;
+      transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
     }
-    .nav-brand { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:900; letter-spacing:.08em; color:#fff; }
-    .nav-brand span { color:var(--acc); }
-    .nav-links { display:flex; gap:24px; font-size:.78rem; font-weight:500; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
-    .nav-links a:hover { color:var(--acc); transition:color .15s; }
-    .nav-tag {
-      font-size:.68rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase;
-      padding:4px 12px; border-radius:100px;
-      background:rgba(212,164,58,.1); border:1px solid rgba(212,164,58,.25); color:var(--acc);
+    #navbar.scrolled {
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
     }
+    .nav-container { max-width:1200px; margin:0 auto; padding:0 24px; }
+    .nav-inner { display:flex; align-items:center; justify-content:space-between; height:58px; }
+    .nav-logo { font-family:'Outfit',sans-serif; font-size:1.5rem; font-weight:700; color:#fff; letter-spacing:.06em; text-transform:uppercase; text-decoration:none; }
+    .nav-logo span { color:var(--acc); text-shadow:0 0 20px rgba(212,164,58,.8),0 0 40px rgba(212,164,58,.4); }
+    .nav-links { display:flex; align-items:center; gap:24px; list-style:none; padding:0; margin:0; }
+    .nav-links li { white-space:nowrap; }
+    .nav-links a { font-size:.9rem; font-weight:500; color:var(--muted); text-decoration:none; white-space:nowrap; transition:color .2s; }
+    .nav-links a:hover { color:#fff; }
+    .nav-cta { margin-left:8px; display:inline-flex; align-items:center; padding:9px 18px; border-radius:8px; font-size:.88rem; font-weight:600; text-decoration:none; }
+    .btn-ghost { border:1px solid #333; color:var(--text,#fff); background:transparent; }
+    .btn-ghost:hover { border-color:var(--acc); color:var(--acc); }
+    .btn-primary { background:var(--acc); color:#000; }
+    .btn-primary:hover { filter:brightness(1.05); }
+    @media (max-width: 900px) { .nav-links { display:none; } }
 
     /* ── HERO ── */
     .hero {
@@ -302,16 +310,24 @@
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="nav-brand">AFTER<span>GLO</span></div>
-  <div class="nav-links">
-    <a href="#board">Board</a>
-    <a href="#systems">Systems</a>
-    <a href="#gpio">Pins</a>
-    <a href="#qr">Reference</a>
+<!-- NAV (canonical AFTERGLO top navbar) -->
+<nav id="navbar">
+  <div class="nav-container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#testimonials">Reviews</a></li>
+        <li><a href="platform.html">Store</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--acc);" title="Preview what a light show looks like on a house before you download it">&#10022; Visualizer</a></li>
+      </ul>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a id="navAccountBtn" href="signin.html" class="btn-ghost nav-cta">Account</a>
+        <a href="index.html#cta" class="btn-primary nav-cta">Get a Quote</a>
+      </div>
+    </div>
   </div>
-  <div class="nav-tag">Rev 1 · S3 Variant</div>
 </nav>
 
 <!-- HERO -->
@@ -679,5 +695,20 @@
 
   loadBoard();
 </script>
+<script>
+  // scroll-shadow behavior for canonical navbar
+  (function () {
+    var nb = document.getElementById('navbar');
+    if (!nb) return;
+    var upd = function () { nb.classList.toggle('scrolled', window.scrollY > 20); };
+    window.addEventListener('scroll', upd, { passive: true });
+    upd();
+  })();
+</script>
+<!-- Firebase + nav Account button toggle -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="js/firebase-auth.js"></script>
+<script src="js/nav-account.js"></script>
 </body>
 </html>

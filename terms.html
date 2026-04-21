@@ -396,13 +396,14 @@
       <ul class="nav-links">
         <li><a href="arches.html">Light Shows</a></li>
         <li><a href="index.html#gallery">Gallery</a></li>
-        <li><a href="platform.html">Platform</a></li>
-        <li><a href="my-library.html">My Library</a></li>
-        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">&#10022; Visualizer</a></li>
+        <li><a href="index.html#testimonials">Reviews</a></li>
+        <li><a href="platform.html">Store</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">&#10022; Visualizer</a></li>
       </ul>
 
       <div class="nav-right">
-        <a href="index.html#cta" class="btn btn-primary btn-sm">Get a Quote</a>
+        <a id="navAccountBtn" href="signin.html" class="btn btn-ghost btn-sm nav-cta">Account</a>
+        <a href="index.html#cta" class="btn btn-primary btn-sm nav-cta">Get a Quote</a>
       </div>
 
       <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -413,9 +414,11 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="arches.html" onclick="closeMenu()">Light Shows</a>
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
-    <a href="platform.html" onclick="closeMenu()">Platform</a>
-    <a href="my-library.html" onclick="closeMenu()">My Library</a>
+    <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
+    <a href="platform.html" onclick="closeMenu()">Store</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">&#10022; Visualizer</a>
+    <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()">Account</a>
+    <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
   </div>
 </nav>
 
@@ -650,5 +653,10 @@
     if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
   });
 </script>
+<!-- Firebase + nav Account button toggle -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="js/firebase-auth.js"></script>
+<script src="js/nav-account.js"></script>
 </body>
 </html>
