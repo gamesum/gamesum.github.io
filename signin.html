@@ -88,14 +88,16 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 36px;
+      gap: 24px;
       list-style: none;
     }
+    .nav-links li { white-space: nowrap; }
     .nav-links a {
       font-size: 0.9rem;
       font-weight: 500;
       color: var(--muted);
       transition: color 0.2s;
+      white-space: nowrap;
     }
     .nav-links a:hover { color: #fff; }
     .nav-links a.active { color: var(--accent); }
@@ -520,7 +522,6 @@
         <li><a href="index.html#gallery">Gallery</a></li>
         <li><a href="index.html#testimonials">Reviews</a></li>
         <li><a href="platform.html">Light Show Store</a></li>
-        <li><a href="my-library.html">My Library</a></li>
         <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
@@ -537,7 +538,6 @@
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
     <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
     <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
-    <a href="my-library.html" onclick="closeMenu()">My Library</a>
     <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
     <div id="mobileAuthArea" style="padding:8px 0;border-bottom:1px solid #222;"></div>
     <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>

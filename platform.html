@@ -182,14 +182,16 @@
     .nav-links {
       display: flex;
       align-items: center;
-      gap: 36px;
+      gap: 24px;
       list-style: none;
     }
+    .nav-links li { white-space: nowrap; }
     .nav-links a {
       font-size: 0.9rem;
       font-weight: 500;
       color: var(--muted);
       transition: color 0.2s;
+      white-space: nowrap;
     }
     .nav-links a:hover { color: #fff; }
     .nav-links a.active { color: var(--accent); }
@@ -2489,7 +2491,7 @@
           <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#c8921e,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
           ${esc(name || email)}
         </a>
-        <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:0.82rem;cursor:pointer;padding:4px 8px;">Sign Out</button>`;
+        <button onclick="signOut()" style="background:none;border:1px solid #333;color:var(--muted);font-size:0.78rem;cursor:pointer;padding:4px 10px;border-radius:6px;margin-left:4px;">Sign Out</button>`;
       if (mobArea) mobArea.innerHTML = `
         <a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>
         <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;text-align:left;padding:0;">Sign Out</button>`;
