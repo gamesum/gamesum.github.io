@@ -2526,6 +2526,16 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
         body:    JSON.stringify({ sequenceId, sequenceName, creator, price }),
       });
+
+      // If the function gateway blocks us (e.g. 403 from Google Frontend
+      // because IAM invoker was dropped), the response body is HTML, not
+      // JSON. Detect that and surface a clear message instead of a generic
+      // "unavailable" parse error.
+      const ct = resp.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) {
+        throw new Error(`checkout endpoint returned non-JSON (HTTP ${resp.status})`);
+      }
+
       const data = await resp.json();
 
       if (data.status === 'already_owned') {
@@ -2533,14 +2543,14 @@
         if (btn) { btn.textContent = 'Already Owned'; btn.disabled = false; }
         return;
       }
-      if (data.url) {
+      if (resp.ok && data.url) {
         window.location.href = data.url; // Stripe Checkout
       } else {
-        throw new Error(data.error || 'Checkout failed');
+        throw new Error(data.error || `Checkout failed (HTTP ${resp.status})`);
       }
     } catch (err) {
       console.error('checkout error:', err);
-      showToast('Payment unavailable. Please try again shortly.', true);
+      showToast('Payment system is temporarily unavailable. Please try again in a few minutes or contact support.', true);
       if (btn) { btn.textContent = '$' + price.toFixed(2); btn.disabled = false; }
     }
   }
