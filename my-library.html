@@ -1666,12 +1666,19 @@
     if (!fbUser) { card.style.display = 'none'; return; }
     card.style.display = 'flex';
 
+    const MIN_UPLOADS = 5;
     let status = 'none';
     let rejectionReason = '';
     let claimVerified = false;
+    let uploadCount = 0;
     try {
       const tok = await fbUser.getIdTokenResult();
       claimVerified = tok.claims && tok.claims.creatorVerified === true;
+    } catch (e) { /* ignore */ }
+    try {
+      const upSnap = await firebase.firestore().collection('sequences')
+        .where('creatorUid', '==', fbUser.uid).get();
+      upSnap.forEach(d => { if ((d.data() || {}).status !== 'rejected') uploadCount++; });
     } catch (e) { /* ignore */ }
     try {
       const doc = await firebase.firestore().collection('users').doc(fbUser.uid).get();
@@ -1726,9 +1733,24 @@
       pill.classList.remove('verified'); pill.classList.add('unverified');
       pillT.textContent = 'Not verified';
       head.textContent  = 'Want to sell Premium ($) shows?';
-      body.textContent  = 'Request creator verification. An AFTERGLO admin will review and approve. Free uploads do not require verification.';
-      startBtn.textContent = 'Request verification';
-      startBtn.style.display = '';
+      if (uploadCount < MIN_UPLOADS) {
+        const left = MIN_UPLOADS - uploadCount;
+        body.textContent = 'Upload ' + MIN_UPLOADS + ' shows to qualify for creator verification. '
+          + uploadCount + ' of ' + MIN_UPLOADS + ' uploaded. '
+          + left + ' to go. Free uploads count.';
+        startBtn.textContent = 'Need ' + left + ' more upload' + (left === 1 ? '' : 's');
+        startBtn.disabled = true;
+        startBtn.style.opacity = '0.5';
+        startBtn.style.cursor = 'not-allowed';
+        startBtn.style.display = '';
+      } else {
+        body.textContent = 'Request creator verification. An AFTERGLO admin will review and approve. Free uploads do not require verification.';
+        startBtn.textContent = 'Request verification';
+        startBtn.disabled = false;
+        startBtn.style.opacity = '';
+        startBtn.style.cursor = '';
+        startBtn.style.display = '';
+      }
     }
   }
 

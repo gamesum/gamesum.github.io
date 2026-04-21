@@ -2698,6 +2698,23 @@ export const requestCreatorVerification = functions.https.onCall(async (data, co
     return { ok: true, status: "approved", alreadyApproved: true };
   }
 
+  // Gate: require at least 5 non-rejected uploads before they can request.
+  const MIN_UPLOADS = 5;
+  const uploadsSnap = await db.collection("sequences")
+    .where("creatorUid", "==", uid)
+    .get();
+  const uploadCount = uploadsSnap.docs.filter((d) => {
+    const s = (d.data() || {}).status;
+    return s !== "rejected";
+  }).length;
+  if (uploadCount < MIN_UPLOADS) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      `You need at least ${MIN_UPLOADS} uploaded shows before you can request creator verification. You currently have ${uploadCount}.`,
+      { uploadCount, required: MIN_UPLOADS }
+    );
+  }
+
   await userRef.set({
     creatorVerificationStatus: "pending",
     creatorVerified:           prev.creatorVerified === true ? true : false,
