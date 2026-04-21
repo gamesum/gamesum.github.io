@@ -2934,7 +2934,16 @@
         .onSnapshot(
           snap => {
             const docs = [];
-            snap.forEach(d => docs.push(d));
+            snap.forEach(d => {
+              const data = d.data() || {};
+              // Skip seed/placeholder Firestore rows. Hardcoded bundle tiles
+              // in this file stay regardless. Only real creator uploads go
+              // through _mergeLiveDocs.
+              if (data.isSeed === true) return;
+              if (data.source === 'seed') return;
+              if (data.creatorUid === 'system') return;
+              docs.push(d);
+            });
             _mergeLiveDocs(docs);
             render();
           },

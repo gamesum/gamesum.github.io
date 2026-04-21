@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminReplyFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
+exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -2172,5 +2172,107 @@ exports.adminReplyFeedback = functions.https.onCall(async (data, context) => {
         },
     });
     return { ok: true, id };
+});
+// ─── adminPurgeSeedData ───────────────────────────────────────────────────────
+// One-off admin-gated callable. Deletes every doc in /sequences, /packs,
+// /purchases, /users that is tagged as seed/placeholder data.
+//
+// Seed criteria (any one is enough):
+//   . isSeed === true
+//   . source === 'seed'
+//   . creatorUid === 'system'            (legacy marker from seed-sequences.js)
+//   . name in SEED_TITLES                (belt-and-suspenders fallback)
+//   . id in SEED_IDS                     (for packs, which have fixed ids)
+//
+// Safe to run more than once. Returns counts per collection.
+const SEED_TITLES_SERVER = new Set([
+    "Candy Cane Dream", "Star-Spangled Roofline", "Spooky Strobe-Free",
+    "Winter Wonderland Chase", "Firecracker Finale", "Pumpkin Pulse",
+    "Be My Valentine", "Northern Lights Effect", "Freedom Waves",
+    "Twinkle & Sparkle", "Rocket's Red Glare", "Haunted Mansion Fade",
+]);
+const SEED_PACK_IDS = new Set([
+    "pack_christmas", "pack_halloween", "pack_patriotic",
+]);
+function _isSeedSequenceDoc(d) {
+    if (!d)
+        return false;
+    if (d.isSeed === true)
+        return true;
+    if (d.isTest === true)
+        return true;
+    if (d.source === "seed")
+        return true;
+    if (d.creatorUid === "system")
+        return true;
+    const name = typeof d.name === "string" ? d.name : "";
+    if (name && SEED_TITLES_SERVER.has(name))
+        return true;
+    return false;
+}
+exports.adminPurgeSeedData = functions.https.onCall(async (data, context) => {
+    const actor = await requireAdmin(context);
+    let seqDeleted = 0;
+    let packDeleted = 0;
+    let purchaseDeleted = 0;
+    let userDeleted = 0;
+    // /sequences
+    const seqSnap = await db.collection("sequences").get();
+    for (const doc of seqSnap.docs) {
+        const d = doc.data() || {};
+        if (_isSeedSequenceDoc(d)) {
+            await doc.ref.delete();
+            seqDeleted++;
+        }
+    }
+    // /packs (always treated as seed if id matches or marker set)
+    const packSnap = await db.collection("packs").get();
+    for (const doc of packSnap.docs) {
+        const d = doc.data() || {};
+        if (d.isSeed === true || d.source === "seed" || SEED_PACK_IDS.has(doc.id)) {
+            await doc.ref.delete();
+            packDeleted++;
+        }
+    }
+    // /purchases
+    const purSnap = await db.collection("purchases").get();
+    for (const doc of purSnap.docs) {
+        const d = doc.data() || {};
+        if (d.isSeed === true || d.isTest === true || d.source === "seed") {
+            await doc.ref.delete();
+            purchaseDeleted++;
+        }
+    }
+    // /users
+    const userSnap = await db.collection("users").get();
+    for (const doc of userSnap.docs) {
+        const d = doc.data() || {};
+        if (d.isSeed === true || d.isTest === true || d.source === "seed") {
+            await doc.ref.delete();
+            userDeleted++;
+        }
+    }
+    await writeAudit({
+        actor,
+        action: "admin.purgeSeedData",
+        target: null,
+        targetCollection: null,
+        extra: {
+            sequences: seqDeleted,
+            packs: packDeleted,
+            purchases: purchaseDeleted,
+            users: userDeleted,
+        },
+    });
+    functions.logger.info(`adminPurgeSeedData by ${actor}: ` +
+        `sequences=${seqDeleted} packs=${packDeleted} ` +
+        `purchases=${purchaseDeleted} users=${userDeleted}`);
+    return {
+        ok: true,
+        sequences: seqDeleted,
+        packs: packDeleted,
+        purchases: purchaseDeleted,
+        users: userDeleted,
+    };
 });
 //# sourceMappingURL=index.js.map
