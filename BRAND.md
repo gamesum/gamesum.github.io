@@ -76,7 +76,7 @@ rather than edited.
    `<link rel="icon">`. Add one pointing at a shared mark once item 1 is
    resolved.
 3. `og:image` across the site points at
-   `https://gamesum.github.io/afterglo-logo-flat.png` (the prior GitHub
+   `https://afterglolighting.org/afterglo-logo-flat.png` (the prior GitHub
    Pages host) rather than an `afterglolighting.org` URL. Rehost to the
    production domain.
 4. The `Resources/` folder contains a legacy banner `AFTERGLOBANNER.png`

@@ -2,7 +2,7 @@
 
 ## What this is
 Marketing + product website for Afterglo permanent holiday lighting business.
-Live at: https://gamesum.github.io
+Live at: https://afterglolighting.org
 
 ## Key files
 - `index.html` — main marketing site (hero, lightshow, testimonials, FAQ, contact)
