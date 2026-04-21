@@ -1346,8 +1346,8 @@
           </span>
         </div>
         <a id="verifyAnchor" style="position:relative;top:-80px;visibility:hidden;" name="verify"></a>
-        <h3 id="verifyHeading">Verify your email to sell shows</h3>
-        <p id="verifyBody">Verified creators can publish Premium ($) shows on the Store. It only takes a minute.</p>
+        <h3 id="verifyHeading">Confirm your email to sell shows</h3>
+        <p id="verifyBody">Confirm your email to unlock Premium ($) show uploads. It only takes a minute.</p>
         <div class="verify-sent-note" id="verifySentNote" style="display:none;">
           <strong>Check your inbox.</strong> Link expires in 1 hour.
         </div>
@@ -1666,8 +1666,8 @@
       card.dataset.state = 'verified';
       pill.classList.remove('unverified');
       pill.classList.add('verified');
-      pillText.textContent = 'Verified';
-      heading.textContent  = "You're a verified creator";
+      pillText.textContent = 'Email confirmed';
+      heading.textContent  = "Creator uploads unlocked";
       body.textContent     = 'You can publish Premium shows on the Store.';
       sendBtn.style.display   = 'none';
       resendBtn.style.display = 'none';
@@ -1677,9 +1677,9 @@
       card.dataset.state = 'unverified';
       pill.classList.remove('verified');
       pill.classList.add('unverified');
-      pillText.textContent = 'Unverified';
-      heading.textContent  = 'Verify your email to sell shows';
-      body.textContent     = 'Verified creators can publish Premium ($) shows on the Store. It only takes a minute.';
+      pillText.textContent = 'Email unconfirmed';
+      heading.textContent  = 'Confirm your email to sell shows';
+      body.textContent     = 'Confirm your email to unlock Premium ($) show uploads. It only takes a minute.';
       sendBtn.style.display = '';
     }
   }

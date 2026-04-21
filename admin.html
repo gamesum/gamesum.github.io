@@ -377,7 +377,7 @@
     <section class="section active" id="section-stats">
       <div class="stats-grid">
         <div class="stat-card"><div class="label">Total users</div><div class="value" id="statTotalUsers">.</div></div>
-        <div class="stat-card"><div class="label">Verified creators</div><div class="value gold" id="statCreators">.</div></div>
+        <div class="stat-card"><div class="label">Creators (agreement signed)</div><div class="value gold" id="statCreators">.</div></div>
         <div class="stat-card"><div class="label">Total uploads</div><div class="value" id="statUploads">.</div></div>
         <div class="stat-card"><div class="label">Total revenue</div><div class="value gold" id="statRevenue">.</div></div>
         <div class="stat-card"><div class="label">Signups · last 7 days</div><div class="value" id="stat7day">.</div></div>
@@ -433,24 +433,53 @@
     <section class="section" id="section-uploads">
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title">Uploads (sequences)</div>
+          <div class="panel-title">Uploads</div>
           <div class="panel-tools">
             <div class="search">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="text" id="uploadSearch" placeholder="Search title or creator" autocomplete="off" />
             </div>
-            <button class="btn btn-sm" id="refreshUploads">Refresh</button>
+            <details class="filter-wrap" id="uploadsFilterWrap">
+              <summary title="Filter">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>
+              </summary>
+              <div class="filter-pop" role="menu">
+                <div class="filter-head">Show categories</div>
+                <label><input type="checkbox" class="uploadCatFilter" value="sequence" checked /> Sequences</label>
+                <label><input type="checkbox" class="uploadCatFilter" value="show" checked /> Shows</label>
+                <label><input type="checkbox" class="uploadCatFilter" value="preset" checked /> Presets</label>
+                <div class="filter-head" style="margin-top:10px;">Include</div>
+                <label><input type="checkbox" id="uploadShowRejected" /> Rejected</label>
+              </div>
+            </details>
+            <button class="btn btn-sm btn-icon" id="refreshUploads" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
           </div>
         </div>
+        <div style="padding: 14px 20px 6px; color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em;">Pending review</div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Title</th><th>Creator</th><th>Price</th><th>Status</th><th>Uploaded</th><th>Actions</th>
+                <th>Title</th><th>Category</th><th>Creator</th><th>Price</th><th>Status</th><th>Uploaded</th><th>Actions</th>
               </tr>
             </thead>
-            <tbody id="uploadsBody">
-              <tr><td colspan="6" class="empty-row">Loading uploads.</td></tr>
+            <tbody id="uploadsPendingBody">
+              <tr><td colspan="7" class="empty-row">Loading uploads.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="padding: 18px 20px 6px; color: var(--muted); font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; border-top: 1px solid var(--line); margin-top: 8px;">Approved</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th><th>Category</th><th>Creator</th><th>Price</th><th>Status</th><th>Uploaded</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="uploadsApprovedBody">
+              <tr><td colspan="7" class="empty-row">Loading uploads.</td></tr>
             </tbody>
           </table>
         </div>
@@ -468,7 +497,9 @@
               <input type="text" id="purchaseSearch" placeholder="Search buyer or sequence" autocomplete="off" />
             </div>
             <button class="btn btn-sm" id="exportCsv">Export CSV</button>
-            <button class="btn btn-sm" id="refreshPurchases">Refresh</button>
+            <button class="btn btn-sm btn-icon" id="refreshPurchases" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
           </div>
         </div>
         <div style="padding: 12px 20px; border-bottom: 1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap;">
@@ -498,7 +529,9 @@
         <div class="panel-head">
           <div class="panel-title">Disputes</div>
           <div class="panel-tools">
-            <button class="btn btn-sm" id="refreshDisputes">Refresh</button>
+            <button class="btn btn-sm btn-icon" id="refreshDisputes" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
           </div>
         </div>
         <div class="table-wrap">
@@ -531,7 +564,9 @@
               <button class="btn btn-sm dmca-filter" data-dmca-filter="counter_noticed">Counter-Noticed</button>
               <button class="btn btn-sm dmca-filter" data-dmca-filter="closed">Closed</button>
             </div>
-            <button class="btn btn-sm" id="refreshDmca">Refresh</button>
+            <button class="btn btn-sm btn-icon" id="refreshDmca" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
           </div>
         </div>
         <div class="table-wrap">
@@ -555,7 +590,9 @@
         <div class="panel-head">
           <div class="panel-title">GDPR / CCPA data requests</div>
           <div class="panel-tools">
-            <button class="btn btn-sm" id="refreshDataReq">Refresh</button>
+            <button class="btn btn-sm btn-icon" id="refreshDataReq" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
           </div>
         </div>
         <div class="table-wrap">
@@ -585,7 +622,9 @@
               <button class="btn btn-sm feedback-filter" data-fb-filter="read">Read</button>
               <button class="btn btn-sm feedback-filter" data-fb-filter="resolved">Resolved</button>
             </div>
-            <button class="btn btn-sm" id="refreshFeedback">Refresh</button>
+            <button class="btn btn-sm btn-icon" id="refreshFeedback" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
           </div>
         </div>
         <div class="table-wrap">
@@ -614,7 +653,9 @@
               <input type="text" id="auditSearch" placeholder="Search action, actor, target" autocomplete="off" />
             </div>
             <button class="btn btn-sm" id="exportAuditCsv">Export CSV</button>
-            <button class="btn btn-sm" id="refreshAudit">Refresh</button>
+            <button class="btn btn-sm btn-icon" id="refreshAudit" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
           </div>
         </div>
         <div class="table-wrap">
@@ -906,8 +947,8 @@
                     : u.role === 'creator' ? '<span class="pill pill-creator">Creator</span>'
                     :                        '<span class="pill pill-user">User</span>';
       const verified = u.emailVerified
-        ? '<span class="pill pill-verified">Verified</span>'
-        : '<span class="pill pill-unverified">Unverified</span>';
+        ? '<span class="pill pill-verified" title="User confirmed their email address via Firebase Auth. This is NOT a creator review.">Email confirmed</span>'
+        : '<span class="pill pill-unverified" title="User has not confirmed their email address yet.">Email unconfirmed</span>';
       const disabledNote = u.disabled ? ' <span class="cell-sub" style="color:var(--danger);">disabled</span>' : '';
 
       const acts = [];
@@ -964,22 +1005,30 @@
   document.getElementById('refreshUsers').addEventListener('click', loadUsers);
 
   /* ─── Uploads ──────────────────────────────────────────────────── */
+  const PENDING_STATUSES = new Set(['pending', 'pending_review', 'pending_upload']);
+  const APPROVED_STATUSES = new Set(['approved', 'published']);
+
   async function loadUploads() {
-    const body = document.getElementById('uploadsBody');
-    body.innerHTML = '<tr><td colspan="6" class="empty-row">Loading uploads.</td></tr>';
+    const pendingBody = document.getElementById('uploadsPendingBody');
+    const approvedBody = document.getElementById('uploadsApprovedBody');
+    pendingBody.innerHTML  = '<tr><td colspan="7" class="empty-row">Loading uploads.</td></tr>';
+    approvedBody.innerHTML = '<tr><td colspan="7" class="empty-row">Loading uploads.</td></tr>';
     try {
       const snap = await fbFirestore.collection('sequences').orderBy('createdAt', 'desc').limit(500).get();
       uploadsCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
       renderUploads();
     } catch (err) {
       console.error(err);
-      body.innerHTML = '<tr><td colspan="6" class="empty-row">Failed to load uploads. '+esc(err.message||'')+'</td></tr>';
+      const msg = '<tr><td colspan="7" class="empty-row">Failed to load uploads. '+esc(err.message||'')+'</td></tr>';
+      pendingBody.innerHTML = msg;
+      approvedBody.innerHTML = msg;
     }
   }
 
   function statusPill(status) {
     const cls = ({
       pending: 'pill-pending',
+      pending_review: 'pill-pending',
       pending_upload: 'pill-pending',
       approved: 'pill-approved',
       published: 'pill-published',
@@ -988,33 +1037,73 @@
     return '<span class="pill '+cls+'">'+esc(status || 'pending')+'</span>';
   }
 
+  function categoryLabel(cat) {
+    const c = (cat || 'sequence').toLowerCase();
+    if (c === 'sequence') return 'Sequence';
+    if (c === 'show')     return 'Show';
+    if (c === 'preset')   return 'Preset';
+    return esc(cat || '.');
+  }
+
+  function uploadRowHtml(u, bucket) {
+    const id = u._id || u.id || '';
+    const acts = [];
+    if (bucket === 'pending') {
+      acts.push('<button class="btn btn-sm btn-success" onclick="setUploadStatus(\''+esc(id)+'\',\'published\')">Approve</button>');
+      acts.push('<button class="btn btn-sm btn-danger" onclick="setUploadStatus(\''+esc(id)+'\',\'rejected\')">Reject</button>');
+    } else if (bucket === 'approved') {
+      acts.push('<button class="btn btn-sm" onclick="setUploadStatus(\''+esc(id)+'\',\'pending_review\')">Un-approve</button>');
+    } else if (bucket === 'rejected') {
+      acts.push('<button class="btn btn-sm btn-success" onclick="setUploadStatus(\''+esc(id)+'\',\'published\')">Approve</button>');
+    }
+    acts.push('<button class="btn btn-sm btn-danger" onclick="deleteUpload(\''+esc(id)+'\')">Delete</button>');
+    return '<tr>'
+      + '<td><div class="cell-email">'+esc(u.name || '(untitled)')+'</div><div class="cell-sub mono">'+esc(id)+'</div></td>'
+      + '<td>'+categoryLabel(u.category)+'</td>'
+      + '<td>'+esc(u.creator || '.')+'</td>'
+      + '<td>'+fmtMoney(u.price)+'</td>'
+      + '<td>'+statusPill(u.status)+(u.flagged ? ' <span class="pill pill-pending" title="Content moderation flag">flagged</span>' : '')+'</td>'
+      + '<td>'+esc(fmtDate(u.createdAt))+'</td>'
+      + '<td><div class="actions">'+acts.join('')+'</div></td>'
+      + '</tr>';
+  }
+
   function renderUploads() {
-    const body = document.getElementById('uploadsBody');
+    const pendingBody  = document.getElementById('uploadsPendingBody');
+    const approvedBody = document.getElementById('uploadsApprovedBody');
     const q = (document.getElementById('uploadSearch').value || '').trim().toLowerCase();
-    const rows = uploadsCache.filter(u => {
+    const showRejected = !!(document.getElementById('uploadShowRejected') || {}).checked;
+    const catBoxes = document.querySelectorAll('.uploadCatFilter');
+    const cats = new Set();
+    catBoxes.forEach(b => { if (b.checked) cats.add((b.value || '').toLowerCase()); });
+
+    const matchCat = (u) => {
+      if (!cats.size) return true;
+      const c = (u.category || 'sequence').toLowerCase();
+      return cats.has(c);
+    };
+    const matchQ = (u) => {
       if (!q) return true;
       return (u.name || '').toLowerCase().includes(q) || (u.creator || '').toLowerCase().includes(q);
-    });
-    if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="6" class="empty-row">No uploads match.</td></tr>';
-      return;
+    };
+
+    const filtered = uploadsCache.filter(u => matchQ(u) && matchCat(u));
+    const pending  = filtered.filter(u => PENDING_STATUSES.has(u.status || 'pending'));
+    const approved = filtered.filter(u => APPROVED_STATUSES.has(u.status));
+    const rejected = filtered.filter(u => u.status === 'rejected');
+
+    pendingBody.innerHTML = pending.length
+      ? pending.map(u => uploadRowHtml(u, 'pending')).join('')
+      : '<tr><td colspan="7" class="empty-row">Nothing waiting for review.</td></tr>';
+
+    let approvedHtml = approved.length
+      ? approved.map(u => uploadRowHtml(u, 'approved')).join('')
+      : '<tr><td colspan="7" class="empty-row">No approved uploads yet.</td></tr>';
+    if (showRejected && rejected.length) {
+      approvedHtml += '<tr><td colspan="7" style="padding:14px 14px 6px;color:var(--muted);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;">Rejected</td></tr>';
+      approvedHtml += rejected.map(u => uploadRowHtml(u, 'rejected')).join('');
     }
-    body.innerHTML = rows.map(u => {
-      const id = u._id || u.id || '';
-      const acts = [
-        '<button class="btn btn-sm btn-success" onclick="setUploadStatus(\''+esc(id)+'\',\'published\')">Approve</button>',
-        '<button class="btn btn-sm btn-danger" onclick="setUploadStatus(\''+esc(id)+'\',\'rejected\')">Reject</button>',
-        '<button class="btn btn-sm btn-danger" onclick="deleteUpload(\''+esc(id)+'\')">Delete</button>',
-      ];
-      return '<tr>'
-        + '<td><div class="cell-email">'+esc(u.name || '(untitled)')+'</div><div class="cell-sub mono">'+esc(id)+'</div></td>'
-        + '<td>'+esc(u.creator || '.')+'</td>'
-        + '<td>'+fmtMoney(u.price)+'</td>'
-        + '<td>'+statusPill(u.status)+'</td>'
-        + '<td>'+esc(fmtDate(u.createdAt))+'</td>'
-        + '<td><div class="actions">'+acts.join('')+'</div></td>'
-        + '</tr>';
-    }).join('');
+    approvedBody.innerHTML = approvedHtml;
   }
 
   window.setUploadStatus = async function(uploadId, status) {
@@ -1042,6 +1131,9 @@
 
   document.getElementById('uploadSearch').addEventListener('input', renderUploads);
   document.getElementById('refreshUploads').addEventListener('click', loadUploads);
+  document.querySelectorAll('.uploadCatFilter').forEach(el => el.addEventListener('change', renderUploads));
+  const _uploadShowRejected = document.getElementById('uploadShowRejected');
+  if (_uploadShowRejected) _uploadShowRejected.addEventListener('change', renderUploads);
 
   /* ─── Purchases ────────────────────────────────────────────────── */
   let purchaseFilter = 'all';
@@ -1631,8 +1723,12 @@
     document.getElementById('statTotalUsers').textContent = realUsers.length.toLocaleString();
     document.getElementById('statCreators').textContent = usersCache.filter(u => u.role === 'creator' || u.role === 'admin').length.toLocaleString();
 
-    // Total uploads = real creator uploads only, seeds excluded.
-    const realUploads = uploadsCache.filter(u => !isSeedDoc(u));
+    // Total uploads = real creator uploads that have been approved/published. Seeds excluded, pending/rejected excluded.
+    const realUploads = uploadsCache.filter(u => {
+      if (isSeedDoc(u)) return false;
+      const s = u.status || 'pending';
+      return s === 'approved' || s === 'published';
+    });
     document.getElementById('statUploads').textContent = realUploads.length.toLocaleString();
 
     // Total revenue = paid, non-seed purchases only.

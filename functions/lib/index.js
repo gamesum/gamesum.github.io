@@ -264,7 +264,7 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
         res.status(401).json({ error: "Invalid or expired token" });
         return;
     }
-    const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3 } = req.body;
+    const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3, flagged } = req.body;
     if (!sequenceId || !name) {
         res.status(400).json({ error: "Missing required fields" });
         return;
@@ -307,6 +307,11 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
             });
             mp3UploadUrl = mp3Url;
         }
+        // Determine initial status:
+        // - Single-song sequences auto-publish unless flagged by content moderation.
+        // - Shows and presets always go through manual review.
+        const isSequence = (category ?? "").toLowerCase() === "sequence";
+        const initialStatus = isSequence && !flagged ? "published" : "pending_review";
         // Record metadata in Firestore (pending until file is uploaded)
         await db.collection("sequences").doc(sequenceId).set({
             id: sequenceId,
@@ -321,7 +326,8 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
             songName: songName ?? "",
             youtubeUrl: youtubeUrl ?? "",
             hasMp3: hasMp3 ?? false,
-            status: "published",
+            flagged: !!flagged,
+            status: initialStatus,
             createdAt: admin.firestore.Timestamp.now(),
             downloadCount: 0,
         });
@@ -1132,7 +1138,7 @@ exports.adminSetUploadStatus = functions.https.onCall(async (data, context) => {
     if (typeof uploadId !== "string" || !isValidId(uploadId)) {
         throw new functions.https.HttpsError("invalid-argument", "Invalid uploadId.");
     }
-    const allowed = new Set(["pending", "approved", "rejected", "published", "pending_upload"]);
+    const allowed = new Set(["pending", "pending_review", "approved", "rejected", "published", "pending_upload"]);
     if (typeof status !== "string" || !allowed.has(status)) {
         throw new functions.https.HttpsError("invalid-argument", "Invalid status.");
     }
