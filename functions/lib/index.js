@@ -266,7 +266,38 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
         res.status(401).json({ error: "Invalid or expired token" });
         return;
     }
-    const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3, flagged } = req.body;
+    const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3, flagged, photos, description, props } = req.body;
+    // Validate photos: array of <=6 Firebase Storage URLs, each < 2 KB.
+    let safePhotos = [];
+    if (Array.isArray(photos)) {
+        if (photos.length > 6) {
+            res.status(400).json({ error: "Too many photos (max 6)" });
+            return;
+        }
+        for (const p of photos) {
+            if (typeof p !== "string" || p.length > 2048) {
+                res.status(400).json({ error: "Invalid photo URL" });
+                return;
+            }
+            if (!p.startsWith("https://firebasestorage.googleapis.com/") &&
+                !p.startsWith("https://storage.googleapis.com/")) {
+                res.status(400).json({ error: "Photo URL must be a Firebase Storage URL" });
+                return;
+            }
+            safePhotos.push(p);
+        }
+    }
+    // Validate props (optional): array of short strings.
+    let safeProps = [];
+    if (Array.isArray(props)) {
+        for (const pr of props) {
+            if (typeof pr === "string" && pr.length <= 40)
+                safeProps.push(pr);
+        }
+        if (safeProps.length > 12)
+            safeProps = safeProps.slice(0, 12);
+    }
+    const safeDescription = typeof description === "string" ? description.slice(0, 500) : "";
     if (!sequenceId || !name) {
         res.status(400).json({ error: "Missing required fields" });
         return;
@@ -342,6 +373,10 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
             status: initialStatus,
             createdAt: admin.firestore.Timestamp.now(),
             downloadCount: 0,
+            photos: safePhotos,
+            coverPhoto: safePhotos[0] || "",
+            description: safeDescription,
+            props: safeProps,
         });
         res.status(200).json({ uploadUrl: signedUrl, sequenceId, ...(mp3UploadUrl ? { mp3UploadUrl } : {}) });
     }
@@ -2432,6 +2467,18 @@ exports.requestCreatorVerification = functions.https.onCall(async (data, context
     const prev = snap.exists ? (snap.data() || {}) : {};
     if (prev.creatorVerificationStatus === "approved" && prev.creatorVerified === true) {
         return { ok: true, status: "approved", alreadyApproved: true };
+    }
+    // Gate: require at least 5 non-rejected uploads before they can request.
+    const MIN_UPLOADS = 5;
+    const uploadsSnap = await db.collection("sequences")
+        .where("creatorUid", "==", uid)
+        .get();
+    const uploadCount = uploadsSnap.docs.filter((d) => {
+        const s = (d.data() || {}).status;
+        return s !== "rejected";
+    }).length;
+    if (uploadCount < MIN_UPLOADS) {
+        throw new functions.https.HttpsError("failed-precondition", `You need at least ${MIN_UPLOADS} uploaded shows before you can request creator verification. You currently have ${uploadCount}.`, { uploadCount, required: MIN_UPLOADS });
     }
     await userRef.set({
         creatorVerificationStatus: "pending",

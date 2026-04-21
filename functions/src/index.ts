@@ -268,7 +268,7 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
     return;
   }
 
-  const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3, flagged } =
+  const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3, flagged, photos, description, props } =
     req.body as {
       sequenceId: string;
       name: string;
@@ -280,7 +280,43 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
       youtubeUrl?: string;
       hasMp3?: boolean;
       flagged?: boolean;
+      photos?: string[];
+      description?: string;
+      props?: string[];
     };
+
+  // Validate photos: array of <=6 Firebase Storage URLs, each < 2 KB.
+  let safePhotos: string[] = [];
+  if (Array.isArray(photos)) {
+    if (photos.length > 6) {
+      res.status(400).json({ error: "Too many photos (max 6)" });
+      return;
+    }
+    for (const p of photos) {
+      if (typeof p !== "string" || p.length > 2048) {
+        res.status(400).json({ error: "Invalid photo URL" });
+        return;
+      }
+      if (!p.startsWith("https://firebasestorage.googleapis.com/") &&
+          !p.startsWith("https://storage.googleapis.com/")) {
+        res.status(400).json({ error: "Photo URL must be a Firebase Storage URL" });
+        return;
+      }
+      safePhotos.push(p);
+    }
+  }
+
+  // Validate props (optional): array of short strings.
+  let safeProps: string[] = [];
+  if (Array.isArray(props)) {
+    for (const pr of props) {
+      if (typeof pr === "string" && pr.length <= 40) safeProps.push(pr);
+    }
+    if (safeProps.length > 12) safeProps = safeProps.slice(0, 12);
+  }
+
+  const safeDescription =
+    typeof description === "string" ? description.slice(0, 500) : "";
 
   if (!sequenceId || !name) {
     res.status(400).json({ error: "Missing required fields" });
@@ -363,6 +399,10 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
       status: initialStatus,
       createdAt: admin.firestore.Timestamp.now(),
       downloadCount: 0,
+      photos: safePhotos,
+      coverPhoto: safePhotos[0] || "",
+      description: safeDescription,
+      props: safeProps,
     });
 
     res.status(200).json({ uploadUrl: signedUrl, sequenceId, ...(mp3UploadUrl ? { mp3UploadUrl } : {}) });

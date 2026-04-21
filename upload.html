@@ -12,6 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
   <script src="js/collections.js" defer></script>
   <style>
@@ -652,6 +653,60 @@
     .mp3-file-btn:hover { background: rgba(99,102,241,0.2); }
     #mp3FileInfo { font-size: 0.82rem; color: #4ade80; margin-top: 10px; display: none; }
 
+    /* ─── SHOW PHOTOS ─────────────────────────────────────────────── */
+    .photo-section {
+      margin-top: 20px;
+      padding: 20px;
+      background: rgba(212,164,58,0.05);
+      border: 1px solid rgba(212,164,58,0.2);
+      border-radius: 12px;
+    }
+    .photo-label-title { font-weight: 600; color: #fff; font-size: 0.9rem; margin-bottom: 6px; }
+    .photo-label-sub { font-size: 0.8rem; color: var(--muted); margin-bottom: 14px; }
+    .photo-dz {
+      border: 1.5px dashed rgba(212,164,58,0.35);
+      border-radius: 10px;
+      padding: 22px 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      color: #cbd5e1;
+      font-size: 0.85rem;
+    }
+    .photo-dz:hover, .photo-dz.drag { background: rgba(212,164,58,0.08); border-color: #D4A43A; }
+    .photo-dz strong { color: #D4A43A; }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
+    }
+    .photo-tile {
+      position: relative;
+      aspect-ratio: 4/3;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #1a1a1a;
+      border: 1px solid #2a2a2a;
+    }
+    .photo-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-tile-remove {
+      position: absolute; top: 4px; right: 4px;
+      width: 24px; height: 24px;
+      background: rgba(0,0,0,0.7);
+      color: #fff; border: none; border-radius: 50%;
+      cursor: pointer; font-size: 0.8rem; line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-tile-remove:hover { background: #ef4444; }
+    .photo-tile-status {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.55);
+      color: #fff; font-size: 0.72rem; font-weight: 600;
+      display: flex; align-items: center; justify-content: center;
+    }
+    #photoHint { font-size: 0.78rem; color: var(--muted); margin-top: 10px; }
+
     /* ─── YOUTUBE PREVIEW ─────────────────────────────────────────── */
     .yt-preview {
       display: none;
@@ -1269,6 +1324,19 @@
           </button>
           <div id="mp3FileInfo"></div>
         </div>
+
+        <div class="photo-section">
+          <div class="photo-label-title">Show photos (optional)</div>
+          <div class="photo-label-sub">Add up to 6 photos of your show in action. We resize and compress them automatically. The first photo is used as the cover.</div>
+          <input type="file" id="photoInput" accept="image/png,image/jpeg,image/webp" multiple style="display:none;" />
+          <div class="photo-dz" id="photoDz" onclick="document.getElementById('photoInput').click()">
+            <div style="font-size:1.6rem;margin-bottom:4px;">📸</div>
+            <div>Drop photos here or <strong>click to pick</strong></div>
+            <div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">JPG, PNG, or WebP. Up to 6 images.</div>
+          </div>
+          <div class="photo-grid" id="photoGrid"></div>
+          <div id="photoHint"></div>
+        </div>
       </div>
 
       <div class="form-nav">
@@ -1379,6 +1447,10 @@
   let fseqFile      = null;
   let mp3File       = null;
   let detectedDuration = null;
+  let showPhotos    = []; // Array of { id, file, blob, previewUrl, uploadedUrl? }
+  const MAX_PHOTOS = 6;
+  const PHOTO_MAX_EDGE = 1200;
+  const PHOTO_JPEG_QUALITY = 0.82;
 
   /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
   function signOut() { signOutUser(); window.location.href = 'index.html'; }
@@ -1421,6 +1493,7 @@
     initYouTubePreview();
     initDescCounter();
     initMp3Input();
+    initPhotoInput();
     initLegalCheck();
   });
 
@@ -1784,6 +1857,131 @@
     });
   }
 
+  /* ─── SHOW PHOTOS: pick, compress, preview ──────────────────────── */
+  function initPhotoInput() {
+    const input = document.getElementById('photoInput');
+    const dz    = document.getElementById('photoDz');
+    if (!input || !dz) return;
+
+    input.addEventListener('change', () => {
+      handlePhotoFiles(Array.from(input.files || []));
+      input.value = '';
+    });
+
+    ['dragenter','dragover'].forEach(ev =>
+      dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.add('drag'); })
+    );
+    ['dragleave','drop'].forEach(ev =>
+      dz.addEventListener(ev, e => { e.preventDefault(); dz.classList.remove('drag'); })
+    );
+    dz.addEventListener('drop', e => {
+      e.preventDefault();
+      dz.classList.remove('drag');
+      const files = Array.from((e.dataTransfer && e.dataTransfer.files) || [])
+        .filter(f => /^image\/(jpeg|png|webp)$/.test(f.type));
+      handlePhotoFiles(files);
+    });
+  }
+
+  async function handlePhotoFiles(files) {
+    if (!files.length) return;
+    const remaining = MAX_PHOTOS - showPhotos.length;
+    if (remaining <= 0) {
+      showToast('You can add up to 6 photos.', 'warning');
+      return;
+    }
+    const toAdd = files.slice(0, remaining);
+    if (files.length > remaining) {
+      showToast('Only the first ' + remaining + ' photo(s) were added (max 6 total).', 'warning');
+    }
+    for (const file of toAdd) {
+      try {
+        const blob = await compressImage(file);
+        const id = crypto.randomUUID();
+        const previewUrl = URL.createObjectURL(blob);
+        showPhotos.push({ id, file, blob, previewUrl, uploadedUrl: null });
+      } catch (err) {
+        console.warn('Photo compression failed:', err);
+        showToast('Could not process ' + file.name, 'error');
+      }
+    }
+    renderPhotoGrid();
+  }
+
+  function renderPhotoGrid() {
+    const grid = document.getElementById('photoGrid');
+    const hint = document.getElementById('photoHint');
+    if (!grid) return;
+    grid.innerHTML = '';
+    showPhotos.forEach((p, idx) => {
+      const tile = document.createElement('div');
+      tile.className = 'photo-tile';
+      tile.innerHTML =
+        '<img src="' + p.previewUrl + '" alt="Show photo ' + (idx + 1) + '" />' +
+        '<button type="button" class="photo-tile-remove" title="Remove photo">✕</button>';
+      tile.querySelector('.photo-tile-remove').addEventListener('click', () => removePhoto(p.id));
+      grid.appendChild(tile);
+    });
+    if (hint) {
+      hint.textContent = showPhotos.length
+        ? showPhotos.length + ' of ' + MAX_PHOTOS + ' photos added. First photo is the cover.'
+        : '';
+    }
+  }
+
+  function removePhoto(id) {
+    const i = showPhotos.findIndex(p => p.id === id);
+    if (i === -1) return;
+    try { URL.revokeObjectURL(showPhotos[i].previewUrl); } catch(e) {}
+    showPhotos.splice(i, 1);
+    renderPhotoGrid();
+  }
+
+  function compressImage(file) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const scale = Math.min(1, PHOTO_MAX_EDGE / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          URL.revokeObjectURL(url);
+          canvas.toBlob(
+            blob => blob ? resolve(blob) : reject(new Error('toBlob returned null')),
+            'image/jpeg',
+            PHOTO_JPEG_QUALITY
+          );
+        } catch (err) { reject(err); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image decode failed')); };
+      img.src = url;
+    });
+  }
+
+  async function uploadShowPhotos(sequenceId, onProgress) {
+    if (!showPhotos.length) return [];
+    if (typeof firebase === 'undefined' || !firebase.storage) {
+      console.warn('Firebase Storage SDK not loaded; skipping photo upload.');
+      return [];
+    }
+    const urls = [];
+    for (let i = 0; i < showPhotos.length; i++) {
+      const p = showPhotos[i];
+      const ref = firebase.storage().ref('sequence_photos/' + sequenceId + '/' + i + '.jpg');
+      await ref.put(p.blob, { contentType: 'image/jpeg' });
+      const url = await ref.getDownloadURL();
+      p.uploadedUrl = url;
+      urls.push(url);
+      if (typeof onProgress === 'function') onProgress(i + 1, showPhotos.length);
+    }
+    return urls;
+  }
+
   /* ─── LEGAL CHECKBOXES ──────────────────────────────────────────── */
   function initLegalCheck() {
     function updatePublishBtn() {
@@ -1954,6 +2152,23 @@
       const ytEl  = document.getElementById('youtubeUrl') || document.getElementById('youtubeMusicUrl');
       const ytUrl = ytEl ? ytEl.value.trim() : '';
 
+      // Upload photos first (if any). Storage rules require the user to be signed in;
+      // Firebase JS SDK uses the current auth token automatically.
+      let photoUrls = [];
+      if (showPhotos.length) {
+        setProgress(5, 'Uploading ' + showPhotos.length + ' photo' + (showPhotos.length === 1 ? '' : 's') + '...');
+        try {
+          photoUrls = await uploadShowPhotos(seqId, (done, total) => {
+            const pct = 5 + Math.round((done / total) * 5);
+            setProgress(pct, 'Uploading photos (' + done + ' of ' + total + ')...');
+          });
+        } catch (photoErr) {
+          console.warn('Show-photo upload failed; continuing without photos.', photoErr);
+          showToast('Photo upload failed. Continuing without photos.', 'warning');
+          photoUrls = [];
+        }
+      }
+
       const payload = {
         sequenceId:   seqId,
         name:         document.getElementById('showName').value.trim(),
@@ -1965,10 +2180,12 @@
         youtubeUrl:   ytUrl,
         hasMp3:       hasMp3,
         props:        props,
+        description:  document.getElementById('description').value.trim(),
+        photos:       photoUrls,
         flagged:      modResult.flagged    // stored for manual review queue
       };
 
-      setProgress(10, 'Preparing upload…');
+      setProgress(10, 'Preparing upload...');
 
       // Step 1: POST metadata to Cloud Function to get signed Storage URLs.
       // The function restricts CORS to afterglolighting.github.io. Calling from

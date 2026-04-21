@@ -23,6 +23,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/sequence-viewer.js"></script>
   <script src="js/avatar.js"></script>
   <script src="js/collections.js" defer></script>
   <style>
@@ -2622,7 +2623,23 @@
   // Upload handled by dedicated upload.html page
 
   /* ─── SEQUENCE DETAIL DRAWER ────────────────────────────────────── */
+  // Shared viewer lives in js/sequence-viewer.js. Keep a thin wrapper so
+  // existing call sites (card click, external listeners) keep working.
   function openDrawer(seq) {
+    if (window.AGSequenceViewer) {
+      window.AGSequenceViewer.open(seq);
+      return;
+    }
+    _legacyOpenDrawer(seq);
+  }
+  function closeDrawer() {
+    if (window.AGSequenceViewer) { window.AGSequenceViewer.close(); return; }
+    const el = document.getElementById('seqDrawer');
+    if (el) el.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function _legacyOpenDrawer(seq) {
     // Build YouTube embed URL from watch URL or short URL
     let ytEmbed = null;
     if (seq.youtubeUrl) {
@@ -2701,10 +2718,7 @@
     document.body.style.overflow = 'hidden';
   }
 
-  function closeDrawer() {
-    document.getElementById('seqDrawer').classList.remove('open');
-    document.body.style.overflow = '';
-  }
+  // Legacy closeDrawer definition removed; the top-of-block wrapper handles it.
 
   // Close drawer on backdrop click
   document.addEventListener('DOMContentLoaded', () => {

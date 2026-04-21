@@ -15,6 +15,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
+  <script src="js/sequence-viewer.js"></script>
   <script src="js/avatar.js"></script>
   <script src="js/collections.js" defer></script>
   <style>
@@ -2480,6 +2481,30 @@
   function buildCard(item, type) {
     const card = document.createElement('div');
     card.className = 'lib-card';
+    card.style.cursor = 'pointer';
+
+    // Open the shared expanded viewer when the card (but not an action button) is clicked.
+    card.addEventListener('click', (ev) => {
+      if (ev.target.closest('button, a')) return;
+      if (window.AGSequenceViewer) {
+        // Pass what we know; viewer enriches from Firestore for photos/description/props.
+        window.AGSequenceViewer.open({
+          id: item.id,
+          name: item.name,
+          creator: item.creator || 'Community',
+          price: item.price || 0,
+          isFree: (item.price || 0) === 0,
+          duration: item.duration,
+          durationSecs: item.durationSecs,
+          category: item.category,
+          gradient: item.gradient,
+          hasMp3: item.hasMp3
+        }, {
+          onDownload: () => { if (typeof downloadFseq === 'function') downloadFseq(item.id); },
+          onBuy: () => { /* already owned; no buy path from library */ }
+        });
+      }
+    });
 
     const badgeClass = type === 'download' ? 'badge-dl' : type === 'purchase' ? 'badge-purchased' : 'badge-upload';
     const badgeText  = type === 'download' ? 'Downloaded' : type === 'purchase' ? 'Purchased' : 'Uploaded';
