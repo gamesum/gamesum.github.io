@@ -780,6 +780,82 @@
     .badge-purchased { background: rgba(212,164,58,0.15); color: var(--accent); border: 1px solid rgba(212,164,58,0.35); }
     .badge-upload { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.35); }
 
+    /* Upload status section */
+    .status-list { display: flex; flex-direction: column; gap: 10px; }
+    .status-row {
+      display: grid;
+      grid-template-columns: 52px 1fr auto auto auto;
+      gap: 14px;
+      align-items: center;
+      padding: 12px 14px;
+      background: #17171A;
+      border: 1px solid #2A2A32;
+      border-radius: 12px;
+    }
+    .status-row .swatch {
+      width: 52px; height: 52px; border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .status-row .title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      color: #F2F2F4;
+      font-size: 0.98rem;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .status-row .sub {
+      font-family: 'Inter', sans-serif;
+      color: #9A9AA2;
+      font-size: 0.78rem;
+      margin-top: 2px;
+    }
+    .status-row .price {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      color: #F2F2F4;
+      font-size: 0.9rem;
+      min-width: 64px;
+      text-align: right;
+    }
+    .status-pill {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 5px 11px;
+      border-radius: 100px;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+    .pill-amber   { background: rgba(240,192,74,0.12); color: #F0C04A; border-color: rgba(240,192,74,0.35); }
+    .pill-green   { background: rgba(61,203,115,0.12); color: #3DCB73; border-color: rgba(61,203,115,0.35); }
+    .pill-red     { background: rgba(240,90,74,0.12);  color: #F05A4A; border-color: rgba(240,90,74,0.35); }
+    .pill-gray    { background: rgba(154,154,162,0.12); color: #9A9AA2; border-color: rgba(154,154,162,0.35); }
+    .status-row .view-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #D4A43A;
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(212,164,58,0.35);
+    }
+    .status-row .view-link:hover { background: rgba(212,164,58,0.1); }
+    .status-empty {
+      padding: 18px;
+      color: #9A9AA2;
+      font-size: 0.85rem;
+      text-align: center;
+      border: 1px dashed #2A2A32;
+      border-radius: 12px;
+    }
+    @media (max-width: 620px) {
+      .status-row { grid-template-columns: 44px 1fr auto; }
+      .status-row .swatch { width: 44px; height: 44px; }
+      .status-row .price, .status-row .view-link { grid-column: 2 / -1; justify-self: start; }
+    }
+
     .lib-card-body {
       padding: 16px 18px;
     }
@@ -1321,6 +1397,21 @@
         <span class="lib-section-count" id="countPurchases">0 packs</span>
       </div>
       <div id="purchasesGrid" class="lib-grid"></div>
+    </div>
+
+    <!-- Your uploads (status) -->
+    <div class="lib-section">
+      <div class="lib-section-header">
+        <div class="lib-section-left">
+          <div class="lib-section-icon icon-uploads">📡</div>
+          <div>
+            <div class="lib-section-title">Your uploads</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Track the status of shows you've submitted to the Store.</div>
+          </div>
+        </div>
+        <span class="lib-section-count" id="countUploadStatus">0 submissions</span>
+      </div>
+      <div id="uploadStatusList" class="status-list"></div>
     </div>
 
     <!-- My Uploads -->
@@ -1865,6 +1956,194 @@
     renderGroupedSection('downloadsGrid', lib, 'download');
     renderGroupedSection('purchasesGrid', pur, 'purchase');
     renderGroupedSection('uploadsGrid',   upl, 'upload');
+
+    renderUploadStatus();
+    subscribeUploadStatus();
+  }
+
+  /* ─── UPLOAD STATUS SECTION ─────────────────────────────────────── */
+  let _uploadStatusUnsub = null;
+  let _uploadStatusDocs  = null; // array of { id, data } once Firestore answers
+
+  function _statusHashGradient(id) {
+    const str = String(id || '');
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+    const h1 = Math.abs(h) % 360;
+    const h2 = (h1 + 60 + (Math.abs(h >> 3) % 120)) % 360;
+    return 'linear-gradient(135deg, hsl(' + h1 + ',60%,18%) 0%, hsl(' + h2 + ',65%,45%) 55%, hsl(' + ((h1+200)%360) + ',55%,22%) 100%)';
+  }
+
+  function _statusPill(status) {
+    switch (status) {
+      case 'published':       return { cls: 'pill-green', text: 'Live on Store' };
+      case 'pending_upload':  return { cls: 'pill-amber', text: 'Uploading.' };
+      case 'pending_review':  return { cls: 'pill-amber', text: 'In review' };
+      case 'rejected':        return { cls: 'pill-red',   text: 'Rejected' };
+      default:                return { cls: 'pill-gray',  text: 'Processing' };
+    }
+  }
+
+  function _fmtUploadTs(ts) {
+    if (!ts) return '';
+    let d;
+    if (typeof ts.toDate === 'function') d = ts.toDate();
+    else if (typeof ts === 'number') d = new Date(ts);
+    else if (typeof ts === 'string') d = new Date(ts);
+    else if (ts.seconds) d = new Date(ts.seconds * 1000);
+    else return '';
+    if (isNaN(d.getTime())) return '';
+    return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function _priceLabel(price, isFree) {
+    const p = Number(price) || 0;
+    if (isFree || p === 0) return 'Free';
+    return '$' + p.toFixed(2);
+  }
+
+  function renderUploadStatus() {
+    const list  = document.getElementById('uploadStatusList');
+    const count = document.getElementById('countUploadStatus');
+    if (!list) return;
+
+    // Build row data from Firestore if we have it, otherwise from localStorage uploads.
+    let rows = [];
+    let localMode = false;
+
+    if (_uploadStatusDocs && _uploadStatusDocs.length) {
+      rows = _uploadStatusDocs.map(function (doc) {
+        const d = doc.data || {};
+        return {
+          id:          d.id || doc.id,
+          name:        d.name || 'Untitled Show',
+          status:      d.status || 'unknown',
+          rejectReason: d.rejectReason || d.rejectionReason || '',
+          price:       d.price,
+          isFree:      d.isFree === true || (Number(d.price) || 0) === 0,
+          uploadedAt:  d.createdAt,
+          local:       false
+        };
+      });
+    } else {
+      // Fallback: localStorage uploads (user not Firebase-signed-in, or Firestore unavailable).
+      localMode = true;
+      const upl = (currentUser && currentUser.uploads) || [];
+      rows = upl.map(function (u) {
+        return {
+          id:         u.id,
+          name:       u.name || 'Untitled Show',
+          status:     'local',
+          price:      u.price,
+          isFree:     u.free === true || u.isFree === true || (Number(u.price) || 0) === 0,
+          uploadedAt: u.uploadedAt || u.createdAt || null,
+          local:      true
+        };
+      });
+    }
+
+    count.textContent = rows.length + ' submission' + (rows.length === 1 ? '' : 's');
+    list.innerHTML = '';
+
+    if (!rows.length) {
+      const empty = document.createElement('div');
+      empty.className = 'status-empty';
+      empty.textContent = "You haven't uploaded any shows yet. Head to Upload a Show to submit one.";
+      list.appendChild(empty);
+      return;
+    }
+
+    rows.forEach(function (r) {
+      const row = document.createElement('div');
+      row.className = 'status-row';
+
+      const swatch = document.createElement('div');
+      swatch.className = 'swatch';
+      swatch.style.background = _statusHashGradient(r.id);
+
+      const info = document.createElement('div');
+      const title = document.createElement('div');
+      title.className = 'title';
+      title.textContent = r.name;
+      const sub = document.createElement('div');
+      sub.className = 'sub';
+      const ts = _fmtUploadTs(r.uploadedAt);
+      sub.textContent = ts ? ('Uploaded ' + ts) : 'Upload date unavailable';
+      info.appendChild(title);
+      info.appendChild(sub);
+
+      const price = document.createElement('div');
+      price.className = 'price';
+      price.textContent = _priceLabel(r.price, r.isFree);
+
+      const pill = document.createElement('span');
+      if (r.local) {
+        pill.className = 'status-pill pill-gray';
+        pill.textContent = 'Saved locally . sign in to sync';
+      } else {
+        const p = _statusPill(r.status);
+        pill.className = 'status-pill ' + p.cls;
+        pill.textContent = p.text;
+        if (r.status === 'rejected' && r.rejectReason) {
+          pill.title = r.rejectReason;
+        }
+      }
+
+      row.appendChild(swatch);
+      row.appendChild(info);
+      row.appendChild(price);
+      row.appendChild(pill);
+
+      if (r.status === 'published' && r.id) {
+        const link = document.createElement('a');
+        link.className = 'view-link';
+        link.href = 'platform.html#seq-' + encodeURIComponent(r.id);
+        link.textContent = 'View';
+        row.appendChild(link);
+      } else {
+        // spacer to preserve grid
+        const spacer = document.createElement('span');
+        spacer.style.minWidth = '1px';
+        row.appendChild(spacer);
+      }
+
+      list.appendChild(row);
+    });
+  }
+
+  function subscribeUploadStatus() {
+    if (_uploadStatusUnsub) return; // already subscribed
+    if (typeof firebase === 'undefined' || !firebase.firestore) return;
+    const fbUser = firebase.auth().currentUser;
+    if (!fbUser) return;
+
+    try {
+      // No orderBy here to avoid needing a new composite index.
+      // We sort client-side by createdAt desc.
+      _uploadStatusUnsub = firebase.firestore()
+        .collection('sequences')
+        .where('creatorUid', '==', fbUser.uid)
+        .onSnapshot(
+          function (snap) {
+            const docs = [];
+            snap.forEach(function (d) { docs.push({ id: d.id, data: d.data() }); });
+            docs.sort(function (a, b) {
+              const at = (a.data.createdAt && a.data.createdAt.seconds) || 0;
+              const bt = (b.data.createdAt && b.data.createdAt.seconds) || 0;
+              return bt - at;
+            });
+            _uploadStatusDocs = docs;
+            renderUploadStatus();
+          },
+          function (err) {
+            console.warn('[uploadStatus] Firestore query failed, falling back to localStorage.', err);
+            _uploadStatusDocs = null;
+            renderUploadStatus();
+          }
+        );
+    } catch (err) {
+      console.warn('[uploadStatus] subscribe threw:', err);
+    }
   }
 
   function renderCollectionChips() {
