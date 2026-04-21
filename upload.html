@@ -1348,6 +1348,12 @@
             <div class="upload-progress-fill" id="progressFill"></div>
           </div>
         </div>
+
+        <div id="uploadRetryBar" style="display:none;margin-top:16px;gap:10px;align-items:center;flex-wrap:wrap;">
+          <button type="button" class="btn-next" id="uploadRetryBtn" onclick="submitUpload()" style="background:linear-gradient(135deg,#D4A43A,#c8932d);">Try Again</button>
+          <button type="button" class="btn-next" id="uploadSaveDraftBtn" onclick="saveUploadDraft()" style="background:#2a2a32;color:#e2e8f0;">Save Draft</button>
+          <span style="color:#94a3b8;font-size:0.82rem;">Your entries are preserved. Try again now, or save as a draft and come back later.</span>
+        </div>
       </div>
 
       <div class="form-nav">
@@ -1874,6 +1880,8 @@
     const btn            = document.getElementById('publishBtn');
     const backBtn        = document.getElementById('step3BackBtn');
     const contentErrorEl = document.getElementById('contentError');
+    const retryBar       = document.getElementById('uploadRetryBar');
+    if (retryBar) retryBar.style.display = 'none';
 
     // Content moderation: run before any network calls
     const modResult = checkContentModeration();
@@ -1988,11 +1996,19 @@
         mp3UploadUrl = metaJson.mp3UploadUrl || null;
       } catch (fetchErr) {
         if (fetchErr.message && fetchErr.message.startsWith('Server error')) throw fetchErr;
-        console.warn('uploadSequence network/CORS failure (degrading gracefully):', fetchErr);
-        corsBlocked = true;
+        console.error('uploadSequence network/CORS failure:', fetchErr);
+        throw new Error('Upload failed. Could not reach the server. Check your connection and try again. (' + (fetchErr.message || 'network error') + ')');
       }
-
-      // Graceful degradation path
+      if (!uploadUrl) {
+        throw new Error('Upload failed. Server did not return an upload URL. Please try again.');
+      }
+      // Stray vars retained to minimize blast radius:
+      /* The block below was the old silent graceful-degrade path. It is now
+         disabled with `if (false)` so failures throw real errors to the user
+         instead of pretending success. Keeping the code so we can restore
+         behavior quickly if anything regresses. */
+      if (false) {
+      // Graceful degradation path (disabled; retained for quick revert)
       if (corsBlocked || !uploadUrl) {
         setProgress(100, 'Submission received…');
         document.querySelector('#successState .success-title').textContent = 'Submission Received!';
@@ -2003,6 +2019,7 @@
         showSuccessView();
         return;
       }
+      } // end if(false) dead branch
 
       // Step 2: PUT FSEQ to signed GCS URL (GCS signed URLs bypass CORS)
       setProgress(30, 'Uploading FSEQ file…');
@@ -2042,6 +2059,7 @@
       setProgress(100, 'Complete!');
       mirrorUploadLocally(payload, pendingCollectionId);
       pendingCollectionId = null;
+      try { localStorage.removeItem('afterglo_upload_draft_v1'); } catch (_) {}
       showSuccessView();
 
     } catch (err) {
@@ -2049,15 +2067,94 @@
       // Never expose raw browser "Failed to fetch" to the user
       const isNetworkErr = (err instanceof TypeError) && /fetch/i.test(err.message);
       const userMsg = isNetworkErr
-        ? 'Upload processing. You\u2019ll receive a confirmation email within 24 hours.'
-        : 'Upload failed: ' + err.message;
-      showToast(userMsg, isNetworkErr ? 'warning' : 'error');
+        ? 'Upload failed. We could not reach the server. Check your connection and try again, or save as a draft to finish later.'
+        : 'Upload failed: ' + (err.message || 'Unknown error') + '. Try again, or save as a draft.';
+      showToast(userMsg, 'error');
+      try { window._lastFailedUploadPayload = payload; } catch (_) {}
       btn.disabled     = false;
       backBtn.disabled = false;
       progressEl.classList.remove('show');
+      const retryBar = document.getElementById('uploadRetryBar');
+      if (retryBar) retryBar.style.display = 'flex';
     }
   }
 
+
+  /* ─── DRAFT SAVE / RESTORE ───────────────────────────────────────── */
+  const DRAFT_KEY = 'afterglo_upload_draft_v1';
+
+  function collectDraft() {
+    const val = id => { const el = document.getElementById(id); return el ? el.value : ''; };
+    const priceSel = document.querySelector('input[name="price"]:checked');
+    return {
+      savedAt:       Date.now(),
+      showName:      val('showName'),
+      category:      val('category'),
+      description:   val('description'),
+      songName:      val('songName'),
+      duration:      val('duration'),
+      youtubeMusicUrl: val('youtubeMusicUrl'),
+      youtubeShowUrl:  val('youtubeShowUrl'),
+      price:         priceSel ? priceSel.value : '',
+      priceAmount:   val('priceAmount'),
+      props:         [...document.querySelectorAll('input[name="props"]:checked')].map(cb => cb.value),
+    };
+  }
+
+  function saveUploadDraft() {
+    try {
+      const d = collectDraft();
+      if (!d.showName && !d.songName && !d.description) {
+        showToast('Nothing to save yet. Fill in at least a show name.', 'warning');
+        return;
+      }
+      localStorage.setItem(DRAFT_KEY, JSON.stringify(d));
+      showToast('Draft saved. Come back any time to finish.', 'success');
+    } catch (e) {
+      console.warn('saveUploadDraft failed', e);
+      showToast('Could not save draft.', 'error');
+    }
+  }
+
+  function restoreUploadDraft(d) {
+    const set = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
+    set('showName', d.showName);
+    set('category', d.category);
+    set('description', d.description);
+    set('songName', d.songName);
+    set('duration', d.duration);
+    set('youtubeMusicUrl', d.youtubeMusicUrl);
+    set('youtubeShowUrl', d.youtubeShowUrl);
+    set('priceAmount', d.priceAmount);
+    if (d.price) {
+      const r = document.querySelector('input[name="price"][value="' + d.price + '"]');
+      if (r && !r.disabled) r.checked = true;
+    }
+    (d.props || []).forEach(v => {
+      const cb = document.querySelector('input[name="props"][value="' + v + '"]');
+      if (cb) cb.checked = true;
+    });
+    try { document.dispatchEvent(new Event('upload:draft-restored')); } catch (_) {}
+  }
+
+  function clearUploadDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (_) {} }
+
+  (function maybeOfferDraftRestore() {
+    document.addEventListener('DOMContentLoaded', () => {
+      let d = null;
+      try { d = JSON.parse(localStorage.getItem(DRAFT_KEY) || 'null'); } catch (_) {}
+      if (!d || !d.showName) return;
+      const bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;left:50%;top:80px;transform:translateX(-50%);background:#17171A;border:1px solid #D4A43A;border-radius:10px;padding:12px 18px;z-index:9999;display:flex;gap:12px;align-items:center;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:Inter,sans-serif;font-size:0.88rem;color:#F2F2F4;';
+      const when = new Date(d.savedAt || 0).toLocaleString();
+      bar.innerHTML = '<span>Draft found: <strong>' + (d.showName || '').replace(/[<>&]/g,'') + '</strong> <span style="color:#94a3b8;">(saved ' + when + ')</span></span>' +
+        '<button id="draftRestoreBtn" style="background:#D4A43A;color:#000;border:none;padding:6px 14px;border-radius:6px;font-weight:700;cursor:pointer;">Restore</button>' +
+        '<button id="draftDismissBtn" style="background:transparent;color:#94a3b8;border:1px solid #333;padding:6px 12px;border-radius:6px;cursor:pointer;">Discard</button>';
+      document.body.appendChild(bar);
+      document.getElementById('draftRestoreBtn').onclick = () => { restoreUploadDraft(d); bar.remove(); showToast('Draft restored.', 'success'); };
+      document.getElementById('draftDismissBtn').onclick = () => { clearUploadDraft(); bar.remove(); };
+    });
+  })();
 
   /* ─── FSEQ MODAL ─────────────────────────────────────────────────── */
   function openFseqModal()  { document.getElementById('fseqModal').classList.add('open'); }
