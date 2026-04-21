@@ -2039,164 +2039,7 @@
   }
 
   /* ─── MOCK DATA ──────────────────────────────────────────────────── */
-  const sequences = [
-    {
-      id: 1,
-      name: "Candy Cane Dream",
-      creator: "jwitchell",
-      duration: "3:42",
-      channels: 1024,
-      category: "christmas",
-      free: true,
-      downloads: 412,
-      price: null,
-      gradient: "linear-gradient(135deg, #c8000a 0%, #ffffff 50%, #c8000a 100%)",
-      glow: "rgba(200,0,10,0.3)"
-    },
-    {
-      id: 2,
-      name: "Star-Spangled Roofline",
-      creator: "patriot_pixels",
-      duration: "4:18",
-      channels: 768,
-      category: "patriotic",
-      free: false,
-      downloads: 287,
-      price: 9.98,
-      gradient: "linear-gradient(135deg, #3c3b6e 0%, #b22234 50%, #ffffff 100%)",
-      glow: "rgba(178,34,52,0.3)"
-    },
-    {
-      id: 3,
-      name: "Spooky Strobe-Free",
-      creator: "HauntMaster",
-      duration: "2:55",
-      channels: 512,
-      category: "halloween",
-      free: true,
-      downloads: 634,
-      price: null,
-      gradient: "linear-gradient(135deg, #1a0030 0%, #ff6600 60%, #000000 100%)",
-      glow: "rgba(255,102,0,0.3)"
-    },
-    {
-      id: 4,
-      name: "Winter Wonderland Chase",
-      creator: "ShaneW_Lights",
-      duration: "5:10",
-      channels: 2048,
-      category: "christmas",
-      free: false,
-      downloads: 198,
-      price: 13.98,
-      gradient: "linear-gradient(135deg, #001a33 0%, #ffffff 40%, #D4A43A 100%)",
-      glow: "rgba(212,164,58,0.35)"
-    },
-    {
-      id: 5,
-      name: "Firecracker Finale",
-      creator: "UTpixels",
-      duration: "6:02",
-      channels: 1536,
-      category: "fourth",
-      free: false,
-      downloads: 321,
-      price: 15.98,
-      gradient: "linear-gradient(135deg, #ff0000 0%, #ffffff 50%, #0000cc 100%)",
-      glow: "rgba(255,0,0,0.25)"
-    },
-    {
-      id: 6,
-      name: "Pumpkin Pulse",
-      creator: "HauntMaster",
-      duration: "3:28",
-      channels: 512,
-      category: "halloween",
-      free: true,
-      downloads: 509,
-      price: null,
-      gradient: "linear-gradient(135deg, #2a0000 0%, #ff6600 45%, #3d0066 100%)",
-      glow: "rgba(255,102,0,0.25)"
-    },
-    {
-      id: 7,
-      name: "Be My Valentine",
-      creator: "HeartBeat_Shows",
-      duration: "2:44",
-      channels: 640,
-      category: "valentine",
-      free: true,
-      downloads: 183,
-      price: null,
-      gradient: "linear-gradient(135deg, #3d001a 0%, #ff1a6b 50%, #ffffff 100%)",
-      glow: "rgba(255,26,107,0.3)"
-    },
-    {
-      id: 8,
-      name: "Northern Lights Effect",
-      creator: "AuroraCraft",
-      duration: "4:55",
-      channels: 1024,
-      category: "christmas",
-      free: false,
-      downloads: 445,
-      price: 11.98,
-      gradient: "linear-gradient(135deg, #001a00 0%, #00ff88 40%, #0066ff 100%)",
-      glow: "rgba(0,255,136,0.2)"
-    },
-    {
-      id: 9,
-      name: "Freedom Waves",
-      creator: "patriot_pixels",
-      duration: "3:12",
-      channels: 768,
-      category: "patriotic",
-      free: true,
-      downloads: 267,
-      price: null,
-      gradient: "linear-gradient(135deg, #b22234 0%, #ffffff 35%, #3c3b6e 100%)",
-      glow: "rgba(60,59,110,0.3)"
-    },
-    {
-      id: 10,
-      name: "Twinkle & Sparkle",
-      creator: "jwitchell",
-      duration: "2:30",
-      channels: 256,
-      category: "christmas",
-      free: true,
-      downloads: 871,
-      price: null,
-      gradient: "linear-gradient(135deg, #0a001a 0%, #ffffff 50%, #D4A43A 100%)",
-      glow: "rgba(200,255,255,0.2)"
-    },
-    {
-      id: 11,
-      name: "Rocket's Red Glare",
-      creator: "UTpixels",
-      duration: "5:30",
-      channels: 1280,
-      category: "fourth",
-      free: false,
-      downloads: 156,
-      price: 9.98,
-      gradient: "linear-gradient(135deg, #ff0000 0%, #ffff00 50%, #ff0000 100%)",
-      glow: "rgba(255,200,0,0.25)"
-    },
-    {
-      id: 12,
-      name: "Haunted Mansion Fade",
-      creator: "ShadowPixels",
-      duration: "4:05",
-      channels: 896,
-      category: "halloween",
-      free: false,
-      downloads: 312,
-      price: 7.98,
-      gradient: "linear-gradient(135deg, #0d0005 0%, #6600aa 50%, #1a0000 100%)",
-      glow: "rgba(102,0,170,0.3)"
-    }
-  ];
+  const sequences = [];  // Seed data removed. Individual shows load live from Firestore.
 
   /* ─── STATE ──────────────────────────────────────────────────────── */
   let activeFilter = 'all';
@@ -2215,7 +2058,7 @@
            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
            Download
          </button>`
-      : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" onclick="event.stopPropagation();handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy $${seq.price.toFixed(2)}</button>`;
+      : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" onclick="event.stopPropagation();handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy ${'$' + seq.price.toFixed(2)}</button>`;
 
     const isTrending = seq.downloads >= 450;
     const hotBadge = isTrending
@@ -2686,7 +2529,7 @@
     } catch (err) {
       console.error('checkout error:', err);
       showToast('Payment unavailable. Please try again shortly.', true);
-      if (btn) { btn.textContent = `$${price.toFixed(2)}`; btn.disabled = false; }
+      if (btn) { btn.textContent = '$' + price.toFixed(2); btn.disabled = false; }
     }
   }
 
@@ -2823,7 +2666,7 @@
             ${seq.hasMp3 && price > 0 ? '<div style="font-size:0.8rem;color:#94a3b8;">Includes FSEQ + MP3</div>' : ''}
           </div>
           ${price > 0
-            ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#D4A43A;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy $${price.toFixed(2)}</button>`
+            ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#D4A43A;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy ${'$' + price.toFixed(2)}</button>`
             : `<button onclick="handleDownload(event,'${esc(String(seq.id))}');closeDrawer();" style="width:100%;background:#4ade80;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Download Free</button>`
           }
         </div>
@@ -3011,6 +2854,84 @@
     if (params.get('purchase') === 'cancelled') {
       history.replaceState({}, '', window.location.pathname);
       showToast('Checkout cancelled. Your cart was not charged.', true);
+    }
+  })();
+
+  /* ─── LIVE FIRESTORE MARKETPLACE LOADER ─────────────────────────────
+     Bug fix: the seed `sequences` array above is kept only as a fallback.
+     We stream every published doc from Firestore and merge into `sequences`,
+     then re-render. `onSnapshot` keeps the grid live without reload.
+  ──────────────────────────────────────────────────────────────────── */
+  function _hashGradient(id) {
+    // Deterministic procedural gradient based on a string/number id hash.
+    const str = String(id || '');
+    let h = 0;
+    for (let i = 0; i < str.length; i++) h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+    const h1 = Math.abs(h) % 360;
+    const h2 = (h1 + 60 + (Math.abs(h >> 3) % 120)) % 360;
+    return `linear-gradient(135deg, hsl(${h1},60%,14%) 0%, hsl(${h2},65%,45%) 55%, hsl(${(h1+200)%360},55%,20%) 100%)`;
+  }
+
+  function _secsToDuration(secs) {
+    const s = Math.max(0, Math.floor(Number(secs) || 0));
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  function _firestoreDocToSeq(doc) {
+    const d = doc.data() || {};
+    const price = Number(d.price) || 0;
+    const isFree = d.isFree === true || price === 0;
+    return {
+      id:        d.id || doc.id,
+      name:      d.name || 'Untitled Show',
+      creator:   d.creator || 'Community',
+      duration:  _secsToDuration(d.durationSecs),
+      channels:  Number(d.channelCount) || 512,
+      category:  d.category || 'other',
+      free:      isFree,
+      downloads: Number(d.downloadCount) || 0,
+      price:     isFree ? null : price,
+      gradient:  _hashGradient(d.id || doc.id),
+      glow:      'rgba(212,164,58,0.3)',
+      hasMp3:    d.hasMp3 === true,
+      _live:     true
+    };
+  }
+
+  function _mergeLiveDocs(docs) {
+    // Remove any previously-merged live docs so we don't duplicate on update.
+    for (let i = sequences.length - 1; i >= 0; i--) {
+      if (sequences[i] && sequences[i]._live) sequences.splice(i, 1);
+    }
+    // Prepend live docs so newly published shows surface first.
+    const mapped = docs.map(_firestoreDocToSeq);
+    // Newest first (docs already ordered desc by createdAt).
+    for (let j = mapped.length - 1; j >= 0; j--) sequences.unshift(mapped[j]);
+  }
+
+  (function subscribeLiveMarketplace() {
+    if (typeof firebase === 'undefined' || !firebase.firestore) return;
+    try {
+      firebase.firestore()
+        .collection('sequences')
+        .where('status', '==', 'published')
+        .orderBy('createdAt', 'desc')
+        .limit(200)
+        .onSnapshot(
+          snap => {
+            const docs = [];
+            snap.forEach(d => docs.push(d));
+            _mergeLiveDocs(docs);
+            render();
+          },
+          err => {
+            console.warn('[marketplace] Firestore live query failed; keeping seed data.', err);
+          }
+        );
+    } catch (err) {
+      console.warn('[marketplace] subscribeLiveMarketplace threw; keeping seed data.', err);
     }
   })();
 
