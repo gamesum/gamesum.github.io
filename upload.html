@@ -1234,15 +1234,15 @@
                 <div class="price-label-sub">Anyone can download</div>
               </label>
             </div>
-            <div class="price-option-wrap gated">
+            <div class="price-option-wrap gated" id="pricePremiumWrap">
               <input type="radio" name="price" id="pricePremium" class="price-radio" value="premium" disabled />
               <label for="pricePremium" class="price-label">
                 <div class="price-label-icon">💰</div>
                 <div class="price-label-title">Premium ($)</div>
                 <div class="price-label-sub">Earn on every download</div>
               </label>
-              <div class="price-gated-badge">Pending approval</div>
-              <div class="price-gated-tooltip">Premium uploads require account verification. Contact us to get verified.</div>
+              <div class="price-gated-badge" id="pricePremiumBadge">Verify email</div>
+              <div class="price-gated-tooltip" id="pricePremiumTooltip">Verify your email in your <a href="my-library.html#verify" style="color:#D4A43A;text-decoration:underline;">dashboard</a> to unlock Premium uploads.</div>
             </div>
           </div>
 
@@ -1401,6 +1401,7 @@
         window.location.replace('signin.html?redirect=upload.html');
         return;
       }
+      applyPremiumGate(user);
     });
 
     initDropZone();
@@ -1606,6 +1607,57 @@
     document.querySelectorAll('input[name="price"]').forEach(radio => {
       radio.addEventListener('change', updatePriceUI);
     });
+    // Intercept clicks on the gated Premium option for unverified users
+    const premiumWrap = document.getElementById('pricePremiumWrap');
+    if (premiumWrap) {
+      premiumWrap.addEventListener('click', (e) => {
+        const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+        if (!fbUser || !fbUser.emailVerified) {
+          e.preventDefault();
+          showGateToast('Email verification required. Visit your dashboard to verify.');
+        }
+      }, true);
+    }
+  }
+
+  function applyPremiumGate(fbUser) {
+    const wrap   = document.getElementById('pricePremiumWrap');
+    const radio  = document.getElementById('pricePremium');
+    const badge  = document.getElementById('pricePremiumBadge');
+    if (!wrap || !radio) return;
+    const verified = !!(fbUser && fbUser.emailVerified);
+    if (verified) {
+      wrap.classList.remove('gated');
+      radio.disabled = false;
+      if (badge) badge.style.display = 'none';
+    } else {
+      wrap.classList.add('gated');
+      radio.disabled = true;
+      radio.checked  = false;
+      if (badge) badge.style.display = '';
+      // Ensure Free remains selected if Premium was active
+      const free = document.getElementById('priceFree');
+      if (free && !document.querySelector('input[name="price"]:checked')) free.checked = true;
+      updatePriceUI();
+    }
+  }
+
+  function showGateToast(msg) {
+    // Minimal inline toast, independent of any page-level toast system
+    let t = document.getElementById('uploadGateToast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'uploadGateToast';
+      t.style.cssText = 'position:fixed;left:50%;bottom:28px;transform:translateX(-50%);' +
+        'background:#17171A;color:#F2F2F4;border:1px solid #F0C04A;border-radius:10px;' +
+        'padding:12px 18px;font-family:Inter,sans-serif;font-size:0.88rem;z-index:9999;' +
+        'box-shadow:0 8px 24px rgba(0,0,0,0.5);opacity:0;transition:opacity 0.2s;';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    requestAnimationFrame(() => { t.style.opacity = '1'; });
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(() => { t.style.opacity = '0'; }, 3200);
   }
 
   function updatePriceUI() {

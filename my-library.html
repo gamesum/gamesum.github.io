@@ -391,6 +391,105 @@
       padding: 3px 10px;
     }
 
+    /* ─── ACCOUNT VERIFICATION CARD ───────────────────────────────── */
+    .verify-card {
+      background: #17171A;
+      border: 1px solid #2A2A32;
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin-bottom: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 16px;
+      color: #F2F2F4;
+    }
+    .verify-card-body { flex: 1 1 320px; min-width: 0; }
+    .verify-card-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .verify-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.02rem;
+      font-weight: 600;
+      margin: 0;
+      color: #F2F2F4;
+      letter-spacing: -0.01em;
+    }
+    .verify-card p {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.86rem;
+      line-height: 1.5;
+      margin: 0;
+      color: #9A9AA2;
+    }
+    .verify-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+    .verify-pill.unverified {
+      background: rgba(240, 192, 74, 0.12);
+      color: #F0C04A;
+      border: 1px solid rgba(240, 192, 74, 0.35);
+    }
+    .verify-pill.verified {
+      background: rgba(61, 203, 115, 0.12);
+      color: #3DCB73;
+      border: 1px solid rgba(61, 203, 115, 0.35);
+    }
+    .verify-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+    .verify-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .verify-btn-primary {
+      background: #D4A43A;
+      color: #17171A;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      font-size: 0.86rem;
+      padding: 10px 18px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .verify-btn-primary:hover { background: #E0B452; }
+    .verify-btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+    .verify-btn-ghost {
+      background: transparent;
+      color: #F2F2F4;
+      border: 1px solid #2A2A32;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      font-size: 0.82rem;
+      padding: 9px 14px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .verify-btn-ghost:hover { border-color: #D4A43A; color: #D4A43A; }
+    .verify-sent-note {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: #9A9AA2;
+      margin-top: 10px;
+    }
+    .verify-sent-note strong { color: #F2F2F4; font-weight: 600; }
+
     /* ─── COLLECTIONS TOOLBAR ─────────────────────────────────────── */
     .collections-bar {
       display: flex;
@@ -1160,6 +1259,28 @@
 
   <div class="container">
 
+    <!-- Account Verification card -->
+    <div class="verify-card" id="verifyCard" style="display:none;" data-state="unverified">
+      <div class="verify-card-body">
+        <div class="verify-card-head">
+          <span class="verify-pill unverified" id="verifyPill">
+            <span class="verify-pill-dot"></span>
+            <span id="verifyPillText">Unverified</span>
+          </span>
+        </div>
+        <a id="verifyAnchor" style="position:relative;top:-80px;visibility:hidden;" name="verify"></a>
+        <h3 id="verifyHeading">Verify your email to sell shows</h3>
+        <p id="verifyBody">Verified creators can publish Premium ($) shows on the Store. It only takes a minute.</p>
+        <div class="verify-sent-note" id="verifySentNote" style="display:none;">
+          <strong>Check your inbox.</strong> Link expires in 1 hour.
+        </div>
+      </div>
+      <div class="verify-actions" id="verifyActions">
+        <button type="button" class="verify-btn-primary" id="verifySendBtn" onclick="sendVerificationEmail()">Send verification email</button>
+        <button type="button" class="verify-btn-ghost" id="verifyResendBtn" onclick="sendVerificationEmail(true)" style="display:none;">Resend</button>
+      </div>
+    </div>
+
     <!-- Collections toolbar -->
     <div class="collections-bar" id="collectionsBar">
       <span class="collections-bar-label">Collections</span>
@@ -1357,6 +1478,99 @@
     document.getElementById('profileEmail').textContent  = currentUser.email || '';
 
     renderSections();
+    renderVerifyCard();
+  }
+
+  /* ─── EMAIL VERIFICATION (self-serve) ─────────────────────────── */
+  let _verifyPollTimer = null;
+  let _verifyPollCount = 0;
+
+  function renderVerifyCard() {
+    const card = document.getElementById('verifyCard');
+    if (!card) return;
+    const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    // Card only shown to signed-in Firebase users (emailVerified only meaningful there)
+    if (!fbUser) { card.style.display = 'none'; return; }
+    card.style.display = 'flex';
+
+    const pill        = document.getElementById('verifyPill');
+    const pillText    = document.getElementById('verifyPillText');
+    const heading     = document.getElementById('verifyHeading');
+    const body        = document.getElementById('verifyBody');
+    const sendBtn     = document.getElementById('verifySendBtn');
+    const resendBtn   = document.getElementById('verifyResendBtn');
+    const sentNote    = document.getElementById('verifySentNote');
+
+    if (fbUser.emailVerified) {
+      card.dataset.state = 'verified';
+      pill.classList.remove('unverified');
+      pill.classList.add('verified');
+      pillText.textContent = 'Verified';
+      heading.textContent  = "You're a verified creator";
+      body.textContent     = 'You can publish Premium shows on the Store.';
+      sendBtn.style.display   = 'none';
+      resendBtn.style.display = 'none';
+      sentNote.style.display  = 'none';
+      stopVerifyPoll();
+    } else {
+      card.dataset.state = 'unverified';
+      pill.classList.remove('verified');
+      pill.classList.add('unverified');
+      pillText.textContent = 'Unverified';
+      heading.textContent  = 'Verify your email to sell shows';
+      body.textContent     = 'Verified creators can publish Premium ($) shows on the Store. It only takes a minute.';
+      sendBtn.style.display = '';
+    }
+  }
+
+  async function sendVerificationEmail(isResend) {
+    const sendBtn   = document.getElementById('verifySendBtn');
+    const resendBtn = document.getElementById('verifyResendBtn');
+    const sentNote  = document.getElementById('verifySentNote');
+    const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    if (!fbUser) { showToast('Please sign in again to verify your email.', 'warning'); return; }
+
+    const target = isResend ? resendBtn : sendBtn;
+    if (target) target.disabled = true;
+    try {
+      await fbUser.sendEmailVerification();
+      sentNote.style.display  = '';
+      sendBtn.style.display   = 'none';
+      resendBtn.style.display = '';
+      showToast(isResend ? 'Verification email resent.' : 'Verification email sent.');
+      startVerifyPoll();
+    } catch (err) {
+      console.warn('sendEmailVerification failed:', err);
+      const msg = (err && err.code === 'auth/too-many-requests')
+        ? 'Too many attempts. Please wait a minute and try again.'
+        : 'Could not send verification email. Please try again.';
+      showToast(msg, 'warning');
+    } finally {
+      if (target) target.disabled = false;
+    }
+  }
+
+  function startVerifyPoll() {
+    stopVerifyPoll();
+    _verifyPollCount = 0;
+    _verifyPollTimer = setInterval(async () => {
+      _verifyPollCount++;
+      const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+      if (!fbUser) { stopVerifyPoll(); return; }
+      try {
+        await fbUser.reload();
+        if (fbUser.emailVerified) {
+          stopVerifyPoll();
+          renderVerifyCard();
+          showToast("You're verified. Premium uploads unlocked.");
+        }
+      } catch (e) { /* non-fatal */ }
+      // 8s interval, up to 2 minutes = 15 polls
+      if (_verifyPollCount >= 15) stopVerifyPoll();
+    }, 8000);
+  }
+  function stopVerifyPoll() {
+    if (_verifyPollTimer) { clearInterval(_verifyPollTimer); _verifyPollTimer = null; }
   }
 
   /* ─── DISPLAY NAME EDITING ────────────────────────────────────── */
@@ -2203,6 +2417,14 @@
               document.getElementById('authCheck').style.display = 'none';
               document.getElementById('pageContent').style.display = 'block';
               renderSections();
+            }
+            renderVerifyCard();
+            // Auto-scroll to verify card when linked with #verify
+            if (window.location.hash === '#verify') {
+              setTimeout(() => {
+                const el = document.getElementById('verifyCard');
+                if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              }, 150);
             }
           } else {
             // Firebase says no active session
