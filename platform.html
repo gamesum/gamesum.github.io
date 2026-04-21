@@ -2927,7 +2927,7 @@
     try {
       firebase.firestore()
         .collection('sequences')
-        .where('status', '==', 'published')
+        .where('status', 'in', ['published', 'pending_upload', 'pending_review'])
         .orderBy('createdAt', 'desc')
         .limit(200)
         .onSnapshot(
