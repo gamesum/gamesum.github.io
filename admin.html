@@ -328,6 +328,9 @@
       <button class="tab-chip" data-tab="uploads">Uploads</button>
       <button class="tab-chip" data-tab="purchases">Purchases</button>
       <button class="tab-chip" data-tab="disputes">Disputes</button>
+      <button class="tab-chip" data-tab="dmca">DMCA</button>
+      <button class="tab-chip" data-tab="data-requests">Data Requests</button>
+      <button class="tab-chip" data-tab="audit">Audit Log</button>
     </div>
 
     <!-- STATS -->
@@ -454,6 +457,92 @@
             </thead>
             <tbody id="disputesBody">
               <tr><td colspan="7" class="empty-row">Loading disputes.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- DMCA -->
+    <section class="section" id="section-dmca">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">DMCA notices</div>
+          <div class="panel-tools">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn btn-sm dmca-filter active" data-dmca-filter="all">All</button>
+              <button class="btn btn-sm dmca-filter" data-dmca-filter="pending">Pending</button>
+              <button class="btn btn-sm dmca-filter" data-dmca-filter="valid">Valid</button>
+              <button class="btn btn-sm dmca-filter" data-dmca-filter="invalid">Invalid</button>
+              <button class="btn btn-sm dmca-filter" data-dmca-filter="forwarded">Forwarded</button>
+              <button class="btn btn-sm dmca-filter" data-dmca-filter="counter_noticed">Counter-Noticed</button>
+              <button class="btn btn-sm dmca-filter" data-dmca-filter="closed">Closed</button>
+            </div>
+            <button class="btn btn-sm" id="refreshDmca">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Claimant</th><th>Type</th><th>Target</th><th>Submitted</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="dmcaBody">
+              <tr><td colspan="6" class="empty-row">Loading DMCA notices.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- DATA REQUESTS -->
+    <section class="section" id="section-data-requests">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">GDPR / CCPA data requests</div>
+          <div class="panel-tools">
+            <button class="btn btn-sm" id="refreshDataReq">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th><th>Type</th><th>Status</th><th>Requested</th><th>Scheduled / completed</th><th>Initiator</th>
+              </tr>
+            </thead>
+            <tbody id="dataReqBody">
+              <tr><td colspan="6" class="empty-row">Loading data requests.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUDIT LOG -->
+    <section class="section" id="section-audit">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Admin audit log</div>
+          <div class="panel-tools">
+            <div class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="auditSearch" placeholder="Search action, actor, target" autocomplete="off" />
+            </div>
+            <button class="btn btn-sm" id="exportAuditCsv">Export CSV</button>
+            <button class="btn btn-sm" id="refreshAudit">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>When</th><th>Actor</th><th>Action</th><th>Target</th><th>Reason</th><th>ToS</th>
+              </tr>
+            </thead>
+            <tbody id="auditBody">
+              <tr><td colspan="6" class="empty-row">Loading audit log.</td></tr>
             </tbody>
           </table>
         </div>
@@ -612,33 +701,70 @@
 
   /* ─── Load everything on dashboard init ────────────────────────── */
   async function initDashboard() {
-    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes()]);
+    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadAudit()]);
     renderStats();
   }
 
   /* ─── Users ────────────────────────────────────────────────────── */
+  let payoutsByUid = {};
+
   async function loadUsers() {
     const body = document.getElementById('usersBody');
-    body.innerHTML = '<tr><td colspan="6" class="empty-row">Loading users.</td></tr>';
+    body.innerHTML = '<tr><td colspan="7" class="empty-row">Loading users.</td></tr>';
     try {
-      const res = await call('adminListUsers', {});
+      const [res, payoutsRes] = await Promise.all([
+        call('adminListUsers', {}),
+        call('adminListCreatorsPayoutStatus', {}).catch(() => ({ creators: [] })),
+      ]);
       usersCache = res.users || [];
+      payoutsByUid = {};
+      (payoutsRes.creators || []).forEach(c => { payoutsByUid[c.uid] = c; });
       renderUsers();
     } catch (err) {
       console.error(err);
-      body.innerHTML = '<tr><td colspan="6" class="empty-row">Failed to load users. ' + esc(err.message || '') + '</td></tr>';
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">Failed to load users. ' + esc(err.message || '') + '</td></tr>';
     }
+  }
+
+  function payoutCell(u) {
+    const p = payoutsByUid[u.uid] || {};
+    const status = p.onboardingStatus || null;
+    const acctLink = p.stripeAccountId
+      ? '<a href="https://dashboard.stripe.com/test/connect/accounts/'+esc(p.stripeAccountId)+'" target="_blank" rel="noopener" class="cell-sub mono" style="color:var(--gold);text-decoration:underline;">'+esc(p.stripeAccountId)+'</a>'
+      : '';
+    let pill;
+    if (!p.stripeAccountId)          pill = '<span class="pill pill-unverified">Not set up</span>';
+    else if (status === 'complete')  pill = '<span class="pill pill-verified">Active</span>';
+    else if (status === 'review')    pill = '<span class="pill pill-user">Review</span>';
+    else                             pill = '<span class="pill pill-unverified">Pending</span>';
+    const flags = [];
+    if (p.detailsSubmitted) flags.push('details');
+    if (p.chargesEnabled)   flags.push('charges');
+    if (p.payoutsEnabled)   flags.push('payouts');
+    const sub = flags.length ? '<div class="cell-sub">'+flags.join(' . ')+'</div>' : '';
+    return '<td>' + pill + (acctLink ? '<div>'+acctLink+'</div>' : '') + sub + '</td>';
+  }
+
+  function isPayoutsPending(u) {
+    const p = payoutsByUid[u.uid] || {};
+    // A creator "pending setup" = role is creator or admin AND either no
+    // stripeAccountId or onboardingStatus != complete.
+    const isCreator = u.role === 'creator' || u.role === 'admin';
+    if (!isCreator) return false;
+    return !p.stripeAccountId || p.onboardingStatus !== 'complete';
   }
 
   function renderUsers() {
     const body  = document.getElementById('usersBody');
     const q     = (document.getElementById('userSearch').value || '').trim().toLowerCase();
+    const filterPending = document.getElementById('filterPayoutsPending').checked;
     const rows  = usersCache.filter(u => {
+      if (filterPending && !isPayoutsPending(u)) return false;
       if (!q) return true;
       return (u.email || '').toLowerCase().includes(q) || (u.displayName || '').toLowerCase().includes(q);
     });
     if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="6" class="empty-row">No users match.</td></tr>';
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">No users match.</td></tr>';
       return;
     }
     body.innerHTML = rows.map(u => {
@@ -671,6 +797,7 @@
         + '<td>'+esc(fmtDate(u.createdAt))+'</td>'
         + '<td>'+verified+'</td>'
         + '<td>'+rolePill+'</td>'
+        + payoutCell(u)
         + '<td><div class="actions">'+acts.join('')+'</div></td>'
         + '</tr>';
     }).join('');
@@ -699,6 +826,7 @@
   };
 
   document.getElementById('userSearch').addEventListener('input', renderUsers);
+  document.getElementById('filterPayoutsPending').addEventListener('change', renderUsers);
   document.getElementById('refreshUsers').addEventListener('click', loadUsers);
 
   /* ─── Uploads ──────────────────────────────────────────────────── */
@@ -946,6 +1074,218 @@
   }
 
   document.getElementById('refreshDisputes').addEventListener('click', loadDisputes);
+
+  /* ─── DMCA notices ─────────────────────────────────────────────── */
+  let dmcaCache = [];
+  let dmcaFilter = 'all';
+
+  async function loadDmca() {
+    const body = document.getElementById('dmcaBody');
+    body.innerHTML = '<tr><td colspan="6" class="empty-row">Loading DMCA notices.</td></tr>';
+    try {
+      const snap = await fbFirestore.collection('dmca_notices').orderBy('submittedAt', 'desc').limit(500).get();
+      dmcaCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      renderDmca();
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">Failed to load DMCA notices. '+esc(err.message||'')+'</td></tr>';
+    }
+  }
+
+  function dmcaStatusPill(s) {
+    const map = {
+      pending: 'pill-pending',
+      valid: 'pill-approved',
+      invalid: 'pill-rejected',
+      forwarded: 'pill-creator',
+      counter_noticed: 'pill-creator',
+      closed: 'pill-pending',
+    };
+    const cls = map[s] || 'pill-pending';
+    return '<span class="pill '+cls+'">'+esc((s||'pending').replace('_',' '))+'</span>';
+  }
+
+  function renderDmca() {
+    const body = document.getElementById('dmcaBody');
+    const rows = dmcaCache.filter(n => dmcaFilter === 'all' ? true : n.status === dmcaFilter);
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">No DMCA notices match.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(n => {
+      const id = n._id;
+      const acts = [];
+      if (n.status === 'pending' || n.status === 'forwarded') {
+        acts.push('<button class="btn btn-sm btn-danger" onclick="dmcaAct(\''+esc(id)+'\',\'takedown\')">Takedown</button>');
+        acts.push('<button class="btn btn-sm" onclick="dmcaAct(\''+esc(id)+'\',\'reject\')">Reject</button>');
+        if (n.status === 'pending') acts.push('<button class="btn btn-sm" onclick="dmcaAct(\''+esc(id)+'\',\'forward_to_creator\')">Forward to creator</button>');
+      }
+      if (n.status === 'forwarded') {
+        acts.push('<button class="btn btn-sm btn-success" onclick="dmcaAct(\''+esc(id)+'\',\'restore\')">Restore</button>');
+      }
+      if (n.status !== 'closed') {
+        acts.push('<button class="btn btn-sm" onclick="dmcaAct(\''+esc(id)+'\',\'close\')">Close</button>');
+      }
+      return '<tr>'
+        + '<td><div class="cell-email">'+esc(n.claimantName||'.')+'</div><div class="cell-sub">'+esc(n.claimantEmail||'')+'</div></td>'
+        + '<td>'+esc(n.type||'takedown')+'</td>'
+        + '<td><div class="mono" style="max-width:320px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">'+esc(n.infringingUrl||'.')+'</div>'
+          + (n.affectedSequence ? '<div class="cell-sub mono">seq: '+esc(n.affectedSequence)+'</div>' : '')+'</td>'
+        + '<td>'+esc(fmtDate(n.submittedAt))+'</td>'
+        + '<td>'+dmcaStatusPill(n.status)+'</td>'
+        + '<td><div class="actions">'+acts.join('')+'</div></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.dmcaAct = async function(noticeId, action) {
+    let reason = '';
+    let sequenceId = '';
+    let tosClause = '';
+    if (action === 'takedown') {
+      reason = prompt('Reason for takedown (shown in audit):') || '';
+      const notice = dmcaCache.find(n => n._id === noticeId);
+      let auto = '';
+      if (notice && notice.infringingUrl) {
+        const m = notice.infringingUrl.match(/([a-zA-Z0-9_-]{6,128})/);
+        if (m) auto = m[1];
+      }
+      sequenceId = prompt('Target sequenceId (leave blank to auto-detect):', auto) || '';
+      tosClause = prompt('ToS clause cited (optional, e.g. 4.2):') || '';
+    } else if (action === 'reject') {
+      reason = prompt('Reason for rejection (shown in audit):') || '';
+    } else if (action === 'restore') {
+      const notice = dmcaCache.find(n => n._id === noticeId);
+      sequenceId = prompt('sequenceId to restore:', (notice && notice.affectedSequence) || '') || '';
+      reason = prompt('Restore reason (optional):') || '';
+    } else if (action === 'close') {
+      reason = prompt('Close reason (optional):') || '';
+    } else if (action === 'forward_to_creator') {
+      reason = prompt('Note for audit (optional):') || '';
+    }
+    try {
+      await call('adminDmcaAction', { noticeId, action, reason, sequenceId, tosClause });
+      toast('DMCA ' + action + ' complete.', 'success');
+      await loadDmca();
+      await loadAudit();
+    } catch (err) {
+      toast('Failed: ' + (err.message || 'error'), 'error');
+    }
+  };
+
+  document.querySelectorAll('.dmca-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.dmca-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      dmcaFilter = btn.dataset.dmcaFilter;
+      renderDmca();
+    });
+  });
+  document.getElementById('refreshDmca').addEventListener('click', loadDmca);
+
+  /* ─── Data requests ────────────────────────────────────────────── */
+  let dataReqCache = [];
+  async function loadDataRequests() {
+    const body = document.getElementById('dataReqBody');
+    body.innerHTML = '<tr><td colspan="6" class="empty-row">Loading data requests.</td></tr>';
+    try {
+      const snap = await fbFirestore.collection('data_requests').orderBy('createdAt', 'desc').limit(300).get();
+      dataReqCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      renderDataRequests();
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">Failed to load data requests. '+esc(err.message||'')+'</td></tr>';
+    }
+  }
+  function renderDataRequests() {
+    const body = document.getElementById('dataReqBody');
+    if (!dataReqCache.length) {
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">No data requests yet.</td></tr>';
+      return;
+    }
+    body.innerHTML = dataReqCache.map(r => {
+      const when = r.scheduledFor ? fmtDate(r.scheduledFor) : (r.completedAt ? fmtDate(r.completedAt) : '.');
+      const cls = r.status === 'completed' ? 'pill-approved'
+                : r.status === 'pending' ? 'pill-pending'
+                : r.status === 'cancelled' ? 'pill-rejected'
+                : r.status === 'failed' ? 'pill-rejected'
+                : 'pill-pending';
+      return '<tr>'
+        + '<td class="mono">'+esc(r.uid||'.')+'</td>'
+        + '<td>'+esc(r.type||'.')+'</td>'
+        + '<td><span class="pill '+cls+'">'+esc(r.status||'.')+'</span></td>'
+        + '<td>'+esc(fmtDate(r.requestedAt || r.createdAt))+'</td>'
+        + '<td>'+esc(when)+'</td>'
+        + '<td>'+esc(r.initiatedBy||'user')+(r.adminActor ? ' <span class="cell-sub mono">'+esc(r.adminActor)+'</span>' : '')+'</td>'
+        + '</tr>';
+    }).join('');
+  }
+  document.getElementById('refreshDataReq').addEventListener('click', loadDataRequests);
+
+  /* ─── Audit log ───────────────────────────────────────────────── */
+  let auditCache = [];
+  async function loadAudit() {
+    const body = document.getElementById('auditBody');
+    body.innerHTML = '<tr><td colspan="6" class="empty-row">Loading audit log.</td></tr>';
+    try {
+      const snap = await fbFirestore.collection('admin_audit').orderBy('createdAt', 'desc').limit(500).get();
+      auditCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      renderAudit();
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">Failed to load audit log. '+esc(err.message||'')+'</td></tr>';
+    }
+  }
+  function renderAudit() {
+    const body = document.getElementById('auditBody');
+    const q = (document.getElementById('auditSearch').value || '').trim().toLowerCase();
+    const rows = auditCache.filter(a => {
+      if (!q) return true;
+      return (a.action||'').toLowerCase().includes(q)
+          || (a.actor||'').toLowerCase().includes(q)
+          || (a.target||'').toLowerCase().includes(q)
+          || (a.reason||'').toLowerCase().includes(q);
+    });
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">No audit entries match.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(a => {
+      return '<tr>'
+        + '<td>'+esc(fmtDate(a.createdAt))+'</td>'
+        + '<td class="mono">'+esc(a.actor||'.')+'</td>'
+        + '<td><code style="font-size:0.78rem;">'+esc(a.action||'.')+'</code></td>'
+        + '<td><div class="mono" style="max-width:220px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(a.target||'.')+'</div>'
+          + (a.targetCollection ? '<div class="cell-sub">'+esc(a.targetCollection)+'</div>' : '')+'</td>'
+        + '<td><div style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(a.reason||'')+'</div></td>'
+        + '<td>'+esc(a.tosClause||'')+'</td>'
+        + '</tr>';
+    }).join('');
+  }
+  function exportAuditCsv() {
+    const header = ['createdAt','actor','action','target','targetCollection','reason','tosClause','actorIp'];
+    const lines = [header.join(',')];
+    auditCache.forEach(a => {
+      const d = a.createdAt && typeof a.createdAt.toDate === 'function'
+        ? a.createdAt.toDate().toISOString()
+        : (a.createdAt && a.createdAt.seconds ? new Date(a.createdAt.seconds * 1000).toISOString() : '');
+      const row = [d, a.actor||'', a.action||'', a.target||'', a.targetCollection||'', a.reason||'', a.tosClause||'', a.actorIp||''];
+      lines.push(row.map(v => {
+        const s = String(v).replace(/"/g,'""');
+        return /[",\n]/.test(s) ? '"'+s+'"' : s;
+      }).join(','));
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'afterglo-audit-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('Audit CSV exported.', 'success');
+  }
+  document.getElementById('auditSearch').addEventListener('input', renderAudit);
+  document.getElementById('refreshAudit').addEventListener('click', loadAudit);
+  document.getElementById('exportAuditCsv').addEventListener('click', exportAuditCsv);
 
   function exportPurchasesCsv() {
     const header = ['buyer_uid','sequence_id','sequence_name','creator','amount','stripe_session_id','purchased_at'];

@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
+exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -1394,5 +1394,591 @@ exports.adminListCreatorsPayoutStatus = functions.https.onCall(async (_data, con
     });
     await writeAdminAudit("listCreatorsPayoutStatus", actor, { count: rows.length });
     return { creators: rows };
+});
+// ─── DMCA / GDPR / CCPA / AUDIT ───────────────────────────────────────────────
+// Constants
+const DMCA_AGENT_EMAIL = "dmca@afterglolighting.org";
+const CREATOR_AGREEMENT_VERSION = "2026-04-21";
+const DATA_DELETION_GRACE_DAYS = 30;
+// Writes a canonical audit record. `before`/`after` are optional snapshots.
+async function writeAudit(entry) {
+    try {
+        await db.collection("admin_audit").add({
+            actor: entry.actor,
+            action: entry.action,
+            target: entry.target ?? null,
+            targetCollection: entry.targetCollection ?? null,
+            reason: entry.reason ?? null,
+            tosClause: entry.tosClause ?? null,
+            before: entry.before ?? null,
+            after: entry.after ?? null,
+            actorIp: entry.actorIp ?? null,
+            extra: entry.extra ?? null,
+            createdAt: admin.firestore.Timestamp.now(),
+        });
+    }
+    catch (err) {
+        functions.logger.error("writeAudit failed", err);
+    }
+}
+function clientIp(req) {
+    const fwd = req.headers["x-forwarded-for"] || "";
+    if (fwd)
+        return fwd.split(",")[0].trim();
+    return req.ip || (req.socket && req.socket.remoteAddress) || null;
+}
+// ─── submitDmcaNotice (public HTTP) ───────────────────────────────────────────
+// Anyone may submit a DMCA takedown notice or counter-notice.
+// Writes /dmca_notices/{autoId} with status 'pending'.
+exports.submitDmcaNotice = functions.https.onRequest(async (req, res) => {
+    // Public endpoint. Allow any origin; this is a legal notice submission.
+    res.set("Access-Control-Allow-Origin", "*");
+    res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+    res.set("Access-Control-Allow-Headers", "Content-Type");
+    if (req.method === "OPTIONS") {
+        res.status(204).send("");
+        return;
+    }
+    if (req.method !== "POST") {
+        res.status(405).json({ error: "Method not allowed" });
+        return;
+    }
+    const body = (req.body || {});
+    const type = body.type === "counter" ? "counter" : "takedown";
+    const str = (k, max) => {
+        const v = body[k];
+        if (typeof v !== "string")
+            return "";
+        return v.trim().slice(0, max);
+    };
+    const claimantName = str("claimantName", 160);
+    const claimantEmail = str("claimantEmail", 200);
+    const claimantPhone = str("claimantPhone", 60);
+    const claimantAddress = str("claimantAddress", 400);
+    const workDescription = str("workDescription", 2000);
+    const infringingUrl = str("infringingUrl", 500);
+    const signature = str("signature", 160);
+    const claimantRole = type === "takedown" ? str("claimantRole", 40) : "";
+    const additional = str("additional", 2000);
+    const originalNoticeId = str("originalNoticeId", 120);
+    const missing = [];
+    if (!claimantName)
+        missing.push("claimantName");
+    if (!claimantEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(claimantEmail))
+        missing.push("claimantEmail");
+    if (!claimantPhone)
+        missing.push("claimantPhone");
+    if (!claimantAddress)
+        missing.push("claimantAddress");
+    if (!workDescription)
+        missing.push("workDescription");
+    if (!infringingUrl)
+        missing.push("infringingUrl");
+    if (!signature)
+        missing.push("signature");
+    if (!body.attGoodFaith)
+        missing.push("attGoodFaith");
+    if (!body.attAccuracy)
+        missing.push("attAccuracy");
+    if (!body.attConsent)
+        missing.push("attConsent");
+    if (type === "counter" && !body.attJurisdiction)
+        missing.push("attJurisdiction");
+    if (missing.length) {
+        res.status(400).json({ error: "Missing or invalid fields", fields: missing });
+        return;
+    }
+    try {
+        const notice = {
+            type,
+            status: "pending",
+            claimantName,
+            claimantEmail,
+            claimantPhone,
+            claimantAddress,
+            claimantRole,
+            workDescription,
+            infringingUrl,
+            additional,
+            originalNoticeId: originalNoticeId || null,
+            signature,
+            attestations: {
+                goodFaith: !!body.attGoodFaith,
+                accuracy: !!body.attAccuracy,
+                consent: !!body.attConsent,
+                jurisdiction: !!body.attJurisdiction,
+            },
+            submittedAt: admin.firestore.Timestamp.now(),
+            submitterIp: clientIp(req),
+            userAgent: req.headers["user-agent"] || null,
+        };
+        const docRef = await db.collection("dmca_notices").add(notice);
+        await writeAudit({
+            actor: "public",
+            action: type === "counter" ? "dmca.counter_notice_submitted" : "dmca.notice_submitted",
+            target: docRef.id,
+            targetCollection: "dmca_notices",
+            reason: type + " from " + claimantEmail,
+            actorIp: clientIp(req),
+        });
+        functions.logger.info("DMCA " + type + " received: " + docRef.id + " from " + claimantEmail);
+        res.status(201).json({ ok: true, noticeId: docRef.id, agent: DMCA_AGENT_EMAIL });
+    }
+    catch (err) {
+        functions.logger.error("submitDmcaNotice error", err);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+// ─── adminDmcaAction (admin callable) ─────────────────────────────────────────
+// actions: 'takedown', 'reject', 'forward_to_creator', 'restore', 'close'
+exports.adminDmcaAction = functions.https.onCall(async (data, context) => {
+    const adminUid = await requireAdmin(context);
+    const noticeId = data?.noticeId;
+    const action = data?.action;
+    const reason = typeof data?.reason === "string" ? data.reason.slice(0, 1000) : "";
+    const tosClause = typeof data?.tosClause === "string" ? data.tosClause.slice(0, 120) : "";
+    const sequenceIdOverride = typeof data?.sequenceId === "string" ? data.sequenceId : "";
+    if (typeof noticeId !== "string" || !isValidId(noticeId)) {
+        throw new functions.https.HttpsError("invalid-argument", "Invalid noticeId.");
+    }
+    const validActions = new Set(["takedown", "reject", "forward_to_creator", "restore", "close"]);
+    if (!validActions.has(action)) {
+        throw new functions.https.HttpsError("invalid-argument", "Invalid action.");
+    }
+    const noticeRef = db.collection("dmca_notices").doc(noticeId);
+    const noticeSnap = await noticeRef.get();
+    if (!noticeSnap.exists) {
+        throw new functions.https.HttpsError("not-found", "Notice not found.");
+    }
+    const notice = noticeSnap.data();
+    const before = { ...notice };
+    // Resolve sequenceId from the infringingUrl if possible (admin may override).
+    let sequenceId = sequenceIdOverride;
+    if (!sequenceId && typeof notice.infringingUrl === "string") {
+        const m = notice.infringingUrl.match(/([a-zA-Z0-9_-]{6,128})/);
+        if (m)
+            sequenceId = m[1];
+    }
+    if (action === "takedown") {
+        if (!sequenceId || !isValidId(sequenceId)) {
+            throw new functions.https.HttpsError("failed-precondition", "Could not resolve sequenceId. Pass sequenceId explicitly.");
+        }
+        const seqRef = db.collection("sequences").doc(sequenceId);
+        const seqSnap = await seqRef.get();
+        if (!seqSnap.exists) {
+            throw new functions.https.HttpsError("not-found", "Sequence not found.");
+        }
+        const seqBefore = seqSnap.data();
+        await db.runTransaction(async (tx) => {
+            tx.update(seqRef, {
+                status: "taken_down",
+                takedownReason: reason || "DMCA takedown",
+                takedownNoticeId: noticeId,
+                takedownAt: admin.firestore.Timestamp.now(),
+                takedownActor: adminUid,
+            });
+            tx.update(noticeRef, {
+                status: "valid",
+                takedownActor: adminUid,
+                takedownAt: admin.firestore.Timestamp.now(),
+                affectedSequence: sequenceId,
+                adminReason: reason || null,
+                tosClause: tosClause || null,
+            });
+        });
+        // Revoke buyer entitlements: mark purchases as revoked (keep record for accounting).
+        const purchaseSnap = await db.collection("purchases")
+            .where("sequenceId", "==", sequenceId).get();
+        const batch = db.batch();
+        purchaseSnap.docs.forEach((p) => {
+            batch.update(p.ref, {
+                status: "revoked",
+                revokedAt: admin.firestore.Timestamp.now(),
+                revokedBy: adminUid,
+                revokedReason: "DMCA takedown",
+            });
+        });
+        await batch.commit();
+        // Reverse creator earnings on affected sales.
+        const creatorUid = seqBefore?.creatorUid;
+        if (creatorUid) {
+            let reversal = 0;
+            purchaseSnap.docs.forEach((p) => {
+                const price = parseFloat(String(p.data()?.price ?? "0")) || 0;
+                reversal += Math.round(price * 0.7 * 100) / 100;
+            });
+            if (reversal > 0) {
+                await db.collection("creator_earnings").doc(creatorUid).set({
+                    totalEarnings: admin.firestore.FieldValue.increment(-reversal),
+                    updatedAt: admin.firestore.Timestamp.now(),
+                }, { merge: true });
+                await db.collection("creator_earnings").doc(creatorUid).collection("ledger").add({
+                    type: "dmca_reversal",
+                    amount: -reversal,
+                    noticeId,
+                    sequenceId,
+                    createdAt: admin.firestore.Timestamp.now(),
+                });
+            }
+        }
+        await writeAudit({
+            actor: adminUid,
+            action: "dmca.takedown",
+            target: sequenceId,
+            targetCollection: "sequences",
+            reason: reason || "DMCA takedown",
+            tosClause: tosClause || null,
+            before: { sequence: seqBefore, notice: before },
+            after: { sequenceStatus: "taken_down", noticeStatus: "valid" },
+            extra: { noticeId, purchasesRevoked: purchaseSnap.size },
+        });
+        return { ok: true, sequenceId, purchasesRevoked: purchaseSnap.size };
+    }
+    if (action === "reject") {
+        await noticeRef.update({
+            status: "invalid",
+            adminReason: reason || null,
+            resolvedAt: admin.firestore.Timestamp.now(),
+            resolvedBy: adminUid,
+        });
+        await writeAudit({
+            actor: adminUid, action: "dmca.reject", target: noticeId,
+            targetCollection: "dmca_notices",
+            reason: reason || "Rejected as invalid", tosClause: tosClause || null,
+            before, after: { status: "invalid" },
+        });
+        return { ok: true };
+    }
+    if (action === "forward_to_creator") {
+        const counterWindowEnds = admin.firestore.Timestamp.fromMillis(Date.now() + 14 * 24 * 60 * 60 * 1000);
+        await noticeRef.update({
+            status: "forwarded",
+            forwardedAt: admin.firestore.Timestamp.now(),
+            forwardedBy: adminUid,
+            counterWindowEnds,
+            affectedSequence: sequenceId || null,
+        });
+        await writeAudit({
+            actor: adminUid, action: "dmca.forward_to_creator", target: noticeId,
+            targetCollection: "dmca_notices", reason, before, after: { status: "forwarded" },
+        });
+        return { ok: true, counterWindowEnds: counterWindowEnds.toMillis() };
+    }
+    if (action === "restore") {
+        if (!sequenceId) {
+            throw new functions.https.HttpsError("failed-precondition", "sequenceId required.");
+        }
+        const seqRef = db.collection("sequences").doc(sequenceId);
+        await seqRef.update({
+            status: "published",
+            restoredAt: admin.firestore.Timestamp.now(),
+            restoredBy: adminUid,
+        });
+        await noticeRef.update({
+            status: "counter_noticed",
+            resolvedAt: admin.firestore.Timestamp.now(),
+            resolvedBy: adminUid,
+        });
+        await writeAudit({
+            actor: adminUid, action: "dmca.restore", target: sequenceId,
+            targetCollection: "sequences", reason, before, after: { status: "published" },
+        });
+        return { ok: true };
+    }
+    if (action === "close") {
+        await noticeRef.update({
+            status: "closed",
+            resolvedAt: admin.firestore.Timestamp.now(),
+            resolvedBy: adminUid,
+            adminReason: reason || null,
+        });
+        await writeAudit({
+            actor: adminUid, action: "dmca.close", target: noticeId,
+            targetCollection: "dmca_notices", reason, before, after: { status: "closed" },
+        });
+        return { ok: true };
+    }
+    return { ok: false };
+});
+// ─── userAcceptCreatorAgreement (callable) ────────────────────────────────────
+exports.userAcceptCreatorAgreement = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    }
+    const uid = context.auth.uid;
+    const version = typeof data?.version === "string" ? data.version : CREATOR_AGREEMENT_VERSION;
+    await db.collection("users").doc(uid).set({
+        creatorAgreementAcceptedAt: admin.firestore.Timestamp.now(),
+        creatorAgreementVersion: version,
+        email: context.auth.token.email || null,
+        updatedAt: admin.firestore.Timestamp.now(),
+    }, { merge: true });
+    await writeAudit({
+        actor: uid,
+        action: "creator_agreement.accepted",
+        target: uid,
+        targetCollection: "users",
+        extra: { version },
+    });
+    return { ok: true, version, acceptedAt: Date.now() };
+});
+// ─── userRequestDataExport (callable) ─────────────────────────────────────────
+// Compiles all personal data for the caller into a JSON blob uploaded to
+// Cloud Storage at user-exports/{uid}/{ts}.json and returns a 7-day signed URL.
+exports.userRequestDataExport = functions.https.onCall(async (_data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    }
+    const uid = context.auth.uid;
+    const email = (context.auth.token.email || "").toLowerCase();
+    try {
+        const [authUser, userDoc, purchaseSnap, sequenceSnap, earningsDoc, dmcaSnap] = await Promise.all([
+            admin.auth().getUser(uid).catch(() => null),
+            db.collection("users").doc(uid).get(),
+            db.collection("purchases").where("userId", "==", uid).get(),
+            db.collection("sequences").where("creatorUid", "==", uid).get(),
+            db.collection("creator_earnings").doc(uid).get(),
+            email
+                ? db.collection("dmca_notices").where("claimantEmail", "==", email).get()
+                : Promise.resolve({ docs: [] }),
+        ]);
+        const ledgerSnap = earningsDoc.exists
+            ? await db.collection("creator_earnings").doc(uid).collection("ledger").get()
+            : { docs: [] };
+        const blob = {
+            generatedAt: new Date().toISOString(),
+            uid,
+            email,
+            authRecord: authUser ? {
+                uid: authUser.uid,
+                email: authUser.email,
+                emailVerified: authUser.emailVerified,
+                displayName: authUser.displayName,
+                photoURL: authUser.photoURL,
+                disabled: authUser.disabled,
+                createdAt: authUser.metadata.creationTime,
+                lastSignInAt: authUser.metadata.lastSignInTime,
+                providers: (authUser.providerData || []).map((p) => ({ providerId: p.providerId, email: p.email })),
+                customClaims: authUser.customClaims || null,
+            } : null,
+            profile: userDoc.exists ? userDoc.data() : null,
+            purchases: purchaseSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+            sequences: sequenceSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+            earnings: earningsDoc.exists ? earningsDoc.data() : null,
+            earningsLedger: ledgerSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+            dmcaNotices: dmcaSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+        };
+        const ts = new Date().toISOString().replace(/[:.]/g, "-");
+        const storagePath = "user-exports/" + uid + "/" + ts + ".json";
+        const bucket = admin.storage().bucket();
+        await bucket.file(storagePath).save(JSON.stringify(blob, null, 2), {
+            contentType: "application/json",
+            metadata: { metadata: { uid, generatedAt: blob.generatedAt } },
+        });
+        const [signedUrl] = await bucket.file(storagePath).getSignedUrl({
+            version: "v4",
+            action: "read",
+            expires: Date.now() + 7 * 24 * 60 * 60 * 1000,
+        });
+        const reqRef = await db.collection("data_requests").add({
+            uid,
+            type: "export",
+            status: "completed",
+            storagePath,
+            createdAt: admin.firestore.Timestamp.now(),
+            completedAt: admin.firestore.Timestamp.now(),
+        });
+        await writeAudit({
+            actor: uid,
+            action: "gdpr.export",
+            target: reqRef.id,
+            targetCollection: "data_requests",
+            extra: { storagePath, counts: {
+                    purchases: blob.purchases.length,
+                    sequences: blob.sequences.length,
+                    dmcaNotices: blob.dmcaNotices.length,
+                } },
+        });
+        return { ok: true, url: signedUrl, requestId: reqRef.id, expiresInDays: 7 };
+    }
+    catch (err) {
+        functions.logger.error("userRequestDataExport error", err);
+        throw new functions.https.HttpsError("internal", "Export failed.");
+    }
+});
+// ─── userRequestDataDeletion (callable) ───────────────────────────────────────
+// Marks the user for deletion with a 30-day grace period.
+exports.userRequestDataDeletion = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    }
+    const uid = context.auth.uid;
+    const confirm = typeof data?.confirmText === "string" ? data.confirmText.trim().toLowerCase() : "";
+    if (confirm !== "delete my account") {
+        throw new functions.https.HttpsError("invalid-argument", 'Type "delete my account" to confirm.');
+    }
+    const scheduledFor = admin.firestore.Timestamp.fromMillis(Date.now() + DATA_DELETION_GRACE_DAYS * 24 * 60 * 60 * 1000);
+    await db.collection("users").doc(uid).set({
+        deletionRequestedAt: admin.firestore.Timestamp.now(),
+        deletionScheduledFor: scheduledFor,
+        updatedAt: admin.firestore.Timestamp.now(),
+    }, { merge: true });
+    const reqRef = await db.collection("data_requests").add({
+        uid,
+        type: "delete",
+        status: "pending",
+        requestedAt: admin.firestore.Timestamp.now(),
+        scheduledFor,
+        createdAt: admin.firestore.Timestamp.now(),
+        initiatedBy: "user",
+    });
+    await writeAudit({
+        actor: uid,
+        action: "gdpr.deletion_requested",
+        target: reqRef.id,
+        targetCollection: "data_requests",
+        extra: { scheduledFor: scheduledFor.toMillis() },
+    });
+    return { ok: true, requestId: reqRef.id, scheduledFor: scheduledFor.toMillis(), graceDays: DATA_DELETION_GRACE_DAYS };
+});
+// ─── userCancelDeletion (callable) ────────────────────────────────────────────
+exports.userCancelDeletion = functions.https.onCall(async (_data, context) => {
+    if (!context.auth)
+        throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    const uid = context.auth.uid;
+    const snap = await db.collection("data_requests")
+        .where("uid", "==", uid).where("type", "==", "delete").where("status", "==", "pending").get();
+    const batch = db.batch();
+    snap.docs.forEach((d) => batch.update(d.ref, {
+        status: "cancelled",
+        cancelledAt: admin.firestore.Timestamp.now(),
+    }));
+    batch.update(db.collection("users").doc(uid), {
+        deletionRequestedAt: admin.firestore.FieldValue.delete(),
+        deletionScheduledFor: admin.firestore.FieldValue.delete(),
+        updatedAt: admin.firestore.Timestamp.now(),
+    });
+    await batch.commit();
+    await writeAudit({
+        actor: uid, action: "gdpr.deletion_cancelled", target: uid, targetCollection: "users",
+    });
+    return { ok: true, cancelled: snap.size };
+});
+// ─── adminRequestUserDeletion (callable) ──────────────────────────────────────
+exports.adminRequestUserDeletion = functions.https.onCall(async (data, context) => {
+    const adminUid = await requireAdmin(context);
+    const uid = data?.uid;
+    const reason = typeof data?.reason === "string" ? data.reason.slice(0, 1000) : "";
+    if (typeof uid !== "string" || !uid) {
+        throw new functions.https.HttpsError("invalid-argument", "uid is required.");
+    }
+    const scheduledFor = admin.firestore.Timestamp.fromMillis(Date.now() + DATA_DELETION_GRACE_DAYS * 24 * 60 * 60 * 1000);
+    await db.collection("users").doc(uid).set({
+        deletionRequestedAt: admin.firestore.Timestamp.now(),
+        deletionScheduledFor: scheduledFor,
+        deletionInitiatedBy: adminUid,
+        deletionReason: reason || null,
+        updatedAt: admin.firestore.Timestamp.now(),
+    }, { merge: true });
+    const reqRef = await db.collection("data_requests").add({
+        uid,
+        type: "delete",
+        status: "pending",
+        requestedAt: admin.firestore.Timestamp.now(),
+        scheduledFor,
+        createdAt: admin.firestore.Timestamp.now(),
+        initiatedBy: "admin",
+        adminActor: adminUid,
+        reason: reason || null,
+    });
+    await writeAudit({
+        actor: adminUid, action: "gdpr.admin_deletion_requested", target: uid,
+        targetCollection: "users", reason, extra: { requestId: reqRef.id, scheduledFor: scheduledFor.toMillis() },
+    });
+    return { ok: true, requestId: reqRef.id, scheduledFor: scheduledFor.toMillis() };
+});
+// ─── processPendingDeletions (scheduled) ──────────────────────────────────────
+// Runs nightly, processes any data_requests where scheduledFor <= now and status=pending.
+exports.processPendingDeletions = functions.pubsub
+    .schedule("every day 03:00")
+    .timeZone("America/Denver")
+    .onRun(async () => {
+    const now = admin.firestore.Timestamp.now();
+    const snap = await db.collection("data_requests")
+        .where("type", "==", "delete")
+        .where("status", "==", "pending")
+        .where("scheduledFor", "<=", now)
+        .get();
+    for (const doc of snap.docs) {
+        const req = doc.data();
+        const uid = req.uid;
+        try {
+            await doc.ref.update({ status: "processing", processingStartedAt: now });
+            // Delete Firebase Auth user.
+            try {
+                await admin.auth().deleteUser(uid);
+            }
+            catch (e) {
+                functions.logger.warn("deleteUser(" + uid + ") failed (already gone?)", e);
+            }
+            // Anonymize purchases (keep for tax/accounting).
+            const purchases = await db.collection("purchases").where("userId", "==", uid).get();
+            const pb = db.batch();
+            purchases.docs.forEach((p) => pb.update(p.ref, {
+                userId: "DELETED-USER",
+                anonymizedAt: admin.firestore.Timestamp.now(),
+            }));
+            await pb.commit();
+            // Handle creator-uploaded sequences.
+            const seqs = await db.collection("sequences").where("creatorUid", "==", uid).get();
+            const bucket = admin.storage().bucket();
+            for (const s of seqs.docs) {
+                const seqId = s.id;
+                const hasBuyers = await db.collection("purchases")
+                    .where("sequenceId", "==", seqId).limit(1).get();
+                if (hasBuyers.empty) {
+                    // Delete files + doc entirely.
+                    await Promise.all([
+                        bucket.file("sequences/" + seqId + ".fseq").delete({ ignoreNotFound: true }).catch(() => null),
+                        bucket.file("sequences/" + seqId + ".mp3").delete({ ignoreNotFound: true }).catch(() => null),
+                    ]);
+                    await s.ref.delete();
+                }
+                else {
+                    // Transfer to AFTERGLO Archive, flag for refund option.
+                    await s.ref.update({
+                        creatorUid: "AFTERGLO_ARCHIVE",
+                        creator: "AFTERGLO Archive",
+                        transferredAt: admin.firestore.Timestamp.now(),
+                        transferReason: "creator_deletion",
+                        refundEligible: true,
+                    });
+                }
+            }
+            // Delete user doc last.
+            await db.collection("users").doc(uid).delete();
+            await doc.ref.update({
+                status: "completed",
+                completedAt: admin.firestore.Timestamp.now(),
+            });
+            await writeAudit({
+                actor: "system",
+                action: "gdpr.deletion_processed",
+                target: uid,
+                targetCollection: "users",
+                extra: { requestId: doc.id, sequencesCount: seqs.size, purchasesAnonymized: purchases.size },
+            });
+            functions.logger.info("processPendingDeletions: completed " + uid);
+        }
+        catch (err) {
+            functions.logger.error("processPendingDeletions failed for " + uid, err);
+            await doc.ref.update({
+                status: "failed",
+                failedAt: admin.firestore.Timestamp.now(),
+                error: String(err?.message || err),
+            });
+        }
+    }
+    return null;
 });
 //# sourceMappingURL=index.js.map

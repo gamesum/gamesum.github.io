@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Creator Dashboard | AFTERGLO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <script src="js/firebase-auth.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --surface:  #0F0F11;
+      --surface2: #17171A;
+      --surface3: #1D1D22;
+      --border:   #2A2A32;
+      --border2:  #3A3A44;
+      --gold:     #D4A43A;
+      --gold2:    #E8B84A;
+      --text:     #F2F2F4;
+      --muted:    #9A9AA2;
+      --success:  #3DCB73;
+      --danger:   #F05A4A;
+      --accent:   #818cf8;
+      --radius:   12px;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; letter-spacing: 0.01em; }
+    a { color: inherit; text-decoration: none; }
+
+    .container { max-width: 1080px; margin: 0 auto; padding: 40px 24px 96px; }
+    .topbar { display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px; }
+    .brand { font-family:'Outfit',sans-serif; font-size: 1.35rem; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; }
+    .brand span { color: var(--gold); text-shadow: 0 0 16px rgba(212,164,58,0.6); }
+    .back { color: var(--muted); font-size: 0.9rem; }
+    .back:hover { color: var(--text); }
+
+    h1 { font-size: 1.9rem; font-weight: 800; margin-bottom: 6px; }
+    .sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 28px; }
+
+    .panel {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .panel h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 14px; }
+
+    .stats { display:grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    @media(max-width: 760px){ .stats { grid-template-columns: repeat(2, 1fr); } }
+    .stat {
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .stat-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 6px; }
+    .stat-value { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; color: #fff; }
+    .stat-value.gold { color: var(--gold); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 10px 18px; border-radius: 8px;
+      font-size: 0.88rem; font-weight: 600; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface3); color: var(--text);
+      transition: all 0.15s;
+    }
+    .btn:hover { border-color: var(--border2); background: #23232a; }
+    .btn-primary { background: var(--gold); color: #000; border-color: var(--gold); }
+    .btn-primary:hover { background: var(--gold2); border-color: var(--gold2); }
+    .btn-ghost { background: transparent; }
+
+    .pill {
+      display:inline-block; padding: 3px 10px; border-radius: 999px;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .pill-ok  { background: rgba(61,203,115,0.15); color: var(--success); border:1px solid rgba(61,203,115,0.35); }
+    .pill-pend{ background: rgba(212,164,58,0.15); color: var(--gold);    border:1px solid rgba(212,164,58,0.35); }
+    .pill-none{ background: rgba(240,90,74,0.12);  color: var(--danger);  border:1px solid rgba(240,90,74,0.35); }
+
+    .cta-hero {
+      background: linear-gradient(135deg, rgba(212,164,58,0.12), rgba(129,140,248,0.06));
+      border: 1px solid rgba(212,164,58,0.3);
+      border-radius: var(--radius);
+      padding: 28px;
+      margin-bottom: 20px;
+    }
+    .cta-hero h2 { font-size: 1.25rem; margin-bottom: 8px; }
+    .cta-hero p  { color: var(--muted); margin-bottom: 16px; font-size: 0.92rem; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th, td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); font-weight: 600; }
+    td.mono { font-family: 'JetBrains Mono', ui-monospace, Menlo, monospace; font-size: 0.82rem; }
+    .empty { color: var(--muted); text-align: center; padding: 24px; }
+
+    .banner {
+      background: rgba(129,140,248,0.08);
+      border: 1px solid rgba(129,140,248,0.35);
+      border-radius: 10px;
+      padding: 14px 16px;
+      font-size: 0.86rem;
+      color: #c7d2fe;
+      margin-bottom: 20px;
+    }
+    .banner a { color: var(--accent); text-decoration: underline; }
+
+    .toast {
+      position: fixed; bottom: 22px; right: 22px; z-index: 200;
+      background: var(--surface3); border:1px solid var(--border2); color: var(--text);
+      padding: 12px 16px; border-radius: 10px; font-size: 0.88rem;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+      opacity: 0; transform: translateY(8px); transition: opacity 0.2s, transform 0.2s;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast.error { border-color: rgba(240,90,74,0.5); }
+    .toast.success { border-color: rgba(61,203,115,0.5); }
+
+    .loading { color: var(--muted); font-size: 0.9rem; text-align:center; padding: 24px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <a href="index.html" class="brand">AFTER<span>GLO</span></a>
+      <a href="my-library.html" class="back">. Back to My Library</a>
+    </div>
+
+    <h1>Creator Payouts</h1>
+    <div class="sub">Your earnings, payout setup, and sales ledger. Stripe handles the W-9, banking, and tax forms.</div>
+
+    <!-- 1099-K banner -->
+    <div class="banner">
+      Stripe automatically generates 1099-K tax forms for US creators who earn $600+ in a calendar year.
+      You'll get an email from Stripe when yours is ready.
+      <a href="https://support.stripe.com/topics/tax-forms" target="_blank" rel="noopener">Learn more</a>.
+    </div>
+
+    <!-- Payouts card -->
+    <div class="panel" id="payoutsPanel">
+      <h2>Payouts</h2>
+      <div id="payoutsBody" class="loading">Loading.</div>
+    </div>
+
+    <!-- Ledger -->
+    <div class="panel">
+      <h2>Sales ledger</h2>
+      <div id="ledgerWrap">
+        <div class="loading">Loading ledger.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+<script>
+  let fbAuth, fbFunctions, fbFirestore, currentUser;
+
+  function toast(msg, kind) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = 'toast show' + (kind ? ' ' + kind : '');
+    setTimeout(() => { t.className = 'toast' + (kind ? ' ' + kind : ''); }, 3200);
+  }
+
+  function fmtMoney(n) {
+    const x = typeof n === 'number' ? n : parseFloat(n || 0);
+    if (!isFinite(x)) return '$0.00';
+    return '$' + x.toFixed(2);
+  }
+  function fmtDate(d) {
+    if (!d) return '.';
+    let dt;
+    if (typeof d === 'number') dt = new Date(d * 1000);
+    else if (typeof d === 'string') dt = new Date(d);
+    else if (d && typeof d.toDate === 'function') dt = d.toDate();
+    else if (d && typeof d.seconds === 'number') dt = new Date(d.seconds * 1000);
+    else dt = new Date(d);
+    if (isNaN(dt.getTime())) return '.';
+    return dt.toLocaleDateString('en-US', { year:'numeric', month:'short', day:'numeric' });
+  }
+
+  async function call(name, payload) {
+    return fbFunctions.httpsCallable(name)(payload || {}).then(r => r.data);
+  }
+
+  async function boot() {
+    if (typeof firebase === 'undefined' || !firebase.auth) {
+      document.getElementById('payoutsBody').innerHTML = '<div class="empty">Firebase failed to load.</div>';
+      return;
+    }
+    fbAuth      = firebase.auth();
+    fbFirestore = firebase.firestore();
+    fbFunctions = firebase.functions();
+
+    fbAuth.onAuthStateChanged(async (user) => {
+      if (!user) {
+        window.location.href = 'signin.html?redirect=creator-dashboard.html';
+        return;
+      }
+      currentUser = user;
+      await Promise.all([renderPayouts(), renderLedger()]);
+    });
+  }
+
+  async function renderPayouts() {
+    const body = document.getElementById('payoutsBody');
+    body.innerHTML = '<div class="loading">Checking payout status.</div>';
+
+    // Read the mirror doc for fast first render, then refresh from Stripe.
+    let mirror = {};
+    try {
+      const snap = await fbFirestore.collection('users').doc(currentUser.uid).get();
+      if (snap.exists) mirror = snap.data() || {};
+    } catch (_) {}
+
+    let status;
+    try {
+      status = await call('checkConnectStatus', {});
+    } catch (err) {
+      // Use mirror fallback.
+      status = {
+        ok: true,
+        hasAccount: !!mirror.stripeAccountId,
+        stripeAccountId: mirror.stripeAccountId,
+        onboardingStatus: mirror.onboardingStatus,
+        payoutsEnabled:   !!mirror.payoutsEnabled,
+        chargesEnabled:   !!mirror.chargesEnabled,
+        detailsSubmitted: !!mirror.detailsSubmitted,
+        nextPayoutDate:   null,
+      };
+    }
+
+    // Earnings rollup from /creator_earnings/{uid}
+    let earnings = { totalEarnings: 0, routedEarnings: 0, unroutableEarnings: 0 };
+    try {
+      const snap = await fbFirestore.collection('creator_earnings').doc(currentUser.uid).get();
+      if (snap.exists) earnings = Object.assign(earnings, snap.data() || {});
+    } catch (_) {}
+
+    const total    = earnings.totalEarnings     || 0;
+    const routed   = earnings.routedEarnings    || 0;
+    const unrouted = earnings.unroutableEarnings|| 0;
+    // "Paid out to date" is best-approximated by the routed-and-cleared portion.
+    // Without a Stripe balance lookup we show the routed total as the
+    // cumulative amount sent to the creator's Stripe Express balance.
+    const paidOut  = routed;
+    const pending  = Math.max(0, total - routed);
+
+    let action = '';
+    let statusPill = '';
+    if (!status.hasAccount) {
+      statusPill = '<span class="pill pill-none">Not set up</span>';
+      action = `
+        <div class="cta-hero">
+          <h2>Set up payouts</h2>
+          <p>Create a Stripe Express account to receive your 70% creator share automatically. Stripe collects your W-9, bank info, and tax details securely. Most setups take under 5 minutes.</p>
+          <button class="btn btn-primary" id="btnSetup">Set up payouts with Stripe</button>
+        </div>`;
+    } else if (status.onboardingStatus !== 'complete') {
+      statusPill = '<span class="pill pill-pend">Onboarding incomplete</span>';
+      action = `
+        <div class="cta-hero">
+          <h2>Finish setup on Stripe</h2>
+          <p>Stripe still needs a few pieces of info (W-9, bank, or ID verification) before payouts can start.</p>
+          <button class="btn btn-primary" id="btnFinish">Finish setup on Stripe</button>
+        </div>`;
+    } else {
+      statusPill = '<span class="pill pill-ok">Payouts active</span>';
+      action = `
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 16px;">
+          <button class="btn btn-ghost" id="btnUpdate">Update banking / tax info</button>
+          <button class="btn btn-ghost" id="btnRefresh">Refresh status</button>
+        </div>`;
+    }
+
+    const nextPayout = status.nextPayoutDate
+      ? fmtDate(status.nextPayoutDate)
+      : (status.onboardingStatus === 'complete' ? 'Daily (Stripe schedule)' : '.');
+
+    body.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 18px; flex-wrap:wrap; gap: 10px;">
+        <div>${statusPill}</div>
+        <div style="color:var(--muted); font-size:0.82rem;">${status.stripeAccountId ? 'Account: ' + status.stripeAccountId : ''}</div>
+      </div>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-label">Total earned</div>
+          <div class="stat-value gold">${fmtMoney(total)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Pending balance</div>
+          <div class="stat-value">${fmtMoney(pending)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Paid out to date</div>
+          <div class="stat-value">${fmtMoney(paidOut)}</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Next payout</div>
+          <div class="stat-value" style="font-size:1.05rem;">${nextPayout}</div>
+        </div>
+      </div>
+      ${unrouted > 0 ? `<div style="margin-top:14px; color:var(--danger); font-size:0.85rem;">Heads up: ${fmtMoney(unrouted)} from earlier sales could not route to Stripe because payouts weren't set up. An admin will reconcile these.</div>` : ''}
+      ${action}
+    `;
+
+    const btnSetup   = document.getElementById('btnSetup');
+    const btnFinish  = document.getElementById('btnFinish');
+    const btnUpdate  = document.getElementById('btnUpdate');
+    const btnRefresh = document.getElementById('btnRefresh');
+    if (btnSetup)   btnSetup.addEventListener('click', startOnboarding);
+    if (btnFinish)  btnFinish.addEventListener('click', startOnboarding);
+    if (btnUpdate)  btnUpdate.addEventListener('click', () => openOnboardingLink('update'));
+    if (btnRefresh) btnRefresh.addEventListener('click', async () => {
+      await renderPayouts();
+      toast('Status refreshed.', 'success');
+    });
+  }
+
+  async function startOnboarding() {
+    try {
+      await call('createConnectAccount', {});
+      await openOnboardingLink('onboarding');
+    } catch (err) {
+      console.error(err);
+      toast('Could not start Stripe setup: ' + (err.message || 'error'), 'error');
+    }
+  }
+
+  async function openOnboardingLink(mode) {
+    try {
+      const res = await call('createConnectOnboardingLink', { mode: mode === 'update' ? 'update' : 'onboarding' });
+      if (res && res.url) {
+        window.location.href = res.url;
+      } else {
+        toast('Stripe did not return a link.', 'error');
+      }
+    } catch (err) {
+      console.error(err);
+      toast('Could not open Stripe: ' + (err.message || 'error'), 'error');
+    }
+  }
+
+  async function renderLedger() {
+    const wrap = document.getElementById('ledgerWrap');
+    wrap.innerHTML = '<div class="loading">Loading ledger.</div>';
+    try {
+      const snap = await fbFirestore
+        .collection('creator_earnings').doc(currentUser.uid)
+        .collection('ledger')
+        .orderBy('createdAt', 'desc')
+        .limit(200)
+        .get();
+      const rows = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      if (!rows.length) {
+        wrap.innerHTML = '<div class="empty">No sales yet. Once you publish a Premium show and someone buys it, sales will appear here.</div>';
+        return;
+      }
+      let running = 0;
+      // iterate oldest-first for running balance, then render newest-first
+      const ascending = rows.slice().reverse();
+      const withBal = ascending.map(r => {
+        running += (r.earnings || 0);
+        return Object.assign({}, r, { runningBalance: running });
+      });
+      withBal.reverse();
+
+      const html = `
+        <table>
+          <thead>
+            <tr><th>Date</th><th>Sequence</th><th>Sale</th><th>Earnings (70%)</th><th>Status</th><th>Running</th></tr>
+          </thead>
+          <tbody>
+            ${withBal.map(r => `
+              <tr>
+                <td>${fmtDate(r.createdAt)}</td>
+                <td>${(r.sequenceName || '').replace(/[<>&"]/g, c => ({ '<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;' }[c]))}</td>
+                <td class="mono">${fmtMoney(r.saleAmount)}</td>
+                <td class="mono" style="color:var(--gold);">${fmtMoney(r.earnings)}</td>
+                <td>${r.status === 'routed'
+                       ? '<span class="pill pill-ok">Routed</span>'
+                       : r.status === 'unroutable'
+                         ? '<span class="pill pill-none">Unroutable</span>'
+                         : '<span class="pill pill-pend">' + (r.status || '.') + '</span>'}</td>
+                <td class="mono">${fmtMoney(r.runningBalance)}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      wrap.innerHTML = html;
+    } catch (err) {
+      console.error(err);
+      wrap.innerHTML = '<div class="empty">Failed to load ledger.</div>';
+    }
+  }
+
+  boot();
+</script>
+</body>
+</html>

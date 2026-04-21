@@ -63,5 +63,21 @@ service cloud.firestore {
       allow read:  if isAdmin();
       allow write: if false;
     }
+
+    // DMCA notices: anyone may create (public legal notice submission).
+    // Only admin may read or modify. Cloud Functions write via Admin SDK.
+    match /dmca_notices/{noticeId} {
+      allow read:   if isAdmin();
+      allow create: if true;
+      allow update, delete: if false;
+    }
+
+    // GDPR/CCPA data requests: requester reads own, admin reads all.
+    // Cloud Functions write only.
+    match /data_requests/{requestId} {
+      allow read:  if isAdmin()
+                   || (request.auth != null && request.auth.uid == resource.data.uid);
+      allow write: if false;
+    }
   }
 }

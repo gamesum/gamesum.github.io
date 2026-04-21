@@ -1423,7 +1423,10 @@
             <div class="lib-section-title">My Uploads <span style="font-size:0.72rem;background:rgba(99,102,241,0.15);color:#818cf8;border:1px solid rgba(99,102,241,0.3);border-radius:100px;padding:2px 8px;font-weight:600;letter-spacing:0.05em;vertical-align:middle;">FOR CREATORS</span></div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Share your own light show designs with the AFTERGLO community</div>
           </div>
         </div>
-        <span class="lib-section-count" id="countUploads">0 sequences</span>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <a id="creatorDashLink" href="creator-dashboard.html" class="btn btn-ghost" style="display:none;padding:8px 14px;font-size:0.8rem;font-weight:600;">Payouts &amp; earnings</a>
+          <span class="lib-section-count" id="countUploads">0 sequences</span>
+        </div>
       </div>
       <div id="uploadsGrid" class="lib-grid"></div>
     </div>
@@ -1951,6 +1954,8 @@
     document.getElementById('countDownloads').textContent = lib.length + ' sequence' + (lib.length !== 1 ? 's' : '');
     document.getElementById('countPurchases').textContent = pur.length + ' pack' + (pur.length !== 1 ? 's' : '');
     document.getElementById('countUploads').textContent   = upl.length + ' sequence' + (upl.length !== 1 ? 's' : '');
+    const _dashLink = document.getElementById('creatorDashLink');
+    if (_dashLink) _dashLink.style.display = upl.length > 0 ? '' : 'none';
 
     renderCollectionChips();
     renderGroupedSection('downloadsGrid', lib, 'download');
