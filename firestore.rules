@@ -6,10 +6,25 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.admin == true;
     }
 
+    // Permanent super-admin emails. Must mirror SUPER_ADMIN_EMAILS in
+    // functions/src/index.ts. Used as a READ-ONLY fallback so the admin
+    // dashboard is usable on the first sign-in before the custom claim
+    // round-trip completes. Writes still require the admin claim.
+    function isSuperAdminEmail() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.lower() in [
+          'shaneward852@gmail.com'
+        ];
+    }
+    function isAdminRead() {
+      return isAdmin() || isSuperAdminEmail();
+    }
+
     // Users directory: self or admin can read, only admin can write.
     // (Cloud Functions using the Admin SDK bypass these rules.)
     match /users/{uid} {
-      allow read:  if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow read:  if request.auth != null && (request.auth.uid == uid || isAdminRead());
       allow write: if isAdmin();
 
       // Download tokens are written by Cloud Functions only; user may read own.
@@ -23,7 +38,7 @@ service cloud.firestore {
     // Admins can read all. Creators may write their own doc; admin can write any.
     match /sequences/{seqId} {
       allow read:  if resource.data.status == "published"
-                   || isAdmin()
+                   || isAdminRead()
                    || (request.auth != null && resource.data.creatorUid == request.auth.uid);
       allow write: if isAdmin()
                    || (request.auth != null && request.auth.uid == resource.data.creatorUid);
@@ -32,21 +47,21 @@ service cloud.firestore {
     // Purchases: buyer can read their own, admin can read all.
     // Writes are Cloud Functions only.
     match /purchases/{docId} {
-      allow read:  if isAdmin()
+      allow read:  if isAdminRead()
                    || (request.auth != null && request.auth.uid == resource.data.userId);
       allow write: if false;
     }
 
     // Creator earnings: creator can read their own record; admin can read all.
     match /creator_earnings/{creatorId} {
-      allow read:  if isAdmin()
+      allow read:  if isAdminRead()
                    || (request.auth != null && request.auth.uid == creatorId);
       allow write: if false;
 
       // Ledger entries (refunds, disputes, sales): creator reads own, admin reads all.
       // Cloud Functions write only.
       match /ledger/{entryId} {
-        allow read:  if isAdmin()
+        allow read:  if isAdminRead()
                      || (request.auth != null && request.auth.uid == creatorId);
         allow write: if false;
       }
@@ -54,20 +69,20 @@ service cloud.firestore {
 
     // Disputes: admin read/write only. Cloud Functions write via Admin SDK.
     match /disputes/{disputeId} {
-      allow read:  if isAdmin();
+      allow read:  if isAdminRead();
       allow write: if isAdmin();
     }
 
     // Admin audit log: admin read only. Cloud Functions write via Admin SDK.
     match /admin_audit/{entryId} {
-      allow read:  if isAdmin();
+      allow read:  if isAdminRead();
       allow write: if false;
     }
 
     // DMCA notices: anyone may create (public legal notice submission).
     // Only admin may read or modify. Cloud Functions write via Admin SDK.
     match /dmca_notices/{noticeId} {
-      allow read:   if isAdmin();
+      allow read:   if isAdminRead();
       allow create: if true;
       allow update, delete: if false;
     }
@@ -75,9 +90,19 @@ service cloud.firestore {
     // GDPR/CCPA data requests: requester reads own, admin reads all.
     // Cloud Functions write only.
     match /data_requests/{requestId} {
-      allow read:  if isAdmin()
+      allow read:  if isAdminRead()
                    || (request.auth != null && request.auth.uid == resource.data.uid);
       allow write: if false;
+    }
+
+    // Feedback: written only by the submitFeedback callable (Admin SDK
+    // bypasses these rules). Admins read and mutate via adminReplyFeedback.
+    // Direct client reads and writes are explicitly denied.
+    match /feedback/{feedbackId} {
+      allow read:   if isAdminRead();
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
     }
   }
 }

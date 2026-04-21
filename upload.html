@@ -1927,6 +1927,10 @@
         });
         if (!metaRes.ok) {
           const errBody = await metaRes.text();
+          if (metaRes.status === 403 && errBody.indexOf('agreement_required') !== -1) {
+            window.location.href = 'my-library.html#creator-agreement';
+            throw new Error('Creator Agreement acceptance required. Redirecting.');
+          }
           throw new Error('Server error (' + metaRes.status + '): ' + errBody);
         }
         const metaJson = await metaRes.json();

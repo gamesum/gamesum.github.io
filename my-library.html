@@ -12,6 +12,7 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
   <script src="js/firebase-auth.js"></script>
   <script src="js/collections.js" defer></script>
   <style>
@@ -1431,8 +1432,74 @@
       <div id="uploadsGrid" class="lib-grid"></div>
     </div>
 
+    <!-- ─── Privacy & Data Rights ─────────────────────────────────── -->
+    <div class="lib-section" id="privacySection" style="margin-top:40px;">
+      <div class="lib-section-header">
+        <div class="lib-section-left">
+          <div class="lib-section-icon" style="background:rgba(154,154,162,0.15);color:#c9c9d0;">🛡️</div>
+          <div>
+            <div class="lib-section-title">Privacy &amp; Data Rights</div>
+            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Export or delete your personal data (GDPR / CCPA).</div>
+          </div>
+        </div>
+      </div>
+      <div style="background:var(--bg2,#0e0e0e);border:1px solid var(--border,#222);border-radius:12px;padding:24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center;justify-content:space-between;">
+        <div style="max-width:560px;">
+          <div style="font-family:'Outfit',sans-serif;font-weight:800;color:#fff;font-size:1.05rem;margin-bottom:6px;">Your data, your control.</div>
+          <p style="font-size:0.88rem;color:#94a3b8;margin:0;">Download a machine-readable JSON of everything we store about you, or request account deletion. Deletion takes effect after a 30-day grace period, during which you can cancel.</p>
+          <div id="privacyDeletionNotice" style="display:none;margin-top:10px;padding:10px 12px;border-left:3px solid #F05A4A;background:rgba(240,90,74,0.08);border-radius:6px;font-size:0.85rem;color:#F05A4A;"></div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <button class="btn btn-primary" id="btnExportData">Export my data</button>
+          <button class="btn" style="background:transparent;border:1px solid #F05A4A;color:#F05A4A;" id="btnDeleteAccount">Delete my account</button>
+          <button class="btn" id="btnCancelDeletion" style="display:none;">Cancel deletion</button>
+        </div>
+      </div>
+    </div>
+
   </div><!-- /container -->
 </div><!-- /page-content -->
+
+<!-- ─── Creator Agreement Modal ──────────────────────────────────── -->
+<div id="creatorAgreementModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#17171A;border:1px solid #2A2A32;border-radius:12px;max-width:560px;width:100%;padding:28px;max-height:85vh;overflow-y:auto;">
+    <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;margin-bottom:6px;color:#fff;">Creator Agreement</h2>
+    <div style="color:#94a3b8;font-size:0.85rem;margin-bottom:18px;">Version <span id="creatorAgreementVersion">2026-04-21</span></div>
+    <div style="font-size:0.9rem;color:#e2e8f0;line-height:1.7;max-height:40vh;overflow-y:auto;padding:14px 16px;background:#0f0f11;border:1px solid #2A2A32;border-radius:8px;margin-bottom:16px;">
+      <p style="margin-bottom:10px;"><strong>By becoming a Creator on AFTERGLO you agree:</strong></p>
+      <ul style="padding-left:18px;display:flex;flex-direction:column;gap:8px;">
+        <li>You own, or are authorized to license, all FSEQ sequences and MP3 audio you upload.</li>
+        <li>You will not upload content that infringes copyright, trademark, or any other right.</li>
+        <li>AFTERGLO may remove content in response to valid DMCA notices and suspend repeat infringers.</li>
+        <li>Creator revenue split is 70% to Creator, 30% platform fee. Payouts processed monthly via Stripe.</li>
+        <li>Full terms: <a href="creator-agreement.html" target="_blank" style="color:#D4A43A;text-decoration:underline;">Creator Agreement</a> &middot; <a href="terms.html" target="_blank" style="color:#D4A43A;text-decoration:underline;">Terms of Service</a> &middot; <a href="dmca.html" target="_blank" style="color:#D4A43A;text-decoration:underline;">DMCA policy</a>.</li>
+      </ul>
+    </div>
+    <label style="display:flex;align-items:flex-start;gap:10px;margin-bottom:16px;cursor:pointer;">
+      <input type="checkbox" id="creatorAgreementAccept" style="margin-top:3px;" />
+      <span style="font-size:0.88rem;color:#e2e8f0;">I have read and agree to the AFTERGLO Creator Agreement (version <span id="creatorAgreementVersion2">2026-04-21</span>) and the Terms of Service.</span>
+    </label>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn" id="creatorAgreementCancel" style="background:transparent;border:1px solid #2A2A32;color:#94a3b8;">Not now</button>
+      <button class="btn btn-primary" id="creatorAgreementSubmit" disabled>Accept &amp; continue</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Delete Account Modal ─────────────────────────────────────── -->
+<div id="deleteAccountModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#17171A;border:1px solid #2A2A32;border-radius:12px;max-width:520px;width:100%;padding:28px;">
+    <h2 style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;margin-bottom:6px;color:#F05A4A;">Delete my account</h2>
+    <p style="color:#e2e8f0;font-size:0.9rem;margin-bottom:10px;line-height:1.6;">This schedules permanent deletion of your AFTERGLO account in <strong>30 days</strong>. During the grace period you can cancel from this page.</p>
+    <p style="color:#94a3b8;font-size:0.82rem;margin-bottom:14px;">After the grace period, your Firebase Auth record, profile, uploads without buyers, and associated files will be permanently removed. Purchase records are anonymized (kept for tax/accounting). Uploads with existing buyers are transferred to the AFTERGLO Archive.</p>
+    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:6px;">Type "delete my account" to confirm</label>
+    <input type="text" id="deleteAccountConfirm" autocomplete="off" style="width:100%;background:#0f0f11;border:1px solid #2A2A32;color:#e2e8f0;padding:10px 12px;border-radius:8px;font-size:0.9rem;margin-bottom:20px;" />
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button class="btn" id="deleteAccountCancel" style="background:transparent;border:1px solid #2A2A32;color:#94a3b8;">Cancel</button>
+      <button class="btn" style="background:#F05A4A;color:#000;" id="deleteAccountSubmit">Schedule deletion</button>
+    </div>
+  </div>
+</div>
 
 <!-- Not signed in state (hidden until Firebase confirms no user) -->
 <div id="authCheck" style="min-height:100vh;display:none;align-items:center;justify-content:center;">
@@ -2724,6 +2791,148 @@
       console.error('Firebase auth error:', e);
     }
   });
+
+  /* ─── Privacy & Data Rights + Creator Agreement ──────────────── */
+  const CREATOR_AGREEMENT_VERSION = '2026-04-21';
+
+  function callFn(name, payload) {
+    if (!firebase || !firebase.functions) return Promise.reject(new Error('Functions unavailable'));
+    return firebase.functions().httpsCallable(name)(payload || {}).then(r => r.data);
+  }
+
+  async function refreshDeletionNotice() {
+    try {
+      if (!firebase || !firebase.auth || !firebase.auth().currentUser) return;
+      const uid = firebase.auth().currentUser.uid;
+      const doc = await firebase.firestore().collection('users').doc(uid).get();
+      const data = doc.exists ? doc.data() : {};
+      const notice = document.getElementById('privacyDeletionNotice');
+      const cancelBtn = document.getElementById('btnCancelDeletion');
+      const delBtn = document.getElementById('btnDeleteAccount');
+      if (data.deletionScheduledFor) {
+        const d = data.deletionScheduledFor.toDate ? data.deletionScheduledFor.toDate() : new Date(data.deletionScheduledFor);
+        notice.textContent = 'Deletion scheduled for ' + d.toLocaleDateString() + '. Click "Cancel deletion" below to keep your account.';
+        notice.style.display = 'block';
+        cancelBtn.style.display = '';
+        delBtn.style.display = 'none';
+      } else {
+        notice.style.display = 'none';
+        cancelBtn.style.display = 'none';
+        delBtn.style.display = '';
+      }
+    } catch (e) { console.warn('deletionNotice failed', e); }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const ex = document.getElementById('btnExportData');
+    if (ex) ex.addEventListener('click', async () => {
+      if (!firebase.auth().currentUser) { showToast('Please sign in first.', 'warning'); return; }
+      ex.disabled = true; ex.textContent = 'Preparing export…';
+      try {
+        const res = await callFn('userRequestDataExport');
+        if (res && res.url) {
+          window.open(res.url, '_blank');
+          showToast('Export ready. Link valid for 7 days.', 'success');
+        } else {
+          showToast('Export generated.', 'success');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Export failed: ' + (err.message || 'error'), 'warning');
+      } finally {
+        ex.disabled = false; ex.textContent = 'Export my data';
+      }
+    });
+
+    const del = document.getElementById('btnDeleteAccount');
+    if (del) del.addEventListener('click', () => {
+      document.getElementById('deleteAccountModal').style.display = 'flex';
+    });
+    const delCancel = document.getElementById('deleteAccountCancel');
+    if (delCancel) delCancel.addEventListener('click', () => {
+      document.getElementById('deleteAccountModal').style.display = 'none';
+      document.getElementById('deleteAccountConfirm').value = '';
+    });
+    const delSubmit = document.getElementById('deleteAccountSubmit');
+    if (delSubmit) delSubmit.addEventListener('click', async () => {
+      const txt = document.getElementById('deleteAccountConfirm').value.trim();
+      delSubmit.disabled = true; delSubmit.textContent = 'Scheduling…';
+      try {
+        await callFn('userRequestDataDeletion', { confirmText: txt });
+        document.getElementById('deleteAccountModal').style.display = 'none';
+        document.getElementById('deleteAccountConfirm').value = '';
+        showToast('Deletion scheduled for 30 days from now.', 'success');
+        await refreshDeletionNotice();
+      } catch (err) {
+        showToast('Failed: ' + (err.message || 'error'), 'warning');
+      } finally {
+        delSubmit.disabled = false; delSubmit.textContent = 'Schedule deletion';
+      }
+    });
+    const cancelBtn = document.getElementById('btnCancelDeletion');
+    if (cancelBtn) cancelBtn.addEventListener('click', async () => {
+      cancelBtn.disabled = true;
+      try {
+        await callFn('userCancelDeletion');
+        showToast('Deletion cancelled.', 'success');
+        await refreshDeletionNotice();
+      } catch (err) {
+        showToast('Failed: ' + (err.message || 'error'), 'warning');
+      } finally {
+        cancelBtn.disabled = false;
+      }
+    });
+
+    // Creator agreement modal wiring
+    const agreeChk = document.getElementById('creatorAgreementAccept');
+    const agreeBtn = document.getElementById('creatorAgreementSubmit');
+    const agreeCancel = document.getElementById('creatorAgreementCancel');
+    if (agreeChk && agreeBtn) agreeChk.addEventListener('change', () => { agreeBtn.disabled = !agreeChk.checked; });
+    if (agreeCancel) agreeCancel.addEventListener('click', () => {
+      document.getElementById('creatorAgreementModal').style.display = 'none';
+    });
+    if (agreeBtn) agreeBtn.addEventListener('click', async () => {
+      agreeBtn.disabled = true; agreeBtn.textContent = 'Saving…';
+      try {
+        await callFn('userAcceptCreatorAgreement', { version: CREATOR_AGREEMENT_VERSION });
+        document.getElementById('creatorAgreementModal').style.display = 'none';
+        showToast('Creator Agreement accepted. You can now upload.', 'success');
+        setTimeout(() => { window.location.href = 'upload.html'; }, 600);
+      } catch (err) {
+        showToast('Failed: ' + (err.message || 'error'), 'warning');
+        agreeBtn.disabled = false; agreeBtn.textContent = 'Accept & continue';
+      }
+    });
+
+    // Refresh deletion notice on auth ready
+    if (firebase && firebase.auth) {
+      firebase.auth().onAuthStateChanged(() => {
+        refreshDeletionNotice();
+        if (window.location.hash === '#creator-agreement') {
+          setTimeout(() => { if (window.startCreatorFlow) window.startCreatorFlow(); }, 300);
+        }
+      });
+    }
+  });
+
+  // Hook: anywhere in the app that wants to start a creator flow can call this.
+  // Shows modal if not yet accepted; otherwise navigates straight to upload.
+  window.startCreatorFlow = async function() {
+    try {
+      const u = firebase.auth().currentUser;
+      if (!u) { window.location.href = 'signin.html?redirect=my-library.html'; return; }
+      const doc = await firebase.firestore().collection('users').doc(u.uid).get();
+      const data = doc.exists ? doc.data() : {};
+      if (data.creatorAgreementAcceptedAt && data.creatorAgreementVersion === CREATOR_AGREEMENT_VERSION) {
+        window.location.href = 'upload.html';
+        return;
+      }
+      document.getElementById('creatorAgreementModal').style.display = 'flex';
+    } catch (e) {
+      console.error(e);
+      document.getElementById('creatorAgreementModal').style.display = 'flex';
+    }
+  };
 </script>
 <script src="js/nav-account.js"></script>
 </body>

@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DMCA Notice | AFTERGLO</title>
+  <meta name="description" content="Submit a DMCA takedown notice or Section 512(g) counter-notice to AFTERGLO. Registered DMCA agent information." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #111111;
+      --bg4:      #1a1a1a;
+      --accent:   #D4A43A;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --border2:  #2a2a2a;
+      --danger:   #F05A4A;
+      --success:  #3DCB73;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+    input, textarea, button, select { font-family: inherit; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 26px; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: var(--accent); color: #000; box-shadow: 0 4px 20px rgba(212,164,58,0.35); }
+    .btn-primary:hover { background: var(--accent2); box-shadow: 0 6px 28px rgba(212,164,58,0.5); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border2); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-sm { padding: 8px 16px; font-size: 0.82rem; }
+
+    /* ─── NAVBAR ──────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 1000;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
+    .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; }
+    .nav-logo span { color: var(--accent); text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4); }
+    .nav-links { display: flex; align-items: center; gap: 36px; list-style: none; }
+    .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--muted); transition: color 0.2s; }
+    .nav-links a:hover { color: #fff; }
+    .nav-right { display: flex; align-items: center; gap: 12px; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 6px; }
+    .hamburger span { width: 24px; height: 2px; background: var(--text); transition: transform 0.25s, opacity 0.25s; }
+    .mobile-menu { display: none; flex-direction: column; gap: 18px; padding: 24px; background: var(--bg2); border-top: 1px solid var(--border); }
+    .mobile-menu.open { display: flex; }
+
+    /* ─── HERO ───────────────────────────────────────────────────── */
+    .page-content { padding-top: var(--nav-h); }
+    .legal-hero { padding: 72px 0 48px; border-bottom: 1px solid var(--border); background: var(--bg2); }
+    .legal-hero-label {
+      display: inline-block; padding: 4px 12px;
+      background: rgba(212,164,58,0.12); border: 1px solid rgba(212,164,58,0.4);
+      color: var(--accent); border-radius: 999px;
+      font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 14px;
+    }
+    .legal-hero h1 { font-size: 2.4rem; font-weight: 900; color: #fff; margin-bottom: 10px; }
+    .legal-hero-meta { color: var(--muted); font-size: 0.92rem; }
+
+    /* ─── LAYOUT ─────────────────────────────────────────────────── */
+    .legal-layout { display: grid; grid-template-columns: 240px 1fr; gap: 48px; padding: 48px 0 96px; }
+    .legal-toc { position: sticky; top: calc(var(--nav-h) + 24px); align-self: start; }
+    .legal-toc h3 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 12px; font-weight: 700; }
+    .legal-toc ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .legal-toc a { font-size: 0.88rem; color: var(--muted); transition: color 0.2s; }
+    .legal-toc a:hover { color: var(--accent); }
+
+    .legal-body section { margin-bottom: 40px; }
+    .legal-body h2 {
+      font-size: 1.35rem; font-weight: 800; color: #fff;
+      margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+    }
+    .legal-body p { font-size: 0.925rem; color: var(--text); margin-bottom: 12px; line-height: 1.75; }
+    .legal-body ul { list-style: none; margin: 0 0 12px 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .legal-body ul li { font-size: 0.925rem; color: var(--text); padding-left: 18px; position: relative; line-height: 1.7; }
+    .legal-body ul li::before { content: "·"; position: absolute; left: 4px; color: var(--accent); font-weight: 700; font-size: 1.2rem; top: -4px; }
+    .legal-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    .legal-body a:hover { color: var(--accent2); }
+    .legal-highlight {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent); border-radius: 8px;
+      padding: 16px 20px; margin: 16px 0;
+    }
+    .legal-highlight p { margin-bottom: 0; font-size: 0.875rem; color: var(--silver); }
+
+    /* ─── FORM ───────────────────────────────────────────────────── */
+    .form-card {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: var(--radius); padding: 28px; margin: 20px 0;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .form-row.full { grid-column: 1 / -1; }
+    .form-row label { font-size: 0.78rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+    .form-row input, .form-row textarea, .form-row select {
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--border2); border-radius: 8px;
+      padding: 11px 14px; font-size: 0.92rem;
+      transition: border-color 0.15s;
+    }
+    .form-row input:focus, .form-row textarea:focus, .form-row select:focus { outline: none; border-color: var(--accent); }
+    .form-row textarea { min-height: 96px; resize: vertical; }
+    .form-row .hint { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .attest {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 12px; background: var(--bg3); border: 1px solid var(--border2); border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    .attest input[type="checkbox"] { margin-top: 3px; flex-shrink: 0; }
+    .attest label { font-size: 0.85rem; color: var(--silver); line-height: 1.55; }
+    .form-err { color: var(--danger); font-size: 0.85rem; margin-top: 8px; display: none; }
+    .form-success {
+      background: rgba(61,203,115,0.08); border: 1px solid rgba(61,203,115,0.35);
+      border-left: 3px solid var(--success);
+      border-radius: 8px; padding: 18px 20px; margin: 16px 0;
+    }
+    .form-success h3 { color: var(--success); font-size: 1.1rem; margin-bottom: 6px; }
+    .form-success p { color: var(--text); font-size: 0.9rem; }
+    .form-success .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 0.85rem; color: var(--accent); word-break: break-all; }
+
+    .flow-switch {
+      display: flex; gap: 8px; margin-bottom: 24px;
+      padding: 6px; background: var(--bg2); border: 1px solid var(--border); border-radius: 999px;
+      width: fit-content;
+    }
+    .flow-chip {
+      padding: 9px 20px; border-radius: 999px;
+      font-size: 0.85rem; font-weight: 600; color: var(--muted);
+      background: transparent; border: none; cursor: pointer;
+    }
+    .flow-chip.active { background: var(--accent); color: #000; }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────── */
+    footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 56px 0 32px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 40px; }
+    .footer-brand .nav-logo { font-size: 1.3rem; }
+    .footer-brand p { font-size: 0.85rem; color: var(--muted); margin-top: 14px; line-height: 1.7; }
+    .footer-brand-sub { font-size: 0.8rem; color: #444; margin-top: 10px; }
+    .footer-col h4 { font-family: 'Outfit', sans-serif; font-size: 0.9rem; font-weight: 800; color: #fff; letter-spacing: 0.04em; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a { font-size: 0.85rem; color: var(--muted); transition: color 0.2s; }
+    .footer-col ul a:hover { color: var(--text); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; padding-top: 28px; border-top: 1px solid var(--border); }
+    .footer-bottom p { font-size: 0.82rem; color: #444; }
+    .footer-bottom a { color: var(--muted); transition: color 0.2s; text-decoration: none; }
+    .footer-bottom a:hover { color: var(--accent); }
+
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .legal-layout { grid-template-columns: 1fr; }
+      .legal-toc { display: none; }
+      .form-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="platform.html">Store</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);">&#10022; Visualizer</a></li>
+      </ul>
+      <div class="nav-right">
+        <a id="navAccountBtn" href="signin.html" class="btn btn-ghost btn-sm nav-cta">Account</a>
+        <a href="index.html#cta" class="btn btn-primary btn-sm nav-cta">Get a Quote</a>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+    <a href="platform.html" onclick="closeMenu()">Store</a>
+    <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()">Account</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ───────────────────────────────────────────────────────── -->
+<div class="page-content">
+  <div class="legal-hero">
+    <div class="container">
+      <div class="legal-hero-label">Legal</div>
+      <h1>DMCA Notice &amp; Takedown</h1>
+      <p class="legal-hero-meta">AFTERGLO complies with the Digital Millennium Copyright Act (17 U.S.C. &sect; 512). Submit takedown notices and counter-notices below.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="legal-layout">
+
+      <nav class="legal-toc">
+        <h3>On this page</h3>
+        <ul>
+          <li><a href="#agent">Registered DMCA Agent</a></li>
+          <li><a href="#takedown">Takedown Notice</a></li>
+          <li><a href="#counter">Counter-Notice</a></li>
+          <li><a href="#policy">Repeat Infringer Policy</a></li>
+        </ul>
+      </nav>
+
+      <div class="legal-body">
+
+        <section id="agent">
+          <h2>Registered DMCA Agent</h2>
+          <p>AFTERGLO is operated by Ward Legacy Group LLC. Direct all DMCA notices to our registered agent:</p>
+          <!-- ACTION REQUIRED: owner must register this agent with the US Copyright Office (dmca.copyright.gov)
+               before marketplace launch and fill in the physical address below. -->
+          <div class="legal-highlight">
+            <p><strong>Ward Legacy Group LLC, Attn: DMCA Agent</strong></p>
+            <p>[address to be completed]</p>
+            <p>Email: <a href="mailto:dmca@afterglolighting.org">dmca@afterglolighting.org</a></p>
+          </div>
+          <p>We prefer electronic submission through the forms below. Postal notices sent to the address above will also be processed.</p>
+        </section>
+
+        <section id="takedown">
+          <h2>Submit a Takedown Notice</h2>
+          <p>Use this form if you are the copyright owner (or authorized agent) and believe a sequence or audio file on AFTERGLO infringes your rights. All fields are required by 17 U.S.C. &sect; 512(c)(3).</p>
+
+          <div class="flow-switch" role="tablist">
+            <button class="flow-chip active" data-flow="takedown" onclick="switchFlow('takedown')">Takedown notice</button>
+            <button class="flow-chip" data-flow="counter" onclick="switchFlow('counter')">Counter-notice</button>
+          </div>
+
+          <form id="takedownForm" class="form-card" novalidate>
+            <div class="form-grid">
+              <div class="form-row">
+                <label>Full legal name</label>
+                <input type="text" name="claimantName" required maxlength="160" />
+              </div>
+              <div class="form-row">
+                <label>Email</label>
+                <input type="email" name="claimantEmail" required maxlength="200" />
+              </div>
+              <div class="form-row">
+                <label>Phone</label>
+                <input type="tel" name="claimantPhone" required maxlength="60" />
+              </div>
+              <div class="form-row">
+                <label>Role</label>
+                <select name="claimantRole" required>
+                  <option value="owner">Copyright owner</option>
+                  <option value="agent">Authorized agent of the owner</option>
+                </select>
+              </div>
+              <div class="form-row full">
+                <label>Physical mailing address</label>
+                <input type="text" name="claimantAddress" required maxlength="400" />
+              </div>
+              <div class="form-row full">
+                <label>Description of the copyrighted work</label>
+                <textarea name="workDescription" required maxlength="2000" placeholder="Title, ISRC/ISWC, registration number, or representative sample..."></textarea>
+              </div>
+              <div class="form-row full">
+                <label>Infringing sequence ID or URL on AFTERGLO</label>
+                <input type="text" name="infringingUrl" required maxlength="500" placeholder="e.g. https://afterglolighting.org/platform.html#seq=abc123 or sequence ID" />
+              </div>
+              <div class="form-row full">
+                <label>Additional details (optional)</label>
+                <textarea name="additional" maxlength="2000" placeholder="Anything else that helps us identify the infringement..."></textarea>
+              </div>
+            </div>
+
+            <div class="attest">
+              <input type="checkbox" id="attGoodFaith" name="attGoodFaith" required />
+              <label for="attGoodFaith"><strong>Good-faith belief.</strong> I have a good-faith belief that the use of the material described above is not authorized by the copyright owner, its agent, or the law.</label>
+            </div>
+            <div class="attest">
+              <input type="checkbox" id="attAccuracy" name="attAccuracy" required />
+              <label for="attAccuracy"><strong>Accuracy under penalty of perjury.</strong> I swear, under penalty of perjury, that the information in this notification is accurate and that I am the copyright owner, or am authorized to act on behalf of the owner, of an exclusive right that is allegedly infringed.</label>
+            </div>
+            <div class="attest">
+              <input type="checkbox" id="attConsent" name="attConsent" required />
+              <label for="attConsent">I consent to AFTERGLO sharing this notice (including my contact information) with the alleged infringing party as required by 17 U.S.C. &sect; 512(c)(3).</label>
+            </div>
+
+            <div class="form-row full">
+              <label>Typed signature</label>
+              <input type="text" name="signature" required maxlength="160" placeholder="Type your full legal name" />
+              <div class="hint">Typing your name constitutes an electronic signature.</div>
+            </div>
+
+            <div class="form-err" id="takedownErr"></div>
+            <button type="submit" class="btn btn-primary" id="takedownSubmit">Submit takedown notice</button>
+          </form>
+
+          <div id="takedownSuccess" style="display:none;" class="form-success">
+            <h3>Notice received</h3>
+            <p>Thank you. Your notice has been recorded. Our team will review within 2 business days.</p>
+            <p>Tracking ID: <span class="mono" id="takedownNoticeId"></span></p>
+            <p style="margin-top:10px;">Please keep this ID for your records. We may contact you at the email provided.</p>
+          </div>
+        </section>
+
+        <section id="counter">
+          <h2>Submit a Counter-Notice (Section 512(g))</h2>
+          <p>If your content was removed and you believe the takedown was mistaken or the result of misidentification, you may file a counter-notice. Under 17 U.S.C. &sect; 512(g), a counter-notice requires you to consent to federal court jurisdiction and to accept service of process from the original claimant.</p>
+
+          <form id="counterForm" class="form-card" novalidate>
+            <div class="form-grid">
+              <div class="form-row">
+                <label>Full legal name</label>
+                <input type="text" name="claimantName" required maxlength="160" />
+              </div>
+              <div class="form-row">
+                <label>Email</label>
+                <input type="email" name="claimantEmail" required maxlength="200" />
+              </div>
+              <div class="form-row">
+                <label>Phone</label>
+                <input type="tel" name="claimantPhone" required maxlength="60" />
+              </div>
+              <div class="form-row">
+                <label>Original notice ID (if known)</label>
+                <input type="text" name="originalNoticeId" maxlength="120" />
+              </div>
+              <div class="form-row full">
+                <label>Physical mailing address</label>
+                <input type="text" name="claimantAddress" required maxlength="400" />
+              </div>
+              <div class="form-row full">
+                <label>Removed material (URL or sequence ID)</label>
+                <input type="text" name="infringingUrl" required maxlength="500" />
+              </div>
+              <div class="form-row full">
+                <label>Statement explaining the mistake or misidentification</label>
+                <textarea name="workDescription" required maxlength="2000"></textarea>
+              </div>
+            </div>
+
+            <div class="attest">
+              <input type="checkbox" id="cAttGoodFaith" name="attGoodFaith" required />
+              <label for="cAttGoodFaith"><strong>Good-faith belief.</strong> I have a good-faith belief that the material was removed or disabled as a result of a mistake or misidentification of the material.</label>
+            </div>
+            <div class="attest">
+              <input type="checkbox" id="cAttAccuracy" name="attAccuracy" required />
+              <label for="cAttAccuracy"><strong>Accuracy under penalty of perjury.</strong> I swear, under penalty of perjury, that the information in this counter-notice is accurate.</label>
+            </div>
+            <div class="attest">
+              <input type="checkbox" id="cAttJurisdiction" name="attJurisdiction" required />
+              <label for="cAttJurisdiction"><strong>Jurisdiction.</strong> I consent to the jurisdiction of the US Federal District Court for the judicial district in which my address is located (or, if outside the United States, for any judicial district in which AFTERGLO may be found), and I will accept service of process from the person who provided the original notification or an agent of such person.</label>
+            </div>
+            <div class="attest">
+              <input type="checkbox" id="cAttConsent" name="attConsent" required />
+              <label for="cAttConsent">I consent to AFTERGLO sharing this counter-notice with the original claimant as required by 17 U.S.C. &sect; 512(g).</label>
+            </div>
+
+            <div class="form-row full">
+              <label>Typed signature</label>
+              <input type="text" name="signature" required maxlength="160" placeholder="Type your full legal name" />
+            </div>
+
+            <div class="form-err" id="counterErr"></div>
+            <button type="submit" class="btn btn-primary" id="counterSubmit">Submit counter-notice</button>
+          </form>
+
+          <div id="counterSuccess" style="display:none;" class="form-success">
+            <h3>Counter-notice received</h3>
+            <p>Your counter-notice has been recorded. We will forward it to the original claimant. Unless the claimant notifies us that they have filed a court action within 10 to 14 business days, we will restore the material.</p>
+            <p>Tracking ID: <span class="mono" id="counterNoticeId"></span></p>
+          </div>
+        </section>
+
+        <section id="policy">
+          <h2>Repeat Infringer Policy</h2>
+          <p>AFTERGLO terminates, in appropriate circumstances, the accounts of users who are repeat infringers, consistent with 17 U.S.C. &sect; 512(i). Creator accounts that receive multiple substantiated takedown notices will be permanently suspended and associated sequences removed from the marketplace.</p>
+          <p>Knowingly misrepresenting that material is infringing (or was removed by mistake) may result in liability for damages under 17 U.S.C. &sect; 512(f).</p>
+          <p>Related documents: <a href="terms.html">Terms of Service</a> &nbsp;&middot;&nbsp; <a href="privacy.html">Privacy Policy</a> &nbsp;&middot;&nbsp; <a href="creator-agreement.html">Creator Agreement</a></p>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="nav-logo">AFTER<span>GLO</span></span>
+        <p>Permanent LED roofline lighting installed across Utah. Music-synchronized Christmas light shows. And a growing library of FSEQ sequences for the xLights community.</p>
+        <p class="footer-brand-sub">Salt Lake City, Utah &bull; (385) 337-4144</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="platform.html#sequences">Browse Sequences</a></li>
+          <li><a href="platform.html#categories">Categories</a></li>
+          <li><a href="platform.html#premium">Premium Packs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="arches.html">Light Shows</a></li>
+          <li><a href="afterglo-visualizer.html">Visualizer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="creator-agreement.html">Creator Agreement</a></li>
+          <li><a href="dmca.html">DMCA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AFTERGLO by Ward Legacy Group LLC. All rights reserved.</p>
+      <div style="display:flex; gap:20px;">
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="dmca.html">DMCA</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="js/firebase-auth.js"></script>
+<script src="js/nav-account.js"></script>
+
+<script>
+  const FUNCTIONS_BASE = "https://us-central1-afterglo-website-fbb89.cloudfunctions.net";
+
+  const hamburger  = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen = false;
+  hamburger.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    const spans = hamburger.querySelectorAll('span');
+    if (menuOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+  document.addEventListener('click', e => {
+    if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+  });
+
+  function switchFlow(flow) {
+    document.querySelectorAll('.flow-chip').forEach(c => c.classList.toggle('active', c.dataset.flow === flow));
+    if (flow === 'counter') {
+      document.getElementById('counter').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      document.getElementById('takedown').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  // Respect URL fragment
+  if (window.location.hash === '#counter') switchFlow('counter');
+
+  function collectForm(form, requireFields, requireChecks) {
+    const data = {};
+    const fd = new FormData(form);
+    for (const [k, v] of fd.entries()) data[k] = typeof v === 'string' ? v.trim() : v;
+    for (const f of requireFields) {
+      if (!data[f]) return { error: 'Please complete all required fields.' };
+    }
+    for (const c of requireChecks) {
+      if (!form.querySelector('input[name="'+c+'"]').checked) {
+        return { error: 'You must accept all required legal statements.' };
+      }
+    }
+    return { data };
+  }
+
+  async function postNotice(payload) {
+    const res = await fetch(FUNCTIONS_BASE + '/submitDmcaNotice', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const j = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(j.error || ('HTTP ' + res.status));
+    return j;
+  }
+
+  document.getElementById('takedownForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('takedownErr');
+    errEl.style.display = 'none';
+    const fields = ['claimantName','claimantEmail','claimantPhone','claimantRole','claimantAddress','workDescription','infringingUrl','signature'];
+    const checks = ['attGoodFaith','attAccuracy','attConsent'];
+    const r = collectForm(e.target, fields, checks);
+    if (r.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('takedownSubmit');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    try {
+      const result = await postNotice(Object.assign({ type: 'takedown' }, r.data));
+      document.getElementById('takedownForm').style.display = 'none';
+      document.getElementById('takedownNoticeId').textContent = result.noticeId || '(unknown)';
+      document.getElementById('takedownSuccess').style.display = 'block';
+    } catch (err) {
+      errEl.textContent = 'Submission failed: ' + err.message;
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Submit takedown notice';
+    }
+  });
+
+  document.getElementById('counterForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const errEl = document.getElementById('counterErr');
+    errEl.style.display = 'none';
+    const fields = ['claimantName','claimantEmail','claimantPhone','claimantAddress','workDescription','infringingUrl','signature'];
+    const checks = ['attGoodFaith','attAccuracy','attJurisdiction','attConsent'];
+    const r = collectForm(e.target, fields, checks);
+    if (r.error) { errEl.textContent = r.error; errEl.style.display = 'block'; return; }
+    const btn = document.getElementById('counterSubmit');
+    btn.disabled = true; btn.textContent = 'Submitting…';
+    try {
+      const result = await postNotice(Object.assign({ type: 'counter' }, r.data));
+      document.getElementById('counterForm').style.display = 'none';
+      document.getElementById('counterNoticeId').textContent = result.noticeId || '(unknown)';
+      document.getElementById('counterSuccess').style.display = 'block';
+    } catch (err) {
+      errEl.textContent = 'Submission failed: ' + err.message;
+      errEl.style.display = 'block';
+      btn.disabled = false; btn.textContent = 'Submit counter-notice';
+    }
+  });
+</script>
+
+</body>
+</html>

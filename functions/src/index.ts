@@ -11,6 +11,17 @@ const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
 
 const SITE_URL = "https://afterglolighting.org";
 
+// Permanent super-admins. Emails here get admin privileges automatically as
+// soon as they sign in with a verified email, without needing the bootstrap
+// callable. Compared case-insensitively.
+const SUPER_ADMIN_EMAILS: string[] = ["shaneward852@gmail.com"];
+
+function isSuperAdminEmail(email: string | undefined | null): boolean {
+  if (!email) return false;
+  const e = String(email).toLowerCase();
+  return SUPER_ADMIN_EMAILS.some((s) => s.toLowerCase() === e);
+}
+
 const ALLOWED_ORIGINS = new Set<string>([
   "https://afterglolighting.org",
   "https://www.afterglolighting.org",
@@ -1045,22 +1056,119 @@ async function requireAdmin(context: functions.https.CallableContext): Promise<s
   if (rawToken) {
     try {
       const decoded = await admin.auth().verifyIdToken(rawToken, true);
-      if (decoded.admin !== true) {
-        throw new functions.https.HttpsError("permission-denied", "Admin access required.");
+      if (decoded.admin === true) {
+        return decoded.uid;
       }
-      return decoded.uid;
+      // Super-admin fallback: verify via getUser so the email is authoritative
+      // and confirmed as verified, then promote the claim for future calls.
+      if (isSuperAdminEmail(decoded.email)) {
+        const u = await admin.auth().getUser(decoded.uid);
+        if (u.email && isSuperAdminEmail(u.email) && u.emailVerified) {
+          const existing = (u.customClaims || {}) as { [k: string]: any };
+          if (existing.admin !== true) {
+            await admin.auth().setCustomUserClaims(decoded.uid, {
+              ...existing,
+              admin:   true,
+              creator: true,
+            });
+            functions.logger.info(`requireAdmin: promoted super-admin ${u.email} (${decoded.uid})`);
+          }
+          return decoded.uid;
+        }
+      }
+      throw new functions.https.HttpsError("permission-denied", "Admin access required.");
     } catch (err) {
       if ((err as any)?.code === "auth/id-token-revoked") {
         throw new functions.https.HttpsError("permission-denied", "Session revoked. Sign in again.");
       }
+      if (err instanceof functions.https.HttpsError) throw err;
       // fall through to legacy check if decoding failed for another reason
     }
   }
-  if (context.auth.token.admin !== true) {
-    throw new functions.https.HttpsError("permission-denied", "Admin access required.");
+  if (context.auth.token.admin === true) {
+    return context.auth.uid;
   }
-  return context.auth.uid;
+  // Super-admin fallback on the legacy path as well.
+  const emailFromToken = (context.auth.token.email as string | undefined) || "";
+  if (isSuperAdminEmail(emailFromToken)) {
+    const u = await admin.auth().getUser(context.auth.uid);
+    if (u.email && isSuperAdminEmail(u.email) && u.emailVerified) {
+      const existing = (u.customClaims || {}) as { [k: string]: any };
+      if (existing.admin !== true) {
+        await admin.auth().setCustomUserClaims(context.auth.uid, {
+          ...existing,
+          admin:   true,
+          creator: true,
+        });
+        functions.logger.info(`requireAdmin: promoted super-admin ${u.email} (${context.auth.uid})`);
+      }
+      return context.auth.uid;
+    }
+  }
+  throw new functions.https.HttpsError("permission-denied", "Admin access required.");
 }
+
+// ensureSuperAdminClaim. Called from admin.html on first load when the caller's
+// email is in SUPER_ADMIN_EMAILS but the admin custom claim is not yet on the
+// token. Also runs on new-user creation so brand-new super-admins get the claim
+// on the very first token mint. No-ops if the caller is not a super-admin.
+export const ensureSuperAdminClaim = functions.https.onCall(async (_data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+  }
+  const uid = context.auth.uid;
+  const u   = await admin.auth().getUser(uid);
+  if (!u.email || !isSuperAdminEmail(u.email) || !u.emailVerified) {
+    return { ok: false, promoted: false };
+  }
+  const existing = (u.customClaims || {}) as { [k: string]: any };
+  if (existing.admin === true) {
+    return { ok: true, promoted: false };
+  }
+  await admin.auth().setCustomUserClaims(uid, {
+    ...existing,
+    admin:   true,
+    creator: true,
+  });
+  await db.collection("users").doc(uid).set(
+    {
+      role:      "admin",
+      email:     u.email,
+      updatedAt: admin.firestore.Timestamp.now(),
+    },
+    { merge: true }
+  );
+  functions.logger.info(`ensureSuperAdminClaim: promoted ${u.email} (${uid})`);
+  return { ok: true, promoted: true };
+});
+
+// onUserCreate. When a new Firebase Auth user is created, if their email is
+// a super-admin and already verified, stamp the admin claim immediately so
+// their first ID token carries it.
+export const ensureSuperAdminOnCreate = functions.auth.user().onCreate(async (user) => {
+  try {
+    if (!user.email || !isSuperAdminEmail(user.email)) return;
+    if (!user.emailVerified) return;
+    const existing = (user.customClaims || {}) as { [k: string]: any };
+    if (existing.admin === true) return;
+    await admin.auth().setCustomUserClaims(user.uid, {
+      ...existing,
+      admin:   true,
+      creator: true,
+    });
+    await db.collection("users").doc(user.uid).set(
+      {
+        role:      "admin",
+        email:     user.email,
+        updatedAt: admin.firestore.Timestamp.now(),
+      },
+      { merge: true }
+    );
+    functions.logger.info(`ensureSuperAdminOnCreate: promoted ${user.email} (${user.uid})`);
+  } catch (err) {
+    functions.logger.error("ensureSuperAdminOnCreate failed", err);
+  }
+});
 
 // adminSetUserRole(uid, role). role is one of: 'user', 'creator', 'admin'.
 // Writes custom claim {admin, creator} and mirrors role into /users/{uid}.
@@ -2187,3 +2295,109 @@ export const processPendingDeletions = functions.pubsub
     }
     return null;
   });
+
+// ─── Feedback ────────────────────────────────────────────────────────────────
+// submitFeedback: callable. Auth is OPTIONAL. Suite (and other clients) post a
+// short message plus optional category, log tail, app version, and OS string.
+// We validate length, strip absurd sizes, and stamp uid/email only when the
+// caller is signed in. Writes live in /feedback. Direct client writes are
+// blocked by firestore.rules; this callable is the only way in.
+const FEEDBACK_CATEGORIES = new Set(["bug", "idea", "other"]);
+
+export const submitFeedback = functions.https.onCall(async (data, context) => {
+  const raw = (data && typeof data.message === "string") ? data.message : "";
+  const message = raw.trim();
+  if (message.length < 3 || message.length > 5000) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Message must be between 3 and 5000 characters."
+    );
+  }
+
+  let category: string = "other";
+  if (typeof data?.category === "string" && FEEDBACK_CATEGORIES.has(data.category)) {
+    category = data.category;
+  }
+
+  // Cap log tail and version/os so a misbehaving client cannot bloat the doc.
+  const logTail    = typeof data?.logTail    === "string" ? data.logTail.slice(0, 20000) : null;
+  const appVersion = typeof data?.appVersion === "string" ? data.appVersion.slice(0, 64)  : null;
+  const os         = typeof data?.os         === "string" ? data.os.slice(0, 128)         : null;
+
+  const doc: Record<string, unknown> = {
+    message,
+    category,
+    logTail,
+    appVersion,
+    os,
+    status: "new",
+    reply: null,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+  };
+
+  if (context.auth) {
+    doc.uid   = context.auth.uid;
+    doc.email = context.auth.token?.email || null;
+  } else {
+    doc.uid   = null;
+    doc.email = null;
+  }
+
+  const ref = await db.collection("feedback").add(doc);
+  functions.logger.info("submitFeedback: wrote " + ref.id + " category=" + category);
+  return { id: ref.id };
+});
+
+// adminReplyFeedback({id, status?, reply?}) . admin-only. Updates feedback
+// status and/or reply. Status must be one of new, read, resolved.
+const FEEDBACK_STATUSES = new Set(["new", "read", "resolved"]);
+
+export const adminReplyFeedback = functions.https.onCall(async (data, context) => {
+  const actor = await requireAdmin(context);
+
+  const id = data?.id;
+  if (typeof id !== "string" || !isValidId(id)) {
+    throw new functions.https.HttpsError("invalid-argument", "id is required.");
+  }
+
+  const update: Record<string, unknown> = {
+    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedBy: actor,
+  };
+
+  if (typeof data?.status === "string") {
+    if (!FEEDBACK_STATUSES.has(data.status)) {
+      throw new functions.https.HttpsError("invalid-argument", "Invalid status.");
+    }
+    update.status = data.status;
+  }
+
+  if (typeof data?.reply === "string") {
+    const reply = data.reply.trim();
+    if (reply.length > 5000) {
+      throw new functions.https.HttpsError("invalid-argument", "Reply too long.");
+    }
+    update.reply = reply.length ? reply : null;
+    update.repliedAt = admin.firestore.FieldValue.serverTimestamp();
+  }
+
+  const ref = db.collection("feedback").doc(id);
+  const snap = await ref.get();
+  if (!snap.exists) {
+    throw new functions.https.HttpsError("not-found", "Feedback not found.");
+  }
+  await ref.update(update);
+
+  await writeAudit({
+    actor,
+    action: "feedback.update",
+    target: id,
+    targetCollection: "feedback",
+    extra: {
+      status: update.status ?? null,
+      hasReply: typeof data?.reply === "string" && data.reply.trim().length > 0,
+    },
+  });
+
+  return { ok: true, id };
+});

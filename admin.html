@@ -330,6 +330,7 @@
       <button class="tab-chip" data-tab="disputes">Disputes</button>
       <button class="tab-chip" data-tab="dmca">DMCA</button>
       <button class="tab-chip" data-tab="data-requests">Data Requests</button>
+      <button class="tab-chip" data-tab="feedback">Feedback</button>
       <button class="tab-chip" data-tab="audit">Audit Log</button>
     </div>
 
@@ -520,6 +521,36 @@
       </div>
     </section>
 
+    <!-- FEEDBACK -->
+    <section class="section" id="section-feedback">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">User feedback</div>
+          <div class="panel-tools">
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <button class="btn btn-sm feedback-filter active" data-fb-filter="all">All</button>
+              <button class="btn btn-sm feedback-filter" data-fb-filter="new">New</button>
+              <button class="btn btn-sm feedback-filter" data-fb-filter="read">Read</button>
+              <button class="btn btn-sm feedback-filter" data-fb-filter="resolved">Resolved</button>
+            </div>
+            <button class="btn btn-sm" id="refreshFeedback">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>When</th><th>Category</th><th>Status</th><th>From</th><th>Message</th><th></th>
+              </tr>
+            </thead>
+            <tbody id="feedbackBody">
+              <tr><td colspan="6" class="empty-row">Loading feedback.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- AUDIT LOG -->
     <section class="section" id="section-audit">
       <div class="panel">
@@ -579,6 +610,32 @@
     </div>
   </div>
 </div>
+
+<!-- ─── FEEDBACK DRAWER ────────────────────────────────────────────── -->
+<div id="fbDrawerBackdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:3000;"></div>
+<aside id="fbDrawer" style="display:none; position:fixed; top:0; right:0; bottom:0; width:min(520px, 100%); background:var(--surface2); border-left:1px solid var(--border); z-index:3001; overflow-y:auto; padding:26px 26px 40px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+    <h2 style="font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:800;">Feedback</h2>
+    <button class="btn btn-sm" id="fbDrawerClose">Close</button>
+  </div>
+  <div id="fbDrawerMeta" style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;"></div>
+
+  <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:14px 16px; margin-bottom:16px; white-space:pre-wrap; font-size:0.92rem; line-height:1.55;" id="fbDrawerMessage"></div>
+
+  <details id="fbDrawerLogWrap" style="margin-bottom:18px; display:none;">
+    <summary style="cursor:pointer; color:var(--gold); font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;">Log tail</summary>
+    <pre id="fbDrawerLog" style="margin-top:10px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; max-height:240px; overflow:auto; font-family:ui-monospace,'SF Mono',Menlo,monospace; font-size:0.78rem; color:var(--muted); white-space:pre-wrap;"></pre>
+  </details>
+
+  <label style="display:block; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:6px;">Admin reply</label>
+  <textarea id="fbDrawerReply" rows="5" style="width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:8px; font-size:0.9rem; margin-bottom:16px; resize:vertical;" placeholder="Private note, for now. Saved on the feedback doc."></textarea>
+
+  <div style="display:flex; gap:8px; flex-wrap:wrap;">
+    <button class="btn btn-sm" id="fbMarkRead">Mark Read</button>
+    <button class="btn btn-sm btn-success" id="fbMarkResolved">Mark Resolved</button>
+    <button class="btn btn-sm btn-primary" id="fbSaveReply">Save Reply</button>
+  </div>
+</aside>
 
 <div class="toast-stack" id="toastStack"></div>
 
@@ -659,9 +716,29 @@
       navUser.textContent = user.email || user.displayName || '';
       signOutBtn.style.display = '';
 
+      // Permanent super-admins. Must mirror SUPER_ADMIN_EMAILS in
+      // functions/src/index.ts. Lowercase compare.
+      const SUPER_ADMIN_EMAILS = ['shaneward852@gmail.com'];
+      const emailLc = (user.email || '').toLowerCase();
+      const isSuper = SUPER_ADMIN_EMAILS.indexOf(emailLc) !== -1;
+
       try {
-        const result = await user.getIdTokenResult(true);
-        if (result.claims && result.claims.admin === true) {
+        let result = await user.getIdTokenResult(true);
+        let isAdminClaim = !!(result.claims && result.claims.admin === true);
+
+        // Silent promotion for super-admins whose claim hasn't landed yet.
+        if (!isAdminClaim && isSuper) {
+          try {
+            await call('ensureSuperAdminClaim');
+            await user.getIdToken(true);
+            result = await user.getIdTokenResult(true);
+            isAdminClaim = !!(result.claims && result.claims.admin === true);
+          } catch (e) {
+            console.debug('ensureSuperAdminClaim failed silently', e);
+          }
+        }
+
+        if (isAdminClaim) {
           showOnly(dashboard);
           initDashboard();
         } else {
@@ -701,8 +778,13 @@
 
   /* ─── Load everything on dashboard init ────────────────────────── */
   async function initDashboard() {
-    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadAudit()]);
+    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadFeedback(), loadAudit()]);
     renderStats();
+    // Deep-link: admin.html#feedback opens the Feedback tab directly.
+    if ((window.location.hash || '').toLowerCase() === '#feedback') {
+      const chip = document.querySelector('.tab-chip[data-tab="feedback"]');
+      if (chip) chip.click();
+    }
   }
 
   /* ─── Users ────────────────────────────────────────────────────── */
@@ -1286,6 +1368,150 @@
   document.getElementById('auditSearch').addEventListener('input', renderAudit);
   document.getElementById('refreshAudit').addEventListener('click', loadAudit);
   document.getElementById('exportAuditCsv').addEventListener('click', exportAuditCsv);
+
+  /* ─── Feedback ─────────────────────────────────────────────────── */
+  let feedbackCache = [];
+  let feedbackFilter = 'all';
+  let fbDrawerId = null;
+
+  function fbRelative(d) {
+    let dt;
+    if (!d) return '.';
+    if (typeof d === 'string') dt = new Date(d);
+    else if (d && typeof d.toDate === 'function') dt = d.toDate();
+    else if (d && typeof d.seconds === 'number') dt = new Date(d.seconds * 1000);
+    else dt = new Date(d);
+    if (isNaN(dt.getTime())) return '.';
+    const diff = (Date.now() - dt.getTime()) / 1000;
+    if (diff < 60)    return Math.floor(diff) + 's ago';
+    if (diff < 3600)  return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    if (diff < 86400 * 14) return Math.floor(diff / 86400) + 'd ago';
+    return fmtDate(dt);
+  }
+
+  function fbCategoryPill(cat) {
+    const c = cat || 'other';
+    const cls = c === 'bug'  ? 'pill-rejected'
+              : c === 'idea' ? 'pill-creator'
+              :                'pill-user';
+    return '<span class="pill ' + cls + '">' + esc(c) + '</span>';
+  }
+
+  function fbStatusPill(status) {
+    const s = status || 'new';
+    const cls = s === 'resolved' ? 'pill-approved'
+              : s === 'read'     ? 'pill-user'
+              :                    'pill-pending';
+    return '<span class="pill ' + cls + '">' + esc(s) + '</span>';
+  }
+
+  async function loadFeedback() {
+    const body = document.getElementById('feedbackBody');
+    if (!body) return;
+    body.innerHTML = '<tr><td colspan="6" class="empty-row">Loading feedback.</td></tr>';
+    try {
+      const snap = await fbFirestore.collection('feedback').orderBy('createdAt', 'desc').limit(500).get();
+      feedbackCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      renderFeedback();
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">Failed to load feedback. ' + esc(err.message || '') + '</td></tr>';
+    }
+  }
+
+  function renderFeedback() {
+    const body = document.getElementById('feedbackBody');
+    if (!body) return;
+    const rows = feedbackCache.filter(f => feedbackFilter === 'all' ? true : (f.status || 'new') === feedbackFilter);
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="6" class="empty-row">No feedback matches.</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(f => {
+      const preview = (f.message || '').slice(0, 140) + ((f.message || '').length > 140 ? '.' : '');
+      const who = f.email ? esc(f.email) : '<span class="cell-sub">anonymous</span>';
+      return '<tr style="cursor:pointer;" onclick="openFeedbackDrawer(\'' + esc(f._id) + '\')">'
+        + '<td>' + esc(fbRelative(f.createdAt)) + '</td>'
+        + '<td>' + fbCategoryPill(f.category) + '</td>'
+        + '<td>' + fbStatusPill(f.status) + '</td>'
+        + '<td>' + who + '</td>'
+        + '<td><div style="max-width:420px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">' + esc(preview) + '</div></td>'
+        + '<td><button class="btn btn-sm" onclick="event.stopPropagation(); openFeedbackDrawer(\'' + esc(f._id) + '\')">Open</button></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  document.querySelectorAll('.feedback-filter').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.feedback-filter').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      feedbackFilter = btn.dataset.fbFilter;
+      renderFeedback();
+    });
+  });
+  const refreshFb = document.getElementById('refreshFeedback');
+  if (refreshFb) refreshFb.addEventListener('click', loadFeedback);
+
+  window.openFeedbackDrawer = function(id) {
+    const f = feedbackCache.find(x => x._id === id);
+    if (!f) { toast('Feedback not found.', 'error'); return; }
+    fbDrawerId = id;
+
+    const metaBits = [];
+    metaBits.push(fbCategoryPill(f.category));
+    metaBits.push(fbStatusPill(f.status));
+    metaBits.push('<span>' + esc(fbRelative(f.createdAt)) + '</span>');
+    metaBits.push('<span>' + (f.email ? esc(f.email) : 'anonymous') + '</span>');
+    if (f.appVersion) metaBits.push('<span class="mono">' + esc(f.appVersion) + '</span>');
+    if (f.os)         metaBits.push('<span class="mono">' + esc(f.os) + '</span>');
+    document.getElementById('fbDrawerMeta').innerHTML =
+      '<div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">' + metaBits.join('') + '</div>';
+
+    document.getElementById('fbDrawerMessage').textContent = f.message || '';
+
+    const logWrap = document.getElementById('fbDrawerLogWrap');
+    const logEl   = document.getElementById('fbDrawerLog');
+    if (f.logTail) {
+      logEl.textContent = f.logTail;
+      logWrap.style.display = '';
+    } else {
+      logEl.textContent = '';
+      logWrap.style.display = 'none';
+    }
+
+    document.getElementById('fbDrawerReply').value = f.reply || '';
+    document.getElementById('fbDrawerBackdrop').style.display = 'block';
+    document.getElementById('fbDrawer').style.display = 'block';
+  };
+
+  function closeFeedbackDrawer() {
+    fbDrawerId = null;
+    document.getElementById('fbDrawerBackdrop').style.display = 'none';
+    document.getElementById('fbDrawer').style.display = 'none';
+  }
+  document.getElementById('fbDrawerClose').addEventListener('click', closeFeedbackDrawer);
+  document.getElementById('fbDrawerBackdrop').addEventListener('click', closeFeedbackDrawer);
+
+  async function fbUpdate(payload, successMsg) {
+    if (!fbDrawerId) return;
+    try {
+      await call('adminReplyFeedback', Object.assign({ id: fbDrawerId }, payload));
+      toast(successMsg, 'success');
+      await loadFeedback();
+    } catch (err) {
+      toast('Failed: ' + (err.message || 'error'), 'error');
+    }
+  }
+
+  document.getElementById('fbMarkRead').addEventListener('click', () =>
+    fbUpdate({ status: 'read' }, 'Marked read.'));
+  document.getElementById('fbMarkResolved').addEventListener('click', () =>
+    fbUpdate({ status: 'resolved' }, 'Marked resolved.'));
+  document.getElementById('fbSaveReply').addEventListener('click', () => {
+    const reply = document.getElementById('fbDrawerReply').value || '';
+    fbUpdate({ reply }, 'Reply saved.');
+  });
 
   function exportPurchasesCsv() {
     const header = ['buyer_uid','sequence_id','sequence_name','creator','amount','stripe_session_id','purchased_at'];
