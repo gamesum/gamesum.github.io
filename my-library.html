@@ -2257,10 +2257,8 @@
     list.innerHTML = '';
 
     if (!rows.length) {
-      const empty = document.createElement('div');
-      empty.className = 'status-empty';
-      empty.textContent = "You haven't uploaded any shows yet. Head to Upload a Show to submit one.";
-      list.appendChild(empty);
+      // Let the grouped-section empty-state card handle the "no uploads" message
+      // so we don't show two empty states stacked on top of each other.
       return;
     }
 
