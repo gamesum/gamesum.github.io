@@ -619,6 +619,126 @@
       padding: 13px 20px;
     }
 
+    /* ─── NETWORK SCAN UI ─────────────────────────────────────────── */
+    .scan-status {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-bottom: 14px;
+      min-height: 28px;
+    }
+    .scan-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid #333;
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    .scan-section-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #555;
+      margin: 12px 0 8px;
+    }
+    .found-controllers {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+      max-height: 180px;
+      overflow-y: auto;
+    }
+    .controller-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #111;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      padding: 10px 14px;
+      gap: 10px;
+      transition: border-color 0.2s;
+    }
+    .controller-row:hover { border-color: rgba(200,146,30,0.4); }
+    .controller-row-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .controller-row-ip {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+      font-family: 'Inter', monospace;
+    }
+    .controller-row-name {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .controller-row-send {
+      padding: 7px 14px;
+      min-height: 36px;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      background: rgba(200,146,30,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(200,146,30,0.25);
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .controller-row-send:hover { background: rgba(200,146,30,0.25); }
+    .manual-divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 16px 0 12px;
+      color: #555;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .manual-divider::before, .manual-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #222;
+    }
+
+    /* ─── REMOVE SAVED SHOW BUTTON ────────────────────────────────── */
+    .card-remove-btn {
+      position: absolute;
+      top: 8px; right: 8px;
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #888;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      line-height: 1;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
+      z-index: 2;
+    }
+    .card-remove-btn:hover {
+      background: rgba(200,30,30,0.75);
+      color: #fff;
+      border-color: rgba(255,80,80,0.5);
+    }
+
     /* ─── TOAST ───────────────────────────────────────────────────── */
     #toast {
       position: fixed;
@@ -711,11 +831,23 @@
     <div class="modal-title">Send Show to Your Controller</div>
     <div class="modal-sub">This sends <strong id="modalSeqName">this show</strong> directly to your AFTERGLO controller over your home Wi-Fi. You only need to do this once per show.</div>
 
-    <div class="modal-input-wrap">
-      <label for="controllerIP">Controller Address</label>
+    <!-- Scan status -->
+    <div class="scan-status" id="scanStatus">
+      <div class="scan-spinner" id="scanSpinner"></div>
+      <span id="scanStatusText">Scanning network for controllers…</span>
+    </div>
+
+    <!-- Found controllers list -->
+    <div id="foundSection" style="display:none;">
+      <div class="scan-section-label">Found</div>
+      <div class="found-controllers" id="foundControllers"></div>
+    </div>
+
+    <!-- Manual IP fallback -->
+    <div class="manual-divider">Manual</div>
+    <div class="modal-input-wrap" style="margin-bottom:14px;">
+      <label for="controllerIP">Enter IP manually</label>
       <input type="text" id="controllerIP" class="modal-input" placeholder="e.g. 192.168.1.105" autocomplete="off" inputmode="decimal" />
-      <div class="modal-hint">Not sure what this is? <button onclick="var h=document.getElementById('ipHelp');h.style.display=h.style.display==='none'?'block':'none'" style="background:none;border:none;color:var(--accent);cursor:pointer;font-size:0.75rem;font-weight:600;padding:0;text-decoration:underline;">Tap here for step-by-step help</button></div>
-      <div id="ipHelp" style="display:none;margin-top:10px;padding:12px;background:#0a0a0a;border:1px solid #2a2a2a;border-radius:8px;font-size:0.8rem;color:var(--muted);line-height:1.7;"><strong style="color:var(--silver);">Option 1: Check your controller's screen.</strong> When your AFTERGLO controller starts up, a number like 192.168.1.105 appears on its screen. Type that number here.<br><br><strong style="color:var(--silver);">Option 2: Check your router.</strong> Type 192.168.1.1 into your browser address bar. Look for a page with a list of connected devices and find "AFTERGLO."<br><br><strong style="color:var(--silver);">Can't find it?</strong> Use the "Download Show File" button instead, then drag that file onto your controller's web page.</div>
     </div>
 
     <div style="font-size:0.78rem;color:var(--muted);margin-bottom:16px;line-height:1.6;">💡 <strong style="color:var(--silver);">Tip:</strong> Make sure your phone or computer is connected to your home Wi-Fi (not mobile data) before sending.</div>
@@ -1039,9 +1171,16 @@
            Send to Controller
          </button>`;
 
+    const removeBtn = type === 'download'
+      ? `<button class="card-remove-btn" title="Remove from library" onclick="removeSavedShow('${escapedId}',event)">
+           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+         </button>`
+      : '';
+
     card.innerHTML = `
       <div class="lib-card-thumb" style="background:${gradient};">
         <span class="lib-card-badge ${badgeClass}">${badgeText}</span>
+        ${removeBtn}
       </div>
       <div class="lib-card-body">
         <div class="lib-card-title">${escapeHtml(item.name)}</div>
@@ -1088,6 +1227,18 @@
     return div;
   }
 
+  /* ─── REMOVE SAVED SHOW ───────────────────────────────────────── */
+  function removeSavedShow(id, event) {
+    if (event) event.stopPropagation();
+    if (!currentUser) return;
+    const idx = (currentUser.library || []).findIndex(item => String(item.id) === String(id));
+    if (idx === -1) return;
+    currentUser.library.splice(idx, 1);
+    saveUser(currentUser);
+    renderSections();
+    showToast('Show removed from your library');
+  }
+
   /* ─── ACTIONS ──────────────────────────────────────────────────── */
   async function downloadFseq(sequenceId) {
     showToast('Preparing download…', 'info');
@@ -1114,15 +1265,103 @@
   // Legacy alias used by older upload-type cards
   function redownload(id) { downloadFseq(id); }
 
+  /* ─── NETWORK SCANNING ────────────────────────────────────────── */
+  let scanAbortFlag = false;
+
+  async function probeController(ip) {
+    return new Promise((resolve) => {
+      const timeout = new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), 1000));
+      const req = fetch(`http://${ip}/api/info`, { signal: AbortSignal.timeout ? AbortSignal.timeout(1000) : undefined })
+        .then(async (res) => {
+          if (!res.ok) { resolve(null); return; }
+          try {
+            const text = await res.text();
+            let info = {};
+            try { info = JSON.parse(text); } catch (_) {}
+            const lc = text.toLowerCase();
+            if (lc.includes('wled') || lc.includes('afterglo') || res.status === 200) {
+              resolve({ ip, name: info.name || info.ap || 'WLED Device' });
+            } else {
+              resolve(null);
+            }
+          } catch (_) { resolve(null); }
+        })
+        .catch(() => resolve(null));
+      Promise.race([req, timeout]).catch(() => resolve(null));
+    });
+  }
+
+  async function scanNetwork() {
+    scanAbortFlag = false;
+    const spinner  = document.getElementById('scanSpinner');
+    const statusTx = document.getElementById('scanStatusText');
+    const foundSec = document.getElementById('foundSection');
+    const foundEl  = document.getElementById('foundControllers');
+
+    spinner.style.display = '';
+    statusTx.textContent  = 'Scanning network for controllers…';
+    foundSec.style.display = 'none';
+    foundEl.innerHTML = '';
+
+    const subnets = ['192.168.1', '192.168.0', '10.0.0'];
+    const allIPs  = [];
+    for (const sub of subnets) {
+      for (let i = 1; i <= 254; i++) allIPs.push(`${sub}.${i}`);
+    }
+
+    const BATCH = 30;
+    let found = 0;
+
+    for (let i = 0; i < allIPs.length; i += BATCH) {
+      if (scanAbortFlag) break;
+      const batch = allIPs.slice(i, i + BATCH);
+      const results = await Promise.all(batch.map(ip => probeController(ip)));
+      results.forEach(r => {
+        if (!r) return;
+        found++;
+        foundSec.style.display = '';
+        const row = document.createElement('div');
+        row.className = 'controller-row';
+        row.innerHTML = `
+          <div class="controller-row-info">
+            <div class="controller-row-ip">${esc(r.ip)}</div>
+            <div class="controller-row-name">${esc(r.name)}</div>
+          </div>
+          <button class="controller-row-send" onclick="sendToControllerIP('${esc(r.ip)}')">Send</button>
+        `;
+        foundEl.appendChild(row);
+      });
+    }
+
+    spinner.style.display = 'none';
+    if (found === 0) {
+      statusTx.textContent = 'No controllers found on network. Enter IP manually below.';
+    } else {
+      statusTx.textContent = `Found ${found} controller${found !== 1 ? 's' : ''} on your network.`;
+    }
+  }
+
+  async function sendToControllerIP(ip) {
+    document.getElementById('controllerIP').value = ip;
+    await sendToController();
+  }
+
   async function openSendModal(id, name) {
-    sendTargetId     = id;
+    sendTargetId      = id;
     sendTargetFseqUrl = null;
     document.getElementById('modalSeqName').textContent = name;
     document.getElementById('controllerIP').value = '';
     document.getElementById('sendModal').classList.add('open');
-    setTimeout(() => document.getElementById('controllerIP').focus(), 100);
 
-    // Pre-fetch the signed URL so we have it ready when the user clicks Send
+    // Reset scan UI
+    document.getElementById('scanSpinner').style.display = '';
+    document.getElementById('scanStatusText').textContent = 'Scanning network for controllers…';
+    document.getElementById('foundSection').style.display = 'none';
+    document.getElementById('foundControllers').innerHTML = '';
+
+    // Kick off scan and URL pre-fetch in parallel
+    scanNetwork();
+
     try {
       const token = await getIdToken();
       if (token) {
@@ -1140,7 +1379,8 @@
 
   function closeModal() {
     document.getElementById('sendModal').classList.remove('open');
-    sendTargetId = null;
+    sendTargetId  = null;
+    scanAbortFlag = true;
   }
 
   function handleOverlayClick(e) {
