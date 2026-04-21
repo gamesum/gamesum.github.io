@@ -2,22 +2,40 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Published sequences are public-read
+    function isAdmin() {
+      return request.auth != null && request.auth.token.admin == true;
+    }
+
+    // Users directory: self or admin can read, only admin can write.
+    // (Cloud Functions using the Admin SDK bypass these rules.)
+    match /users/{uid} {
+      allow read:  if request.auth != null && (request.auth.uid == uid || isAdmin());
+      allow write: if isAdmin();
+    }
+
+    // Sequences (aka "uploads"): published rows are public-read.
+    // Admins can read all. Creators may write their own doc; admin can write any.
     match /sequences/{seqId} {
-      allow read: if resource.data.status == "published";
-      allow write: if false; // Cloud Functions only
+      allow read:  if resource.data.status == "published"
+                   || isAdmin()
+                   || (request.auth != null && resource.data.creatorUid == request.auth.uid);
+      allow write: if isAdmin()
+                   || (request.auth != null && request.auth.uid == resource.data.creatorUid);
     }
 
-    // Purchases: user can read their own, write via Cloud Functions only
+    // Purchases: buyer can read their own, admin can read all.
+    // Writes are Cloud Functions only.
     match /purchases/{docId} {
-      allow read: if request.auth != null && request.auth.uid == resource.data.userId;
-      allow write: if false; // Cloud Functions only
+      allow read:  if isAdmin()
+                   || (request.auth != null && request.auth.uid == resource.data.userId);
+      allow write: if false;
     }
 
-    // Creator earnings: creator can read their own record
+    // Creator earnings: creator can read their own record; admin can read all.
     match /creator_earnings/{creatorId} {
-      allow read: if request.auth != null;
-      allow write: if false; // Cloud Functions only
+      allow read:  if isAdmin()
+                   || (request.auth != null && request.auth.uid == creatorId);
+      allow write: if false;
     }
   }
 }

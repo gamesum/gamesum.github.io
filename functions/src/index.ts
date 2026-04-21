@@ -721,3 +721,204 @@ export const confirmUpload = functions.https.onRequest(async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// ─── ADMIN DASHBOARD CALLABLES ────────────────────────────────────────────────
+// Gen 1 HTTPS callables. All require the caller to have a custom claim
+// `admin === true` on their Firebase ID token. Every function throws
+// HttpsError('permission-denied', ...) if the caller is not an admin.
+
+const OWNER_EMAIL = "shaneward852@gmail.com";
+
+function requireAdmin(context: functions.https.CallableContext): string {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+  }
+  if (context.auth.token.admin !== true) {
+    throw new functions.https.HttpsError("permission-denied", "Admin access required.");
+  }
+  return context.auth.uid;
+}
+
+// adminSetUserRole(uid, role). role is one of: 'user', 'creator', 'admin'.
+// Writes custom claim {admin, creator} and mirrors role into /users/{uid}.
+export const adminSetUserRole = functions.https.onCall(async (data, context) => {
+  requireAdmin(context);
+
+  const uid  = data?.uid;
+  const role = data?.role;
+  if (typeof uid !== "string" || !uid) {
+    throw new functions.https.HttpsError("invalid-argument", "uid is required.");
+  }
+  if (role !== "user" && role !== "creator" && role !== "admin") {
+    throw new functions.https.HttpsError("invalid-argument", "role must be user, creator, or admin.");
+  }
+
+  const claims = {
+    admin:   role === "admin",
+    creator: role === "creator" || role === "admin",
+  };
+
+  await admin.auth().setCustomUserClaims(uid, claims);
+  await db.collection("users").doc(uid).set(
+    {
+      role,
+      updatedAt: admin.firestore.Timestamp.now(),
+    },
+    { merge: true }
+  );
+
+  functions.logger.info(`adminSetUserRole: ${uid} -> ${role}`);
+  return { ok: true, uid, role, claims };
+});
+
+// adminDisableUser(uid, disabled)
+export const adminDisableUser = functions.https.onCall(async (data, context) => {
+  requireAdmin(context);
+
+  const uid      = data?.uid;
+  const disabled = data?.disabled;
+  if (typeof uid !== "string" || !uid) {
+    throw new functions.https.HttpsError("invalid-argument", "uid is required.");
+  }
+  if (typeof disabled !== "boolean") {
+    throw new functions.https.HttpsError("invalid-argument", "disabled must be boolean.");
+  }
+
+  await admin.auth().updateUser(uid, { disabled });
+  await db.collection("users").doc(uid).set(
+    { disabled, updatedAt: admin.firestore.Timestamp.now() },
+    { merge: true }
+  );
+
+  functions.logger.info(`adminDisableUser: ${uid} disabled=${disabled}`);
+  return { ok: true, uid, disabled };
+});
+
+// adminSetUploadStatus(uploadId, status). Status is one of: pending, approved, rejected, published, pending_upload.
+export const adminSetUploadStatus = functions.https.onCall(async (data, context) => {
+  requireAdmin(context);
+
+  const uploadId = data?.uploadId;
+  const status   = data?.status;
+  if (typeof uploadId !== "string" || !isValidId(uploadId)) {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid uploadId.");
+  }
+  const allowed = new Set(["pending", "approved", "rejected", "published", "pending_upload"]);
+  if (typeof status !== "string" || !allowed.has(status)) {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid status.");
+  }
+
+  await db.collection("sequences").doc(uploadId).update({
+    status,
+    moderatedAt: admin.firestore.Timestamp.now(),
+  });
+
+  functions.logger.info(`adminSetUploadStatus: ${uploadId} -> ${status}`);
+  return { ok: true, uploadId, status };
+});
+
+// adminDeleteUpload(uploadId). Deletes the Firestore doc and its Storage file(s).
+export const adminDeleteUpload = functions.https.onCall(async (data, context) => {
+  requireAdmin(context);
+
+  const uploadId = data?.uploadId;
+  if (typeof uploadId !== "string" || !isValidId(uploadId)) {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid uploadId.");
+  }
+
+  const bucket = admin.storage().bucket();
+
+  // Best-effort storage deletes (don't fail if the file never existed)
+  await Promise.all([
+    bucket.file(`sequences/${uploadId}.fseq`).delete({ ignoreNotFound: true } as any).catch(() => null),
+    bucket.file(`sequences/${uploadId}.mp3`).delete({ ignoreNotFound: true } as any).catch(() => null),
+  ]);
+
+  await db.collection("sequences").doc(uploadId).delete();
+
+  functions.logger.info(`adminDeleteUpload: ${uploadId}`);
+  return { ok: true, uploadId };
+});
+
+// adminListUsers(pageToken?). Joins Firebase Auth user records with /users/{uid} mirror docs.
+export const adminListUsers = functions.https.onCall(async (data, context) => {
+  requireAdmin(context);
+
+  const pageToken = typeof data?.pageToken === "string" ? data.pageToken : undefined;
+  const result = await admin.auth().listUsers(1000, pageToken);
+
+  // Fetch mirror docs in parallel (chunked to stay under Firestore batch-get limits)
+  const uids = result.users.map((u) => u.uid);
+  const docs: Record<string, FirebaseFirestore.DocumentData> = {};
+  const CHUNK = 30;
+  for (let i = 0; i < uids.length; i += CHUNK) {
+    const batch = uids.slice(i, i + CHUNK);
+    const snaps = await Promise.all(batch.map((uid) => db.collection("users").doc(uid).get()));
+    snaps.forEach((s) => {
+      if (s.exists) docs[s.id] = s.data() as FirebaseFirestore.DocumentData;
+    });
+  }
+
+  const users = result.users.map((u) => {
+    const mirror = docs[u.uid] || {};
+    const claims = (u.customClaims || {}) as { admin?: boolean; creator?: boolean };
+    const role: "admin" | "creator" | "user" =
+      claims.admin ? "admin" : claims.creator ? "creator" : (mirror.role as any) || "user";
+    return {
+      uid:           u.uid,
+      email:         u.email || "",
+      displayName:   u.displayName || mirror.displayName || "",
+      emailVerified: u.emailVerified,
+      disabled:      u.disabled,
+      createdAt:     u.metadata.creationTime || null,
+      lastSignIn:    u.metadata.lastSignInTime || null,
+      role,
+      photoURL:      u.photoURL || "",
+    };
+  });
+
+  return { users, nextPageToken: result.pageToken || null };
+});
+
+// adminClaimBootstrap(secretKey). One-time bootstrap for the owner only.
+// ONLY the hard-coded owner email may call this, and only with the matching
+// ADMIN_BOOTSTRAP_SECRET. After the first successful call, rotate the secret.
+export const adminClaimBootstrap = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+  }
+  const email = (context.auth.token.email || "").toLowerCase();
+  if (email !== OWNER_EMAIL.toLowerCase()) {
+    throw new functions.https.HttpsError("permission-denied", "Only the owner may bootstrap admin.");
+  }
+
+  const provided = typeof data?.secretKey === "string" ? data.secretKey : "";
+  let expected = "";
+  try {
+    expected = (functions.config() as any)?.admin?.bootstrap || "";
+  } catch {
+    expected = "";
+  }
+  if (!expected) expected = process.env.ADMIN_BOOTSTRAP_SECRET || "";
+
+  if (!expected) {
+    throw new functions.https.HttpsError("failed-precondition", "Bootstrap secret is not configured.");
+  }
+  if (provided !== expected) {
+    throw new functions.https.HttpsError("permission-denied", "Invalid bootstrap secret.");
+  }
+
+  const uid = context.auth.uid;
+  await admin.auth().setCustomUserClaims(uid, { admin: true, creator: true });
+  await db.collection("users").doc(uid).set(
+    {
+      role:      "admin",
+      email,
+      updatedAt: admin.firestore.Timestamp.now(),
+    },
+    { merge: true }
+  );
+
+  functions.logger.warn(`adminClaimBootstrap: admin claim granted to ${email} (${uid}). Rotate ADMIN_BOOTSTRAP_SECRET now.`);
+  return { ok: true, uid, note: "Admin claim granted. Rotate ADMIN_BOOTSTRAP_SECRET now." };
+});
