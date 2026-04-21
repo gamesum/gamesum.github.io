@@ -23,7 +23,8 @@
     style.id = 'nav-account-css';
     style.textContent = [
       '.nav-account-wrap{position:relative;display:inline-flex;align-items:center;}',
-      '.nav-account-trigger{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:4px 10px 4px 4px;cursor:pointer;color:inherit;font:inherit;line-height:1;}',
+      '.nav-account-trigger{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:999px;padding:4px 12px 4px 4px;cursor:pointer;color:inherit;font:inherit;line-height:1;}',
+      '.nav-account-trigger .nav-account-name{font-size:0.88rem;font-weight:600;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}',
       '.nav-account-trigger:hover{border-color:var(--accent,#D4A43A);}',
       '.nav-account-trigger .caret{width:10px;height:10px;opacity:0.7;}',
       '.nav-account-menu{position:absolute;top:calc(100% + 8px);right:0;min-width:200px;background:#0f0f0f;border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:6px;box-shadow:0 12px 40px rgba(0,0,0,0.5);display:none;z-index:9999;}',
@@ -42,12 +43,15 @@
       : '<span class="avatar avatar-initials" style="width:28px;height:28px;font-size:12px;">' +
         esc(((user && (user.displayName || user.email)) || 'U').charAt(0).toUpperCase()) + '</span>';
 
+    var displayLabel = (user && (user.displayName || (user.email ? user.email.split('@')[0] : ''))) || 'Account';
+
     var wrap = document.createElement('div');
     wrap.className = 'nav-account-wrap';
     wrap.id = 'navAccountWrap';
     wrap.innerHTML =
       '<button type="button" class="nav-account-trigger" id="navAccountTrigger" aria-haspopup="menu" aria-expanded="false">' +
         avatar +
+        '<span class="nav-account-name">' + esc(displayLabel) + '</span>' +
         '<svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>' +
       '</button>' +
       '<div class="nav-account-menu" id="' + DROPDOWN_ID + '" role="menu">' +
