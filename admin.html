@@ -364,6 +364,7 @@
     <div class="tabs" role="tablist">
       <button class="tab-chip active" data-tab="stats">Stats</button>
       <button class="tab-chip" data-tab="users">Users</button>
+      <button class="tab-chip" data-tab="creators-verify">Creator verification</button>
       <button class="tab-chip" data-tab="uploads">Uploads</button>
       <button class="tab-chip" data-tab="purchases">Purchases</button>
       <button class="tab-chip" data-tab="disputes">Disputes</button>
@@ -378,6 +379,7 @@
       <div class="stats-grid">
         <div class="stat-card"><div class="label">Total users</div><div class="value" id="statTotalUsers">.</div></div>
         <div class="stat-card"><div class="label">Creators (agreement signed)</div><div class="value gold" id="statCreators">.</div></div>
+        <div class="stat-card"><div class="label">Pending creator reviews</div><div class="value gold" id="statPendingCreators">.</div></div>
         <div class="stat-card"><div class="label">Total uploads</div><div class="value" id="statUploads">.</div></div>
         <div class="stat-card"><div class="label">Total revenue</div><div class="value gold" id="statRevenue">.</div></div>
         <div class="stat-card"><div class="label">Signups · last 7 days</div><div class="value" id="stat7day">.</div></div>
@@ -423,6 +425,48 @@
             </thead>
             <tbody id="usersBody">
               <tr><td colspan="7" class="empty-row">Loading users.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- CREATOR VERIFICATION -->
+    <section class="section" id="section-creators-verify">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Creator verification queue</div>
+          <div class="panel-tools">
+            <div class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="creatorVerifSearch" placeholder="Search email or name" autocomplete="off" />
+            </div>
+            <details class="filter-wrap" id="creatorVerifFilterWrap">
+              <summary title="Filter">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16"><path d="M3 5h18l-7 8v6l-4-2v-4z"/></svg>
+              </summary>
+              <div class="filter-pop" role="menu">
+                <div class="filter-head">Status</div>
+                <label><input type="checkbox" class="creatorVerifStatus" value="pending"  checked /> Pending</label>
+                <label><input type="checkbox" class="creatorVerifStatus" value="approved" /> Approved</label>
+                <label><input type="checkbox" class="creatorVerifStatus" value="rejected" /> Rejected</label>
+                <label><input type="checkbox" class="creatorVerifStatus" value="none"     /> Not requested</label>
+              </div>
+            </details>
+            <button class="btn btn-sm btn-icon" id="refreshCreatorVerif" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Email</th><th>Display name</th><th>Country</th><th>Stripe account</th><th>Submitted</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="creatorVerifBody">
+              <tr><td colspan="7" class="empty-row">Loading queue.</td></tr>
             </tbody>
           </table>
         </div>
@@ -727,6 +771,7 @@
     <button class="btn btn-sm" id="fbMarkRead">Mark Read</button>
     <button class="btn btn-sm btn-success" id="fbMarkResolved">Mark Resolved</button>
     <button class="btn btn-sm btn-primary" id="fbSaveReply">Save Reply</button>
+    <button class="btn btn-sm btn-danger" id="fbDelete" style="margin-left:auto;">Delete</button>
   </div>
 </aside>
 
@@ -895,6 +940,7 @@
       payoutsByUid = {};
       (payoutsRes.creators || []).forEach(c => { payoutsByUid[c.uid] = c; });
       renderUsers();
+      if (typeof renderCreatorVerif === 'function') renderCreatorVerif();
     } catch (err) {
       console.error(err);
       body.innerHTML = '<tr><td colspan="7" class="empty-row">Failed to load users. ' + esc(err.message || '') + '</td></tr>';
@@ -1003,6 +1049,101 @@
   document.getElementById('userSearch').addEventListener('input', renderUsers);
   document.getElementById('filterPayoutsPending').addEventListener('change', renderUsers);
   document.getElementById('refreshUsers').addEventListener('click', loadUsers);
+
+  /* ─── Creator verification queue ───────────────────────────────── */
+  function renderCreatorVerif() {
+    const body = document.getElementById('creatorVerifBody');
+    if (!body) return;
+    const q = (document.getElementById('creatorVerifSearch').value || '').trim().toLowerCase();
+    const allowed = new Set(
+      Array.from(document.querySelectorAll('.creatorVerifStatus:checked')).map(el => el.value)
+    );
+    if (!allowed.size) allowed.add('pending');
+
+    const rows = (usersCache || []).filter(u => {
+      const status = u.creatorVerificationStatus || 'none';
+      if (!allowed.has(status)) return false;
+      if (!q) return true;
+      const req = u.creatorVerificationRequest || {};
+      return (u.email || '').toLowerCase().includes(q)
+        || (u.displayName || '').toLowerCase().includes(q)
+        || (req.payoutName || '').toLowerCase().includes(q);
+    });
+
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">No creators match.</td></tr>';
+      return;
+    }
+
+    body.innerHTML = rows.map(u => {
+      const req = u.creatorVerificationRequest || {};
+      const status = u.creatorVerificationStatus || 'none';
+      const statusPill =
+          status === 'pending'  ? '<span class="pill pill-pending">Pending</span>'
+        : status === 'approved' ? '<span class="pill pill-approved">Approved</span>'
+        : status === 'rejected' ? '<span class="pill pill-rejected">Rejected</span>'
+        :                         '<span class="pill pill-user">Not requested</span>';
+      const stripeCell = req.stripeAccountId
+        ? '<span class="mono">'+esc(req.stripeAccountId)+'</span>'
+        : '<span class="cell-sub">—</span>';
+      const displayName = req.payoutName || u.displayName || '.';
+      const country = req.country || '.';
+
+      const acts = [];
+      if (status !== 'approved') {
+        acts.push('<button class="btn btn-sm btn-success" onclick="approveCreator(\''+esc(u.uid)+'\')">Approve</button>');
+      }
+      if (status !== 'rejected') {
+        acts.push('<button class="btn btn-sm btn-danger" onclick="rejectCreator(\''+esc(u.uid)+'\')">Reject</button>');
+      }
+      const reasonNote = (status === 'rejected' && u.rejectionReason)
+        ? '<div class="cell-sub" style="color:var(--danger);">Reason: '+esc(u.rejectionReason)+'</div>'
+        : '';
+
+      return '<tr>'
+        + '<td><div class="cell-email">'+esc(u.email || '.')+'</div><div class="cell-sub mono">'+esc(u.uid)+'</div></td>'
+        + '<td>'+esc(displayName)+reasonNote+'</td>'
+        + '<td>'+esc(country)+'</td>'
+        + '<td>'+stripeCell+'</td>'
+        + '<td>'+esc(fmtDate(u.requestedAt))+'</td>'
+        + '<td>'+statusPill+'</td>'
+        + '<td><div class="actions">'+acts.join('')+'</div></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  window.approveCreator = async function(uid) {
+    if (!confirm('Approve this creator for Premium ($) uploads?')) return;
+    try {
+      await call('adminSetCreatorVerification', { uid, decision: 'approved' });
+      toast('Creator approved.', 'success');
+      await loadUsers();
+      renderCreatorVerif();
+      renderStats();
+    } catch (err) {
+      toast('Failed: ' + (err.message || 'error'), 'error');
+    }
+  };
+
+  window.rejectCreator = async function(uid) {
+    const reason = prompt('Reason for rejection (shown to the creator):', '');
+    if (reason === null) return;
+    try {
+      await call('adminSetCreatorVerification', { uid, decision: 'rejected', reason: reason.trim() });
+      toast('Creator rejected.', 'success');
+      await loadUsers();
+      renderCreatorVerif();
+      renderStats();
+    } catch (err) {
+      toast('Failed: ' + (err.message || 'error'), 'error');
+    }
+  };
+
+  const _verifSearch = document.getElementById('creatorVerifSearch');
+  if (_verifSearch) _verifSearch.addEventListener('input', renderCreatorVerif);
+  document.querySelectorAll('.creatorVerifStatus').forEach(el => el.addEventListener('change', renderCreatorVerif));
+  const _verifRefresh = document.getElementById('refreshCreatorVerif');
+  if (_verifRefresh) _verifRefresh.addEventListener('click', async () => { await loadUsers(); renderCreatorVerif(); });
 
   /* ─── Uploads ──────────────────────────────────────────────────── */
   const PENDING_STATUSES = new Set(['pending', 'pending_review', 'pending_upload']);
@@ -1656,6 +1797,18 @@
     const reply = document.getElementById('fbDrawerReply').value || '';
     fbUpdate({ reply }, 'Reply saved.');
   });
+  document.getElementById('fbDelete').addEventListener('click', async () => {
+    if (!fbDrawerId) return;
+    if (!confirm('Permanently delete this feedback? This cannot be undone.')) return;
+    try {
+      await call('adminDeleteFeedback', { id: fbDrawerId });
+      toast('Feedback deleted.', 'success');
+      closeFeedbackDrawer();
+      await loadFeedback();
+    } catch (err) {
+      toast('Failed: ' + (err.message || 'error'), 'error');
+    }
+  });
 
   function exportPurchasesCsv() {
     const header = ['buyer_uid','sequence_id','sequence_name','creator','amount','stripe_session_id','purchased_at'];
@@ -1722,6 +1875,9 @@
     });
     document.getElementById('statTotalUsers').textContent = realUsers.length.toLocaleString();
     document.getElementById('statCreators').textContent = usersCache.filter(u => u.role === 'creator' || u.role === 'admin').length.toLocaleString();
+    const pendingCreators = usersCache.filter(u => (u.creatorVerificationStatus || 'none') === 'pending').length;
+    const pendEl = document.getElementById('statPendingCreators');
+    if (pendEl) pendEl.textContent = pendingCreators.toLocaleString();
 
     // Total uploads = real creator uploads that have been approved/published. Seeds excluded, pending/rejected excluded.
     const realUploads = uploadsCache.filter(u => {

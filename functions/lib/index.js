@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -255,10 +255,12 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
     const idToken = authHeader.slice(7);
     let uid;
     let displayName;
+    let creatorVerifiedClaim = false;
     try {
         const decoded = await admin.auth().verifyIdToken(idToken);
         uid = decoded.uid;
         displayName = decoded.name ?? decoded.email ?? "Unknown";
+        creatorVerifiedClaim = decoded.creatorVerified === true;
     }
     catch {
         res.status(401).json({ error: "Invalid or expired token" });
@@ -285,6 +287,16 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
     }
     catch (e) {
         functions.logger.warn("uploadSequence agreement check failed", e);
+    }
+    // Premium uploads require admin-granted creator verification. Free uploads
+    // remain open to every signed-in user that has accepted the agreement.
+    const priceNum = typeof price === "number" ? price : parseFloat(String(price ?? 0));
+    if (isFinite(priceNum) && priceNum > 0 && !creatorVerifiedClaim) {
+        res.status(403).json({
+            error: "Creator verification required to publish Premium shows.",
+            code: "creator_verification_required",
+        });
+        return;
     }
     try {
         const bucket = admin.storage().bucket();
@@ -1197,6 +1209,13 @@ exports.adminListUsers = functions.https.onCall(async (data, context) => {
             lastSignIn: u.metadata.lastSignInTime || null,
             role,
             photoURL: u.photoURL || "",
+            creatorVerified: u.customClaims?.creatorVerified === true || mirror.creatorVerified === true,
+            creatorVerificationStatus: mirror.creatorVerificationStatus || "none",
+            creatorVerificationRequest: mirror.creatorVerificationRequest || null,
+            rejectionReason: mirror.rejectionReason || null,
+            requestedAt: mirror.requestedAt || null,
+            approvedAt: mirror.approvedAt || null,
+            rejectedAt: mirror.rejectedAt || null,
         };
     });
     return { users, nextPageToken: result.pageToken || null };
@@ -1916,6 +1935,90 @@ exports.userRequestDataExport = functions.https.onCall(async (_data, context) =>
         throw new functions.https.HttpsError("internal", "Export failed.");
     }
 });
+// ─── exportMyData (callable) ─────────────────────────────────────────────────
+// Inline GDPR export. Assembles the caller's data and returns it as a JSON
+// payload the client downloads as a Blob. No Storage/signed-URL dependency,
+// so it works even when the default service account lacks
+// iam.serviceAccountTokenCreator. Capped at ~5MB.
+exports.exportMyData = functions
+    .runWith({ memory: "512MB", timeoutSeconds: 60 })
+    .https.onCall(async (_data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    }
+    const uid = context.auth.uid;
+    const email = (context.auth.token.email || "").toLowerCase();
+    const MAX_BYTES = 5 * 1024 * 1024;
+    try {
+        const [authUser, userDoc, purchaseSnap, sequenceSnap, earningsDoc, feedbackSnap, dmcaSnap,] = await Promise.all([
+            admin.auth().getUser(uid).catch(() => null),
+            db.collection("users").doc(uid).get(),
+            db.collection("purchases").where("userId", "==", uid).get(),
+            db.collection("sequences").where("creatorUid", "==", uid).get(),
+            db.collection("creator_earnings").doc(uid).get(),
+            db.collection("feedback").where("uid", "==", uid).get().catch(() => ({ docs: [] })),
+            email
+                ? db.collection("dmca_notices").where("claimantEmail", "==", email).get().catch(() => ({ docs: [] }))
+                : Promise.resolve({ docs: [] }),
+        ]);
+        const ledgerSnap = earningsDoc.exists
+            ? await db.collection("creator_earnings").doc(uid).collection("ledger").get()
+            : { docs: [] };
+        const payload = {
+            schema: "afterglo.user-export.v1",
+            generatedAt: new Date().toISOString(),
+            uid,
+            email,
+            authRecord: authUser ? {
+                uid: authUser.uid,
+                email: authUser.email,
+                emailVerified: authUser.emailVerified,
+                displayName: authUser.displayName,
+                photoURL: authUser.photoURL,
+                disabled: authUser.disabled,
+                createdAt: authUser.metadata.creationTime,
+                lastSignInAt: authUser.metadata.lastSignInTime,
+                providers: (authUser.providerData || []).map((p) => ({ providerId: p.providerId, email: p.email })),
+                customClaims: authUser.customClaims || null,
+            } : null,
+            profile: userDoc.exists ? userDoc.data() : null,
+            purchases: purchaseSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+            sequences: sequenceSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+            earnings: earningsDoc.exists ? earningsDoc.data() : null,
+            earningsLedger: ledgerSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+            feedback: feedbackSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+            dmcaNotices: dmcaSnap.docs.map((d) => Object.assign({ id: d.id }, d.data())),
+        };
+        const json = JSON.stringify(payload, null, 2);
+        const byteLen = Buffer.byteLength(json, "utf8");
+        if (byteLen > MAX_BYTES) {
+            throw new functions.https.HttpsError("resource-exhausted", "Export exceeds 5MB. Contact support@afterglolighting.org for a full archive.");
+        }
+        await writeAudit({
+            actor: uid,
+            action: "gdpr.export",
+            target: uid,
+            targetCollection: "users",
+            extra: {
+                mode: "inline",
+                bytes: byteLen,
+                counts: {
+                    purchases: payload.purchases.length,
+                    sequences: payload.sequences.length,
+                    feedback: payload.feedback.length,
+                    dmcaNotices: payload.dmcaNotices.length,
+                },
+            },
+        });
+        return { ok: true, data: payload, bytes: byteLen };
+    }
+    catch (err) {
+        if (err instanceof functions.https.HttpsError)
+            throw err;
+        functions.logger.error("exportMyData error", err);
+        throw new functions.https.HttpsError("internal", "Export failed: " + (err?.message || "unknown"));
+    }
+});
 // ─── userRequestDataDeletion (callable) ───────────────────────────────────────
 // Marks the user for deletion with a 30-day grace period.
 exports.userRequestDataDeletion = functions.https.onCall(async (data, context) => {
@@ -2099,6 +2202,11 @@ exports.processPendingDeletions = functions.pubsub
 // blocked by firestore.rules; this callable is the only way in.
 const FEEDBACK_CATEGORIES = new Set(["bug", "idea", "other"]);
 exports.submitFeedback = functions.https.onCall(async (data, context) => {
+    // Feedback is not anonymous. We need to know who sent it so we can reply
+    // and filter out drive-by spam.
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Please sign in to send feedback.");
+    }
     const raw = (data && typeof data.message === "string") ? data.message : "";
     const message = raw.trim();
     if (message.length < 3 || message.length > 5000) {
@@ -2122,17 +2230,33 @@ exports.submitFeedback = functions.https.onCall(async (data, context) => {
         reply: null,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
     };
-    if (context.auth) {
-        doc.uid = context.auth.uid;
-        doc.email = context.auth.token?.email || null;
-    }
-    else {
-        doc.uid = null;
-        doc.email = null;
-    }
+    doc.uid = context.auth.uid;
+    doc.email = context.auth.token?.email || null;
     const ref = await db.collection("feedback").add(doc);
     functions.logger.info("submitFeedback: wrote " + ref.id + " category=" + category);
     return { id: ref.id };
+});
+// adminDeleteFeedback({id}) . admin-only. Hard-deletes a feedback doc.
+exports.adminDeleteFeedback = functions.https.onCall(async (data, context) => {
+    const actor = await requireAdmin(context);
+    const id = data?.id;
+    if (typeof id !== "string" || !isValidId(id)) {
+        throw new functions.https.HttpsError("invalid-argument", "id is required.");
+    }
+    const ref = db.collection("feedback").doc(id);
+    const snap = await ref.get();
+    if (!snap.exists) {
+        throw new functions.https.HttpsError("not-found", "Feedback not found.");
+    }
+    await ref.delete();
+    await writeAudit({
+        actor,
+        action: "feedback.delete",
+        target: id,
+        targetCollection: "feedback",
+        extra: { email: snap.data()?.email || null },
+    });
+    return { ok: true };
 });
 // adminReplyFeedback({id, status?, reply?}) . admin-only. Updates feedback
 // status and/or reply. Status must be one of new, read, resolved.
@@ -2280,5 +2404,130 @@ exports.adminPurgeSeedData = functions.https.onCall(async (data, context) => {
         purchases: purchaseDeleted,
         users: userDeleted,
     };
+});
+// ─── Creator verification queue ───────────────────────────────────────────────
+// Admin must manually approve a creator before they can publish Premium ($)
+// shows. Free uploads are unaffected.
+//
+// Flow:
+//   1) Caller hits requestCreatorVerification with optional payout details.
+//      We set /users/{uid}.creatorVerificationStatus = 'pending'.
+//   2) Admin reviews in the admin dashboard "Creator verification" panel and
+//      calls adminSetCreatorVerification with decision 'approved' or
+//      'rejected'. On approve: set creatorVerified custom claim + Firestore
+//      field so uploadSequence will accept price > 0 from the user's token.
+exports.requestCreatorVerification = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    }
+    const uid = context.auth.uid;
+    const payoutName = typeof data?.payoutName === "string" ? data.payoutName.trim().slice(0, 120) : "";
+    const country = typeof data?.country === "string" ? data.country.trim().slice(0, 60) : "";
+    const stripeAccountId = typeof data?.stripeAccountId === "string" ? data.stripeAccountId.trim().slice(0, 64) : "";
+    const notes = typeof data?.notes === "string" ? data.notes.trim().slice(0, 500) : "";
+    // Read existing doc so an already-approved creator doesn't get knocked back
+    // to pending by a stray re-submit.
+    const userRef = db.collection("users").doc(uid);
+    const snap = await userRef.get();
+    const prev = snap.exists ? (snap.data() || {}) : {};
+    if (prev.creatorVerificationStatus === "approved" && prev.creatorVerified === true) {
+        return { ok: true, status: "approved", alreadyApproved: true };
+    }
+    await userRef.set({
+        creatorVerificationStatus: "pending",
+        creatorVerified: prev.creatorVerified === true ? true : false,
+        creatorVerificationRequest: {
+            payoutName,
+            country,
+            stripeAccountId,
+            notes,
+        },
+        requestedAt: admin.firestore.Timestamp.now(),
+        updatedAt: admin.firestore.Timestamp.now(),
+    }, { merge: true });
+    functions.logger.info(`requestCreatorVerification: ${uid} submitted`);
+    return { ok: true, status: "pending" };
+});
+// adminSetCreatorVerification({ uid, decision, reason? })
+// decision: 'approved' | 'rejected'
+exports.adminSetCreatorVerification = functions.https.onCall(async (data, context) => {
+    const actorUid = await requireAdmin(context);
+    const uid = data?.uid;
+    const decision = data?.decision;
+    const reason = typeof data?.reason === "string" ? data.reason.trim().slice(0, 500) : "";
+    if (typeof uid !== "string" || !uid) {
+        throw new functions.https.HttpsError("invalid-argument", "uid is required.");
+    }
+    if (decision !== "approved" && decision !== "rejected") {
+        throw new functions.https.HttpsError("invalid-argument", "decision must be 'approved' or 'rejected'.");
+    }
+    const userRef = db.collection("users").doc(uid);
+    const before = (await userRef.get()).data() || {};
+    if (decision === "approved") {
+        // Merge with existing custom claims so we don't clobber admin/creator.
+        const u = await admin.auth().getUser(uid);
+        const existing = (u.customClaims || {});
+        await admin.auth().setCustomUserClaims(uid, {
+            ...existing,
+            creatorVerified: true,
+        });
+        await userRef.set({
+            creatorVerified: true,
+            creatorVerificationStatus: "approved",
+            approvedAt: admin.firestore.Timestamp.now(),
+            approvedBy: actorUid,
+            rejectionReason: admin.firestore.FieldValue.delete(),
+            updatedAt: admin.firestore.Timestamp.now(),
+        }, { merge: true });
+        await writeAudit({
+            actor: actorUid,
+            action: "admin.creatorVerification.approve",
+            target: uid,
+            targetCollection: "users",
+            before: {
+                creatorVerified: before.creatorVerified === true,
+                creatorVerificationStatus: before.creatorVerificationStatus ?? "none",
+            },
+            after: { creatorVerified: true, creatorVerificationStatus: "approved" },
+        });
+        functions.logger.info(`adminSetCreatorVerification: ${uid} approved by ${actorUid}`);
+        return { ok: true, uid, decision };
+    }
+    // Rejected
+    await userRef.set({
+        creatorVerified: false,
+        creatorVerificationStatus: "rejected",
+        rejectionReason: reason || null,
+        rejectedAt: admin.firestore.Timestamp.now(),
+        rejectedBy: actorUid,
+        updatedAt: admin.firestore.Timestamp.now(),
+    }, { merge: true });
+    // Defensive: if they somehow already had the claim, revoke it on reject.
+    try {
+        const u = await admin.auth().getUser(uid);
+        const existing = (u.customClaims || {});
+        if (existing.creatorVerified === true) {
+            const next = { ...existing };
+            delete next.creatorVerified;
+            await admin.auth().setCustomUserClaims(uid, next);
+        }
+    }
+    catch (err) {
+        functions.logger.warn("adminSetCreatorVerification: claim revoke failed", err);
+    }
+    await writeAudit({
+        actor: actorUid,
+        action: "admin.creatorVerification.reject",
+        target: uid,
+        targetCollection: "users",
+        reason: reason || null,
+        before: {
+            creatorVerified: before.creatorVerified === true,
+            creatorVerificationStatus: before.creatorVerificationStatus ?? "none",
+        },
+        after: { creatorVerified: false, creatorVerificationStatus: "rejected" },
+    });
+    functions.logger.info(`adminSetCreatorVerification: ${uid} rejected by ${actorUid}`);
+    return { ok: true, uid, decision };
 });
 //# sourceMappingURL=index.js.map

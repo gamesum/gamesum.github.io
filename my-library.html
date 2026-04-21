@@ -1924,9 +1924,11 @@
     currentUser.name = newName;
     saveUser(currentUser);
 
-    // Refresh avatar initial
+    // Refresh avatar initial (only when no photo is set)
     const initial = newName[0].toUpperCase();
-    document.getElementById('profileAvatar').textContent = initial;
+    if (!currentUser.picture) {
+      document.getElementById('profileAvatar').textContent = initial;
+    }
     document.getElementById('navAvatar').textContent = initial;
 
     setProfileNameDisplay(newName);
@@ -2945,7 +2947,7 @@
         document.getElementById('authLoading').style.display = 'none';
         document.getElementById('authCheck').style.display = 'none';
         document.getElementById('pageContent').style.display = 'block';
-        document.getElementById('profileAvatar').textContent = (stored.name || stored.email || 'U')[0].toUpperCase();
+        applyProfileAvatarDisplay(stored.picture || '');
         setProfileNameDisplay(stored.name || 'My Account');
         document.getElementById('profileEmail').textContent = stored.email || '';
         renderSections();
@@ -2982,8 +2984,7 @@
               uploads:   base.uploads   || [],
             };
             if (typeof saveUser === 'function') saveUser(currentUser);
-            const initial = (currentUser.name || currentUser.email || 'U')[0].toUpperCase();
-            document.getElementById('profileAvatar').textContent = initial;
+            applyProfileAvatarDisplay(currentUser.picture || '');
             setProfileNameDisplay(currentUser.name || 'My Account');
             document.getElementById('profileEmail').textContent = currentUser.email || '';
             // Show content if localStorage was empty but Firebase has a valid user
