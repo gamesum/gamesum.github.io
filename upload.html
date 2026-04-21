@@ -1205,8 +1205,8 @@
           </div>
           <div class="form-group">
             <label class="form-label">Show Duration</label>
-            <input type="number" class="form-input" id="duration" placeholder="Upload your FSEQ above to auto-fill" min="1" max="7200" readonly style="background:#17171A;color:#9A9AA2;cursor:not-allowed;" />
-            <div class="form-hint" id="durationHint">Read automatically from the FSEQ file you upload. No need to count it yourself.</div>
+            <input type="number" class="form-input" id="duration" placeholder="Seconds (auto-fills from FSEQ)" min="1" max="7200" />
+            <div class="form-hint" id="durationHint">We try to read this automatically from your FSEQ file. If it doesn't fill in, just type the length in seconds.</div>
           </div>
         </div>
 
@@ -1466,7 +1466,7 @@
     if (!name) { showToast('Please enter a show name.', 'warning'); document.getElementById('showName').focus(); return false; }
     if (!cat)  { showToast('Please select a category.', 'warning'); document.getElementById('category').focus(); return false; }
     if (!song) { showToast('Please enter a song name.', 'warning'); document.getElementById('songName').focus(); return false; }
-    if (!dur || parseFloat(dur) <= 0) { showToast('We could not read the duration from your FSEQ file. Please re-upload it.', 'warning'); return false; }
+    if (!dur || parseFloat(dur) <= 0) { showToast('Please enter the show duration in seconds.', 'warning'); document.getElementById('duration').focus(); return false; }
     if (!musicUrl || !isValidYouTubeUrl(musicUrl)) {
       showToast('Please enter a valid YouTube Music link (youtube.com or youtu.be).', 'warning');
       document.getElementById('youtubeMusicUrl').focus();
@@ -1584,28 +1584,40 @@
         const magic = String.fromCharCode(
           view.getUint8(0), view.getUint8(1), view.getUint8(2), view.getUint8(3)
         );
-        if (magic !== 'FSEQ') {
+        if (magic !== 'FSEQ' && magic !== 'PSEQ') {
           console.warn('Not a valid FSEQ file (magic mismatch, got: ' + magic + ')');
+          document.getElementById('durationHint').textContent =
+            'Could not auto-read duration. Enter the length in seconds manually.';
           return;
         }
-        // Use Number() to keep JS safe-integer arithmetic (no BigInt needed since
-        // frameCount * stepTimeMs fits easily within Number.MAX_SAFE_INTEGER).
-        const frameCount = view.getUint32(12, true); // uint32 LE at offset 12
-        const stepTimeMs = view.getUint8(16);        // uint8 at offset 16 (ms per frame)
+        // FSEQ v1/v2 header (xLights/FPP spec, little-endian):
+        //   0-3   magic ("FSEQ" or "PSEQ")
+        //   4-5   channel data offset (uint16)
+        //   6     minor version
+        //   7     major version (1 or 2)
+        //   8-9   fixed header length (uint16)
+        //   10-13 channel count per frame (uint32)
+        //   14-17 number of frames (uint32)
+        //   18    step time in ms per frame (uint8)
+        const frameCount = view.getUint32(14, true);
+        const stepTimeMs = view.getUint8(18);
         if (frameCount > 0 && stepTimeMs > 0) {
-          const totalSecs = Math.round((frameCount * stepTimeMs) / 1000);
+          const totalSecs = Math.max(1, Math.round((frameCount * stepTimeMs) / 1000));
           detectedDuration = totalSecs;
           const durInput = document.getElementById('duration');
           durInput.value = totalSecs;
           document.getElementById('durationHint').textContent =
             'Auto-detected: ' + formatDuration(totalSecs) +
             '  (' + frameCount.toLocaleString() + ' frames @ ' + stepTimeMs + ' ms)';
+        } else {
+          document.getElementById('durationHint').textContent =
+            'Could not auto-read duration from this FSEQ. Enter the length in seconds manually.';
         }
       } catch (err) {
         console.warn('Could not parse FSEQ header:', err);
       }
     };
-    reader.readAsArrayBuffer(file.slice(0, 64));
+    reader.readAsArrayBuffer(file.slice(0, 256));
   }
 
   /* ─── PRICE TOGGLE ──────────────────────────────────────────────── */
