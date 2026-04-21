@@ -11,6 +11,12 @@ service cloud.firestore {
     match /users/{uid} {
       allow read:  if request.auth != null && (request.auth.uid == uid || isAdmin());
       allow write: if isAdmin();
+
+      // Download tokens are written by Cloud Functions only; user may read own.
+      match /download_tokens/{tokenId} {
+        allow read:  if request.auth != null && request.auth.uid == uid;
+        allow write: if false;
+      }
     }
 
     // Sequences (aka "uploads"): published rows are public-read.
@@ -35,6 +41,26 @@ service cloud.firestore {
     match /creator_earnings/{creatorId} {
       allow read:  if isAdmin()
                    || (request.auth != null && request.auth.uid == creatorId);
+      allow write: if false;
+
+      // Ledger entries (refunds, disputes, sales): creator reads own, admin reads all.
+      // Cloud Functions write only.
+      match /ledger/{entryId} {
+        allow read:  if isAdmin()
+                     || (request.auth != null && request.auth.uid == creatorId);
+        allow write: if false;
+      }
+    }
+
+    // Disputes: admin read/write only. Cloud Functions write via Admin SDK.
+    match /disputes/{disputeId} {
+      allow read:  if isAdmin();
+      allow write: if isAdmin();
+    }
+
+    // Admin audit log: admin read only. Cloud Functions write via Admin SDK.
+    match /admin_audit/{entryId} {
+      allow read:  if isAdmin();
       allow write: if false;
     }
   }

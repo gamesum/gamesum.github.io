@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
+exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -184,20 +184,32 @@ exports.recordPurchase = functions
         // Look up creatorUid from sequences collection (key by UID, not display name)
         const seqDoc = await db.collection("sequences").doc(sequenceId).get();
         const creatorUid = seqDoc.exists ? (seqDoc.data()?.creatorUid ?? meta.creator) : meta.creator;
+        // Capture paymentIntentId so Stripe dispute webhooks can match the purchase.
+        const paymentIntentId = typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : session.payment_intent?.id ?? null;
         // FIX 2: deterministic doc ID for idempotency + atomic transaction
         const purchaseDocRef = db.collection("purchases").doc(`${uid}_${sequenceId}`);
         await db.runTransaction(async (tx) => {
             const existing = await tx.get(purchaseDocRef);
-            if (existing.exists)
-                return; // already recorded
+            if (existing.exists) {
+                // Backfill paymentIntentId on already-recorded purchases so old rows are disputable.
+                if (paymentIntentId && !existing.data()?.paymentIntentId) {
+                    tx.update(purchaseDocRef, { paymentIntentId });
+                }
+                return;
+            }
             tx.set(purchaseDocRef, {
                 userId: uid,
                 sequenceId,
                 sequenceName: meta.sequenceName,
                 creator: meta.creator ?? "Unknown",
+                creatorUid: creatorUid ?? null,
                 price: priceNum,
                 purchasedAt: admin.firestore.Timestamp.now(),
                 stripeSessionId,
+                paymentIntentId: paymentIntentId ?? null,
+                status: "paid",
             });
             const creatorEarningsRef = db.collection("creator_earnings").doc(creatorUid);
             tx.set(creatorEarningsRef, { totalEarnings: admin.firestore.FieldValue.increment(Math.round(priceNum * 0.7 * 100) / 100) }, { merge: true });
@@ -252,6 +264,18 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
         res.status(400).json({ error: "Invalid sequenceId" });
         return;
     }
+    // Require creator-agreement acceptance before any upload.
+    try {
+        const userDoc = await db.collection("users").doc(uid).get();
+        const accepted = userDoc.exists ? userDoc.data()?.creatorAgreementAcceptedAt : null;
+        if (!accepted) {
+            res.status(403).json({ error: "Creator agreement not accepted", code: "agreement_required" });
+            return;
+        }
+    }
+    catch (e) {
+        functions.logger.warn("uploadSequence agreement check failed", e);
+    }
     try {
         const bucket = admin.storage().bucket();
         const fseqPath = `sequences/${sequenceId}.fseq`;
@@ -287,7 +311,7 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
             songName: songName ?? "",
             youtubeUrl: youtubeUrl ?? "",
             hasMp3: hasMp3 ?? false,
-            status: "pending_upload",
+            status: "published",
             createdAt: admin.firestore.Timestamp.now(),
             downloadCount: 0,
         });
@@ -419,25 +443,60 @@ exports.createCheckout = functions
     }
     try {
         const stripe = new stripe_1.default(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
-        const session = await stripe.checkout.sessions.create({
+        // Look up the creator's Connect account so 70% routes directly to their
+        // Express balance. If they haven't onboarded, we keep the legacy flow
+        // and flag the sale as unroutable in the ledger for admin reconciliation.
+        const seqDoc = await db.collection("sequences").doc(sequenceId).get();
+        const creatorUid = seqDoc.exists ? seqDoc.data()?.creatorUid : undefined;
+        let creatorStripeAccountId;
+        let creatorOnboardingStatus;
+        if (creatorUid) {
+            const userSnap = await db.collection("users").doc(creatorUid).get();
+            if (userSnap.exists) {
+                const ud = userSnap.data() || {};
+                creatorStripeAccountId = ud.stripeAccountId;
+                creatorOnboardingStatus = ud.onboardingStatus;
+            }
+        }
+        const totalCents = Math.round(price * 100);
+        const creatorShareCents = Math.floor(totalCents * 0.70);
+        const routeToCreator = !!creatorStripeAccountId && creatorOnboardingStatus === "complete" && creatorShareCents > 0;
+        const sessionParams = {
             mode: "payment",
             customer_email: email,
             line_items: [{
                     quantity: 1,
                     price_data: {
                         currency: "usd",
-                        unit_amount: Math.round(price * 100),
+                        unit_amount: totalCents,
                         product_data: {
                             name: sequenceName,
-                            description: `By ${creator} · AFTERGLO Light Show`,
+                            description: `By ${creator} . AFTERGLO Light Show`,
                         },
                     },
                 }],
             allow_promotion_codes: true,
-            metadata: { userId: uid, sequenceId, sequenceName, creator, price: String(price) },
+            metadata: {
+                userId: uid,
+                sequenceId,
+                sequenceName,
+                creator,
+                price: String(price),
+                creatorUid: creatorUid || "",
+                routedToCreator: routeToCreator ? "1" : "0",
+            },
             success_url: `${SITE_URL}/platform.html?purchase=success&seq=${sequenceId}&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${SITE_URL}/platform.html?purchase=cancel`,
-        });
+        };
+        if (routeToCreator) {
+            sessionParams.payment_intent_data = {
+                transfer_data: {
+                    destination: creatorStripeAccountId,
+                    amount: creatorShareCents,
+                },
+            };
+        }
+        const session = await stripe.checkout.sessions.create(sessionParams);
         res.status(200).json({ url: session.url });
     }
     catch (err) {
@@ -472,36 +531,258 @@ exports.stripeWebhook = functions
         }
         const meta = session.metadata ?? {};
         const { userId, sequenceId, sequenceName, creator, price } = meta;
+        const routedToCreator = meta.routedToCreator === "1";
         if (!userId || !sequenceId) {
             functions.logger.warn("stripeWebhook: missing metadata", meta);
             res.status(200).send("OK");
             return;
         }
         const priceNum = parseFloat(price ?? "0");
+        const earningsShare = Math.round(priceNum * 0.7 * 100) / 100;
+        const paymentIntentId = typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : session.payment_intent?.id ?? null;
         // Look up creatorUid by UID so renames don't lose earnings
         const seqSnap = await db.collection("sequences").doc(sequenceId).get();
-        const creatorUid = seqSnap.exists ? (seqSnap.data()?.creatorUid ?? creator) : creator;
+        const creatorUid = seqSnap.exists
+            ? (seqSnap.data()?.creatorUid ?? meta.creatorUid ?? creator ?? "")
+            : (meta.creatorUid ?? creator ?? "");
         // FIX 2: deterministic doc ID + atomic transaction for idempotency
         const purchaseDocRef = db.collection("purchases").doc(`${userId}_${sequenceId}`);
         await db.runTransaction(async (tx) => {
             const existing = await tx.get(purchaseDocRef);
-            if (existing.exists)
-                return; // already recorded
+            if (existing.exists) {
+                // Backfill paymentIntentId on legacy rows so disputes can match.
+                if (paymentIntentId && !existing.data()?.paymentIntentId) {
+                    tx.update(purchaseDocRef, { paymentIntentId });
+                }
+                return;
+            }
             tx.set(purchaseDocRef, {
                 userId,
                 sequenceId,
                 sequenceName,
                 creator: creator ?? "Unknown",
+                creatorUid: creatorUid || null,
                 price: priceNum,
                 purchasedAt: admin.firestore.Timestamp.now(),
                 stripeSessionId: session.id,
+                paymentIntentId: paymentIntentId ?? null,
+                status: "paid",
             });
             if (creatorUid) {
                 const creatorEarningsRef = db.collection("creator_earnings").doc(creatorUid);
-                tx.set(creatorEarningsRef, { totalEarnings: admin.firestore.FieldValue.increment(Math.round(priceNum * 0.7 * 100) / 100) }, { merge: true });
+                tx.set(creatorEarningsRef, {
+                    totalEarnings: admin.firestore.FieldValue.increment(earningsShare),
+                    // Track the portion that has already landed in the creator's
+                    // Stripe Express balance (or, if unroutable, that still owes them).
+                    [routedToCreator ? "routedEarnings" : "unroutableEarnings"]: admin.firestore.FieldValue.increment(earningsShare),
+                    updatedAt: admin.firestore.Timestamp.now(),
+                }, { merge: true });
+                // Ledger entry for the creator dashboard + admin reconciliation.
+                const ledgerRef = creatorEarningsRef.collection("ledger").doc(session.id);
+                tx.set(ledgerRef, {
+                    sequenceId,
+                    sequenceName: sequenceName ?? "",
+                    saleAmount: priceNum,
+                    earnings: earningsShare,
+                    status: routedToCreator ? "routed" : "unroutable",
+                    stripeSessionId: session.id,
+                    createdAt: admin.firestore.Timestamp.now(),
+                }, { merge: true });
             }
         });
-        functions.logger.info(`Purchase recorded via webhook: ${userId} → ${sequenceId}`);
+        functions.logger.info(`Purchase recorded via webhook: ${userId} -> ${sequenceId} (routed=${routedToCreator})`);
+    }
+    // Stripe Connect: account.updated -> mirror capability flags into /users/{uid}
+    if (event.type === "account.updated") {
+        const account = event.data.object;
+        const userId = (account.metadata && account.metadata.userId) || null;
+        if (userId) {
+            try {
+                const detailsSubmitted = !!account.details_submitted;
+                const chargesEnabled = !!account.charges_enabled;
+                const payoutsEnabled = !!account.payouts_enabled;
+                const onboardingStatus = (detailsSubmitted && chargesEnabled && payoutsEnabled) ? "complete" :
+                    detailsSubmitted ? "review" : "pending";
+                await db.collection("users").doc(userId).set({
+                    stripeAccountId: account.id,
+                    detailsSubmitted,
+                    chargesEnabled,
+                    payoutsEnabled,
+                    onboardingStatus,
+                    onboardingUpdatedAt: admin.firestore.Timestamp.now(),
+                }, { merge: true });
+                functions.logger.info(`account.updated synced: ${userId} -> ${onboardingStatus}`);
+            }
+            catch (err) {
+                functions.logger.error("account.updated sync failed", err);
+            }
+        }
+    }
+    // ─── Dispute: created ──────────────────────────────────────────────────────
+    // Customer filed a chargeback. Mark disputed, revoke entitlement, claw back
+    // creator share provisionally. A later charge.dispute.closed(won) restores.
+    if (event.type === "charge.dispute.created") {
+        const dispute = event.data.object;
+        const paymentIntentId = typeof dispute.payment_intent === "string"
+            ? dispute.payment_intent
+            : dispute.payment_intent?.id ?? null;
+        let purchaseDoc = null;
+        if (paymentIntentId) {
+            const snap = await db.collection("purchases")
+                .where("paymentIntentId", "==", paymentIntentId)
+                .limit(1).get();
+            if (!snap.empty)
+                purchaseDoc = snap.docs[0];
+        }
+        // Fallback: derive PaymentIntent from the charge via the Stripe API.
+        if (!purchaseDoc && dispute.charge) {
+            try {
+                const chargeId = typeof dispute.charge === "string" ? dispute.charge : dispute.charge.id;
+                const charge = await stripe.charges.retrieve(chargeId);
+                const pi = typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id;
+                if (pi) {
+                    const snap = await db.collection("purchases")
+                        .where("paymentIntentId", "==", pi)
+                        .limit(1).get();
+                    if (!snap.empty)
+                        purchaseDoc = snap.docs[0];
+                }
+            }
+            catch (err) {
+                functions.logger.warn("dispute: failed to retrieve charge for fallback match", err);
+            }
+        }
+        const purchaseData = purchaseDoc?.data();
+        const disputeRef = db.collection("disputes").doc(dispute.id);
+        await db.runTransaction(async (tx) => {
+            tx.set(disputeRef, {
+                id: dispute.id,
+                status: dispute.status,
+                reason: dispute.reason,
+                amount: dispute.amount,
+                currency: dispute.currency,
+                createdAt: admin.firestore.Timestamp.now(),
+                stripeCreated: dispute.created,
+                evidenceDueBy: dispute.evidence_details?.due_by ?? null,
+                paymentIntentId,
+                charge: typeof dispute.charge === "string" ? dispute.charge : dispute.charge?.id ?? null,
+                purchaseId: purchaseDoc?.id ?? null,
+                userId: purchaseData?.userId ?? null,
+                sequenceId: purchaseData?.sequenceId ?? null,
+                sequenceName: purchaseData?.sequenceName ?? null,
+                creatorUid: purchaseData?.creatorUid ?? null,
+                livemode: dispute.livemode ?? false,
+            }, { merge: true });
+            if (purchaseDoc) {
+                tx.update(purchaseDoc.ref, {
+                    status: "disputed",
+                    disputedAt: admin.firestore.Timestamp.now(),
+                    disputeId: dispute.id,
+                    disputeReason: dispute.reason,
+                });
+                if (purchaseData?.userId) {
+                    tx.set(db.collection("users").doc(purchaseData.userId), {
+                        library: admin.firestore.FieldValue.arrayRemove(purchaseData.sequenceId),
+                    }, { merge: true });
+                }
+                const pCreatorUid = purchaseData?.creatorUid;
+                const pPrice = purchaseData?.price ?? 0;
+                if (pCreatorUid && pPrice > 0) {
+                    const share = Math.round(pPrice * 0.7 * 100) / 100;
+                    const earningsRef = db.collection("creator_earnings").doc(pCreatorUid);
+                    tx.set(earningsRef, {
+                        totalEarnings: admin.firestore.FieldValue.increment(-share),
+                        updatedAt: admin.firestore.Timestamp.now(),
+                    }, { merge: true });
+                    const ledgerRef = earningsRef.collection("ledger").doc();
+                    tx.set(ledgerRef, {
+                        type: "dispute_provisional",
+                        amount: -share,
+                        purchaseId: purchaseDoc.id,
+                        disputeId: dispute.id,
+                        createdAt: admin.firestore.Timestamp.now(),
+                    });
+                }
+            }
+            const auditRef = db.collection("admin_audit").doc();
+            tx.set(auditRef, {
+                action: "dispute.created",
+                actor: "stripe_webhook",
+                target: purchaseDoc?.id ?? null,
+                disputeId: dispute.id,
+                reason: dispute.reason,
+                amount: dispute.amount,
+                createdAt: admin.firestore.Timestamp.now(),
+            });
+        });
+        functions.logger.warn(`Dispute created: ${dispute.id} on purchase ${purchaseDoc?.id ?? "<unmatched>"}`);
+    }
+    // ─── Dispute: closed ───────────────────────────────────────────────────────
+    if (event.type === "charge.dispute.closed") {
+        const dispute = event.data.object;
+        const disputeRef = db.collection("disputes").doc(dispute.id);
+        const disputeSnap = await disputeRef.get();
+        const purchaseId = disputeSnap.data()?.purchaseId;
+        await db.runTransaction(async (tx) => {
+            tx.set(disputeRef, {
+                status: dispute.status,
+                closedAt: admin.firestore.Timestamp.now(),
+            }, { merge: true });
+            if (!purchaseId)
+                return;
+            const purchaseRef = db.collection("purchases").doc(purchaseId);
+            const purchaseSnap = await tx.get(purchaseRef);
+            if (!purchaseSnap.exists)
+                return;
+            const p = purchaseSnap.data();
+            if (dispute.status === "won") {
+                tx.update(purchaseRef, {
+                    status: "paid",
+                    disputeWonAt: admin.firestore.Timestamp.now(),
+                });
+                if (p.userId && p.sequenceId) {
+                    tx.set(db.collection("users").doc(p.userId), {
+                        library: admin.firestore.FieldValue.arrayUnion(p.sequenceId),
+                    }, { merge: true });
+                }
+                const pCreatorUid = p.creatorUid;
+                const pPrice = p.price ?? 0;
+                if (pCreatorUid && pPrice > 0) {
+                    const share = Math.round(pPrice * 0.7 * 100) / 100;
+                    const earningsRef = db.collection("creator_earnings").doc(pCreatorUid);
+                    tx.set(earningsRef, {
+                        totalEarnings: admin.firestore.FieldValue.increment(share),
+                        updatedAt: admin.firestore.Timestamp.now(),
+                    }, { merge: true });
+                    const ledgerRef = earningsRef.collection("ledger").doc();
+                    tx.set(ledgerRef, {
+                        type: "dispute_reversed",
+                        amount: share,
+                        purchaseId,
+                        disputeId: dispute.id,
+                        createdAt: admin.firestore.Timestamp.now(),
+                    });
+                }
+            }
+            else {
+                tx.update(purchaseRef, {
+                    status: "disputed_lost",
+                    disputeLostAt: admin.firestore.Timestamp.now(),
+                });
+            }
+            const auditRef = db.collection("admin_audit").doc();
+            tx.set(auditRef, {
+                action: "dispute.closed",
+                actor: "stripe_webhook",
+                target: purchaseId,
+                disputeId: dispute.id,
+                outcome: dispute.status,
+                createdAt: admin.firestore.Timestamp.now(),
+            });
+        });
+        functions.logger.warn(`Dispute closed: ${dispute.id} outcome=${dispute.status}`);
     }
     res.status(200).send("OK");
 });
@@ -670,9 +951,29 @@ exports.confirmUpload = functions.https.onRequest(async (req, res) => {
 // `admin === true` on their Firebase ID token. Every function throws
 // HttpsError('permission-denied', ...) if the caller is not an admin.
 const OWNER_EMAIL = "shaneward852@gmail.com";
-function requireAdmin(context) {
+// Re-verifies the caller's ID token with checkRevoked=true so revoked admin
+// claims (e.g. just-demoted users) cannot keep calling admin endpoints.
+async function requireAdmin(context) {
     if (!context.auth) {
         throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    }
+    const rawToken = context.rawRequest?.headers?.authorization?.startsWith?.("Bearer ")
+        ? context.rawRequest.headers.authorization.slice(7)
+        : (context.instanceIdToken || "");
+    if (rawToken) {
+        try {
+            const decoded = await admin.auth().verifyIdToken(rawToken, true);
+            if (decoded.admin !== true) {
+                throw new functions.https.HttpsError("permission-denied", "Admin access required.");
+            }
+            return decoded.uid;
+        }
+        catch (err) {
+            if (err?.code === "auth/id-token-revoked") {
+                throw new functions.https.HttpsError("permission-denied", "Session revoked. Sign in again.");
+            }
+            // fall through to legacy check if decoding failed for another reason
+        }
     }
     if (context.auth.token.admin !== true) {
         throw new functions.https.HttpsError("permission-denied", "Admin access required.");
@@ -682,7 +983,7 @@ function requireAdmin(context) {
 // adminSetUserRole(uid, role). role is one of: 'user', 'creator', 'admin'.
 // Writes custom claim {admin, creator} and mirrors role into /users/{uid}.
 exports.adminSetUserRole = functions.https.onCall(async (data, context) => {
-    requireAdmin(context);
+    await requireAdmin(context);
     const uid = data?.uid;
     const role = data?.role;
     if (typeof uid !== "string" || !uid) {
@@ -705,7 +1006,7 @@ exports.adminSetUserRole = functions.https.onCall(async (data, context) => {
 });
 // adminDisableUser(uid, disabled)
 exports.adminDisableUser = functions.https.onCall(async (data, context) => {
-    requireAdmin(context);
+    await requireAdmin(context);
     const uid = data?.uid;
     const disabled = data?.disabled;
     if (typeof uid !== "string" || !uid) {
@@ -721,7 +1022,7 @@ exports.adminDisableUser = functions.https.onCall(async (data, context) => {
 });
 // adminSetUploadStatus(uploadId, status). Status is one of: pending, approved, rejected, published, pending_upload.
 exports.adminSetUploadStatus = functions.https.onCall(async (data, context) => {
-    requireAdmin(context);
+    await requireAdmin(context);
     const uploadId = data?.uploadId;
     const status = data?.status;
     if (typeof uploadId !== "string" || !isValidId(uploadId)) {
@@ -740,7 +1041,7 @@ exports.adminSetUploadStatus = functions.https.onCall(async (data, context) => {
 });
 // adminDeleteUpload(uploadId). Deletes the Firestore doc and its Storage file(s).
 exports.adminDeleteUpload = functions.https.onCall(async (data, context) => {
-    requireAdmin(context);
+    await requireAdmin(context);
     const uploadId = data?.uploadId;
     if (typeof uploadId !== "string" || !isValidId(uploadId)) {
         throw new functions.https.HttpsError("invalid-argument", "Invalid uploadId.");
@@ -757,7 +1058,7 @@ exports.adminDeleteUpload = functions.https.onCall(async (data, context) => {
 });
 // adminListUsers(pageToken?). Joins Firebase Auth user records with /users/{uid} mirror docs.
 exports.adminListUsers = functions.https.onCall(async (data, context) => {
-    requireAdmin(context);
+    await requireAdmin(context);
     const pageToken = typeof data?.pageToken === "string" ? data.pageToken : undefined;
     const result = await admin.auth().listUsers(1000, pageToken);
     // Fetch mirror docs in parallel (chunked to stay under Firestore batch-get limits)
@@ -826,5 +1127,272 @@ exports.adminClaimBootstrap = functions.https.onCall(async (data, context) => {
     }, { merge: true });
     functions.logger.warn(`adminClaimBootstrap: admin claim granted to ${email} (${uid}). Rotate ADMIN_BOOTSTRAP_SECRET now.`);
     return { ok: true, uid, note: "Admin claim granted. Rotate ADMIN_BOOTSTRAP_SECRET now." };
+});
+// ─── callable: adminRefundPurchase ────────────────────────────────────────────
+// Issues a Stripe refund against the PaymentIntent behind a purchase, revokes
+// the user's entitlement, claws back the creator's 70% share of the refunded
+// amount, writes a ledger entry, and logs to /admin_audit. Partial refunds are
+// supported via amountCents (otherwise full refund).
+exports.adminRefundPurchase = functions
+    .runWith({ secrets: ["STRIPE_SECRET"] })
+    .https.onCall(async (data, context) => {
+    const adminUid = await requireAdmin(context);
+    const purchaseId = data?.purchaseId;
+    const reason = data?.reason;
+    const amountCents = data?.amountCents;
+    if (typeof purchaseId !== "string" || !purchaseId) {
+        throw new functions.https.HttpsError("invalid-argument", "purchaseId is required.");
+    }
+    const allowedReasons = new Set([
+        "customer_request", "duplicate", "fraudulent", "content_issue", "other",
+    ]);
+    if (typeof reason !== "string" || !allowedReasons.has(reason)) {
+        throw new functions.https.HttpsError("invalid-argument", "reason is invalid.");
+    }
+    if (amountCents != null &&
+        (typeof amountCents !== "number" || !isFinite(amountCents) || amountCents <= 0 || amountCents > 99900)) {
+        throw new functions.https.HttpsError("invalid-argument", "amountCents is invalid.");
+    }
+    const purchaseRef = db.collection("purchases").doc(purchaseId);
+    const purchaseSnap = await purchaseRef.get();
+    if (!purchaseSnap.exists) {
+        throw new functions.https.HttpsError("not-found", "Purchase not found.");
+    }
+    const purchase = purchaseSnap.data();
+    if (purchase.status === "refunded") {
+        throw new functions.https.HttpsError("failed-precondition", "Purchase already refunded.");
+    }
+    if (!purchase.stripeSessionId) {
+        throw new functions.https.HttpsError("failed-precondition", "No Stripe session on this purchase.");
+    }
+    const stripe = new stripe_1.default(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
+    // Resolve the PaymentIntent. Prefer the cached paymentIntentId; fall back
+    // to retrieving the Checkout Session if the field was never backfilled.
+    let paymentIntentId = purchase.paymentIntentId;
+    if (!paymentIntentId) {
+        const session = await stripe.checkout.sessions.retrieve(purchase.stripeSessionId);
+        paymentIntentId = typeof session.payment_intent === "string"
+            ? session.payment_intent
+            : session.payment_intent?.id ?? undefined;
+        if (paymentIntentId) {
+            await purchaseRef.update({ paymentIntentId });
+        }
+    }
+    if (!paymentIntentId) {
+        throw new functions.https.HttpsError("failed-precondition", "Could not resolve PaymentIntent.");
+    }
+    // Map our reason taxonomy onto Stripe's (only a few are accepted).
+    const stripeReason = reason === "fraudulent" ? "fraudulent"
+        : reason === "duplicate" ? "duplicate"
+            : reason === "customer_request" ? "requested_by_customer"
+                : undefined;
+    let refund;
+    try {
+        refund = await stripe.refunds.create({
+            payment_intent: paymentIntentId,
+            ...(amountCents ? { amount: amountCents } : {}),
+            ...(stripeReason ? { reason: stripeReason } : {}),
+            metadata: { adminUid, purchaseId, reason },
+        });
+    }
+    catch (err) {
+        functions.logger.error("Stripe refund failed", err);
+        throw new functions.https.HttpsError("internal", `Stripe refund failed: ${err?.message || "unknown"}`);
+    }
+    const refundedAmountCents = refund.amount ?? (amountCents ?? Math.round((purchase.price || 0) * 100));
+    const refundedAmountDollars = refundedAmountCents / 100;
+    const creatorShare = Math.round(refundedAmountDollars * 0.7 * 100) / 100;
+    await db.runTransaction(async (tx) => {
+        tx.update(purchaseRef, {
+            status: "refunded",
+            refundedAt: admin.firestore.Timestamp.now(),
+            refundedBy: adminUid,
+            refundReason: reason,
+            refundedAmountCents,
+            stripeRefundId: refund.id,
+        });
+        if (purchase.userId && purchase.sequenceId) {
+            tx.set(db.collection("users").doc(purchase.userId), {
+                library: admin.firestore.FieldValue.arrayRemove(purchase.sequenceId),
+            }, { merge: true });
+            // Revoke any outstanding download token for this sequence.
+            tx.set(db.collection("users").doc(purchase.userId)
+                .collection("download_tokens").doc(purchase.sequenceId), {
+                revokedAt: admin.firestore.Timestamp.now(),
+                revokedBy: adminUid,
+                reason: "refund",
+            }, { merge: true });
+        }
+        const creatorUid = purchase.creatorUid;
+        if (creatorUid && creatorShare > 0) {
+            const earningsRef = db.collection("creator_earnings").doc(creatorUid);
+            tx.set(earningsRef, {
+                totalEarnings: admin.firestore.FieldValue.increment(-creatorShare),
+                updatedAt: admin.firestore.Timestamp.now(),
+            }, { merge: true });
+            const ledgerRef = earningsRef.collection("ledger").doc();
+            tx.set(ledgerRef, {
+                type: "refund",
+                amount: -creatorShare,
+                purchaseId,
+                refundId: refund.id,
+                reason,
+                createdAt: admin.firestore.Timestamp.now(),
+            });
+        }
+        const auditRef = db.collection("admin_audit").doc();
+        tx.set(auditRef, {
+            action: "refund",
+            actor: adminUid,
+            target: purchaseId,
+            reason,
+            stripeRefundId: refund.id,
+            amountCents: refundedAmountCents,
+            createdAt: admin.firestore.Timestamp.now(),
+        });
+    });
+    functions.logger.info(`adminRefundPurchase: ${purchaseId} refund=${refund.id} by ${adminUid}`);
+    return { status: refund.status, stripeRefundId: refund.id };
+});
+// ─── STRIPE CONNECT (Express) ─────────────────────────────────────────────────
+// Creator payouts via Stripe Connect Express accounts. Stripe hosts the W-9,
+// bank, and tax-info flow on their side; we just persist the account id and
+// mirror the capability flags so the creator dashboard knows onboarding state.
+function requireAuth(context) {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign-in required.");
+    }
+    return { uid: context.auth.uid, email: context.auth.token.email };
+}
+async function writeAdminAudit(action, actorUid, payload) {
+    try {
+        await db.collection("admin_audit").add({
+            action,
+            actorUid,
+            payload,
+            createdAt: admin.firestore.Timestamp.now(),
+        });
+    }
+    catch (err) {
+        functions.logger.warn("admin_audit write failed", err);
+    }
+}
+function mirrorAccountFlags(account) {
+    const detailsSubmitted = !!account.details_submitted;
+    const chargesEnabled = !!account.charges_enabled;
+    const payoutsEnabled = !!account.payouts_enabled;
+    const onboardingStatus = (detailsSubmitted && chargesEnabled && payoutsEnabled) ? "complete" :
+        detailsSubmitted ? "review" : "pending";
+    return { detailsSubmitted, chargesEnabled, payoutsEnabled, onboardingStatus };
+}
+// createConnectAccount(): creates a Stripe Connect Express account if the
+// caller doesn't already have one, then stores the id on /users/{uid}.
+exports.createConnectAccount = functions
+    .runWith({ secrets: ["STRIPE_SECRET"] })
+    .https.onCall(async (_data, context) => {
+    const { uid, email } = requireAuth(context);
+    const stripe = new stripe_1.default(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
+    const userRef = db.collection("users").doc(uid);
+    const userSnap = await userRef.get();
+    const userData = userSnap.exists ? userSnap.data() || {} : {};
+    if (userData.stripeAccountId) {
+        return { ok: true, stripeAccountId: userData.stripeAccountId, existing: true };
+    }
+    const account = await stripe.accounts.create({
+        type: "express",
+        country: "US",
+        email,
+        capabilities: { transfers: { requested: true } },
+        business_type: "individual",
+        metadata: { userId: uid },
+    });
+    await userRef.set({
+        stripeAccountId: account.id,
+        onboardingStatus: "pending",
+        detailsSubmitted: false,
+        chargesEnabled: false,
+        payoutsEnabled: false,
+        onboardingUpdatedAt: admin.firestore.Timestamp.now(),
+    }, { merge: true });
+    functions.logger.info(`createConnectAccount: ${uid} -> ${account.id}`);
+    return { ok: true, stripeAccountId: account.id, existing: false };
+});
+// createConnectOnboardingLink({ mode: 'onboarding' | 'update' })
+exports.createConnectOnboardingLink = functions
+    .runWith({ secrets: ["STRIPE_SECRET"] })
+    .https.onCall(async (data, context) => {
+    const { uid } = requireAuth(context);
+    const stripe = new stripe_1.default(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
+    const mode = data?.mode === "update" ? "account_update" : "account_onboarding";
+    const userSnap = await db.collection("users").doc(uid).get();
+    const stripeAccountId = userSnap.data()?.stripeAccountId;
+    if (!stripeAccountId) {
+        throw new functions.https.HttpsError("failed-precondition", "No Connect account. Call createConnectAccount first.");
+    }
+    const link = await stripe.accountLinks.create({
+        account: stripeAccountId,
+        refresh_url: `${SITE_URL}/creator-dashboard.html?connect=refresh`,
+        return_url: `${SITE_URL}/creator-dashboard.html?connect=return`,
+        type: mode,
+    });
+    return { ok: true, url: link.url, expiresAt: link.expires_at };
+});
+// checkConnectStatus(): re-reads the account from Stripe and mirrors flags.
+exports.checkConnectStatus = functions
+    .runWith({ secrets: ["STRIPE_SECRET"] })
+    .https.onCall(async (_data, context) => {
+    const { uid } = requireAuth(context);
+    const stripe = new stripe_1.default(STRIPE_SECRET.value(), { apiVersion: "2023-10-16" });
+    const userRef = db.collection("users").doc(uid);
+    const userSnap = await userRef.get();
+    const stripeAccountId = userSnap.data()?.stripeAccountId;
+    if (!stripeAccountId) {
+        return { ok: true, hasAccount: false };
+    }
+    const account = await stripe.accounts.retrieve(stripeAccountId);
+    const flags = mirrorAccountFlags(account);
+    await userRef.set({
+        ...flags,
+        stripeAccountId,
+        onboardingUpdatedAt: admin.firestore.Timestamp.now(),
+    }, { merge: true });
+    // Best-effort next-payout hint
+    let nextPayoutDate = null;
+    try {
+        const payouts = await stripe.payouts.list({ limit: 1, status: "pending" }, { stripeAccount: stripeAccountId });
+        if (payouts.data.length) {
+            nextPayoutDate = payouts.data[0].arrival_date;
+        }
+    }
+    catch (err) {
+        functions.logger.info("payouts.list skipped", err);
+    }
+    return {
+        ok: true,
+        hasAccount: true,
+        stripeAccountId,
+        ...flags,
+        nextPayoutDate,
+    };
+});
+// adminListCreatorsPayoutStatus(): admin-only view of creator payout flags.
+exports.adminListCreatorsPayoutStatus = functions.https.onCall(async (_data, context) => {
+    const actor = await requireAdmin(context);
+    const snap = await db.collection("users").get();
+    const rows = snap.docs.map((d) => {
+        const u = d.data() || {};
+        return {
+            uid: d.id,
+            email: u.email || "",
+            role: u.role || "user",
+            stripeAccountId: u.stripeAccountId || null,
+            onboardingStatus: u.onboardingStatus || null,
+            payoutsEnabled: !!u.payoutsEnabled,
+            chargesEnabled: !!u.chargesEnabled,
+            detailsSubmitted: !!u.detailsSubmitted,
+        };
+    });
+    await writeAdminAudit("listCreatorsPayoutStatus", actor, { count: rows.length });
+    return { creators: rows };
 });
 //# sourceMappingURL=index.js.map

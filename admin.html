@@ -327,6 +327,7 @@
       <button class="tab-chip" data-tab="users">Users</button>
       <button class="tab-chip" data-tab="uploads">Uploads</button>
       <button class="tab-chip" data-tab="purchases">Purchases</button>
+      <button class="tab-chip" data-tab="disputes">Disputes</button>
     </div>
 
     <!-- STATS -->
@@ -350,6 +351,10 @@
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
               <input type="text" id="userSearch" placeholder="Search by email or name" autocomplete="off" />
             </div>
+            <label style="display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:0.82rem;">
+              <input type="checkbox" id="filterPayoutsPending" />
+              Creators with payouts pending setup
+            </label>
             <button class="btn btn-sm" id="refreshUsers">Refresh</button>
           </div>
         </div>
@@ -357,11 +362,11 @@
           <table>
             <thead>
               <tr>
-                <th>Email</th><th>Display name</th><th>Created</th><th>Verified</th><th>Role</th><th>Actions</th>
+                <th>Email</th><th>Display name</th><th>Created</th><th>Verified</th><th>Role</th><th>Payouts</th><th>Actions</th>
               </tr>
             </thead>
             <tbody id="usersBody">
-              <tr><td colspan="6" class="empty-row">Loading users.</td></tr>
+              <tr><td colspan="7" class="empty-row">Loading users.</td></tr>
             </tbody>
           </table>
         </div>
@@ -410,21 +415,79 @@
             <button class="btn btn-sm" id="refreshPurchases">Refresh</button>
           </div>
         </div>
+        <div style="padding: 12px 20px; border-bottom: 1px solid var(--border); display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="tab-chip filter-chip active" data-filter="all">All</button>
+          <button class="tab-chip filter-chip" data-filter="paid">Paid</button>
+          <button class="tab-chip filter-chip" data-filter="refunded">Refunded</button>
+          <button class="tab-chip filter-chip" data-filter="disputed">Disputed</button>
+        </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
-                <th>Buyer</th><th>Sequence</th><th>Amount</th><th>Stripe session</th><th>Date</th>
+                <th>Buyer</th><th>Sequence</th><th>Amount</th><th>Status</th><th>Stripe session</th><th>Date</th><th>Actions</th>
               </tr>
             </thead>
             <tbody id="purchasesBody">
-              <tr><td colspan="5" class="empty-row">Loading purchases.</td></tr>
+              <tr><td colspan="7" class="empty-row">Loading purchases.</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     </section>
 
+    <!-- DISPUTES -->
+    <section class="section" id="section-disputes">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Disputes</div>
+          <div class="panel-tools">
+            <button class="btn btn-sm" id="refreshDisputes">Refresh</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Dispute</th><th>Reason</th><th>Amount</th><th>Status</th><th>Evidence due</th><th>Created</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="disputesBody">
+              <tr><td colspan="7" class="empty-row">Loading disputes.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- ─── REFUND MODAL ──────────────────────────────────────────────── -->
+<div id="refundModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.72); z-index:3000; align-items:center; justify-content:center; padding:24px;">
+  <div style="background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius); max-width:480px; width:100%; padding:28px;">
+    <h2 style="font-family:'Outfit',sans-serif; font-size:1.3rem; font-weight:800; margin-bottom:6px;">Refund purchase</h2>
+    <div style="color:var(--muted); font-size:0.88rem; margin-bottom:20px;" id="refundSummary"></div>
+
+    <label style="display:block; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:6px;">Reason</label>
+    <select id="refundReason" style="width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:8px; font-size:0.9rem; margin-bottom:16px;">
+      <option value="customer_request">Customer request</option>
+      <option value="duplicate">Duplicate</option>
+      <option value="fraudulent">Fraudulent</option>
+      <option value="content_issue">Content issue</option>
+      <option value="other">Other</option>
+    </select>
+
+    <label style="display:block; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:6px;">Partial amount (optional, USD)</label>
+    <input type="number" step="0.01" min="0.01" id="refundAmount" placeholder="Leave blank for full refund" style="width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:8px; font-size:0.9rem; margin-bottom:16px;" />
+
+    <label style="display:block; font-size:0.78rem; font-weight:600; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:6px;">Type REFUND to confirm</label>
+    <input type="text" id="refundConfirm" autocomplete="off" style="width:100%; background:var(--surface); border:1px solid var(--border); color:var(--text); padding:10px 12px; border-radius:8px; font-size:0.9rem; margin-bottom:20px;" />
+
+    <div style="display:flex; gap:10px; justify-content:flex-end;">
+      <button class="btn" id="refundCancel">Cancel</button>
+      <button class="btn btn-danger" id="refundSubmit">Issue refund</button>
+    </div>
   </div>
 </div>
 
@@ -549,7 +612,7 @@
 
   /* ─── Load everything on dashboard init ────────────────────────── */
   async function initDashboard() {
-    await Promise.all([loadUsers(), loadUploads(), loadPurchases()]);
+    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes()]);
     renderStats();
   }
 
@@ -719,42 +782,170 @@
   document.getElementById('refreshUploads').addEventListener('click', loadUploads);
 
   /* ─── Purchases ────────────────────────────────────────────────── */
+  let purchaseFilter = 'all';
+  let disputesCache = [];
+
   async function loadPurchases() {
     const body = document.getElementById('purchasesBody');
-    body.innerHTML = '<tr><td colspan="5" class="empty-row">Loading purchases.</td></tr>';
+    body.innerHTML = '<tr><td colspan="7" class="empty-row">Loading purchases.</td></tr>';
     try {
       const snap = await fbFirestore.collection('purchases').orderBy('purchasedAt', 'desc').limit(1000).get();
       purchasesCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
       renderPurchases();
     } catch (err) {
       console.error(err);
-      body.innerHTML = '<tr><td colspan="5" class="empty-row">Failed to load purchases. '+esc(err.message||'')+'</td></tr>';
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">Failed to load purchases. '+esc(err.message||'')+'</td></tr>';
     }
+  }
+
+  function purchaseStatusPill(status) {
+    const s = status || 'paid';
+    const cls = s === 'refunded' ? 'pill-rejected'
+              : (s === 'disputed' || s === 'disputed_lost') ? 'pill-pending'
+              : 'pill-published';
+    return '<span class="pill '+cls+'">'+esc(s)+'</span>';
   }
 
   function renderPurchases() {
     const body = document.getElementById('purchasesBody');
     const q = (document.getElementById('purchaseSearch').value || '').trim().toLowerCase();
     const rows = purchasesCache.filter(p => {
+      const status = p.status || 'paid';
+      if (purchaseFilter !== 'all') {
+        if (purchaseFilter === 'disputed' && !(status === 'disputed' || status === 'disputed_lost')) return false;
+        if (purchaseFilter === 'paid' && status !== 'paid') return false;
+        if (purchaseFilter === 'refunded' && status !== 'refunded') return false;
+      }
       if (!q) return true;
       return (p.userId || '').toLowerCase().includes(q)
           || (p.sequenceName || '').toLowerCase().includes(q)
           || (p.sequenceId || '').toLowerCase().includes(q);
     });
     if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="5" class="empty-row">No purchases match.</td></tr>';
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">No purchases match.</td></tr>';
       return;
     }
     body.innerHTML = rows.map(p => {
+      const status = p.status || 'paid';
+      const canRefund = status === 'paid' || status === 'disputed';
+      const refundBtn = canRefund
+        ? '<button class="btn btn-sm btn-danger" onclick="openRefundModal(\''+esc(p._id)+'\')">Refund</button>'
+        : '<span class="cell-sub">.</span>';
       return '<tr>'
         + '<td class="mono">'+esc(p.userId || '.')+'</td>'
         + '<td><div class="cell-email">'+esc(p.sequenceName || '.')+'</div><div class="cell-sub mono">'+esc(p.sequenceId || '')+'</div></td>'
         + '<td>'+fmtMoney(p.price)+'</td>'
+        + '<td>'+purchaseStatusPill(status)+'</td>'
         + '<td class="mono">'+esc((p.stripeSessionId || '').slice(0, 24))+(p.stripeSessionId && p.stripeSessionId.length > 24 ? '.' : '')+'</td>'
         + '<td>'+esc(fmtDate(p.purchasedAt))+'</td>'
+        + '<td><div class="actions">'+refundBtn+'</div></td>'
         + '</tr>';
     }).join('');
   }
+
+  /* ─── Filter chips ─────────────────────────────────────────────── */
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      purchaseFilter = chip.getAttribute('data-filter');
+      renderPurchases();
+    });
+  });
+
+  /* ─── Refund modal ─────────────────────────────────────────────── */
+  let refundTargetId = null;
+
+  window.openRefundModal = function(purchaseId) {
+    const p = purchasesCache.find(x => x._id === purchaseId);
+    if (!p) { toast('Purchase not found.', 'error'); return; }
+    refundTargetId = purchaseId;
+    document.getElementById('refundSummary').innerHTML =
+      esc(p.sequenceName || p.sequenceId || '') + ' . ' + fmtMoney(p.price) + ' . buyer '
+      + '<span class="mono">' + esc((p.userId || '').slice(0, 16)) + '</span>';
+    document.getElementById('refundReason').value = 'customer_request';
+    document.getElementById('refundAmount').value = '';
+    document.getElementById('refundConfirm').value = '';
+    document.getElementById('refundModal').style.display = 'flex';
+  };
+
+  function closeRefundModal() {
+    refundTargetId = null;
+    document.getElementById('refundModal').style.display = 'none';
+  }
+
+  document.getElementById('refundCancel').addEventListener('click', closeRefundModal);
+
+  document.getElementById('refundSubmit').addEventListener('click', async () => {
+    if (!refundTargetId) return;
+    const confirmText = (document.getElementById('refundConfirm').value || '').trim();
+    if (confirmText !== 'REFUND') {
+      toast('Type REFUND to confirm.', 'error');
+      return;
+    }
+    const reason = document.getElementById('refundReason').value;
+    const amountStr = (document.getElementById('refundAmount').value || '').trim();
+    const payload = { purchaseId: refundTargetId, reason };
+    if (amountStr) {
+      const dollars = parseFloat(amountStr);
+      if (!isFinite(dollars) || dollars <= 0) { toast('Invalid amount.', 'error'); return; }
+      payload.amountCents = Math.round(dollars * 100);
+    }
+    const btn = document.getElementById('refundSubmit');
+    btn.disabled = true; btn.textContent = 'Refunding.';
+    try {
+      const res = await call('adminRefundPurchase', payload);
+      toast('Refund issued: ' + (res.status || 'ok') + '.', 'success');
+      closeRefundModal();
+      await loadPurchases();
+    } catch (err) {
+      toast('Refund failed: ' + (err.message || 'error'), 'error');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Issue refund';
+    }
+  });
+
+  /* ─── Disputes ─────────────────────────────────────────────────── */
+  async function loadDisputes() {
+    const body = document.getElementById('disputesBody');
+    body.innerHTML = '<tr><td colspan="7" class="empty-row">Loading disputes.</td></tr>';
+    try {
+      const snap = await fbFirestore.collection('disputes').orderBy('createdAt', 'desc').limit(200).get();
+      disputesCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      renderDisputes();
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">Failed to load disputes. '+esc(err.message||'')+'</td></tr>';
+    }
+  }
+
+  function renderDisputes() {
+    const body = document.getElementById('disputesBody');
+    if (!disputesCache.length) {
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">No disputes. Keep it that way.</td></tr>';
+      return;
+    }
+    body.innerHTML = disputesCache.map(d => {
+      const live = !!d.livemode;
+      const stripeUrl = 'https://dashboard.stripe.com/' + (live ? '' : 'test/') + 'disputes/' + encodeURIComponent(d.id);
+      const amt = typeof d.amount === 'number' ? ('$' + (d.amount / 100).toFixed(2)) : '.';
+      const due = d.evidenceDueBy ? fmtDate(new Date(d.evidenceDueBy * 1000)) : '.';
+      const statusCls = d.status === 'won' ? 'pill-approved'
+                      : d.status === 'lost' ? 'pill-rejected'
+                      : 'pill-pending';
+      return '<tr>'
+        + '<td><div class="cell-email">'+esc(d.sequenceName || '(unmatched)')+'</div><div class="cell-sub mono">'+esc(d.id)+'</div></td>'
+        + '<td>'+esc(d.reason || '.')+'</td>'
+        + '<td>'+amt+'</td>'
+        + '<td><span class="pill '+statusCls+'">'+esc(d.status || '.')+'</span></td>'
+        + '<td>'+esc(due)+'</td>'
+        + '<td>'+esc(fmtDate(d.createdAt))+'</td>'
+        + '<td><a class="btn btn-sm" href="'+stripeUrl+'" target="_blank" rel="noopener">View in Stripe</a></td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  document.getElementById('refreshDisputes').addEventListener('click', loadDisputes);
 
   function exportPurchasesCsv() {
     const header = ['buyer_uid','sequence_id','sequence_name','creator','amount','stripe_session_id','purchased_at'];
