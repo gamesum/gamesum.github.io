@@ -1,0 +1,17 @@
+User-agent: *
+Disallow: /admin.html
+Disallow: /account.html
+Disallow: /creator-dashboard.html
+Disallow: /my-library.html
+Disallow: /upload.html
+Disallow: /signin.html
+Disallow: /_private/
+Disallow: /_secrets/
+Disallow: /scripts/
+Disallow: /functions/
+Disallow: /firestore.rules
+Disallow: /storage.rules
+Disallow: /firebase.json
+Disallow: /firestore.indexes.json
+
+Sitemap: https://afterglolighting.org/sitemap.xml

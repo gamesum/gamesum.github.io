@@ -41,6 +41,7 @@ const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
 const stripe_1 = __importDefault(require("stripe"));
+const crypto = __importStar(require("crypto"));
 admin.initializeApp();
 const db = admin.firestore();
 const STRIPE_SECRET = (0, params_1.defineSecret)("STRIPE_SECRET");
@@ -80,14 +81,59 @@ function applyCors(req, res) {
 function isValidId(id) {
     return typeof id === "string" && /^[a-zA-Z0-9_-]{1,128}$/.test(id);
 }
+// Constant-time string compare for secrets.
+function secretsEqual(a, b) {
+    if (typeof a !== "string" || typeof b !== "string")
+        return false;
+    const ab = Buffer.from(a, "utf8");
+    const bb = Buffer.from(b, "utf8");
+    if (ab.length !== bb.length) {
+        try {
+            crypto.timingSafeEqual(ab, ab);
+        }
+        catch { }
+        return false;
+    }
+    try {
+        return crypto.timingSafeEqual(ab, bb);
+    }
+    catch {
+        return false;
+    }
+}
+// Simple Firestore-backed fixed-window rate limiter. Fails open on errors.
+async function checkRateLimit(bucket, key, limit, windowMs) {
+    try {
+        if (!key)
+            return true;
+        const docId = `${bucket}__${Buffer.from(key).toString("base64url").slice(0, 200)}`;
+        const ref = db.collection("rate_limits").doc(docId);
+        const now = Date.now();
+        return await db.runTransaction(async (tx) => {
+            const snap = await tx.get(ref);
+            const data = snap.exists ? snap.data() : null;
+            if (!data || !data.windowStart || (now - data.windowStart) > windowMs) {
+                tx.set(ref, { windowStart: now, count: 1, bucket, updatedAt: now });
+                return true;
+            }
+            if ((data.count || 0) >= limit)
+                return false;
+            tx.update(ref, { count: (data.count || 0) + 1, updatedAt: now });
+            return true;
+        });
+    }
+    catch (err) {
+        functions.logger.warn("rate limiter failure; failing open", err);
+        return true;
+    }
+}
 // ─── GET /purchases ───────────────────────────────────────────────────────────
 // Called by firmware: GET https://api.afterglolighting.org/purchases
 // Accepts Firebase ID token in Authorization: Bearer header OR ?token= query param.
 // FIX 3: token is now verified as a Firebase ID token, not used raw as a UID.
 exports.purchases = functions.https.onRequest(async (req, res) => {
-    res.set("Access-Control-Allow-Origin", "*");
+    applyCors(req, res);
     res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     if (req.method === "OPTIONS") {
         res.status(204).send("");
         return;
@@ -390,9 +436,8 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
 // Used by the Android app and future website versions as the single source of truth.
 // Response: { sequences: [...], packs: [...] }
 exports.getListings = functions.https.onRequest(async (req, res) => {
-    res.set("Access-Control-Allow-Origin", "*");
+    applyCors(req, res);
     res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.set("Access-Control-Allow-Headers", "Content-Type");
     if (req.method === "OPTIONS") {
         res.status(204).send("");
         return;
@@ -428,7 +473,12 @@ exports.getListings = functions.https.onRequest(async (req, res) => {
 // ─── GET /sequences ───────────────────────────────────────────────────────────
 // Public endpoint: list published sequences for the store.
 exports.sequenceList = functions.https.onRequest(async (req, res) => {
-    res.set("Access-Control-Allow-Origin", "*");
+    applyCors(req, res);
+    res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+    if (req.method === "OPTIONS") {
+        res.status(204).send("");
+        return;
+    }
     if (req.method !== "GET") {
         res.status(405).json({ error: "Method not allowed" });
         return;
@@ -854,9 +904,8 @@ exports.stripeWebhook = functions
 // Query: ?sequenceId=xxx
 // Header: Authorization: Bearer {Firebase ID token}
 exports.getDownloadUrl = functions.https.onRequest(async (req, res) => {
-    res.set("Access-Control-Allow-Origin", "*");
+    applyCors(req, res);
     res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
-    res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
     if (req.method === "OPTIONS") {
         res.status(204).send("");
         return;
@@ -1279,7 +1328,7 @@ exports.adminClaimBootstrap = functions.https.onCall(async (data, context) => {
     if (!expected) {
         throw new functions.https.HttpsError("failed-precondition", "Bootstrap secret is not configured.");
     }
-    if (provided !== expected) {
+    if (!secretsEqual(provided, expected)) {
         throw new functions.https.HttpsError("permission-denied", "Invalid bootstrap secret.");
     }
     const uid = context.auth.uid;
@@ -1595,16 +1644,24 @@ function clientIp(req) {
 // Anyone may submit a DMCA takedown notice or counter-notice.
 // Writes /dmca_notices/{autoId} with status 'pending'.
 exports.submitDmcaNotice = functions.https.onRequest(async (req, res) => {
-    // Public endpoint. Allow any origin; this is a legal notice submission.
-    res.set("Access-Control-Allow-Origin", "*");
+    // Public endpoint but CORS-allowlisted. Legal-notice submitters still POST
+    // from their own domain via DMCA agents; browser-based submissions come from
+    // afterglolighting.org. Non-browser clients ignore CORS anyway.
+    applyCors(req, res);
     res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-    res.set("Access-Control-Allow-Headers", "Content-Type");
     if (req.method === "OPTIONS") {
         res.status(204).send("");
         return;
     }
     if (req.method !== "POST") {
         res.status(405).json({ error: "Method not allowed" });
+        return;
+    }
+    // Rate limit: 5 submissions per IP per 10 minutes. Prevents mass spam.
+    const ip = clientIp(req) || "unknown";
+    const allowed = await checkRateLimit("dmca", String(ip), 5, 10 * 60 * 1000);
+    if (!allowed) {
+        res.status(429).json({ error: "Too many submissions. Please try again later." });
         return;
     }
     const body = (req.body || {});
@@ -1716,13 +1773,10 @@ exports.adminDmcaAction = functions.https.onCall(async (data, context) => {
     }
     const notice = noticeSnap.data();
     const before = { ...notice };
-    // Resolve sequenceId from the infringingUrl if possible (admin may override).
-    let sequenceId = sequenceIdOverride;
-    if (!sequenceId && typeof notice.infringingUrl === "string") {
-        const m = notice.infringingUrl.match(/([a-zA-Z0-9_-]{6,128})/);
-        if (m)
-            sequenceId = m[1];
-    }
+    // Admin MUST pass the sequenceId explicitly. Previously auto-extracted from
+    // the claimant-controlled infringingUrl via regex, which let a DMCA submitter
+    // point admin at an unrelated sequence by embedding its ID in the URL.
+    const sequenceId = sequenceIdOverride;
     if (action === "takedown") {
         if (!sequenceId || !isValidId(sequenceId)) {
             throw new functions.https.HttpsError("failed-precondition", "Could not resolve sequenceId. Pass sequenceId explicitly.");
