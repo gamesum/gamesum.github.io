@@ -3,6 +3,24 @@ logo-export/node_modules/
 functions/node_modules/
 scripts/node_modules/
 .env
+.env.*
 *.local
-service-account.json
-afterglo-website-fbb89-firebase-adminsdk-fbsvc-c5db700ceb.json
+
+# Firebase admin / service-account credentials (NEVER commit)
+*service-account*.json
+*service_account*.json
+*serviceAccount*.json
+*-firebase-adminsdk-*.json
+*firebase-adminsdk*.json
+google-credentials*.json
+gcp-key*.json
+*.pem
+*.p12
+*.key
+
+# Local working dirs
+_secrets/
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+_private/

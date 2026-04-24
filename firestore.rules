@@ -6,109 +6,115 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.admin == true;
     }
 
-    // Permanent super-admin emails. Must mirror SUPER_ADMIN_EMAILS in
-    // functions/src/index.ts. Used as a READ-ONLY fallback so the admin
-    // dashboard is usable on the first sign-in before the custom claim
-    // round-trip completes. Writes still require the admin claim.
-    function isSuperAdminEmail() {
-      return request.auth != null
-        && request.auth.token.email_verified == true
-        && request.auth.token.email.lower() in [
-          'shaneward852@gmail.com'
-        ];
-    }
-    function isAdminRead() {
-      return isAdmin() || isSuperAdminEmail();
-    }
-
-    // Users directory: self or admin can read, only admin can write.
-    // (Cloud Functions using the Admin SDK bypass these rules.)
+    // Users directory: self or admin can read, only admin can write (via Admin SDK).
     match /users/{uid} {
-      allow read:  if request.auth != null && (request.auth.uid == uid || isAdminRead());
+      allow read:  if request.auth != null && (request.auth.uid == uid || isAdmin());
       allow write: if isAdmin();
-      // Owner may self-update their photoURL (and only photoURL) so the
-      // profile-picture upload flow can persist the image without an admin
-      // round-trip. Doc must already exist.
+      // Owner may self-update only photoURL, and only to an allowed host.
       allow update: if request.auth != null
                     && request.auth.uid == uid
-                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['photoURL']);
+                    && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['photoURL'])
+                    && request.resource.data.photoURL is string
+                    && request.resource.data.photoURL.size() < 2048
+                    && request.resource.data.photoURL.matches('^https://(firebasestorage\\.googleapis\\.com|lh[0-9]\\.googleusercontent\\.com|.*\\.googleusercontent\\.com)/.*');
 
-      // Download tokens are written by Cloud Functions only; user may read own.
       match /download_tokens/{tokenId} {
         allow read:  if request.auth != null && request.auth.uid == uid;
         allow write: if false;
       }
     }
 
-    // Sequences (aka "uploads"): published rows are public-read.
-    // Admins can read all. Creators may write their own doc; admin can write any.
+    // Sequences: published rows are public-read. All writes are server-side
+    // via Cloud Functions (Admin SDK). Creators may patch a tight allow-list
+    // of UI-editable fields on their own doc only.
     match /sequences/{seqId} {
-      allow read:  if resource.data.status == "published"
-                   || isAdminRead()
-                   || (request.auth != null && resource.data.creatorUid == request.auth.uid);
-      allow write: if isAdmin()
-                   || (request.auth != null && request.auth.uid == resource.data.creatorUid);
+      allow read:   if resource.data.status == "published"
+                    || isAdmin()
+                    || (request.auth != null && resource.data.creatorUid == request.auth.uid);
+      allow create: if false;
+      allow delete: if isAdmin();
+      allow update: if isAdmin()
+                    || (request.auth != null
+                        && resource.data.creatorUid == request.auth.uid
+                        && request.resource.data.creatorUid == resource.data.creatorUid
+                        && request.resource.data.diff(resource.data).affectedKeys()
+                             .hasOnly(['title','description','tags','coverPhotoIndex','updatedAt']));
     }
 
-    // Purchases: buyer can read their own, admin can read all.
-    // Writes are Cloud Functions only.
+    // Purchases: buyer reads own, admin reads all. Cloud Functions write only.
     match /purchases/{docId} {
-      allow read:  if isAdminRead()
+      allow read:  if isAdmin()
                    || (request.auth != null && request.auth.uid == resource.data.userId);
       allow write: if false;
     }
 
-    // Creator earnings: creator can read their own record; admin can read all.
+    // Creator earnings: creator reads own, admin reads all.
     match /creator_earnings/{creatorId} {
-      allow read:  if isAdminRead()
+      allow read:  if isAdmin()
                    || (request.auth != null && request.auth.uid == creatorId);
       allow write: if false;
 
-      // Ledger entries (refunds, disputes, sales): creator reads own, admin reads all.
-      // Cloud Functions write only.
       match /ledger/{entryId} {
-        allow read:  if isAdminRead()
+        allow read:  if isAdmin()
                      || (request.auth != null && request.auth.uid == creatorId);
         allow write: if false;
       }
     }
 
-    // Disputes: admin read/write only. Cloud Functions write via Admin SDK.
+    // Disputes: admin only.
     match /disputes/{disputeId} {
-      allow read:  if isAdminRead();
+      allow read:  if isAdmin();
       allow write: if isAdmin();
     }
 
-    // Admin audit log: admin read only. Cloud Functions write via Admin SDK.
+    // Admin audit log: admin read only. Admin SDK writes only.
     match /admin_audit/{entryId} {
-      allow read:  if isAdminRead();
+      allow read:  if isAdmin();
       allow write: if false;
     }
 
-    // DMCA notices: anyone may create (public legal notice submission).
-    // Only admin may read or modify. Cloud Functions write via Admin SDK.
+    // DMCA notices: anonymous public legal-notice submission with shape validation
+    // to limit spam/abuse. Admins read/mutate via Cloud Functions.
     match /dmca_notices/{noticeId} {
-      allow read:   if isAdminRead();
-      allow create: if true;
+      allow read:   if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly([
+                        'reporterName','reporterEmail','reporterAddress','reporterPhone',
+                        'copyrightedWork','infringingUrl','goodFaithStatement',
+                        'accuracyStatement','signature','submittedAt','status','userAgent'
+                      ])
+                    && request.resource.data.reporterName is string
+                    && request.resource.data.reporterName.size() > 0
+                    && request.resource.data.reporterName.size() < 200
+                    && request.resource.data.reporterEmail is string
+                    && request.resource.data.reporterEmail.size() < 320
+                    && request.resource.data.reporterEmail.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+                    && request.resource.data.copyrightedWork is string
+                    && request.resource.data.copyrightedWork.size() < 5000
+                    && request.resource.data.infringingUrl is string
+                    && request.resource.data.infringingUrl.size() < 2000
+                    && request.resource.data.signature is string
+                    && request.resource.data.signature.size() < 200;
       allow update, delete: if false;
     }
 
     // GDPR/CCPA data requests: requester reads own, admin reads all.
-    // Cloud Functions write only.
     match /data_requests/{requestId} {
-      allow read:  if isAdminRead()
+      allow read:  if isAdmin()
                    || (request.auth != null && request.auth.uid == resource.data.uid);
       allow write: if false;
     }
 
-    // Feedback: written only by the submitFeedback callable (Admin SDK
-    // bypasses these rules). Admins read and mutate via adminReplyFeedback.
-    // Direct client reads and writes are explicitly denied.
+    // Feedback: server-side only. Admins read via adminReplyFeedback.
     match /feedback/{feedbackId} {
-      allow read:   if isAdminRead();
+      allow read:   if isAdmin();
       allow create: if false;
       allow update: if false;
       allow delete: if false;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

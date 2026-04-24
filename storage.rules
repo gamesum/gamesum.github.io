@@ -1,7 +1,7 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
-    // Profile pictures: public read, owner-only write, max 2 MB, image types only.
+    // Profile pictures: public read, owner-only write/delete, 2 MB cap, image types only.
     match /profile_pictures/{fileName} {
       allow read: if true;
       allow write: if request.auth != null
@@ -9,21 +9,27 @@ service firebase.storage {
                    && request.resource.size < 2 * 1024 * 1024
                    && request.resource.contentType.matches('image/(png|jpeg|webp)');
       allow delete: if request.auth != null
-                    && fileName.matches('^' + request.auth.uid + '\\..+');
+                    && fileName.matches('^' + request.auth.uid + '\\.(png|jpg|jpeg|webp)$');
     }
 
+    // Raw sequence assets (.fseq, .mp3): server-side only via signed URLs.
     match /sequences/{file} {
       allow read: if false;
       allow write: if false;
     }
 
-    // Sequence cover/gallery photos: public read, authed write, image only, 2 MB cap.
+    // Sequence cover/gallery photos: public read; only the sequence creator
+    // (as recorded in the Firestore sequence doc) may write/delete.
+    // Size/type/name constrained to prevent abuse and path collisions.
     match /sequence_photos/{sequenceId}/{fileName} {
       allow read: if true;
       allow write: if request.auth != null
-                   && request.resource.size < 2 * 1024 * 1024
-                   && request.resource.contentType.matches('image/(png|jpeg|webp)');
-      allow delete: if request.auth != null;
+                   && firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/(png|jpeg|webp)')
+                   && fileName.matches('^[A-Za-z0-9_-]{1,64}\\.(png|jpg|jpeg|webp)$');
+      allow delete: if request.auth != null
+                    && firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid;
     }
 
     match /{allPaths=**} {

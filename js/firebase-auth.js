@@ -34,6 +34,26 @@ if (FIREBASE_ENABLED) {
   } catch (e) {
     _firebaseApp = firebase.apps[0] || null;
   }
+
+  // App Check (reCAPTCHA v3). Activates only if:
+  //   1. firebase-app-check-compat.js is loaded in the HTML, AND
+  //   2. window.AFTERGLO_APPCHECK_SITE_KEY is set to the reCAPTCHA v3 site key.
+  // To enable site-wide: (a) register this site in Firebase Console → App Check
+  // with reCAPTCHA v3, (b) add the compat script to every HTML page's <head>,
+  // (c) set window.AFTERGLO_APPCHECK_SITE_KEY before this file loads, (d) enforce
+  // App Check on Firestore/Functions/Storage in the console.
+  try {
+    if (_firebaseApp
+        && typeof firebase.appCheck === 'function'
+        && typeof window.AFTERGLO_APPCHECK_SITE_KEY === 'string'
+        && window.AFTERGLO_APPCHECK_SITE_KEY.length > 0) {
+      firebase.appCheck(_firebaseApp).activate(
+        new firebase.appCheck.ReCaptchaV3Provider(window.AFTERGLO_APPCHECK_SITE_KEY),
+        true
+      );
+    }
+  } catch (e) { /* App Check optional; continue without it */ }
+
   _firebaseAuth = _firebaseApp ? firebase.auth(_firebaseApp) : null;
 
   if (!_firebaseAuth) { /* auth unavailable — will fall back to localStorage */ }
