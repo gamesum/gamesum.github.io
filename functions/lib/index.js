@@ -302,14 +302,23 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
     let uid;
     let displayName;
     let creatorVerifiedClaim = false;
+    let emailVerified = false;
     try {
         const decoded = await admin.auth().verifyIdToken(idToken);
         uid = decoded.uid;
         displayName = decoded.name ?? decoded.email ?? "Unknown";
         creatorVerifiedClaim = decoded.creatorVerified === true;
+        emailVerified = decoded.email_verified === true;
     }
     catch {
         res.status(401).json({ error: "Invalid or expired token" });
+        return;
+    }
+    if (!emailVerified) {
+        res.status(403).json({
+            error: "Please verify your email address before uploading.",
+            code: "email_verification_required",
+        });
         return;
     }
     const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3, flagged, photos, description, props } = req.body;

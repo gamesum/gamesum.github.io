@@ -48,7 +48,7 @@ if (FIREBASE_ENABLED) {
         && typeof window.AFTERGLO_APPCHECK_SITE_KEY === 'string'
         && window.AFTERGLO_APPCHECK_SITE_KEY.length > 0) {
       firebase.appCheck(_firebaseApp).activate(
-        new firebase.appCheck.ReCaptchaV3Provider(window.AFTERGLO_APPCHECK_SITE_KEY),
+        new firebase.appCheck.ReCaptchaEnterpriseProvider(window.AFTERGLO_APPCHECK_SITE_KEY),
         true
       );
     }
@@ -151,10 +151,14 @@ async function createAccountWithEmail(name, email, password) {
   try {
     const cred = await _firebaseAuth.createUserWithEmailAndPassword(email, password);
     await cred.user.updateProfile({ displayName: name });
+    // Fire a verification email. Non-fatal if it fails (user can resend later).
+    cred.user.sendEmailVerification().catch((e) => {
+      console.warn('sendEmailVerification on signup failed:', e && e.code);
+    });
     const idToken = await cred.user.getIdToken();
     saveUser({ name, email, uid: cred.user.uid, token: idToken,
                library: [], purchases: [], uploads: [] });
-    return { ok: true };
+    return { ok: true, verificationSent: true };
   } catch (err) {
     return { ok: false, code: err.code, message: firebaseErrorMessage(err.code) };
   }
