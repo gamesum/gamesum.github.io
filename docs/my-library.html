@@ -2824,6 +2824,34 @@
     }
   }
 
+  // Resize + re-encode an image File as a JPEG Blob, max 512px on the longest
+  // edge, quality 0.85. Typical 2 MB upload becomes ~30-80 KB.
+  function compressProfilePicture(file, maxDim, quality) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Could not read the image file.'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Could not decode the image.'));
+        img.onload = () => {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const canvas = document.createElement('canvas');
+          canvas.width = w; canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          canvas.toBlob(
+            (blob) => blob ? resolve(blob) : reject(new Error('Compression failed.')),
+            'image/jpeg', quality
+          );
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function onProfilePicSelected(ev) {
     const file = ev.target.files && ev.target.files[0];
     ev.target.value = ''; // reset input
@@ -2832,24 +2860,38 @@
       showToast('Please choose a PNG, JPEG, or WebP image.', 'warning');
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      showToast('Image must be under 2 MB.', 'warning');
+    if (file.size > 10 * 1024 * 1024) {
+      showToast('Image must be under 10 MB.', 'warning');
       return;
     }
     const fbUser = firebase.auth().currentUser;
     if (!fbUser) { showToast('Please sign in again.', 'warning'); return; }
 
-    const ext = file.type === 'image/png' ? 'png'
-              : file.type === 'image/webp' ? 'webp' : 'jpg';
-    const path = 'profile_pictures/' + fbUser.uid + '.' + ext;
     const btn = document.getElementById('profilePicBtn');
     const prevHTML = btn ? btn.innerHTML : '';
     if (btn) { btn.disabled = true; btn.innerHTML = '.'; }
 
     try {
+      // Always compress to JPEG @ 512px / q=0.85 so storage stays tiny and we
+      // can upload to a stable `<uid>.jpg` filename (which overwrites the
+      // previous one). Cleans up any legacy `.png`/`.jpeg`/`.webp` for this
+      // user after the new upload succeeds.
+      const blob = await compressProfilePicture(file, 512, 0.85);
+      const path = 'profile_pictures/' + fbUser.uid + '.jpg';
       const ref = firebase.storage().ref().child(path);
-      const snap = await ref.put(file, { contentType: file.type, cacheControl: 'public,max-age=300' });
+      const snap = await ref.put(blob, {
+        contentType: 'image/jpeg',
+        cacheControl: 'public,max-age=300',
+      });
       const url = await snap.ref.getDownloadURL();
+
+      // Best-effort cleanup of legacy variants from before the JPEG-only flow.
+      const legacyExts = ['png', 'jpeg', 'webp'];
+      await Promise.allSettled(
+        legacyExts.map((e) =>
+          firebase.storage().ref().child('profile_pictures/' + fbUser.uid + '.' + e).delete()
+        )
+      );
 
       await fbUser.updateProfile({ photoURL: url });
 
