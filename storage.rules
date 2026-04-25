@@ -20,18 +20,29 @@ service firebase.storage {
       allow write: if false;
     }
 
-    // Sequence cover/gallery photos: public read; only the sequence creator
-    // (as recorded in the Firestore sequence doc) may write/delete.
-    // Size/type/name constrained to prevent abuse and path collisions.
+    // Sequence cover/gallery photos: public read.
+    // Write rules are split into two cases because photos are uploaded BEFORE
+    // the sequence Firestore doc is created (uploadSequence reads the photo
+    // URLs from the request body):
+    //   - If no doc exists yet, allow any authed user (sequenceIds are
+    //     UUIDv4, unguessable; collision risk is negligible).
+    //   - Once the doc exists, only the recorded creator may write/delete.
+    // The auth+size+type+name constraints still bound abuse in either path.
     match /sequence_photos/{sequenceId}/{fileName} {
       allow read: if true;
       allow write: if request.auth != null
-                   && firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid
+                   && (
+                     !firestore.exists(/databases/(default)/documents/sequences/$(sequenceId))
+                     || firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid
+                   )
                    && request.resource.size < 5 * 1024 * 1024
                    && request.resource.contentType.matches('image/(png|jpeg|webp)')
                    && fileName.matches('^[A-Za-z0-9_-]{1,64}\\.(png|jpg|jpeg|webp)$');
       allow delete: if request.auth != null
-                    && firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid;
+                    && (
+                      !firestore.exists(/databases/(default)/documents/sequences/$(sequenceId))
+                      || firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid
+                    );
     }
 
     match /{allPaths=**} {

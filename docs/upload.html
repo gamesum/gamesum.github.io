@@ -2343,11 +2343,9 @@
         if (cb) cb.checked = true;
       });
       try { document.dispatchEvent(new Event('upload:draft-restored')); } catch (_) {}
-      // Jump the user to step 2 so they can see the restored values immediately.
-      // (Most restored fields live in step 2; staying on step 1 hides them.)
-      if (typeof setStep === 'function') {
-        try { setStep(2); } catch (_) {}
-      }
+      // Stay on step 1 — FSEQ binaries can't be saved in drafts, so the user
+      // still needs to pick the file. Their text fields are pre-filled and
+      // will appear once they advance to step 2.
     } catch (e) {
       console.error('restoreUploadDraft failed', e);
       throw e;
@@ -2372,7 +2370,7 @@
         try {
           restoreUploadDraft(d);
           bar.remove();
-          if (typeof showToast === 'function') showToast('Draft restored. Continuing on step 2.', 'success');
+          if (typeof showToast === 'function') showToast('Draft restored. Pick your FSEQ to continue — your details are saved.', 'success');
         } catch (e) {
           console.error('Draft restore failed:', e);
           if (typeof showToast === 'function') showToast('Could not restore draft: ' + (e.message || 'unknown error'), 'error');

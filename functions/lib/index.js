@@ -36,12 +36,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiPreset = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
 const stripe_1 = __importDefault(require("stripe"));
 const crypto = __importStar(require("crypto"));
+// AI preset generator — see ./aiPreset.js. Re-exported here so the function
+// becomes part of the deployed bundle (Firebase loads from lib/index.js).
+var aiPreset_1 = require("./aiPreset");
+Object.defineProperty(exports, "aiPreset", { enumerable: true, get: function () { return aiPreset_1.aiPreset; } });
 admin.initializeApp({
     storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });

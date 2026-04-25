@@ -4,6 +4,10 @@ import { defineSecret } from "firebase-functions/params";
 import Stripe from "stripe";
 import * as crypto from "crypto";
 
+// AI preset generator — see ./aiPreset.js. Re-exported here so the function
+// becomes part of the deployed bundle (Firebase loads from lib/index.js).
+export { aiPreset } from "./aiPreset";
+
 admin.initializeApp({
   storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });
