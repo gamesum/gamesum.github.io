@@ -2184,6 +2184,7 @@
       try {
         const metaRes = await fetch(FUNCTIONS_BASE + '/uploadSequence', {
           method:  'POST',
+          mode:    'cors',
           headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
           body:    JSON.stringify(payload)
         });
@@ -2200,8 +2201,17 @@
         mp3UploadUrl = metaJson.mp3UploadUrl || null;
       } catch (fetchErr) {
         if (fetchErr.message && fetchErr.message.startsWith('Server error')) throw fetchErr;
-        console.error('uploadSequence network/CORS failure:', fetchErr);
-        throw new Error('Upload failed. Could not reach the server. Check your connection and try again. (' + (fetchErr.message || 'network error') + ')');
+        // Surface the actual error name + message so we can diagnose. Common
+        // causes: ad blocker / privacy extension intercepting cloudfunctions.net,
+        // service worker, corporate firewall, or an offline network.
+        console.error('uploadSequence fetch failed:', fetchErr);
+        const detail = (fetchErr && fetchErr.name ? fetchErr.name + ': ' : '') +
+                       (fetchErr && fetchErr.message ? fetchErr.message : 'unknown');
+        throw new Error(
+          'Could not reach the server. Most common cause: an ad-blocker or ' +
+          'privacy extension is blocking *.cloudfunctions.net — try disabling ' +
+          'extensions on this page, or use an incognito window. (' + detail + ')'
+        );
       }
       if (!uploadUrl) {
         throw new Error('Upload failed. Server did not return an upload URL. Please try again.');

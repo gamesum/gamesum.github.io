@@ -30,9 +30,13 @@
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
-if (!admin.apps.length)
-    admin.initializeApp();
-const db = admin.firestore();
+// admin.initializeApp() is handled in src/index.ts. Don't call it here — the
+// re-export hoisting in TypeScript runs this module's top-level code BEFORE
+// index.ts initializes, so calling init here races and crashes with
+// "default Firebase app already exists" once index.ts re-inits.
+// Lazy-resolve firestore inside handlers — by request time the default app
+// exists.
+const db = () => admin.firestore();
 const GEMINI_API_KEY = defineSecret("GEMINI_API_KEY");
 // ── Firmware schema (must stay in sync with src/main.cpp CustomProfile) ────
 const VALID_EFFECTS = new Set([0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]);
@@ -126,9 +130,10 @@ function validatePreset(raw) {
 async function checkAndIncQuota(clientKey) {
     const monthKey = new Date().toISOString().slice(0, 7);
     const hourKey = new Date().toISOString().slice(0, 13);
-    const monthRef = db.collection("aiQuota").doc(`${clientKey}_${monthKey}`);
-    const hourRef = db.collection("aiQuotaHourly").doc(`${clientKey}_${hourKey}`);
-    return db.runTransaction(async (tx) => {
+    const fs = db();
+    const monthRef = fs.collection("aiQuota").doc(`${clientKey}_${monthKey}`);
+    const hourRef = fs.collection("aiQuotaHourly").doc(`${clientKey}_${hourKey}`);
+    return fs.runTransaction(async (tx) => {
         const m = await tx.get(monthRef);
         const h = await tx.get(hourRef);
         const monthCount = (m.exists ? m.data().count : 0) || 0;
@@ -153,11 +158,11 @@ function hashPrompt(s) {
     return crypto.createHash("sha256").update(s.trim().toLowerCase()).digest("hex");
 }
 async function cacheLookup(promptHash) {
-    const snap = await db.collection("aiPresetCache").doc(promptHash).get();
+    const snap = await db().collection("aiPresetCache").doc(promptHash).get();
     return snap.exists ? snap.data().preset : null;
 }
 async function cacheStore(promptHash, preset, prompt) {
-    await db.collection("aiPresetCache").doc(promptHash).set({
+    await db().collection("aiPresetCache").doc(promptHash).set({
         preset, prompt,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
