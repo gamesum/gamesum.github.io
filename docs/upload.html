@@ -1052,7 +1052,7 @@
         <li><a href="index.html#gallery">Gallery</a></li>
         <li><a href="index.html#testimonials">Reviews</a></li>
         <li><a href="platform.html">Light Show Store</a></li>
-        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✶ Visualizer</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
       </ul>
 
       <a id="navAccountBtn" href="signin.html" class="btn btn-ghost nav-cta">Account</a>
@@ -1068,7 +1068,7 @@
     <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
     <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
     <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
-    <a href="afterglo-visualizer.html" onclick="closeMenu()">✶ Visualizer</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
     <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()">Account</a>
     <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
   </div>
@@ -1459,28 +1459,7 @@
   /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
   function signOut() { signOutUser(); window.location.href = 'index.html'; }
 
-  function updateNavAuth(fbUser) {
-    const navArea = document.getElementById('navAuthArea');
-    if (!navArea) return;
-    if (fbUser) {
-      const stored = (typeof getUser === 'function') ? (getUser() || {}) : {};
-      const name  = stored.name  || fbUser.displayName || fbUser.email || '';
-      const email = stored.email || fbUser.email || '';
-      const initial = (name || email || 'U')[0].toUpperCase();
-      navArea.innerHTML = `
-        <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${initial}</span>
-          ${name || email}
-        </a>
-        <button onclick="signOut()" style="background:none;border:1px solid #333;color:var(--muted);font-size:0.78rem;cursor:pointer;padding:4px 10px;border-radius:6px;margin-left:4px;">Sign Out</button>`;
-    } else {
-      navArea.innerHTML = `<a href="signin.html?redirect=upload.html" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>`;
-    }
-  }
-
-  if (typeof firebase !== 'undefined') {
-    firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
-  }
+  function updateNavAuth(_fbUser) { /* handled by nav-account.js */ }
 
   /* ─── AUTH GATE ─────────────────────────────────────────────────── */
   window.addEventListener('DOMContentLoaded', () => {
@@ -2444,28 +2423,7 @@
     return m + ':' + String(s).padStart(2, '0');
   }
 
-  /* ─── NAV AUTH AREA ──────────────────────────────────────── */
-  function updateNavAuth(fbUser) {
-    const navArea = document.getElementById('navAuthArea');
-    const mobArea = document.getElementById('mobileAuthArea');
-    if (!navArea) return;
-    if (fbUser) {
-      const stored = (typeof getUser === 'function') ? (getUser() || {}) : {};
-      const name  = stored.name  || fbUser.displayName || fbUser.email || '';
-      const email = stored.email || fbUser.email || '';
-      const initial = (name || email || 'U')[0].toUpperCase();
-      navArea.innerHTML = '<a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">'
-        + '<span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:Outfit,sans-serif;font-weight:800;font-size:0.85rem;color:#000;">' + initial + '</span>'
-        + (name || email) + '</a>';
-      if (mobArea) mobArea.innerHTML = '<a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>';
-    } else {
-      navArea.innerHTML = '<a href="signin.html?redirect=' + encodeURIComponent(window.location.pathname.split('/').pop() || 'index.html') + '" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>';
-      if (mobArea) mobArea.innerHTML = '<a href="signin.html" style="color:var(--accent);">Sign In / Create Account</a>';
-    }
-  }
-  if (typeof firebase !== 'undefined') {
-    firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
-  }
+  /* Nav avatar/login button is rendered by js/nav-account.js. */
 </script>
 <script src="js/nav-account.js"></script>
 </body>

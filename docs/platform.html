@@ -2328,34 +2328,10 @@
   /* ─── NAV AUTH STATE ─────────────────────────────────────────────── */
   function signOut() { signOutUser(); window.location.href = 'index.html'; }
 
-  function updateNavAuth(fbUser) {
-    const navArea = document.getElementById('navAuthArea');
-    const mobArea = document.getElementById('mobileAuthArea');
-
-    if (fbUser) {
-      const stored = getUser();
-      const name  = (stored && stored.name) || fbUser.displayName || fbUser.email || '';
-      const email = (stored && stored.email) || fbUser.email || '';
-      const initial = (name || email || 'U')[0].toUpperCase();
-      navArea.innerHTML = `
-        <a href="my-library.html" style="display:flex;align-items:center;gap:8px;font-size:0.88rem;font-weight:600;color:var(--text);text-decoration:none;">
-          <span style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#D4A43A,#d4a843);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.85rem;color:#000;">${esc(initial)}</span>
-          ${esc(name || email)}
-        </a>
-        <button onclick="signOut()" style="background:none;border:1px solid #333;color:var(--muted);font-size:0.78rem;cursor:pointer;padding:4px 10px;border-radius:6px;margin-left:4px;">Sign Out</button>`;
-      if (mobArea) mobArea.innerHTML = `
-        <a href="my-library.html" style="color:var(--accent);font-weight:600;">My Library</a>
-        <button onclick="signOut()" style="background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;text-align:left;padding:0;">Sign Out</button>`;
-    } else {
-      navArea.innerHTML = `<a href="signin.html?redirect=platform.html" class="btn btn-ghost" style="padding:9px 18px;font-size:0.88rem;">Sign In</a>`;
-      if (mobArea) mobArea.innerHTML = `<a href="signin.html?redirect=platform.html" style="color:var(--accent);">Sign In / Create Account</a>`;
-    }
-  }
-
-  // Only update nav once Firebase resolves — never call updateNavAuth() before this fires
-  if (typeof firebase !== 'undefined') {
-    firebase.auth().onAuthStateChanged(fbUser => updateNavAuth(fbUser));
-  }
+  // updateNavAuth is a no-op stub — real avatar/login UI is rendered by
+  // js/nav-account.js targeting #navAccountBtn. Kept as a stub so other
+  // call-sites in this file don't throw ReferenceError.
+  function updateNavAuth(_fbUser) { /* handled by nav-account.js */ }
 
   /* ─── EMAIL CAPTURE MODAL (Change 1) ────────────────────────────────
      Logic: when a non-signed-in user clicks a free Download button,

@@ -104,18 +104,18 @@
           target.replaceWith(wrap);
         }
       } else {
-        if (mobBtn) { mobBtn.textContent = 'Login'; mobBtn.href = 'signin.html'; }
+        if (mobBtn) { mobBtn.textContent = 'Sign In'; mobBtn.href = 'signin.html'; }
         var wrap = document.getElementById('navAccountWrap');
         if (wrap) {
           var a = document.createElement('a');
           a.id = 'navAccountBtn';
           a.href = 'signin.html';
           a.className = 'btn btn-ghost nav-cta';
-          a.textContent = 'Login';
+          a.textContent = 'Sign In';
           wrap.replaceWith(a);
         } else {
           var existing = document.getElementById('navAccountBtn');
-          if (existing) { existing.textContent = 'Login'; existing.href = 'signin.html'; }
+          if (existing) { existing.textContent = 'Sign In'; existing.href = 'signin.html'; }
         }
       }
     });
