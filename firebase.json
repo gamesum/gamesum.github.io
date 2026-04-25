@@ -3,7 +3,13 @@
     {
       "source": "functions",
       "codebase": "default",
-      "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"]
+      "ignore": ["node_modules", ".git", "firebase-debug.log", "firebase-debug.*.log"],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ],
+      "postdeploy": [
+        "node \"$RESOURCE_DIR/scripts/grant-invoker.js\""
+      ]
     }
   ],
   "firestore": {
@@ -37,7 +43,9 @@
     ],
     "rewrites": [
       { "source": "/api/purchases", "function": "purchases" },
-      { "source": "/api/sequences", "function": "sequenceList" }
+      { "source": "/api/sequences", "function": "sequenceList" },
+      { "source": "/api/shows.json", "function": "sequenceList" },
+      { "source": "/api/me",        "function": "apiMe" }
     ],
     "headers": [
       {

@@ -28,6 +28,7 @@ const PUBLIC_FUNCTIONS = [
   "getDownloadUrl",
   "getListings",
   "submitDmcaNotice",
+  "apiMe",
 ];
 
 function loadToken() {

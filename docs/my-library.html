@@ -2200,6 +2200,23 @@
 
     renderUploadStatus();
     subscribeUploadStatus();
+    // Suppress the "No uploads yet" empty grid card when the status list is
+    // already showing real upload rows (Firestore-backed). Otherwise users
+    // see two stacked empty/full states for the same data.
+    syncUploadsEmptyState();
+  }
+
+  function syncUploadsEmptyState() {
+    const grid = document.getElementById('uploadsGrid');
+    if (!grid) return;
+    const hasFirestoreUploads = !!(_uploadStatusDocs && _uploadStatusDocs.length);
+    const hasLocalUploads = !!(currentUser && (currentUser.uploads || []).length);
+    grid.style.display = (hasFirestoreUploads || hasLocalUploads) ? '' : '';
+    // If Firestore has uploads, hide the empty-state card inside the grid
+    // since the status row already covers the listing.
+    if (hasFirestoreUploads) {
+      grid.querySelectorAll('.empty-card, .lib-empty').forEach(el => { el.style.display = 'none'; });
+    }
   }
 
   /* ─── UPLOAD STATUS SECTION ─────────────────────────────────────── */
@@ -2440,6 +2457,7 @@
               });
               _uploadStatusDocs = docs;
               renderUploadStatus();
+              try { syncUploadsEmptyState(); } catch (_) {}
             },
             function (err) {
               console.warn('[uploadStatus] Firestore query failed, falling back to localStorage.', err);

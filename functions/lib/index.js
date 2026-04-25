@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.apiMe = exports.mintAppToken = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -997,6 +997,60 @@ exports.getDownloadUrl = functions.https.onRequest(async (req, res) => {
     catch (err) {
         functions.logger.error("getDownloadUrl error", err);
         res.status(500).json({ error: "Internal server error" });
+    }
+});
+// ─── mintAppToken (callable) ──────────────────────────────────────────────────
+// Returns a Firebase custom token for the calling user, scoped to the desktop
+// / native AFTERGLO Studio app. The app exchanges this for an ID token via
+// signInWithCustomToken on its side. No privilege change — the custom token
+// authenticates as the same uid that called us.
+exports.mintAppToken = functions.https.onCall(async (_data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign in required.");
+    }
+    const token = await admin.auth().createCustomToken(context.auth.uid, {
+        iss_app: "afterglo-studio",
+    });
+    return { token, uid: context.auth.uid };
+});
+// ─── GET /api/me ──────────────────────────────────────────────────────────────
+// Lightweight signed-in probe for the desktop / native app. Returns 200 with
+// { signedIn: true, uid, email, displayName, photoURL } if a valid Firebase
+// ID token is provided (Authorization: Bearer …), or 200 with
+// { signedIn: false } otherwise. CORS-allowlisted via applyCors.
+exports.apiMe = functions.https.onRequest(async (req, res) => {
+    applyCors(req, res);
+    res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+    if (req.method === "OPTIONS") {
+        res.status(204).send("");
+        return;
+    }
+    if (req.method !== "GET") {
+        res.status(405).json({ error: "Method not allowed" });
+        return;
+    }
+    const rawToken = (req.headers.authorization?.startsWith("Bearer ")
+        ? req.headers.authorization.slice(7)
+        : req.query.token) ?? "";
+    if (!rawToken) {
+        res.status(200).json({ signedIn: false });
+        return;
+    }
+    try {
+        const decoded = await admin.auth().verifyIdToken(rawToken);
+        res.status(200).json({
+            signedIn: true,
+            uid: decoded.uid,
+            email: decoded.email ?? null,
+            displayName: decoded.name ?? null,
+            photoURL: decoded.picture ?? null,
+            emailVerified: decoded.email_verified === true,
+            admin: decoded.admin === true,
+            creatorVerified: decoded.creatorVerified === true,
+        });
+    }
+    catch {
+        res.status(200).json({ signedIn: false });
     }
 });
 // ─── userDeleteUpload (callable) ─────────────────────────────────────────────

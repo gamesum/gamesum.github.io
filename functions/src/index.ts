@@ -1071,6 +1071,58 @@ export const getDownloadUrl = functions.https.onRequest(async (req, res) => {
   }
 });
 
+// ─── mintAppToken (callable) ──────────────────────────────────────────────────
+// Returns a Firebase custom token for the calling user, scoped to the desktop
+// / native AFTERGLO Studio app. The app exchanges this for an ID token via
+// signInWithCustomToken on its side. No privilege change — the custom token
+// authenticates as the same uid that called us.
+export const mintAppToken = functions.https.onCall(async (_data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Sign in required.");
+  }
+  const token = await admin.auth().createCustomToken(context.auth.uid, {
+    iss_app: "afterglo-studio",
+  });
+  return { token, uid: context.auth.uid };
+});
+
+// ─── GET /api/me ──────────────────────────────────────────────────────────────
+// Lightweight signed-in probe for the desktop / native app. Returns 200 with
+// { signedIn: true, uid, email, displayName, photoURL } if a valid Firebase
+// ID token is provided (Authorization: Bearer …), or 200 with
+// { signedIn: false } otherwise. CORS-allowlisted via applyCors.
+export const apiMe = functions.https.onRequest(async (req, res) => {
+  applyCors(req, res);
+  res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
+  if (req.method === "OPTIONS") { res.status(204).send(""); return; }
+  if (req.method !== "GET") { res.status(405).json({ error: "Method not allowed" }); return; }
+
+  const rawToken = (req.headers.authorization?.startsWith("Bearer ")
+    ? req.headers.authorization.slice(7)
+    : (req.query.token as string)) ?? "";
+
+  if (!rawToken) {
+    res.status(200).json({ signedIn: false });
+    return;
+  }
+
+  try {
+    const decoded = await admin.auth().verifyIdToken(rawToken);
+    res.status(200).json({
+      signedIn:    true,
+      uid:         decoded.uid,
+      email:       decoded.email ?? null,
+      displayName: decoded.name ?? null,
+      photoURL:    decoded.picture ?? null,
+      emailVerified:   decoded.email_verified === true,
+      admin:           decoded.admin === true,
+      creatorVerified: decoded.creatorVerified === true,
+    });
+  } catch {
+    res.status(200).json({ signedIn: false });
+  }
+});
+
 // ─── userDeleteUpload (callable) ─────────────────────────────────────────────
 // Lets a creator delete their OWN sequence: removes FSEQ + MP3 + photos from
 // Storage, then deletes the Firestore doc. Refuses if anyone has bought the

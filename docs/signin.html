@@ -689,6 +689,31 @@
     }
   }
 
+  /* ─── DESKTOP / NATIVE APP HANDOFF ─────────────────────────────
+     If signin.html arrived with ?return=afterglo://... we mint a Firebase
+     custom token and redirect to that URL with the token on the query
+     string. The desktop app exchanges it for an ID token via
+     signInWithCustomToken on its side. We only allow afterglo:// schemes
+     to prevent open-redirect abuse. */
+  async function maybeHandleAppReturn(fbUser) {
+    if (!fbUser) return false;
+    const ret = new URLSearchParams(window.location.search).get('return') || '';
+    if (!/^afterglo:\/\//i.test(ret)) return false;
+    try {
+      const fn = firebase.functions().httpsCallable('mintAppToken');
+      const res = await fn({});
+      const token = res && res.data && res.data.token;
+      if (!token) throw new Error('no token returned');
+      const sep = ret.indexOf('?') === -1 ? '?' : '&';
+      window.location.replace(ret + sep + 'token=' + encodeURIComponent(token));
+      return true;
+    } catch (err) {
+      console.error('App handoff failed', err);
+      showErr('siGlobalErr', 'Could not complete app sign-in. Please try again.');
+      return false;
+    }
+  }
+
   /* ─── REDIRECT IF ALREADY SIGNED IN ──────────────────────────── */
   // This flag is set to true when a sign-in action is in progress.
   // It prevents the onAuthStateChanged listener from double-redirecting.
@@ -712,12 +737,12 @@
     // Only redirect if we are NOT currently executing a sign-in action
     // (those handle their own redirect after showing the welcome toast).
     if (typeof firebase !== 'undefined') {
-      firebase.auth().onAuthStateChanged(function(fbUser) {
+      firebase.auth().onAuthStateChanged(async function(fbUser) {
         if (_signingIn) return; // active sign-in in progress; let its own handler redirect
         if (fbUser) {
+          // Native app handoff trumps every other redirect path.
+          if (await maybeHandleAppReturn(fbUser)) return;
           if (_isSuiteGoogleHandoff) {
-            // Suite handoff: do not redirect; show the success screen so the
-            // user can return to AFTERGLO Suite and re-enter the same email.
             showSuiteSuccess(fbUser);
             return;
           }
