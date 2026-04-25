@@ -23,6 +23,11 @@ const PUBLIC_FUNCTIONS = [
   "purchases",
   "sequenceList",
   "reportContentIssue",
+  "uploadSequence",
+  "confirmUpload",
+  "getDownloadUrl",
+  "getListings",
+  "submitDmcaNotice",
 ];
 
 function loadToken() {
