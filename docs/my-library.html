@@ -1622,13 +1622,18 @@
       currentUser = null;
     }
 
+    // Always sync purchases from Firestore. localStorage is wiped on sign-out,
+    // so without this pull, packs/purchases vanish after a fresh sign-in.
+    // Non-fatal on failure (we still render whatever's locally cached).
+    if (currentUser) {
+      try { await syncPurchasesFromFirestore(); currentUser = getUser() || currentUser; }
+      catch (e) { console.warn('purchases sync failed (non-fatal):', e); }
+    }
+
     // Handle purchase redirect from Stripe
     const params = new URLSearchParams(window.location.search);
     if (params.get('purchase') === 'success') {
       history.replaceState({}, '', window.location.pathname);
-      // Sync purchases from Firestore before rendering
-      await syncPurchasesFromFirestore();
-      currentUser = getUser(); // reload after sync
       setTimeout(() => showToast('Purchase complete! Your new sequence is ready to download.'), 400);
     }
 
