@@ -110,11 +110,27 @@
         paint(u);
         // Force a server-side reload so the in-memory user object picks up
         // photoURL changes that happened on another tab / via admin SDK.
-        // Re-paint if photoURL turned up.
         u.reload().then(function () {
           var fresh = firebase.auth().currentUser;
           if (fresh) paint(fresh);
         }).catch(function () { /* non-fatal */ });
+        // Belt-and-suspenders: if Auth photoURL is still empty after reload,
+        // pull from the Firestore /users/{uid} mirror that my-library.html
+        // writes on profile-picture upload.
+        if (!u.photoURL && firebase.firestore) {
+          firebase.firestore().collection('users').doc(u.uid).get()
+            .then(function (snap) {
+              if (!snap.exists) return;
+              var url = snap.data() && snap.data().photoURL;
+              if (url) paint({
+                displayName: u.displayName || '',
+                email: u.email || '',
+                uid: u.uid,
+                photoURL: url,
+              });
+            })
+            .catch(function () { /* non-fatal */ });
+        }
       } else {
         if (mobBtn) { mobBtn.textContent = 'Sign In'; mobBtn.href = 'signin.html'; }
         var wrap = document.getElementById('navAccountWrap');
