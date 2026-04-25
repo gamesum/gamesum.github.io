@@ -42,7 +42,9 @@ const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
 const stripe_1 = __importDefault(require("stripe"));
 const crypto = __importStar(require("crypto"));
-admin.initializeApp();
+admin.initializeApp({
+    storageBucket: "afterglo-website-fbb89.firebasestorage.app",
+});
 const db = admin.firestore();
 const STRIPE_SECRET = (0, params_1.defineSecret)("STRIPE_SECRET");
 const STRIPE_WEBHOOK_SECRET = (0, params_1.defineSecret)("STRIPE_WEBHOOK_SECRET");

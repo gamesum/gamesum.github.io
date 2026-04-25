@@ -4,7 +4,9 @@ import { defineSecret } from "firebase-functions/params";
 import Stripe from "stripe";
 import * as crypto from "crypto";
 
-admin.initializeApp();
+admin.initializeApp({
+  storageBucket: "afterglo-website-fbb89.firebasestorage.app",
+});
 const db = admin.firestore();
 
 const STRIPE_SECRET = defineSecret("STRIPE_SECRET");

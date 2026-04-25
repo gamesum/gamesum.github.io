@@ -2322,24 +2322,36 @@
   }
 
   function restoreUploadDraft(d) {
-    const set = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
-    set('showName', d.showName);
-    set('category', d.category);
-    set('description', d.description);
-    set('songName', d.songName);
-    set('duration', d.duration);
-    set('youtubeMusicUrl', d.youtubeMusicUrl);
-    set('youtubeShowUrl', d.youtubeShowUrl);
-    set('priceAmount', d.priceAmount);
-    if (d.price) {
-      const r = document.querySelector('input[name="price"][value="' + d.price + '"]');
-      if (r && !r.disabled) r.checked = true;
+    try {
+      const set = (id, v) => { const el = document.getElementById(id); if (el && v != null) el.value = v; };
+      set('showName', d.showName);
+      set('category', d.category);
+      set('description', d.description);
+      set('songName', d.songName);
+      set('duration', d.duration);
+      // Field id is `youtubeUrl` on most layouts, fall back to legacy split fields.
+      set('youtubeUrl', d.youtubeMusicUrl || d.youtubeShowUrl || '');
+      set('youtubeMusicUrl', d.youtubeMusicUrl);
+      set('youtubeShowUrl', d.youtubeShowUrl);
+      set('priceAmount', d.priceAmount);
+      if (d.price) {
+        const r = document.querySelector('input[name="price"][value="' + d.price + '"]');
+        if (r && !r.disabled) r.checked = true;
+      }
+      (d.props || []).forEach(v => {
+        const cb = document.querySelector('input[name="props"][value="' + v + '"]');
+        if (cb) cb.checked = true;
+      });
+      try { document.dispatchEvent(new Event('upload:draft-restored')); } catch (_) {}
+      // Jump the user to step 2 so they can see the restored values immediately.
+      // (Most restored fields live in step 2; staying on step 1 hides them.)
+      if (typeof setStep === 'function') {
+        try { setStep(2); } catch (_) {}
+      }
+    } catch (e) {
+      console.error('restoreUploadDraft failed', e);
+      throw e;
     }
-    (d.props || []).forEach(v => {
-      const cb = document.querySelector('input[name="props"][value="' + v + '"]');
-      if (cb) cb.checked = true;
-    });
-    try { document.dispatchEvent(new Event('upload:draft-restored')); } catch (_) {}
   }
 
   function clearUploadDraft() { try { localStorage.removeItem(DRAFT_KEY); } catch (_) {} }
@@ -2356,7 +2368,16 @@
         '<button id="draftRestoreBtn" style="background:#D4A43A;color:#000;border:none;padding:6px 14px;border-radius:6px;font-weight:700;cursor:pointer;">Restore</button>' +
         '<button id="draftDismissBtn" style="background:transparent;color:#94a3b8;border:1px solid #333;padding:6px 12px;border-radius:6px;cursor:pointer;">Discard</button>';
       document.body.appendChild(bar);
-      document.getElementById('draftRestoreBtn').onclick = () => { restoreUploadDraft(d); bar.remove(); showToast('Draft restored.', 'success'); };
+      document.getElementById('draftRestoreBtn').onclick = () => {
+        try {
+          restoreUploadDraft(d);
+          bar.remove();
+          if (typeof showToast === 'function') showToast('Draft restored. Continuing on step 2.', 'success');
+        } catch (e) {
+          console.error('Draft restore failed:', e);
+          if (typeof showToast === 'function') showToast('Could not restore draft: ' + (e.message || 'unknown error'), 'error');
+        }
+      };
       document.getElementById('draftDismissBtn').onclick = () => { clearUploadDraft(); bar.remove(); };
     });
   })();

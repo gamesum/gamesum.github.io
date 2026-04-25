@@ -90,19 +90,31 @@
     if (!btn && !mobBtn && !existingWrap) return;
     if (!window.firebase || !firebase.auth) return;
 
+    var lastPhoto = null;
+    function paint(u) {
+      if (mobBtn) { mobBtn.textContent = 'My Library'; mobBtn.href = 'my-library.html'; }
+      var target = document.getElementById('navAccountBtn') || document.getElementById('navAccountWrap');
+      if (!target) return;
+      var photo = u.photoURL || '';
+      if (photo === lastPhoto) return; // no change → don't re-render
+      lastPhoto = photo;
+      var wrap = buildSignedInEl({
+        displayName: u.displayName || '',
+        email:       u.email       || '',
+        photoURL:    photo,
+      });
+      target.replaceWith(wrap);
+    }
     firebase.auth().onAuthStateChanged(function (u) {
       if (u) {
-        if (mobBtn) { mobBtn.textContent = 'My Library'; mobBtn.href = 'my-library.html'; }
-        // Replace the signed-out button with the avatar dropdown.
-        var target = document.getElementById('navAccountBtn') || document.getElementById('navAccountWrap');
-        if (target) {
-          var wrap = buildSignedInEl({
-            displayName: u.displayName || '',
-            email:       u.email       || '',
-            photoURL:    u.photoURL    || ''
-          });
-          target.replaceWith(wrap);
-        }
+        paint(u);
+        // Force a server-side reload so the in-memory user object picks up
+        // photoURL changes that happened on another tab / via admin SDK.
+        // Re-paint if photoURL turned up.
+        u.reload().then(function () {
+          var fresh = firebase.auth().currentUser;
+          if (fresh) paint(fresh);
+        }).catch(function () { /* non-fatal */ });
       } else {
         if (mobBtn) { mobBtn.textContent = 'Sign In'; mobBtn.href = 'signin.html'; }
         var wrap = document.getElementById('navAccountWrap');
