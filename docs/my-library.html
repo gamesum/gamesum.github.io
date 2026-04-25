@@ -2256,14 +2256,16 @@
       rows = _uploadStatusDocs.map(function (doc) {
         const d = doc.data || {};
         return {
-          id:          d.id || doc.id,
-          name:        d.name || 'Untitled Show',
-          status:      d.status || 'unknown',
-          rejectReason: d.rejectReason || d.rejectionReason || '',
-          price:       d.price,
-          isFree:      d.isFree === true || (Number(d.price) || 0) === 0,
-          uploadedAt:  d.createdAt,
-          local:       false
+          id:            d.id || doc.id,
+          name:          d.name || 'Untitled Show',
+          status:        d.status || 'unknown',
+          rejectReason:  d.rejectReason || d.rejectionReason || '',
+          price:         d.price,
+          isFree:        d.isFree === true || (Number(d.price) || 0) === 0,
+          uploadedAt:    d.createdAt,
+          downloadCount: d.downloadCount || 0,
+          description:   d.description || '',
+          local:         false
         };
       });
     } else {
@@ -2333,6 +2335,41 @@
       row.appendChild(price);
       row.appendChild(pill);
 
+      // Inline actions for own uploads. Only show when we have a real Firestore
+      // doc — local-only rows have nothing to delete server-side.
+      if (!r.local && r.id) {
+        const actions = document.createElement('div');
+        actions.className = 'upload-actions';
+        actions.style.cssText = 'display:flex;gap:8px;align-items:center;margin-left:8px;';
+
+        // Stats: download count + revenue (if any).
+        const stats = document.createElement('span');
+        stats.className = 'upload-stats';
+        stats.style.cssText = 'font-size:0.78rem;color:var(--muted);white-space:nowrap;';
+        const dlc = (r.downloadCount != null) ? r.downloadCount : 0;
+        const rev = (r.price && dlc) ? ' · $' + (Number(r.price) * dlc * 0.7).toFixed(2) : '';
+        stats.textContent = dlc + ' download' + (dlc === 1 ? '' : 's') + rev;
+        actions.appendChild(stats);
+
+        // Edit (title/description/tags) — opens the edit modal.
+        const editBtn = document.createElement('button');
+        editBtn.className = 'btn btn-sm';
+        editBtn.style.cssText = 'background:transparent;border:1px solid #333;color:var(--text);font-size:0.78rem;padding:4px 10px;border-radius:6px;cursor:pointer;';
+        editBtn.textContent = 'Edit';
+        editBtn.onclick = () => openEditUploadModal(r);
+        actions.appendChild(editBtn);
+
+        // Delete — confirms then removes via callable.
+        const delBtn = document.createElement('button');
+        delBtn.className = 'btn btn-sm';
+        delBtn.style.cssText = 'background:transparent;border:1px solid #4a2222;color:#f87171;font-size:0.78rem;padding:4px 10px;border-radius:6px;cursor:pointer;';
+        delBtn.textContent = 'Delete';
+        delBtn.onclick = () => deleteOwnUpload(r);
+        actions.appendChild(delBtn);
+
+        row.appendChild(actions);
+      }
+
       if (r.status === 'published' && r.id) {
         const link = document.createElement('a');
         link.className = 'view-link';
@@ -2350,38 +2387,80 @@
     });
   }
 
+  /* ─── Edit / Delete own uploads ──────────────────────────────── */
+  async function openEditUploadModal(row) {
+    const newName = prompt('Show name:', row.name);
+    if (newName === null) return;
+    const newDesc = prompt('Description (max 500 chars):', row.description || '');
+    if (newDesc === null) return;
+    try {
+      await firebase.firestore().collection('sequences').doc(row.id).update({
+        name:        newName.trim().slice(0, 120),
+        description: newDesc.trim().slice(0, 500),
+        updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
+      });
+      showToast('Show details updated.', 'success');
+    } catch (e) {
+      console.error('Edit failed', e);
+      showToast('Edit failed: ' + (e.message || 'unknown'), 'error');
+    }
+  }
+
+  async function deleteOwnUpload(row) {
+    const ok = confirm('Delete "' + row.name + '" permanently? This removes the FSEQ file and the Store listing.');
+    if (!ok) return;
+    try {
+      const fn = firebase.functions().httpsCallable('userDeleteUpload');
+      await fn({ sequenceId: row.id });
+      showToast('Upload deleted.', 'success');
+    } catch (e) {
+      console.error('Delete failed', e);
+      showToast('Delete failed: ' + (e.message || 'unknown'), 'error');
+    }
+  }
+
   function subscribeUploadStatus() {
     if (_uploadStatusUnsub) return; // already subscribed
     if (typeof firebase === 'undefined' || !firebase.firestore) return;
-    const fbUser = firebase.auth().currentUser;
-    if (!fbUser) return;
 
-    try {
-      // No orderBy here to avoid needing a new composite index.
-      // We sort client-side by createdAt desc.
-      _uploadStatusUnsub = firebase.firestore()
-        .collection('sequences')
-        .where('creatorUid', '==', fbUser.uid)
-        .onSnapshot(
-          function (snap) {
-            const docs = [];
-            snap.forEach(function (d) { docs.push({ id: d.id, data: d.data() }); });
-            docs.sort(function (a, b) {
-              const at = (a.data.createdAt && a.data.createdAt.seconds) || 0;
-              const bt = (b.data.createdAt && b.data.createdAt.seconds) || 0;
-              return bt - at;
-            });
-            _uploadStatusDocs = docs;
-            renderUploadStatus();
-          },
-          function (err) {
-            console.warn('[uploadStatus] Firestore query failed, falling back to localStorage.', err);
-            _uploadStatusDocs = null;
-            renderUploadStatus();
-          }
-        );
-    } catch (err) {
-      console.warn('[uploadStatus] subscribe threw:', err);
+    function attach(fbUser) {
+      if (_uploadStatusUnsub) return;
+      try {
+        _uploadStatusUnsub = firebase.firestore()
+          .collection('sequences')
+          .where('creatorUid', '==', fbUser.uid)
+          .onSnapshot(
+            function (snap) {
+              const docs = [];
+              snap.forEach(function (d) { docs.push({ id: d.id, data: d.data() }); });
+              docs.sort(function (a, b) {
+                const at = (a.data.createdAt && a.data.createdAt.seconds) || 0;
+                const bt = (b.data.createdAt && b.data.createdAt.seconds) || 0;
+                return bt - at;
+              });
+              _uploadStatusDocs = docs;
+              renderUploadStatus();
+            },
+            function (err) {
+              console.warn('[uploadStatus] Firestore query failed, falling back to localStorage.', err);
+              _uploadStatusDocs = null;
+              renderUploadStatus();
+            }
+          );
+      } catch (err) {
+        console.warn('[uploadStatus] subscribe threw:', err);
+      }
+    }
+
+    // Race-proof: if currentUser is already populated, attach now. Otherwise
+    // wait for the next auth state event (cached session restoring).
+    const fbUser = firebase.auth().currentUser;
+    if (fbUser) {
+      attach(fbUser);
+    } else {
+      const off = firebase.auth().onAuthStateChanged(function (u) {
+        if (u) { off(); attach(u); }
+      });
     }
   }
 

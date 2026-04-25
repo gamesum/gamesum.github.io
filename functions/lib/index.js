@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiPreset = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -46,6 +46,9 @@ const crypto = __importStar(require("crypto"));
 // becomes part of the deployed bundle (Firebase loads from lib/index.js).
 var aiPreset_1 = require("./aiPreset");
 Object.defineProperty(exports, "aiPreset", { enumerable: true, get: function () { return aiPreset_1.aiPreset; } });
+// AI product-knowledge assistant — see ./aiAsk.js.
+var aiAsk_1 = require("./aiAsk");
+Object.defineProperty(exports, "aiAsk", { enumerable: true, get: function () { return aiAsk_1.aiAsk; } });
 admin.initializeApp({
     storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });
@@ -995,6 +998,51 @@ exports.getDownloadUrl = functions.https.onRequest(async (req, res) => {
         functions.logger.error("getDownloadUrl error", err);
         res.status(500).json({ error: "Internal server error" });
     }
+});
+// ─── userDeleteUpload (callable) ─────────────────────────────────────────────
+// Lets a creator delete their OWN sequence: removes FSEQ + MP3 + photos from
+// Storage, then deletes the Firestore doc. Refuses if anyone has bought the
+// sequence (purchase records must be preserved for tax/refund auditing —
+// admin can take over via adminDeleteUpload in that case).
+exports.userDeleteUpload = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign in required.");
+    }
+    const uid = context.auth.uid;
+    const sequenceId = typeof data?.sequenceId === "string" ? data.sequenceId : "";
+    if (!isValidId(sequenceId)) {
+        throw new functions.https.HttpsError("invalid-argument", "Invalid sequenceId.");
+    }
+    const seqRef = db.collection("sequences").doc(sequenceId);
+    const seqSnap = await seqRef.get();
+    if (!seqSnap.exists) {
+        throw new functions.https.HttpsError("not-found", "Sequence not found.");
+    }
+    const seq = seqSnap.data();
+    if (seq.creatorUid !== uid) {
+        throw new functions.https.HttpsError("permission-denied", "You do not own this sequence.");
+    }
+    // Block deletion if there are purchase records (keep audit trail).
+    const purSnap = await db.collection("purchases")
+        .where("sequenceId", "==", sequenceId).limit(1).get();
+    if (!purSnap.empty) {
+        throw new functions.https.HttpsError("failed-precondition", "This show has buyers and can't be deleted by creators. Contact support to take it down.");
+    }
+    const bucket = admin.storage().bucket();
+    const deletes = [
+        bucket.file(`sequences/${sequenceId}.fseq`).delete().catch(() => null),
+    ];
+    if (seq.hasMp3) {
+        deletes.push(bucket.file(`sequences/${sequenceId}.mp3`).delete().catch(() => null));
+    }
+    // Photos under sequence_photos/<sequenceId>/...
+    deletes.push(bucket.getFiles({ prefix: `sequence_photos/${sequenceId}/` })
+        .then(([files]) => Promise.all(files.map((f) => f.delete().catch(() => null))))
+        .catch(() => null));
+    await Promise.all(deletes);
+    await seqRef.delete();
+    functions.logger.info(`userDeleteUpload: ${sequenceId} by ${uid}`);
+    return { ok: true };
 });
 // ─── POST /confirmUpload ──────────────────────────────────────────────────────
 // Called by the creator's client after the FSEQ file has been PUT to Storage.

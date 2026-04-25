@@ -8,6 +8,9 @@ import * as crypto from "crypto";
 // becomes part of the deployed bundle (Firebase loads from lib/index.js).
 export { aiPreset } from "./aiPreset";
 
+// AI product-knowledge assistant — see ./aiAsk.js.
+export { aiAsk } from "./aiAsk";
+
 admin.initializeApp({
   storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });
@@ -1066,6 +1069,61 @@ export const getDownloadUrl = functions.https.onRequest(async (req, res) => {
     functions.logger.error("getDownloadUrl error", err);
     res.status(500).json({ error: "Internal server error" });
   }
+});
+
+// ─── userDeleteUpload (callable) ─────────────────────────────────────────────
+// Lets a creator delete their OWN sequence: removes FSEQ + MP3 + photos from
+// Storage, then deletes the Firestore doc. Refuses if anyone has bought the
+// sequence (purchase records must be preserved for tax/refund auditing —
+// admin can take over via adminDeleteUpload in that case).
+export const userDeleteUpload = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Sign in required.");
+  }
+  const uid = context.auth.uid;
+  const sequenceId = typeof data?.sequenceId === "string" ? data.sequenceId : "";
+  if (!isValidId(sequenceId)) {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid sequenceId.");
+  }
+
+  const seqRef = db.collection("sequences").doc(sequenceId);
+  const seqSnap = await seqRef.get();
+  if (!seqSnap.exists) {
+    throw new functions.https.HttpsError("not-found", "Sequence not found.");
+  }
+  const seq = seqSnap.data() as { creatorUid?: string; hasMp3?: boolean; photos?: string[] };
+  if (seq.creatorUid !== uid) {
+    throw new functions.https.HttpsError("permission-denied", "You do not own this sequence.");
+  }
+
+  // Block deletion if there are purchase records (keep audit trail).
+  const purSnap = await db.collection("purchases")
+    .where("sequenceId", "==", sequenceId).limit(1).get();
+  if (!purSnap.empty) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "This show has buyers and can't be deleted by creators. Contact support to take it down."
+    );
+  }
+
+  const bucket = admin.storage().bucket();
+  const deletes: Promise<unknown>[] = [
+    bucket.file(`sequences/${sequenceId}.fseq`).delete().catch(() => null),
+  ];
+  if (seq.hasMp3) {
+    deletes.push(bucket.file(`sequences/${sequenceId}.mp3`).delete().catch(() => null));
+  }
+  // Photos under sequence_photos/<sequenceId>/...
+  deletes.push(
+    bucket.getFiles({ prefix: `sequence_photos/${sequenceId}/` })
+      .then(([files]) => Promise.all(files.map((f) => f.delete().catch(() => null))))
+      .catch(() => null)
+  );
+  await Promise.all(deletes);
+
+  await seqRef.delete();
+  functions.logger.info(`userDeleteUpload: ${sequenceId} by ${uid}`);
+  return { ok: true };
 });
 
 // ─── POST /confirmUpload ──────────────────────────────────────────────────────
