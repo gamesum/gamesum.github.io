@@ -1853,7 +1853,7 @@ export const adminListCreatorsPayoutStatus = functions.https.onCall(async (_data
 
 // ─── DMCA / GDPR / CCPA / AUDIT ───────────────────────────────────────────────
 // Constants
-const DMCA_AGENT_EMAIL = "dmca@afterglolighting.org";
+const DMCA_AGENT_EMAIL = "afterglolights@gmail.com";
 const CREATOR_AGREEMENT_VERSION = "2026-04-21";
 const DATA_DELETION_GRACE_DAYS = 30;
 

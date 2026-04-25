@@ -475,11 +475,13 @@
     .seq-row::-webkit-scrollbar { display: none; }
     .seq-row:active { cursor: grabbing; }
 
-    /* Card grid (for filtered view) */
+    /* Card grid (for filtered view) — cap card width so a single result
+       doesn't stretch across the whole row. Auto-fill keeps row layout. */
     .seq-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
       gap: 20px;
+      justify-content: start;
     }
 
     /* ─── SEQUENCE CARD ────────────────────────────────────────────── */
