@@ -42,8 +42,16 @@ if (FIREBASE_ENABLED) {
   // with reCAPTCHA v3, (b) add the compat script to every HTML page's <head>,
   // (c) set window.AFTERGLO_APPCHECK_SITE_KEY before this file loads, (d) enforce
   // App Check on Firestore/Functions/Storage in the console.
+  // App Check activation is gated on an explicit opt-in flag. Without the flag
+  // set, App Check stays dormant — Firebase calls go through without trying to
+  // attach an App Check token. This avoids hangs when reCAPTCHA Enterprise
+  // can't complete its handshake (CSP, region blocks, etc.). To enable App
+  // Check site-wide: set window.AFTERGLO_APPCHECK_ENABLED = true alongside the
+  // site key, AND ensure App Check is enforced in Firebase Console for the
+  // services you want gated.
   try {
     if (_firebaseApp
+        && window.AFTERGLO_APPCHECK_ENABLED === true
         && typeof firebase.appCheck === 'function'
         && typeof window.AFTERGLO_APPCHECK_SITE_KEY === 'string'
         && window.AFTERGLO_APPCHECK_SITE_KEY.length > 0) {
