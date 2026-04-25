@@ -2247,17 +2247,18 @@
         setProgress(85, 'MP3 uploaded…');
       }
 
-      // Step 4: Confirm upload (non-fatal if CORS blocks it; file is already in Storage)
-      setProgress(90, 'Confirming…');
-      try {
-        const confirmRes = await fetch(FUNCTIONS_BASE + '/confirmUpload', {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-          body:    JSON.stringify({ sequenceId: seqId })
-        });
-        if (!confirmRes.ok) console.warn('confirmUpload non-OK (' + confirmRes.status + ') — non-fatal.');
-      } catch (confirmErr) {
-        console.warn('confirmUpload network error (non-fatal):', confirmErr);
+      // Step 4: Confirm upload — flips status to "published" (or "pending_review"
+      // if flagged). If this fails, the doc is stuck at pending_upload and the
+      // sequence won't appear in the store, so surface the error.
+      setProgress(90, 'Publishing…');
+      const confirmRes = await fetch(FUNCTIONS_BASE + '/confirmUpload', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body:    JSON.stringify({ sequenceId: seqId })
+      });
+      if (!confirmRes.ok) {
+        const body = await confirmRes.text();
+        throw new Error('Could not publish (' + confirmRes.status + '): ' + body);
       }
 
       setProgress(100, 'Complete!');

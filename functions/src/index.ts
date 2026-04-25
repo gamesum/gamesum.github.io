@@ -426,11 +426,9 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
       mp3UploadUrl = mp3Url;
     }
 
-    // Determine initial status:
-    // - Single-song sequences auto-publish unless flagged by content moderation.
-    // - Shows and presets always go through manual review.
-    const isSequence = (category ?? "").toLowerCase() === "sequence";
-    const initialStatus = isSequence && !flagged ? "published" : "pending_review";
+    // Always start at pending_upload. confirmUpload flips to "published" once
+    // the FSEQ actually lands in Storage (or "pending_review" if flagged).
+    const initialStatus = "pending_upload";
 
     // Record metadata in Firestore (pending until file is uploaded)
     await db.collection("sequences").doc(sequenceId).set({
@@ -1118,7 +1116,7 @@ export const confirmUpload = functions.https.onRequest(async (req, res) => {
       return;
     }
 
-    const seqData = seqDoc.data() as { creatorUid?: string; status?: string };
+    const seqData = seqDoc.data() as { creatorUid?: string; status?: string; flagged?: boolean };
 
     // Only the creator may confirm the upload
     if (seqData.creatorUid !== uid) {
@@ -1126,23 +1124,25 @@ export const confirmUpload = functions.https.onRequest(async (req, res) => {
       return;
     }
 
-    if (seqData.status !== "pending_upload") {
-      // Already published or in another state — treat as idempotent success
-      res.status(200).json({ status: seqData.status ?? "published" });
+    // Already in a terminal state — idempotent success.
+    if (seqData.status === "published" || seqData.status === "pending_review" || seqData.status === "rejected" || seqData.status === "taken_down") {
+      res.status(200).json({ status: seqData.status });
       return;
     }
 
-    // FIX 5: verify the file actually exists in Storage before publishing
+    // Verify the FSEQ file actually exists in Storage before publishing.
     const bucket = admin.storage().bucket();
     const [exists] = await bucket.file(`sequences/${sequenceId}.fseq`).exists();
     if (!exists) {
       res.status(400).json({ error: "File not yet uploaded" }); return;
     }
 
-    await seqRef.update({ status: "published" });
+    // Flagged uploads go to manual review; everything else publishes.
+    const finalStatus = seqData.flagged ? "pending_review" : "published";
+    await seqRef.update({ status: finalStatus });
 
-    functions.logger.info(`Sequence published: ${sequenceId} by ${uid}`);
-    res.status(200).json({ status: "published" });
+    functions.logger.info(`Sequence ${finalStatus}: ${sequenceId} by ${uid}`);
+    res.status(200).json({ status: finalStatus });
   } catch (err) {
     functions.logger.error("confirmUpload error", err);
     res.status(500).json({ error: "Internal server error" });
