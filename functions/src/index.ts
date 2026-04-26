@@ -439,12 +439,23 @@ export const uploadSequence = functions.https.onRequest(async (req, res) => {
     // the FSEQ actually lands in Storage (or "pending_review" if flagged).
     const initialStatus = "pending_upload";
 
+    // Snapshot the creator's photoURL onto the sequence doc so store cards
+    // can render the avatar without a per-card user lookup. This goes stale
+    // if the creator changes their pic; a Firebase Auth onUpdate trigger or
+    // a periodic backfill would refresh it.
+    let creatorPhotoURL = "";
+    try {
+      const u = await admin.auth().getUser(uid);
+      creatorPhotoURL = u.photoURL || "";
+    } catch { /* non-fatal */ }
+
     // Record metadata in Firestore (pending until file is uploaded)
     await db.collection("sequences").doc(sequenceId).set({
       id: sequenceId,
       name,
       creator: displayName,
       creatorUid: uid,
+      creatorPhotoURL,
       category,
       durationSecs: durationSecs ?? 0,
       channelCount: channelCount ?? 0,

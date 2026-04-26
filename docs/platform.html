@@ -2989,8 +2989,9 @@
     return {
       id:           d.id || doc.id,
       name:         d.name || 'Untitled Show',
-      creator:      d.creator || 'Community',
-      creatorUid:   d.creatorUid || '',
+      creator:         d.creator || 'Community',
+      creatorUid:      d.creatorUid || '',
+      creatorPhotoURL: d.creatorPhotoURL || '',
       duration:     _secsToDuration(d.durationSecs),
       durationSecs: Number(d.durationSecs) || 0,
       channels:     Number(d.channelCount) || 512,
