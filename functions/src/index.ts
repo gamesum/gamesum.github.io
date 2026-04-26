@@ -111,11 +111,6 @@ interface PurchaseRecord {
   stripeSessionId?: string;
 }
 
-interface PurchaseManifestItem {
-  id: string;
-  name: string;
-  creator: string;
-}
 
 // ─── GET /purchases ───────────────────────────────────────────────────────────
 // Called by firmware: GET https://api.afterglolighting.org/purchases
