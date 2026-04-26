@@ -475,11 +475,12 @@
     .seq-row::-webkit-scrollbar { display: none; }
     .seq-row:active { cursor: grabbing; }
 
-    /* Card grid (for filtered view) — cap card width so a single result
-       doesn't stretch across the whole row. Auto-fill keeps row layout. */
+    /* Card grid (for filtered view) — fixed 280px tracks so cards are
+       exactly the same width as in the .seq-row horizontal scroller. With
+       auto-fill, an empty row position never stretches a single result. */
     .seq-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 320px));
+      grid-template-columns: repeat(auto-fill, 280px);
       gap: 20px;
       justify-content: start;
     }
