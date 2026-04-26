@@ -2798,30 +2798,88 @@
   });
 
   // Add-to-library button inside the shared sequence viewer when invoked from
-  // My Library. Calls the addToLibrary callable so a purchases doc gets
-  // written (and the firmware/desktop app picks it up via /purchases).
-  // Refuses to issue a raw FSEQ download — that's the legacy "Download Show
-  // File" button on the upload card if the user explicitly wants the file.
-  async function addOwnUploadToLibrary(seq) {
-    try {
-      const fbUser = firebase.auth().currentUser;
-      if (!fbUser) { showToast('Sign in again to add this show.', 'warning'); return; }
-      // Free shows go through addToLibrary. Paid go through Stripe via the
-      // store's Buy flow, which we don't surface from My Library.
-      if (!(seq.isFree || (seq.price || 0) === 0)) {
-        showToast('Premium shows are added at checkout, not from your library.', 'warning');
-        return;
+  // My Library. Opens the AGCollections picker first so the user always
+  // chooses where to file it (cancel = no add). Then calls the addToLibrary
+  // callable to persist + writes the local mirror tagged with the chosen
+  // collectionId. The firmware/desktop app picks this up via /purchases.
+  function addOwnUploadToLibrary(seq) {
+    const fbUser = firebase.auth().currentUser;
+    if (!fbUser) { showToast('Sign in again to add this show.', 'warning'); return; }
+    // Free shows go through addToLibrary. Paid go through Stripe.
+    if (!(seq.isFree || (seq.price || 0) === 0)) {
+      showToast('Premium shows are added at checkout, not from your library.', 'warning');
+      return;
+    }
+
+    // Make sure the user's collections exist.
+    const userForEnsure = (typeof getUser === 'function') ? getUser() : null;
+    if (!userForEnsure) { showToast('Sign in again to add this show.', 'warning'); return; }
+    if (window.AGCollections && typeof AGCollections.ensureCollections === 'function') {
+      AGCollections.ensureCollections(userForEnsure);
+      saveUser(userForEnsure);
+    }
+
+    const doAdd = async (collectionId) => {
+      try {
+        const fn = firebase.functions().httpsCallable('addToLibrary');
+        const res = await fn({ sequenceId: seq.id });
+        const alreadyOwned = !!(res && res.data && res.data.alreadyOwned);
+
+        // Mirror locally so My Library renders it without waiting for the
+        // Firestore round-trip; tag with the chosen collection.
+        const user = getUser();
+        if (user) {
+          if (!user.purchases) user.purchases = [];
+          const seqIdStr = String(seq.id);
+          let entry = user.purchases.find(p => String(p.id) === seqIdStr || String(p.sequenceId) === seqIdStr);
+          if (!entry) {
+            entry = {
+              id:           seqIdStr,
+              sequenceId:   seqIdStr,
+              name:         seq.name || 'Show',
+              creator:      seq.creator || '',
+              price:        0,
+              kind:         'free',
+              addedAt:      Date.now(),
+              collectionId: collectionId,
+            };
+            user.purchases.push(entry);
+          } else {
+            entry.collectionId = collectionId;
+          }
+          saveUser(user);
+          currentUser = user;
+        }
+
+        const colName = (function () {
+          if (!window.AGCollections || !user) return 'your library';
+          const cols = (user.collections || []);
+          const c = cols.find(x => x && x.id === collectionId);
+          return c ? c.name : 'your library';
+        })();
+
+        if (alreadyOwned) {
+          showToast('"' + (seq.name || 'Show') + '" is already in your library — moved to ' + colName + '.');
+        } else {
+          showToast('Added "' + (seq.name || 'Show') + '" to ' + colName + '.');
+        }
+        renderSections();
+      } catch (err) {
+        console.error('addOwnUploadToLibrary failed', err);
+        showToast('Could not add: ' + (err && err.message ? err.message : 'unknown error'), 'warning');
       }
-      const fn = firebase.functions().httpsCallable('addToLibrary');
-      const res = await fn({ sequenceId: seq.id });
-      if (res && res.data && res.data.alreadyOwned) {
-        showToast('"' + (seq.name || 'Show') + '" is already in your library.');
-      } else {
-        showToast('Added "' + (seq.name || 'Show') + '" to your library.');
-      }
-    } catch (err) {
-      console.error('addOwnUploadToLibrary failed', err);
-      showToast('Could not add: ' + (err && err.message ? err.message : 'unknown error'), 'warning');
+    };
+
+    // Show the collection picker; cancel = no add (matches the store's flow).
+    if (window.AGCollections && typeof AGCollections.openPickerModal === 'function') {
+      AGCollections.openPickerModal({
+        title:    'Add "' + (seq.name || 'Show') + '" to.',
+        onPick:   (collectionId) => doAdd(collectionId),
+        onCancel: () => { /* user aborted; no add, no toast */ },
+      });
+    } else {
+      // Picker module unavailable — fall back to a single default collection.
+      doAdd('default');
     }
   }
 
