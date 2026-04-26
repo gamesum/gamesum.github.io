@@ -2418,12 +2418,42 @@
         row.appendChild(actions);
       }
 
+      // Open the same shared expanded viewer the store uses, in-place.
+      // Wired on the swatch + title + View button so any of them works.
+      const openInPlace = () => {
+        if (!r.id) return;
+        const seq = {
+          id:           r.id,
+          name:         r.name,
+          creator:      (currentUser && currentUser.name) || 'You',
+          isFree:       !!r.isFree,
+          price:        r.price || 0,
+          downloads:    r.downloadCount || 0,
+          downloadCount: r.downloadCount || 0,
+          description:  r.description || '',
+          photos:       r.photos || [],
+        };
+        if (window.AGSequenceViewer) {
+          window.AGSequenceViewer.open(seq, {
+            onDownload: () => { if (typeof downloadFseq === 'function') downloadFseq(r.id); },
+            onBuy:      () => {},
+          });
+        }
+      };
+      // Make swatch + title clickable.
+      swatch.style.cursor = 'pointer';
+      swatch.addEventListener('click', openInPlace);
+      title.style.cursor = 'pointer';
+      title.addEventListener('click', openInPlace);
+
       if (r.status === 'published' && r.id) {
-        const link = document.createElement('a');
-        link.className = 'view-link';
-        link.href = 'platform.html#seq-' + encodeURIComponent(r.id);
-        link.textContent = 'View';
-        row.appendChild(link);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'view-link';
+        btn.style.cssText = 'cursor:pointer;background:transparent;border:1px solid rgba(212,164,58,0.35);';
+        btn.textContent = 'View';
+        btn.onclick = openInPlace;
+        row.appendChild(btn);
       } else {
         // spacer to preserve grid
         const spacer = document.createElement('span');
