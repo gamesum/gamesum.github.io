@@ -2300,23 +2300,36 @@
     const pur = currentUser.purchases || [];
     const upl = currentUser.uploads   || [];
 
-    document.getElementById('statDownloads').textContent = lib.length;
+    // Saved tab shows everything the user owns: free saves AND paid
+    // purchases (deduped by id). The Purchased tab still shows ONLY paid
+    // items so the user can quickly find what they spent money on.
+    const savedKeyOf = (item) => String(item.id || item.sequenceId || '');
+    const savedSeen = new Set();
+    const savedAll = [];
+    for (const it of lib.concat(pur)) {
+      const k = savedKeyOf(it);
+      if (!k || savedSeen.has(k)) continue;
+      savedSeen.add(k);
+      savedAll.push(it);
+    }
+
+    document.getElementById('statDownloads').textContent = savedAll.length;
     document.getElementById('statPurchases').textContent = pur.length;
     document.getElementById('statUploads').textContent   = upl.length;
 
     // Compact pills inside the tab strip — number only.
-    document.getElementById('countDownloads').textContent = lib.length;
+    document.getElementById('countDownloads').textContent = savedAll.length;
     document.getElementById('countPurchases').textContent = pur.length;
     document.getElementById('countUploads').textContent   = upl.length;
     const _dashLink = document.getElementById('creatorDashLink');
     if (_dashLink) _dashLink.style.display = upl.length > 0 ? '' : 'none';
 
     renderCollectionChips();
-    renderGroupedSection('downloadsGrid', lib, 'download');
+    renderGroupedSection('downloadsGrid', savedAll, 'download');
     renderGroupedSection('purchasesGrid', pur, 'purchase');
     renderGroupedSection('uploadsGrid',   upl, 'upload');
     // Backfill cover thumbnails for any IDs we don't yet have cached.
-    fetchMissingCovers([...lib, ...pur, ...upl]);
+    fetchMissingCovers(savedAll.concat(upl));
 
     renderUploadStatus();
     subscribeUploadStatus();
@@ -2990,12 +3003,13 @@
         const alreadyOwned = !!(res && res.data && res.data.alreadyOwned);
 
         // Mirror locally so My Library renders it without waiting for the
-        // Firestore round-trip; tag with the chosen collection.
+        // Firestore round-trip; free shows go into `library` (Saved tab),
+        // not `purchases` (Purchased tab).
         const user = getUser();
         if (user) {
-          if (!user.purchases) user.purchases = [];
+          if (!user.library) user.library = [];
           const seqIdStr = String(seq.id);
-          let entry = user.purchases.find(p => String(p.id) === seqIdStr || String(p.sequenceId) === seqIdStr);
+          let entry = (user.library || []).find(p => String(p.id) === seqIdStr || String(p.sequenceId) === seqIdStr);
           if (!entry) {
             entry = {
               id:           seqIdStr,
@@ -3007,9 +3021,16 @@
               addedAt:      Date.now(),
               collectionId: collectionId,
             };
-            user.purchases.push(entry);
+            user.library.push(entry);
           } else {
             entry.collectionId = collectionId;
+          }
+          // Defensive: if it was previously written to purchases by an older
+          // build, drop it from there so we don't dupe-render.
+          if (Array.isArray(user.purchases)) {
+            user.purchases = user.purchases.filter(p =>
+              String(p.id) !== seqIdStr && String(p.sequenceId) !== seqIdStr
+            );
           }
           saveUser(user);
           currentUser = user;

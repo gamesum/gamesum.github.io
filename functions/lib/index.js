@@ -175,10 +175,17 @@ exports.purchases = functions.https.onRequest(async (req, res) => {
             .get();
         const purchaseList = snap.docs.map((doc) => {
             const data = doc.data();
+            const price = Number(data.price) || 0;
+            // kind: prefer the field stored on the doc; fall back to free vs paid
+            // by price so legacy docs without `kind` still classify correctly.
+            const kind = data.kind
+                || (price > 0 ? "paid" : "free");
             return {
                 id: data.sequenceId,
                 name: data.sequenceName,
                 creator: data.creator,
+                price,
+                kind,
             };
         });
         res.status(200).json({ purchases: purchaseList });

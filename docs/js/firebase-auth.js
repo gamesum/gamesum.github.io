@@ -280,26 +280,60 @@ async function signInWithGoogleCredential(googleIdToken) {
 
 // ─── Firestore: sync purchases from backend ───────────────────────────────────
 
+// Pulls every entry in the user's Firestore /purchases collection and splits
+// them locally:
+//   - kind=free / price=0  → user.library  (rendered under "Saved")
+//   - everything else      → user.purchases (rendered under "Purchased")
+// Saved-tab rendering still unions both arrays, so paid shows appear in
+// Saved AND Purchased; free shows only appear in Saved.
 async function syncPurchasesFromFirestore() {
   const token = await getIdToken();
-  if (!token) return [];
+  if (!token) return { library: [], purchases: [] };
   try {
     const res = await fetch(
       `https://us-central1-afterglo-website-fbb89.cloudfunctions.net/purchases`,
       { headers: { 'Authorization': `Bearer ${token}` } }
     );
-    if (!res.ok) return [];
+    if (!res.ok) return { library: [], purchases: [] };
     const data = await res.json();
-    const purchases = data.purchases ?? [];
+    const all = data.purchases ?? [];
+    const free = [];
+    const paid = [];
+    for (const p of all) {
+      const isFree = p && (p.kind === 'free' || (Number(p.price) || 0) === 0);
+      const entry = {
+        id: p.id,
+        sequenceId: p.id,
+        name: p.name || '',
+        creator: p.creator || '',
+        price: Number(p.price) || 0,
+        kind: p.kind || (isFree ? 'free' : 'paid'),
+      };
+      (isFree ? free : paid).push(entry);
+    }
+
     const user = getUser();
     if (user) {
-      user.purchases = purchases;
+      // Preserve any local-only items (e.g. just-added optimistic mirror)
+      // that haven't synced yet by merging on id.
+      const seenLib = new Set(free.map((e) => String(e.id)));
+      const localLib = (user.library || []).filter(
+        (e) => e && e.id && !seenLib.has(String(e.id))
+      );
+      user.library = free.concat(localLib);
+
+      const seenPur = new Set(paid.map((e) => String(e.id)));
+      const localPur = (user.purchases || []).filter(
+        (e) => e && e.id && !seenPur.has(String(e.id))
+      );
+      user.purchases = paid.concat(localPur);
+
       saveUser(user);
     }
-    return purchases;
+    return { library: free, purchases: paid };
   } catch (err) {
     console.warn('syncPurchases failed:', err);
-    return [];
+    return { library: [], purchases: [] };
   }
 }
 

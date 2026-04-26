@@ -2533,11 +2533,13 @@
         showToast('Could not add: ' + (err && err.message ? err.message : 'unknown error'), 'warning');
         return;
       }
+      // Free shows mirror to user.library (Saved tab). Paid Stripe purchases
+      // go through recordPurchase → user.purchases (Purchased tab).
       const user = getUser();
       if (user) {
-        if (!user.purchases) user.purchases = [];
-        if (!user.purchases.find(p => String(p.id) === seqId || String(p.sequenceId) === seqId)) {
-          user.purchases.push({
+        if (!user.library) user.library = [];
+        if (!user.library.find(p => String(p.id) === seqId || String(p.sequenceId) === seqId)) {
+          user.library.push({
             id:           seqId,
             sequenceId:   seqId,
             name:         seq.name,
@@ -2547,8 +2549,14 @@
             addedAt:      Date.now(),
             collectionId: collectionId,
           });
-          saveUser(user);
         }
+        // Drop any stale duplicate in purchases left by older builds.
+        if (Array.isArray(user.purchases)) {
+          user.purchases = user.purchases.filter(p =>
+            String(p.id) !== seqId && String(p.sequenceId) !== seqId
+          );
+        }
+        saveUser(user);
       }
       const u2 = getUser();
       const col = u2 && (u2.collections || []).find(c => c.id === collectionId);
