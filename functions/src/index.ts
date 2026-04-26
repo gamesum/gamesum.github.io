@@ -1287,6 +1287,51 @@ export const apiMe = functions.https.onRequest(async (req, res) => {
   }
 });
 
+// ─── onUserDocChanged (Firestore trigger) ────────────────────────────────────
+// When a creator updates their /users/{uid} mirror doc (specifically photoURL
+// or displayName/name), fan the change out to every sequence they own so the
+// store cards stay in sync. Self-healing replacement for the snapshot we
+// take at uploadSequence time.
+export const onUserDocChanged = functions.firestore
+  .document("users/{uid}")
+  .onUpdate(async (change, context) => {
+    const before = change.before.data() || {};
+    const after = change.after.data() || {};
+    const uid = context.params.uid;
+
+    const photoChanged = (before.photoURL || "") !== (after.photoURL || "");
+    const beforeName = before.displayName || before.name || "";
+    const afterName  = after.displayName || after.name || "";
+    const nameChanged = beforeName !== afterName;
+    if (!photoChanged && !nameChanged) return null;
+
+    const update: Record<string, unknown> = {};
+    if (photoChanged) update.creatorPhotoURL = after.photoURL || "";
+    if (nameChanged && afterName)  update.creator = afterName;
+
+    try {
+      const seqs = await db.collection("sequences")
+        .where("creatorUid", "==", uid).get();
+      if (seqs.empty) return null;
+
+      // Firestore batch caps at 500 ops; chunk just in case a power user has
+      // a huge catalog.
+      const docs = seqs.docs;
+      const CHUNK = 400;
+      for (let i = 0; i < docs.length; i += CHUNK) {
+        const batch = db.batch();
+        docs.slice(i, i + CHUNK).forEach((d) => batch.update(d.ref, update));
+        await batch.commit();
+      }
+      functions.logger.info(
+        `onUserDocChanged: synced ${docs.length} sequences for uid=${uid} (photo=${photoChanged}, name=${nameChanged})`
+      );
+    } catch (err) {
+      functions.logger.error("onUserDocChanged fan-out failed", err);
+    }
+    return null;
+  });
+
 // ─── addToLibrary (callable) ──────────────────────────────────────────────────
 // Adds a FREE sequence (or free pack) to the user's library by writing a
 // purchases doc with price 0. Paid shows still go through Stripe Checkout +

@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.addToLibrary = exports.apiMe = exports.mintAppToken = exports.deleteOwnReview = exports.submitReview = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.addToLibrary = exports.onUserDocChanged = exports.apiMe = exports.mintAppToken = exports.deleteOwnReview = exports.submitReview = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -1209,6 +1209,49 @@ exports.apiMe = functions.https.onRequest(async (req, res) => {
     catch {
         res.status(200).json({ signedIn: false });
     }
+});
+// ─── onUserDocChanged (Firestore trigger) ────────────────────────────────────
+// When a creator updates their /users/{uid} mirror doc (specifically photoURL
+// or displayName/name), fan the change out to every sequence they own so the
+// store cards stay in sync. Self-healing replacement for the snapshot we
+// take at uploadSequence time.
+exports.onUserDocChanged = functions.firestore
+    .document("users/{uid}")
+    .onUpdate(async (change, context) => {
+    const before = change.before.data() || {};
+    const after = change.after.data() || {};
+    const uid = context.params.uid;
+    const photoChanged = (before.photoURL || "") !== (after.photoURL || "");
+    const beforeName = before.displayName || before.name || "";
+    const afterName = after.displayName || after.name || "";
+    const nameChanged = beforeName !== afterName;
+    if (!photoChanged && !nameChanged)
+        return null;
+    const update = {};
+    if (photoChanged)
+        update.creatorPhotoURL = after.photoURL || "";
+    if (nameChanged && afterName)
+        update.creator = afterName;
+    try {
+        const seqs = await db.collection("sequences")
+            .where("creatorUid", "==", uid).get();
+        if (seqs.empty)
+            return null;
+        // Firestore batch caps at 500 ops; chunk just in case a power user has
+        // a huge catalog.
+        const docs = seqs.docs;
+        const CHUNK = 400;
+        for (let i = 0; i < docs.length; i += CHUNK) {
+            const batch = db.batch();
+            docs.slice(i, i + CHUNK).forEach((d) => batch.update(d.ref, update));
+            await batch.commit();
+        }
+        functions.logger.info(`onUserDocChanged: synced ${docs.length} sequences for uid=${uid} (photo=${photoChanged}, name=${nameChanged})`);
+    }
+    catch (err) {
+        functions.logger.error("onUserDocChanged fan-out failed", err);
+    }
+    return null;
 });
 // ─── addToLibrary (callable) ──────────────────────────────────────────────────
 // Adds a FREE sequence (or free pack) to the user's library by writing a
