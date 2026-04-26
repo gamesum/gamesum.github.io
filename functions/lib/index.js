@@ -999,11 +999,40 @@ exports.getDownloadUrl = functions.https.onRequest(async (req, res) => {
             action: "read",
             expires: Date.now() + 60 * 60 * 1000, // 1 hour
         });
-        // Increment download count (best-effort, non-blocking)
-        db.collection("sequences")
-            .doc(sequenceId)
-            .update({ downloadCount: admin.firestore.FieldValue.increment(1) })
-            .catch((err) => functions.logger.warn("downloadCount increment failed", err));
+        // Download count is UNIQUE-USER, not per-fetch. The first time a user
+        // adds the show (addToLibrary or recordPurchase) writes the purchases
+        // doc and increments the count. getDownloadUrl just hands out fresh
+        // signed URLs to users who already added it, so no increment here.
+        // (If a download is requested without a prior purchases entry — e.g.
+        // a free fast-path — fall back to writing one so the count moves.)
+        try {
+            const purchaseDocRef = db.collection("purchases").doc(`${uid}_${sequenceId}`);
+            const existing = await purchaseDocRef.get();
+            if (!existing.exists) {
+                const seqDoc = await db.collection("sequences").doc(sequenceId).get();
+                const seq = seqDoc.exists ? seqDoc.data() : {};
+                const isFree = (seq.price || 0) === 0 || seq.isFree === true;
+                if (isFree) {
+                    await db.runTransaction(async (tx) => {
+                        const dup = await tx.get(purchaseDocRef);
+                        if (dup.exists)
+                            return;
+                        tx.set(purchaseDocRef, {
+                            userId: uid, sequenceId,
+                            sequenceName: seq.name || "",
+                            creator: seq.creator || "Unknown",
+                            creatorUid: seq.creatorUid || null,
+                            price: 0, kind: "free",
+                            purchasedAt: admin.firestore.Timestamp.now(),
+                        });
+                        tx.update(db.collection("sequences").doc(sequenceId), { downloadCount: admin.firestore.FieldValue.increment(1) });
+                    });
+                }
+            }
+        }
+        catch (err) {
+            functions.logger.warn("downloadCount unique-user backfill failed", err);
+        }
         functions.logger.info(`Download URL issued: ${uid} → ${sequenceId}`);
         res.status(200).json({ url: signedUrl, sequenceId });
     }
