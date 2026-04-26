@@ -25,16 +25,19 @@
   <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
   <link rel="dns-prefetch" href="https://js.stripe.com">
-  <!-- Firebase SDK — defer so they load in order without blocking first paint -->
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+  <!-- Firebase SDK. NOT defer'd: the page's main inline <script> runs at
+       parse time and calls firebase APIs immediately (subscribeLiveMarketplace
+       IIFE). With defer those scripts hadn't loaded yet, so the live grid
+       silently stayed empty and the page looked broken. -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
   <script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script defer src="js/firebase-auth.js"></script>
-  <script defer src="js/sequence-viewer.js"></script>
-  <script defer src="js/avatar.js"></script>
-  <script defer src="js/collections.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-auth.js"></script>
+  <script src="js/sequence-viewer.js"></script>
+  <script src="js/avatar.js"></script>
+  <script src="js/collections.js" defer></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }

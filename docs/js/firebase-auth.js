@@ -286,55 +286,102 @@ async function signInWithGoogleCredential(googleIdToken) {
 //   - everything else      → user.purchases (rendered under "Purchased")
 // Saved-tab rendering still unions both arrays, so paid shows appear in
 // Saved AND Purchased; free shows only appear in Saved.
+//
+// Defense in depth:
+//   1. Try the /purchases HTTP function first.
+//   2. If that fails (CORS, expired token, function down), fall back to the
+//      Firestore JS SDK reading the `purchases` collection directly. Both
+//      paths return the same shape.
+//   3. If BOTH fail, leave user.library and user.purchases ALONE — never
+//      wipe local data on a transient network issue.
 async function syncPurchasesFromFirestore() {
-  const token = await getIdToken();
-  if (!token) return { library: [], purchases: [] };
+  // 1) HTTP function path
+  const fromHttp = await _fetchPurchasesViaHttp();
+  if (fromHttp) return _mergePurchasesIntoUser(fromHttp);
+
+  // 2) Firestore JS SDK path (uses the SDK's own auth flow, dodges any
+  //    HTTP auth glitches)
+  const fromFirestore = await _fetchPurchasesViaFirestore();
+  if (fromFirestore) return _mergePurchasesIntoUser(fromFirestore);
+
+  // 3) Both paths failed — preserve whatever the user already had locally
+  console.warn('syncPurchases: HTTP and Firestore both failed; keeping local cache');
+  const user = getUser() || {};
+  return { library: user.library || [], purchases: user.purchases || [] };
+}
+
+async function _fetchPurchasesViaHttp() {
   try {
+    const token = await getIdToken();
+    if (!token) return null;
     const res = await fetch(
-      `https://us-central1-afterglo-website-fbb89.cloudfunctions.net/purchases`,
-      { headers: { 'Authorization': `Bearer ${token}` } }
+      'https://us-central1-afterglo-website-fbb89.cloudfunctions.net/purchases',
+      { headers: { 'Authorization': 'Bearer ' + token } }
     );
-    if (!res.ok) return { library: [], purchases: [] };
+    if (!res.ok) return null;
     const data = await res.json();
-    const all = data.purchases ?? [];
-    const free = [];
-    const paid = [];
-    for (const p of all) {
-      const isFree = p && (p.kind === 'free' || (Number(p.price) || 0) === 0);
-      const entry = {
-        id: p.id,
-        sequenceId: p.id,
-        name: p.name || '',
-        creator: p.creator || '',
-        price: Number(p.price) || 0,
-        kind: p.kind || (isFree ? 'free' : 'paid'),
-      };
-      (isFree ? free : paid).push(entry);
-    }
-
-    const user = getUser();
-    if (user) {
-      // Preserve any local-only items (e.g. just-added optimistic mirror)
-      // that haven't synced yet by merging on id.
-      const seenLib = new Set(free.map((e) => String(e.id)));
-      const localLib = (user.library || []).filter(
-        (e) => e && e.id && !seenLib.has(String(e.id))
-      );
-      user.library = free.concat(localLib);
-
-      const seenPur = new Set(paid.map((e) => String(e.id)));
-      const localPur = (user.purchases || []).filter(
-        (e) => e && e.id && !seenPur.has(String(e.id))
-      );
-      user.purchases = paid.concat(localPur);
-
-      saveUser(user);
-    }
-    return { library: free, purchases: paid };
+    return Array.isArray(data.purchases) ? data.purchases : null;
   } catch (err) {
-    console.warn('syncPurchases failed:', err);
-    return { library: [], purchases: [] };
+    console.warn('purchases HTTP failed:', err && err.message);
+    return null;
   }
+}
+
+async function _fetchPurchasesViaFirestore() {
+  try {
+    if (typeof firebase === 'undefined' || !firebase.firestore) return null;
+    const auth = firebase.auth ? firebase.auth() : null;
+    const u = auth && auth.currentUser;
+    if (!u) return null;
+    const snap = await firebase.firestore().collection('purchases')
+      .where('userId', '==', u.uid).get();
+    return snap.docs.map((d) => {
+      const x = d.data() || {};
+      return {
+        id: x.sequenceId,
+        name: x.sequenceName || '',
+        creator: x.creator || '',
+        price: Number(x.price) || 0,
+        kind: x.kind || ((Number(x.price) || 0) === 0 ? 'free' : 'paid'),
+      };
+    });
+  } catch (err) {
+    console.warn('purchases Firestore failed:', err && err.message);
+    return null;
+  }
+}
+
+function _mergePurchasesIntoUser(rawList) {
+  const free = [];
+  const paid = [];
+  for (const p of (rawList || [])) {
+    if (!p || !p.id) continue;
+    const isFree = p.kind === 'free' || (Number(p.price) || 0) === 0;
+    const entry = {
+      id: p.id,
+      sequenceId: p.id,
+      name: p.name || '',
+      creator: p.creator || '',
+      price: Number(p.price) || 0,
+      kind: p.kind || (isFree ? 'free' : 'paid'),
+    };
+    (isFree ? free : paid).push(entry);
+  }
+  const user = getUser();
+  if (user) {
+    const seenLib = new Set(free.map((e) => String(e.id)));
+    const localLib = (user.library || []).filter(
+      (e) => e && e.id && !seenLib.has(String(e.id))
+    );
+    user.library = free.concat(localLib);
+    const seenPur = new Set(paid.map((e) => String(e.id)));
+    const localPur = (user.purchases || []).filter(
+      (e) => e && e.id && !seenPur.has(String(e.id))
+    );
+    user.purchases = paid.concat(localPur);
+    saveUser(user);
+  }
+  return { library: free, purchases: paid };
 }
 
 // ─── Error message mapper ─────────────────────────────────────────────────────

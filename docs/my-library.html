@@ -2906,7 +2906,6 @@
       if (oldCover) _editUploadCtx.removedPhotoUrls.push(oldCover);
       _editUploadCtx.photos[0] = url;
     } catch (err) {
-      console.error('Cover upload failed', err);
       console.error('Cover upload failed:', err);
       showToast('Couldn\'t upload that cover photo. Try a smaller image (under 5 MB) — or email afterglolights@gmail.com.', 'error');
     } finally {
