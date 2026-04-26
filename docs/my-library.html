@@ -2249,6 +2249,8 @@
     renderGroupedSection('downloadsGrid', lib, 'download');
     renderGroupedSection('purchasesGrid', pur, 'purchase');
     renderGroupedSection('uploadsGrid',   upl, 'upload');
+    // Backfill cover thumbnails for any IDs we don't yet have cached.
+    fetchMissingCovers([...lib, ...pur, ...upl]);
 
     renderUploadStatus();
     subscribeUploadStatus();
@@ -2256,6 +2258,57 @@
     // already showing real upload rows (Firestore-backed). Otherwise users
     // see two stacked empty/full states for the same data.
     syncUploadsEmptyState();
+  }
+
+  // Lazy cache of coverPhoto URLs keyed by sequenceId, populated on demand
+  // from Firestore. Populates _uploadStatusDocs first (already-loaded), then
+  // fires per-id reads only for the ones we don't have. After a round-trip,
+  // re-renders so the thumbnails appear.
+  if (!window._coverPhotoCache) window._coverPhotoCache = {};
+  let _coverFetchInflight = false;
+  async function fetchMissingCovers(items) {
+    if (_coverFetchInflight) return;
+    if (typeof firebase === 'undefined' || !firebase.firestore) return;
+    // Pre-seed from _uploadStatusDocs (uploads we already subscribed to).
+    if (Array.isArray(_uploadStatusDocs)) {
+      _uploadStatusDocs.forEach(d => {
+        const id = String(d.id || '');
+        if (!id) return;
+        const cp = (d.data && d.data.coverPhoto) || (d.data && Array.isArray(d.data.photos) && d.data.photos[0]) || '';
+        if (cp) window._coverPhotoCache[id] = cp;
+      });
+    }
+    const missing = (items || [])
+      .map(it => String(it.id || it.sequenceId || ''))
+      .filter(id => id && !window._coverPhotoCache[id] && !(items.find(it => String(it.id || it.sequenceId) === id) || {}).coverPhoto);
+    const unique = Array.from(new Set(missing));
+    if (!unique.length) return;
+    _coverFetchInflight = true;
+    try {
+      const fs = firebase.firestore();
+      // Cap to 30 lookups per render so we don't smash Firestore on a huge library.
+      const slice = unique.slice(0, 30);
+      const snaps = await Promise.allSettled(
+        slice.map(id => fs.collection('sequences').doc(id).get())
+      );
+      let added = 0;
+      snaps.forEach((r, i) => {
+        if (r.status !== 'fulfilled' || !r.value.exists) return;
+        const d = r.value.data() || {};
+        const cp = d.coverPhoto || (Array.isArray(d.photos) && d.photos[0]) || '';
+        if (cp) { window._coverPhotoCache[slice[i]] = cp; added++; }
+      });
+      if (added > 0) {
+        // Re-render only the grids — re-running renderSections would loop us.
+        const lib = (currentUser && currentUser.library)   || [];
+        const pur = (currentUser && currentUser.purchases) || [];
+        const upl = (currentUser && currentUser.uploads)   || [];
+        renderGroupedSection('downloadsGrid', lib, 'download');
+        renderGroupedSection('purchasesGrid', pur, 'purchase');
+        renderGroupedSection('uploadsGrid',   upl, 'upload');
+      }
+    } catch (e) { /* non-fatal */ }
+    _coverFetchInflight = false;
   }
 
   function syncUploadsEmptyState() {
@@ -3075,6 +3128,14 @@
     const badgeClass = type === 'download' ? 'badge-dl' : type === 'purchase' ? 'badge-purchased' : 'badge-upload';
     const badgeText  = type === 'download' ? 'Downloaded' : type === 'purchase' ? 'Purchased' : 'Uploaded';
     const gradient   = item.gradient || getGradient(item.id);
+    // Prefer the creator-uploaded cover photo when one is known. We populate
+    // _coverPhotoCache lazily from Firestore on render (see fetchMissingCovers
+    // below) so cards get real thumbnails after one fetch round-trip.
+    const cachedCover = (window._coverPhotoCache && window._coverPhotoCache[String(item.id)]) || '';
+    const coverUrl = item.coverPhoto || (Array.isArray(item.photos) && item.photos[0]) || cachedCover;
+    const thumbStyle = coverUrl
+      ? `background-image:url('${escapeHtml(coverUrl).replace(/'/g, "\\'")}');background-size:cover;background-position:center;`
+      : `background:${gradient};`;
 
     const escapedId   = escapeHtml(String(item.id));
     const escapedName = escapeHtml(item.name);
@@ -3099,7 +3160,7 @@
       : '';
 
     card.innerHTML = `
-      <div class="lib-card-thumb" style="background:${gradient};">
+      <div class="lib-card-thumb" style="${thumbStyle}">
         <span class="lib-card-badge ${badgeClass}">${badgeText}</span>
         ${removeBtn}
       </div>

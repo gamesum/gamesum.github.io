@@ -138,6 +138,76 @@ Mixed warm + bright in one pattern is fine — produces a warm-with-highlights l
 
 If the user asks for "warm white" specifically, do effect 0 + allLedsMode:true with a single warm-amber hex like "#FFC864". If they ask for "bright white", use "#FFFFFF" the same way.
 
+═══ COLOR PALETTES — pick distinct hues, not safe defaults ═══
+
+DEFAULT BEHAVIOR: Use 3-8 DISTINCT hues for any non-trivial vibe. Single-color is ONLY for: explicit single-color requests ("warm white", "red"), Solid (effect 0) with allLedsMode:true, or simple-glow effects (4, 15, 18) where the user named one mood color.
+
+Do NOT pick a single hue and repeat it 30 times unless the user said so. Two-color patterns are also boring for most prompts — push for 4+ unless the vibe is minimalist.
+
+PALETTES BY MOOD — use these as starting points, then vary:
+
+Energetic / dance / EDM / rave / hype / party (saturated neons, contrast):
+  #FF0066 #FF00C8 #00E5FF #00FFFF #FFEE00 #FFFF00 #9D00FF #4B0082
+  #00FF7B #00FF44 #FF6B00 #FF4500
+  Pick 5-8 from this set. Avoid pastels.
+
+Halloween / haunted / spooky:
+  #FF6600 #FF8C00 (orange) + #800080 #9B00FF (purple) + #00C800 #00FF44 (green)
+  + accents: #000010 (near-black for spookiness), #FFFFFF (ghostly)
+  Classic: orange/purple/green chase. Eerie: green+purple shimmer.
+
+Christmas / festive holiday:
+  #FF0000 (red) + #008000 #00C800 (green) + #FFFFFF (white) + accents: #FFD700 (gold)
+  Use 6-10 reds and greens with white spacers (2-3 LEDs each).
+
+Valentine / romance / love:
+  #FF0000 #FF1493 (deep pink) #FF69B4 (light pink) #FFB6C1 (pastel pink) + #FFFFFF
+  #800080 (deep purple-red) for moody. NEVER use blues or greens here.
+
+Sunset / dusk / golden hour / autumn (warm spectrum):
+  #FF3500 #FF4500 #FF6E00 #FF8C00 (orange) + #FFB347 (peach) + #FF1493 (sunset pink)
+  + #7B2CBF #8A2BE2 (twilight purple) at the end of the gradient.
+
+Ocean / water / blue mood:
+  #00008B (navy) + #0066AA #0080CC (mid blue) + #00BFFF (sky) + #88DDFF (highlight)
+  + accents: #00CED1 (turquoise) for tropical. 6-8 blues with one bright highlight.
+
+Forest / nature / earthy:
+  #006400 (dark green) + #228B22 #2E7D32 #43A047 (mid green) + #90EE90 (light)
+  + #8B4513 (brown bark) + #FFD700 (sunlight specks) for accent.
+
+Tropical / vacation / beach:
+  #FF7F50 (coral) #FF6347 (tomato) #FFD700 (gold) #00CED1 (turquoise)
+  #FF1493 (hot pink) — saturated, contrasting, pick 4-5.
+
+Cozy / warm / fireplace / candlelit (warm white spectrum):
+  #FF6E2A #FF9329 #FFA500 #FFB347 #FFC864 #FFDC96
+  Pick 3-5. NO cool whites or saturated colors.
+
+Aurora / northern lights:
+  #00FF7F (mint green) + #00FA9A (sea green) + #00BFFF (sky blue) + #8A2BE2 (violet) + #4B0082 (indigo)
+  Long blocks (10+ each) flowing into each other.
+
+Galaxy / space / cosmic:
+  #191970 (midnight blue) + #4B0082 (indigo) + #8A2BE2 (violet) + #FF1493 (nebula pink) + #FFFFFF (stars)
+
+Lava / fire / hot:
+  #8B0000 (dark red) + #FF0000 (red) + #FF4500 (orange-red) + #FF8C00 (orange) + #FFD700 (yellow)
+  Order matters — go dark to bright for "heat rising" feel.
+
+Pastel / Easter / soft:
+  #FF6496 (pink) + #FFFF64 (yellow) + #64B4FF (blue) + #C882DC (lavender) + #98FF98 (mint)
+
+If you can't think of a palette for the vibe, pick a base hue family (warm, cool, vivid, muted) and choose 4-6 colors that vary in HUE (not just brightness). Use a color wheel mentally: complementary pair + 2 analogous = a strong 4-color set.
+
+Rules:
+- For chases (effects 2, 9, 16, 17): use 4-8 DISTINCT hues, repeated 4-10 LEDs each.
+- For shimmer/twinkle/sparkle (4, 13, 15): use 4-8 DISTINCT hues mixed without repetition.
+- For breathe/drip/heartbeat (8, 11, 14): use 3-5 DISTINCT hues that flow nicely as a fade.
+- For solid (0): one color, allLedsMode:true.
+- For fire (3): warm reds/oranges/yellows only — algorithm picks from these.
+- For rainbow (1): pattern colors are largely overridden, but include 6+ rainbow hues anyway.
+
 ═══ COLOR BLOCKS — pattern length is your friend ═══
 
 The pattern array repeats along the strip. The KEY skill is choosing how many LEDs each color holds for. Block length completely changes the look:
