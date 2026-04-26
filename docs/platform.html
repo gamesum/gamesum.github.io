@@ -2987,19 +2987,32 @@
     const price = Number(d.price) || 0;
     const isFree = d.isFree === true || price === 0;
     return {
-      id:        d.id || doc.id,
-      name:      d.name || 'Untitled Show',
-      creator:   d.creator || 'Community',
-      duration:  _secsToDuration(d.durationSecs),
-      channels:  Number(d.channelCount) || 512,
-      category:  d.category || 'other',
-      free:      isFree,
-      downloads: Number(d.downloadCount) || 0,
-      price:     isFree ? null : price,
-      gradient:  _hashGradient(d.id || doc.id),
-      glow:      'rgba(212,164,58,0.3)',
-      hasMp3:    d.hasMp3 === true,
-      _live:     true
+      id:           d.id || doc.id,
+      name:         d.name || 'Untitled Show',
+      creator:      d.creator || 'Community',
+      creatorUid:   d.creatorUid || '',
+      duration:     _secsToDuration(d.durationSecs),
+      durationSecs: Number(d.durationSecs) || 0,
+      channels:     Number(d.channelCount) || 512,
+      channelCount: Number(d.channelCount) || 0,
+      category:     d.category || 'other',
+      free:         isFree,
+      isFree:       isFree,
+      downloads:    Number(d.downloadCount) || 0,
+      downloadCount: Number(d.downloadCount) || 0,
+      price:        isFree ? null : price,
+      gradient:     _hashGradient(d.id || doc.id),
+      glow:         'rgba(212,164,58,0.3)',
+      hasMp3:       d.hasMp3 === true,
+      coverPhoto:   d.coverPhoto || (Array.isArray(d.photos) && d.photos.length ? d.photos[0] : ''),
+      photos:       Array.isArray(d.photos) ? d.photos : [],
+      props:        Array.isArray(d.props) ? d.props : [],
+      description:  d.description || '',
+      songName:     d.songName || '',
+      youtubeUrl:   d.youtubeUrl || '',
+      ratingAvg:    Number(d.ratingAvg) || 0,
+      ratingCount:  Number(d.ratingCount) || 0,
+      _live:        true
     };
   }
 
