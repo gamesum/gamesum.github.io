@@ -2640,6 +2640,15 @@
       showToast('You can only have 6 photos. Remove one first.', 'warning');
       return;
     }
+    const fbUser = firebase.auth && firebase.auth().currentUser;
+    if (!fbUser) {
+      showToast('Sign in again — your session expired.', 'warning');
+      return;
+    }
+    // Force a token refresh so the Storage SDK uses fresh creds; old tokens
+    // can cause silent permission failures on the bucket-level rule check.
+    try { await fbUser.getIdToken(true); } catch (_) {}
+
     const picked = Array.from(files || []).slice(0, remaining);
     const status = document.getElementById('editUploadPhotoStatus');
     let i = 0;
@@ -2648,15 +2657,26 @@
       status.textContent = 'Uploading ' + i + ' of ' + picked.length + '…';
       try {
         const blob = await _compressShowPhoto(file, 1200, 0.82);
-        // Use a fresh filename so we don't collide with existing photos.
-        const fname = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.jpg';
+        // Filename: ASCII-only, fresh per upload, matches the storage rule
+        // regex ^[A-Za-z0-9_-]{1,64}\.(png|jpg|jpeg|webp)$
+        const fname = 'p' + Date.now() + Math.random().toString(36).slice(2, 6) + '.jpg';
         const ref = firebase.storage().ref('sequence_photos/' + _editUploadCtx.id + '/' + fname);
-        await ref.put(blob, { contentType: 'image/jpeg' });
+        // Pass the contentType in metadata.contentType — the SDK derives it
+        // from the Blob otherwise but explicit is safer for the rule check.
+        await ref.put(blob, { contentType: 'image/jpeg', cacheControl: 'public,max-age=31536000' });
         const url = await ref.getDownloadURL();
         _editUploadCtx.photos.push(url);
       } catch (err) {
-        console.warn('Photo upload failed', err);
-        showToast('Could not upload ' + file.name, 'warning');
+        console.error('Photo upload failed', err);
+        // Surface the real error code/message so we can diagnose.
+        const code = (err && err.code) || '';
+        const msg  = (err && err.message) || 'unknown error';
+        let friendly = msg;
+        if (code === 'storage/unauthorized') friendly = 'Permission denied uploading the photo. Sign out and back in.';
+        else if (code === 'storage/canceled') friendly = 'Upload was canceled.';
+        else if (code === 'storage/quota-exceeded') friendly = 'Storage quota exceeded — contact support.';
+        else if (code === 'storage/unauthenticated') friendly = 'Your session expired. Sign in again.';
+        showToast('Photo upload failed: ' + friendly, 'error');
       }
     }
     status.textContent = '';
