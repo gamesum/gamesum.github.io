@@ -469,6 +469,18 @@
       justify-content: center;
     }
     .ag-item:first-child { aspect-ratio: 16/9; }
+    /* Real photo / video fill: cover the entire card with the asset, label
+       overlays via the bottom gradient. */
+    .ag-media {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .ag-item:hover .ag-media { transform: scale(1.02); }
+    .ag-media { transition: transform 0.4s ease; }
     .ag-placeholder {
       position: absolute;
       inset: 0;
@@ -477,11 +489,14 @@
     .ag-label {
       position: absolute;
       bottom: 0; left: 0; right: 0;
-      background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, transparent 100%);
-      padding: 20px 16px 12px;
-      font-size: 0.8rem;
-      color: var(--muted);
+      background: linear-gradient(0deg, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.45) 60%, transparent 100%);
+      padding: 28px 16px 14px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #f2f2f4;
       text-align: center;
+      letter-spacing: 0.01em;
+      pointer-events: none;
     }
 
     /* ─── FINAL CTA ──────────────────────────────────────── */
@@ -933,25 +948,27 @@
         <h2 class="section-title">Arches &amp; Props in the Wild</h2>
       </div>
       <div class="arch-gallery-grid">
+        <!-- Hero card (spans 2 cols, 16:9): autoplay muted loop video so the
+             gallery opens with motion. playsinline keeps it inline on iOS
+             instead of fullscreening. -->
         <div class="ag-item fade-in">
-          <div class="ag-placeholder"></div>
-          <div class="ag-label">Custom Color Scene, Full Arch</div>
+          <video class="ag-media" autoplay muted loop playsinline preload="metadata"
+                 poster="Resources/PXL_20260423_024510091.jpg">
+            <source src="Resources/PXL_20260423_024634099.mp4" type="video/mp4" />
+          </video>
+          <div class="ag-label">Custom Color Scene, Animated Arch Run</div>
         </div>
         <div class="ag-item fade-in fade-delay-1">
-          <div class="ag-placeholder"></div>
-          <div class="ag-label">Warm White, Front Yard Display</div>
+          <img class="ag-media" src="Resources/PXL_20260423_024510091.jpg"
+               alt="AFTERGLO arches lit at night, multi-color palette across the front yard"
+               loading="lazy" />
+          <div class="ag-label">Holiday Color Palette, Full Yard</div>
         </div>
         <div class="ag-item fade-in fade-delay-2">
-          <div class="ag-placeholder"></div>
-          <div class="ag-label">Holiday Preset, Christmas</div>
-        </div>
-        <div class="ag-item fade-in fade-delay-1">
-          <div class="ag-placeholder"></div>
-          <div class="ag-label">RGB Color Chase, Arch Detail</div>
-        </div>
-        <div class="ag-item fade-in fade-delay-2">
-          <div class="ag-placeholder"></div>
-          <div class="ag-label">Patriotic Scene, Full Setup</div>
+          <img class="ag-media" src="Resources/PXL_20260423_024821941.jpg"
+               alt="AFTERGLO arches in a row across a residential lawn"
+               loading="lazy" />
+          <div class="ag-label">Lined Arches, Front Walkway</div>
         </div>
       </div>
     </div>
