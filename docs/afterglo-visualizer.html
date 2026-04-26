@@ -383,7 +383,12 @@
     position: relative;
     display: none;
     flex-shrink: 0;
+    /* JS sets translate3d() on this for middle-mouse pan. Keep it cheap. */
+    transform: translate3d(0, 0, 0);
+    transform-origin: 0 0;
+    will-change: transform;
   }
+  .canvas-wrap.panning, .canvas-wrap.panning * { cursor: grabbing !important; user-select: none; }
 
   #baseCanvas {
     display: block;
@@ -1146,6 +1151,12 @@ function onMouseMove(e) {
 }
 
 function onMouseDown(e) {
+  // Middle mouse → start panning the house. Skip light-drag selection.
+  if (e.button === 1) {
+    e.preventDefault();
+    _startPan(e);
+    return;
+  }
   if (!img || drawingMode) return; // no dragging while placing nodes
   const pos = getPos(e);
   let best = -1, bestNi = -1, bestD = 18;
@@ -1158,10 +1169,63 @@ function onMouseDown(e) {
   if (best>=0) { dragRunIdx=best; dragNodeIdx=bestNi; isDragging=false; }
 }
 
-function onMouseUp() {
+function onMouseUp(e) {
+  if (_isPanning) { _endPan(); return; }
   dragRunIdx = null; dragNodeIdx = null;
   setTimeout(()=>{ isDragging=false; }, 30);
 }
+
+/* ─── Middle-mouse pan (matches AFTERGLO Suite) ───────────────────────── */
+let _panX = 0, _panY = 0;
+let _panStartX = 0, _panStartY = 0;
+let _panOriginPanX = 0, _panOriginPanY = 0;
+let _isPanning = false;
+
+function _applyCanvasPan() {
+  const wrap = document.getElementById('canvasWrap');
+  if (wrap) wrap.style.transform = 'translate3d(' + _panX + 'px,' + _panY + 'px,0)';
+}
+function _startPan(e) {
+  _isPanning = true;
+  _panStartX = e.clientX;
+  _panStartY = e.clientY;
+  _panOriginPanX = _panX;
+  _panOriginPanY = _panY;
+  const wrap = document.getElementById('canvasWrap');
+  if (wrap) wrap.classList.add('panning');
+  document.addEventListener('mousemove', _onPanMove);
+  // Use mouseup at the document level so releasing outside the canvas
+  // still ends the pan.
+  document.addEventListener('mouseup', _onPanEnd);
+  // Auto-release if the middle button isn't pressed anymore.
+  document.addEventListener('mouseleave', _onPanEnd);
+}
+function _onPanMove(e) {
+  if (!_isPanning) return;
+  // If the user released middle button outside our listeners, stop.
+  if ((e.buttons & 4) === 0) { _endPan(); return; }
+  _panX = _panOriginPanX + (e.clientX - _panStartX);
+  _panY = _panOriginPanY + (e.clientY - _panStartY);
+  _applyCanvasPan();
+}
+function _onPanEnd() { _endPan(); }
+function _endPan() {
+  _isPanning = false;
+  const wrap = document.getElementById('canvasWrap');
+  if (wrap) wrap.classList.remove('panning');
+  document.removeEventListener('mousemove', _onPanMove);
+  document.removeEventListener('mouseup', _onPanEnd);
+  document.removeEventListener('mouseleave', _onPanEnd);
+}
+// Suppress the OS middle-click "auto-scroll" cursor on our canvas.
+document.addEventListener('auxclick', (e) => {
+  const ic = document.getElementById('interactCanvas');
+  if (ic && ic.contains(e.target) && e.button === 1) e.preventDefault();
+});
+document.addEventListener('mousedown', (e) => {
+  const ic = document.getElementById('interactCanvas');
+  if (ic && ic.contains(e.target) && e.button === 1) e.preventDefault();
+});
 
 // ════════════════════════════════════════════════════════════
 //  RENDER
@@ -1792,10 +1856,21 @@ function submitLead(e) { e.preventDefault(); closeLeadForm(); alert("Thanks! We'
 let _gateCallback = null;
 
 function showEmailGate(callback) {
+  // Already-captured this session — skip the modal.
   if (sessionStorage.getItem('ag_ec_v2')) {
     if (callback) callback();
     return;
   }
+  // Signed-in users already gave us their email; skip the modal.
+  try {
+    const fbUser = (typeof firebase !== 'undefined' && firebase.auth) ? firebase.auth().currentUser : null;
+    const localUser = (typeof getUser === 'function') ? getUser() : null;
+    if ((fbUser && fbUser.email) || (localUser && localUser.email)) {
+      sessionStorage.setItem('ag_ec_v2', '1');
+      if (callback) callback();
+      return;
+    }
+  } catch (_) { /* fall through to gate */ }
   _gateCallback = callback || null;
   document.getElementById('gateEmailInput').value = '';
   document.getElementById('emailGateModal').style.display = 'flex';
@@ -1917,6 +1992,8 @@ init();
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
 <script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="js/avatar.js"></script>
 <script src="js/firebase-auth.js"></script>
 <script src="js/nav-account.js"></script>
 </body>

@@ -361,7 +361,13 @@
       position: sticky;
       top: var(--nav-h);
       z-index: 100;
+      transition: top 0.25s ease;
     }
+    /* When the main nav slides up out of view, the filter bar takes the
+       full top spot. JS toggles this class based on scroll direction. */
+    #filters.pinned-top { top: 0; }
+    #navbar { transition: transform 0.25s ease; will-change: transform; }
+    #navbar.hidden { transform: translateY(-100%); }
 
     .filter-bar-wrap {
       position: relative;
@@ -2263,6 +2269,49 @@
   }
 
   /* ─── FILTER TABS ────────────────────────────────────────────────── */
+  /* ─── SCROLL: swap nav for filter bar when filters reach the top ──
+     When scrolling DOWN past the filter bar's pin point, hide the main nav
+     and pin the filter bar to top:0 (it takes the nav's spot).
+     When scrolling UP by ~80px accumulated, slide the nav back over. */
+  (function setupScrollSwap() {
+    const navEl = document.getElementById('navbar');
+    const filtersEl = document.getElementById('filters');
+    if (!navEl || !filtersEl) return;
+    const navH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--nav-h'), 10) || 72;
+    const UP_THRESHOLD = 80;
+    let lastY = window.scrollY;
+    let upAccum = 0;
+    let ticking = false;
+
+    function evaluate() {
+      ticking = false;
+      const y = Math.max(0, window.scrollY);
+      const dy = y - lastY;
+      if (dy > 0)        upAccum = 0;     // scrolling down resets the up counter
+      else if (dy < 0)   upAccum += -dy;  // accumulate upward distance
+
+      // The filter bar would otherwise pin under the nav at this scroll Y.
+      const filterPinY = filtersEl.offsetTop - navH;
+      const pastSwap = y > filterPinY + 4; // small dead-zone to avoid jitter
+
+      if (pastSwap && upAccum < UP_THRESHOLD) {
+        navEl.classList.add('hidden');
+        filtersEl.classList.add('pinned-top');
+      } else {
+        navEl.classList.remove('hidden');
+        filtersEl.classList.remove('pinned-top');
+      }
+      lastY = y;
+    }
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(evaluate);
+    }, { passive: true });
+    // Run once on load to settle initial state.
+    evaluate();
+  })();
+
   document.getElementById('filterTabs').addEventListener('click', e => {
     const btn = e.target.closest('.filter-tab');
     if (!btn) return;
