@@ -2313,6 +2313,15 @@
           downloadCount: d.downloadCount || 0,
           description:   d.description || '',
           photos:        Array.isArray(d.photos) ? d.photos : [],
+          durationSecs:  d.durationSecs || 0,
+          channelCount:  d.channelCount || 0,
+          category:      d.category || '',
+          songName:      d.songName || '',
+          youtubeUrl:    d.youtubeUrl || '',
+          hasMp3:        !!d.hasMp3,
+          props:         Array.isArray(d.props) ? d.props : [],
+          creator:       d.creator || '',
+          creatorUid:    d.creatorUid || '',
           local:         false
         };
       });
@@ -2423,15 +2432,23 @@
       const openInPlace = () => {
         if (!r.id) return;
         const seq = {
-          id:           r.id,
-          name:         r.name,
-          creator:      (currentUser && currentUser.name) || 'You',
-          isFree:       !!r.isFree,
-          price:        r.price || 0,
-          downloads:    r.downloadCount || 0,
+          id:            r.id,
+          name:          r.name,
+          creator:       r.creator || (currentUser && currentUser.name) || 'You',
+          creatorUid:    r.creatorUid || '',
+          isFree:        !!r.isFree,
+          price:         r.price || 0,
+          downloads:     r.downloadCount || 0,
           downloadCount: r.downloadCount || 0,
-          description:  r.description || '',
-          photos:       r.photos || [],
+          description:   r.description || '',
+          photos:        r.photos || [],
+          durationSecs:  r.durationSecs || 0,
+          channelCount:  r.channelCount || 0,
+          category:      r.category || '',
+          songName:      r.songName || '',
+          youtubeUrl:    r.youtubeUrl || '',
+          hasMp3:        !!r.hasMp3,
+          props:         r.props || [],
         };
         if (window.AGSequenceViewer) {
           window.AGSequenceViewer.open(seq, {
