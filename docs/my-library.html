@@ -1529,6 +1529,7 @@
     <div class="lib-tab-panel" id="libPanel-uploads" role="tabpanel" aria-labelledby="libTab-uploads">
       <div class="lib-tab-sub">Shows you have submitted to the Store. Each card shows its review status.</div>
       <div class="lib-tab-actions">
+        <a href="upload.html" class="btn btn-primary" style="padding:8px 16px;font-size:0.85rem;font-weight:700;">+ Upload a Show</a>
         <a id="creatorDashLink" href="creator-dashboard.html" class="btn btn-ghost" style="display:none;padding:8px 14px;font-size:0.8rem;font-weight:600;">Payouts &amp; earnings</a>
       </div>
       <div id="uploadStatusList" class="status-list" style="margin-bottom:14px;"></div>
@@ -2414,12 +2415,14 @@
     if (!grid) return;
     const hasFirestoreUploads = !!(_uploadStatusDocs && _uploadStatusDocs.length);
     const hasLocalUploads = !!(currentUser && (currentUser.uploads || []).length);
-    grid.style.display = (hasFirestoreUploads || hasLocalUploads) ? '' : '';
-    // If Firestore has uploads, hide the empty-state card inside the grid
-    // since the status row already covers the listing.
+    // When the Firestore status list has at least one row, the grouped-grid's
+    // empty-state card is duplicate noise. Hide it. (The empty-state class is
+    // `.empty-state` — the previous selector typo'd `.empty-card`.)
     if (hasFirestoreUploads) {
-      grid.querySelectorAll('.empty-card, .lib-empty').forEach(el => { el.style.display = 'none'; });
+      grid.querySelectorAll('.empty-state').forEach(el => { el.style.display = 'none'; });
     }
+    // Always reveal the grid wrapper itself; visibility is controlled inside.
+    grid.style.display = '';
   }
 
   /* ─── UPLOAD STATUS SECTION ─────────────────────────────────────── */
@@ -2486,6 +2489,7 @@
           downloadCount: d.downloadCount || 0,
           description:   d.description || '',
           photos:        Array.isArray(d.photos) ? d.photos : [],
+          coverPhoto:    d.coverPhoto || (Array.isArray(d.photos) && d.photos[0]) || '',
           durationSecs:  d.durationSecs || 0,
           channelCount:  d.channelCount || 0,
           category:      d.category || '',
@@ -2530,7 +2534,15 @@
 
       const swatch = document.createElement('div');
       swatch.className = 'swatch';
-      swatch.style.background = _statusHashGradient(r.id);
+      // Prefer the creator's cover photo when present; fall back to the
+      // deterministic hash gradient so unfinished/empty uploads still render.
+      if (r.coverPhoto) {
+        swatch.style.backgroundImage = "url('" + r.coverPhoto.replace(/'/g, "\\'") + "')";
+        swatch.style.backgroundSize = 'cover';
+        swatch.style.backgroundPosition = 'center';
+      } else {
+        swatch.style.background = _statusHashGradient(r.id);
+      }
 
       const info = document.createElement('div');
       const title = document.createElement('div');
