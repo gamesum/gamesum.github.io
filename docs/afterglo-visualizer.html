@@ -1758,8 +1758,17 @@ function updateSettings() {
   settings.ledCount   = +document.getElementById('ledCount').value;
   document.getElementById('brightnessVal').textContent = settings.brightness+'%';
   document.getElementById('ledCountVal').textContent = settings.ledCount;
-  // Sync brightness to all runs; ledCount is now per-run, only apply to new runs default
+  // Sync brightness to every existing run.
   runs.forEach(r => { r.settings.brightness = settings.brightness; });
+  // If a run is currently selected, the global LED-count slider also writes
+  // to it. Otherwise the slider just sets the default for the next new run.
+  if (selectedRunIdx !== null && selectedRunIdx < runs.length) {
+    runs[selectedRunIdx].settings.ledCount = settings.ledCount;
+    const rlc    = document.getElementById('runLedCount');
+    const rlcVal = document.getElementById('runLedCountVal');
+    if (rlc)    rlc.value = settings.ledCount;
+    if (rlcVal) rlcVal.textContent = settings.ledCount;
+  }
   renderLights();
   updateStats();
 }
