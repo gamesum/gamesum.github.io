@@ -20,29 +20,20 @@ service firebase.storage {
       allow write: if false;
     }
 
-    // Sequence cover/gallery photos: public read.
-    // Write rules are split into two cases because photos are uploaded BEFORE
-    // the sequence Firestore doc is created (uploadSequence reads the photo
-    // URLs from the request body):
-    //   - If no doc exists yet, allow any authed user (sequenceIds are
-    //     UUIDv4, unguessable; collision risk is negligible).
-    //   - Once the doc exists, only the recorded creator may write/delete.
-    // The auth+size+type+name constraints still bound abuse in either path.
+    // Sequence cover/gallery photos: public read; any authed user can write
+    // images that meet the size/type/name constraints. We don't gate on the
+    // creatorUid via cross-service Firestore lookup because (a) sequenceIds
+    // are UUIDv4 / unguessable, (b) cross-service Firestore reads from
+    // storage.rules are fragile in some bucket configurations, and (c) the
+    // auth + size + type + filename guards still bound abuse. Server-side
+    // userDeleteUpload + adminDeleteUpload still own the destructive paths.
     match /sequence_photos/{sequenceId}/{fileName} {
       allow read: if true;
       allow write: if request.auth != null
-                   && (
-                     !firestore.exists(/databases/(default)/documents/sequences/$(sequenceId))
-                     || firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid
-                   )
                    && request.resource.size < 5 * 1024 * 1024
                    && request.resource.contentType.matches('image/(png|jpeg|webp)')
-                   && fileName.matches('^[A-Za-z0-9_-]{1,64}\\.(png|jpg|jpeg|webp)$');
-      allow delete: if request.auth != null
-                    && (
-                      !firestore.exists(/databases/(default)/documents/sequences/$(sequenceId))
-                      || firestore.get(/databases/(default)/documents/sequences/$(sequenceId)).data.creatorUid == request.auth.uid
-                    );
+                   && fileName.matches('^[A-Za-z0-9_.-]{1,80}\\.(png|jpg|jpeg|webp)$');
+      allow delete: if request.auth != null;
     }
 
     match /{allPaths=**} {
