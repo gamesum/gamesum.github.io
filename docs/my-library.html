@@ -2313,16 +2313,23 @@
       savedAll.push(it);
     }
 
+    // Authoritative upload count: prefer the live Firestore subscription
+    // (_uploadStatusDocs) over the localStorage mirror, which is wiped on
+    // sign-out and only re-populated when the user uploads a new show.
+    const uplCount = (Array.isArray(_uploadStatusDocs) && _uploadStatusDocs.length)
+      ? _uploadStatusDocs.length
+      : upl.length;
+
     document.getElementById('statDownloads').textContent = savedAll.length;
     document.getElementById('statPurchases').textContent = pur.length;
-    document.getElementById('statUploads').textContent   = upl.length;
+    document.getElementById('statUploads').textContent   = uplCount;
 
     // Compact pills inside the tab strip — number only.
     document.getElementById('countDownloads').textContent = savedAll.length;
     document.getElementById('countPurchases').textContent = pur.length;
-    document.getElementById('countUploads').textContent   = upl.length;
+    document.getElementById('countUploads').textContent   = uplCount;
     const _dashLink = document.getElementById('creatorDashLink');
-    if (_dashLink) _dashLink.style.display = upl.length > 0 ? '' : 'none';
+    if (_dashLink) _dashLink.style.display = uplCount > 0 ? '' : 'none';
 
     renderCollectionChips();
     renderGroupedSection('downloadsGrid', savedAll, 'download');
@@ -3102,6 +3109,19 @@
               _uploadStatusDocs = docs;
               renderUploadStatus();
               try { syncUploadsEmptyState(); } catch (_) {}
+              // Keep the visible Uploads count + the profile-stat in sync
+              // with the authoritative Firestore subscription. Otherwise
+              // the tab pill stays at 0 because currentUser.uploads is the
+              // localStorage mirror, which is empty after a fresh sign-in.
+              try {
+                const n = Array.isArray(docs) ? docs.length : 0;
+                const cu = document.getElementById('countUploads');
+                const su = document.getElementById('statUploads');
+                if (cu) cu.textContent = n;
+                if (su) su.textContent = n;
+                const _dl = document.getElementById('creatorDashLink');
+                if (_dl) _dl.style.display = n > 0 ? '' : 'none';
+              } catch (_) {}
             },
             function (err) {
               console.warn('[uploadStatus] Firestore query failed, falling back to localStorage.', err);
