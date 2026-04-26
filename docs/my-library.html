@@ -1521,11 +1521,18 @@
     <textarea id="editUploadDesc" maxlength="500" rows="4" style="width:100%;background:#0f0f11;border:1px solid #2A2A32;color:#e2e8f0;padding:10px 12px;border-radius:8px;font-size:0.92rem;line-height:1.55;font-family:Inter,sans-serif;resize:vertical;margin-bottom:6px;"></textarea>
     <div style="text-align:right;font-size:0.72rem;color:#6b7280;margin-bottom:18px;"><span id="editUploadDescCount">0</span> / 500</div>
 
-    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:6px;">Photos <span style="color:#6b7280;text-transform:none;font-weight:400;">(up to 6, first one is the cover)</span></label>
-    <div id="editUploadPhotosGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;"></div>
+    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:6px;">Cover photo <span style="color:#6b7280;text-transform:none;font-weight:400;">(shown as the store thumbnail)</span></label>
+    <div id="editUploadCoverWrap" style="margin-bottom:6px;"></div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:20px;">
+      <input type="file" id="editUploadCoverInput" accept="image/jpeg,image/png,image/webp" style="display:none;" />
+      <button id="editUploadAddCoverBtn" type="button" style="background:#1a1a1a;border:1px solid #2A2A32;color:#e2e8f0;padding:8px 16px;border-radius:8px;font-size:0.85rem;cursor:pointer;">Replace cover</button>
+    </div>
+
+    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:6px;">Gallery photos <span style="color:#6b7280;text-transform:none;font-weight:400;">(up to 5 more, shown on the listing page)</span></label>
+    <div id="editUploadGalleryGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;"></div>
     <div style="display:flex;gap:10px;align-items:center;margin-bottom:24px;">
-      <input type="file" id="editUploadPhotoInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none;" />
-      <button id="editUploadAddPhotosBtn" type="button" style="background:#1a1a1a;border:1px solid #2A2A32;color:#e2e8f0;padding:8px 16px;border-radius:8px;font-size:0.85rem;cursor:pointer;">Add photos</button>
+      <input type="file" id="editUploadGalleryInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none;" />
+      <button id="editUploadAddGalleryBtn" type="button" style="background:#1a1a1a;border:1px solid #2A2A32;color:#e2e8f0;padding:8px 16px;border-radius:8px;font-size:0.85rem;cursor:pointer;">Add gallery photos</button>
       <span id="editUploadPhotoStatus" style="font-size:0.78rem;color:#94a3b8;"></span>
     </div>
 
@@ -2509,56 +2516,91 @@
     });
   }
 
+  function _makePhotoTile(url, opts) {
+    opts = opts || {};
+    const tile = document.createElement('div');
+    tile.style.cssText = 'position:relative;aspect-ratio:1/1;background:#0f0f11;border:1px solid #2A2A32;border-radius:8px;overflow:hidden;';
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+    tile.appendChild(img);
+    if (opts.coverBadge) {
+      const cover = document.createElement('span');
+      cover.textContent = 'Cover';
+      cover.style.cssText = 'position:absolute;top:6px;left:6px;background:rgba(212,164,58,0.95);color:#000;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em;';
+      tile.appendChild(cover);
+    }
+    const del = document.createElement('button');
+    del.type = 'button';
+    del.textContent = '×';
+    del.title = 'Remove';
+    del.style.cssText = 'position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.7);border:1px solid #4a2222;color:#f87171;font-size:1rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+    del.onclick = opts.onDelete;
+    tile.appendChild(del);
+    if (opts.onMakeCover) {
+      const promote = document.createElement('button');
+      promote.type = 'button';
+      promote.textContent = 'Make cover';
+      promote.style.cssText = 'position:absolute;bottom:6px;left:6px;right:6px;background:rgba(0,0,0,0.7);border:1px solid #2A2A32;color:#e2e8f0;font-size:0.7rem;padding:4px 6px;border-radius:4px;cursor:pointer;';
+      promote.onclick = opts.onMakeCover;
+      tile.appendChild(promote);
+    }
+    return tile;
+  }
+
   function _renderEditPhotos() {
-    const grid = document.getElementById('editUploadPhotosGrid');
-    if (!grid || !_editUploadCtx) return;
+    const coverWrap = document.getElementById('editUploadCoverWrap');
+    const grid = document.getElementById('editUploadGalleryGrid');
+    if (!coverWrap || !grid || !_editUploadCtx) return;
+    coverWrap.innerHTML = '';
     grid.innerHTML = '';
     const photos = _editUploadCtx.photos;
-    if (!photos.length) {
+
+    // Cover tile (or empty placeholder)
+    if (photos.length) {
+      const url = photos[0];
+      const tile = _makePhotoTile(url, {
+        coverBadge: true,
+        onDelete: () => {
+          const removed = _editUploadCtx.photos.shift();
+          if (removed) _editUploadCtx.removedPhotoUrls.push(removed);
+          _renderEditPhotos();
+        },
+      });
+      tile.style.maxWidth = '220px';
+      coverWrap.appendChild(tile);
+    } else {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'aspect-ratio:1/1;max-width:220px;display:flex;align-items:center;justify-content:center;text-align:center;color:#6b7280;font-size:0.8rem;padding:18px;border:1px dashed #2A2A32;border-radius:8px;background:#0f0f11;';
+      empty.innerHTML = 'No cover yet.<br>Click "Replace cover" to add one.';
+      coverWrap.appendChild(empty);
+    }
+
+    // Gallery tiles (photos[1..])
+    const galleryPhotos = photos.slice(1);
+    if (!galleryPhotos.length) {
       const empty = document.createElement('div');
       empty.style.cssText = 'grid-column:1/-1;text-align:center;color:#6b7280;font-size:0.8rem;padding:18px;border:1px dashed #2A2A32;border-radius:8px;';
-      empty.textContent = 'No photos yet. Add at least one cover.';
+      empty.textContent = 'No gallery photos yet. Add up to 5 to show off props, the install, or a wide shot.';
       grid.appendChild(empty);
-      return;
+    } else {
+      galleryPhotos.forEach((url, gIdx) => {
+        const realIdx = gIdx + 1; // index into _editUploadCtx.photos
+        const tile = _makePhotoTile(url, {
+          onDelete: () => {
+            const removed = _editUploadCtx.photos.splice(realIdx, 1)[0];
+            if (removed) _editUploadCtx.removedPhotoUrls.push(removed);
+            _renderEditPhotos();
+          },
+          onMakeCover: () => {
+            const moved = _editUploadCtx.photos.splice(realIdx, 1)[0];
+            _editUploadCtx.photos.unshift(moved);
+            _renderEditPhotos();
+          },
+        });
+        grid.appendChild(tile);
+      });
     }
-    photos.forEach((url, idx) => {
-      const tile = document.createElement('div');
-      tile.style.cssText = 'position:relative;aspect-ratio:1/1;background:#0f0f11;border:1px solid #2A2A32;border-radius:8px;overflow:hidden;';
-      const img = document.createElement('img');
-      img.src = url;
-      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
-      tile.appendChild(img);
-      if (idx === 0) {
-        const cover = document.createElement('span');
-        cover.textContent = 'Cover';
-        cover.style.cssText = 'position:absolute;top:6px;left:6px;background:rgba(212,164,58,0.95);color:#000;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em;';
-        tile.appendChild(cover);
-      }
-      const del = document.createElement('button');
-      del.type = 'button';
-      del.textContent = '×';
-      del.title = 'Remove';
-      del.style.cssText = 'position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.7);border:1px solid #4a2222;color:#f87171;font-size:1rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;';
-      del.onclick = () => {
-        _editUploadCtx.photos.splice(idx, 1);
-        _editUploadCtx.removedPhotoUrls.push(url);
-        _renderEditPhotos();
-      };
-      tile.appendChild(del);
-      if (idx > 0) {
-        const promote = document.createElement('button');
-        promote.type = 'button';
-        promote.textContent = 'Make cover';
-        promote.style.cssText = 'position:absolute;bottom:6px;left:6px;right:6px;background:rgba(0,0,0,0.7);border:1px solid #2A2A32;color:#e2e8f0;font-size:0.7rem;padding:4px 6px;border-radius:4px;cursor:pointer;';
-        promote.onclick = () => {
-          const moved = _editUploadCtx.photos.splice(idx, 1)[0];
-          _editUploadCtx.photos.unshift(moved);
-          _renderEditPhotos();
-        };
-        tile.appendChild(promote);
-      }
-      grid.appendChild(tile);
-    });
   }
 
   function openEditUploadModal(row) {
@@ -2633,22 +2675,63 @@
     }
   }
 
-  async function _addPhotosFromInput(files) {
+  // Compress + upload a single image File. Returns the public download URL.
+  async function _uploadOnePhoto(file) {
+    const blob = await _compressShowPhoto(file, 1200, 0.82);
+    const fname = 'p' + Date.now() + Math.random().toString(36).slice(2, 6) + '.jpg';
+    const ref = firebase.storage().ref('sequence_photos/' + _editUploadCtx.id + '/' + fname);
+    await ref.put(blob, { contentType: 'image/jpeg', cacheControl: 'public,max-age=31536000' });
+    return await ref.getDownloadURL();
+  }
+
+  function _photoErrorMessage(err) {
+    const code = (err && err.code) || '';
+    const msg  = (err && err.message) || 'unknown error';
+    if (code === 'storage/unauthorized')     return 'Permission denied. Sign out and back in.';
+    if (code === 'storage/canceled')         return 'Upload was canceled.';
+    if (code === 'storage/quota-exceeded')   return 'Storage quota exceeded — contact support.';
+    if (code === 'storage/unauthenticated')  return 'Your session expired. Sign in again.';
+    return msg;
+  }
+
+  async function _ensureFreshAuth() {
+    const fbUser = firebase.auth && firebase.auth().currentUser;
+    if (!fbUser) { showToast('Sign in again — your session expired.', 'warning'); return null; }
+    try { await fbUser.getIdToken(true); } catch (_) {}
+    return fbUser;
+  }
+
+  // Replace the cover photo (photos[0]). Old cover gets queued for deletion.
+  async function _replaceCoverFromInput(files) {
+    if (!_editUploadCtx) return;
+    const file = (files || [])[0];
+    if (!file) return;
+    if (!(await _ensureFreshAuth())) return;
+    const status = document.getElementById('editUploadPhotoStatus');
+    status.textContent = 'Uploading cover…';
+    try {
+      const url = await _uploadOnePhoto(file);
+      const oldCover = _editUploadCtx.photos[0];
+      if (oldCover) _editUploadCtx.removedPhotoUrls.push(oldCover);
+      _editUploadCtx.photos[0] = url;
+    } catch (err) {
+      console.error('Cover upload failed', err);
+      showToast('Cover upload failed: ' + _photoErrorMessage(err), 'error');
+    } finally {
+      status.textContent = '';
+      _renderEditPhotos();
+    }
+  }
+
+  // Append gallery photos (photos[1..5]). Caps at 6 total.
+  async function _addGalleryFromInput(files) {
     if (!_editUploadCtx) return;
     const remaining = 6 - _editUploadCtx.photos.length;
     if (remaining <= 0) {
-      showToast('You can only have 6 photos. Remove one first.', 'warning');
+      showToast('You already have 6 photos. Remove one first.', 'warning');
       return;
     }
-    const fbUser = firebase.auth && firebase.auth().currentUser;
-    if (!fbUser) {
-      showToast('Sign in again — your session expired.', 'warning');
-      return;
-    }
-    // Force a token refresh so the Storage SDK uses fresh creds; old tokens
-    // can cause silent permission failures on the bucket-level rule check.
-    try { await fbUser.getIdToken(true); } catch (_) {}
-
+    if (!(await _ensureFreshAuth())) return;
     const picked = Array.from(files || []).slice(0, remaining);
     const status = document.getElementById('editUploadPhotoStatus');
     let i = 0;
@@ -2656,27 +2739,13 @@
       i++;
       status.textContent = 'Uploading ' + i + ' of ' + picked.length + '…';
       try {
-        const blob = await _compressShowPhoto(file, 1200, 0.82);
-        // Filename: ASCII-only, fresh per upload, matches the storage rule
-        // regex ^[A-Za-z0-9_-]{1,64}\.(png|jpg|jpeg|webp)$
-        const fname = 'p' + Date.now() + Math.random().toString(36).slice(2, 6) + '.jpg';
-        const ref = firebase.storage().ref('sequence_photos/' + _editUploadCtx.id + '/' + fname);
-        // Pass the contentType in metadata.contentType — the SDK derives it
-        // from the Blob otherwise but explicit is safer for the rule check.
-        await ref.put(blob, { contentType: 'image/jpeg', cacheControl: 'public,max-age=31536000' });
-        const url = await ref.getDownloadURL();
+        const url = await _uploadOnePhoto(file);
+        // If there's no cover yet, the first uploaded gallery photo becomes
+        // the cover so the listing has something to display.
         _editUploadCtx.photos.push(url);
       } catch (err) {
-        console.error('Photo upload failed', err);
-        // Surface the real error code/message so we can diagnose.
-        const code = (err && err.code) || '';
-        const msg  = (err && err.message) || 'unknown error';
-        let friendly = msg;
-        if (code === 'storage/unauthorized') friendly = 'Permission denied uploading the photo. Sign out and back in.';
-        else if (code === 'storage/canceled') friendly = 'Upload was canceled.';
-        else if (code === 'storage/quota-exceeded') friendly = 'Storage quota exceeded — contact support.';
-        else if (code === 'storage/unauthenticated') friendly = 'Your session expired. Sign in again.';
-        showToast('Photo upload failed: ' + friendly, 'error');
+        console.error('Gallery photo upload failed', err);
+        showToast('Photo upload failed: ' + _photoErrorMessage(err), 'error');
       }
     }
     status.textContent = '';
@@ -2690,20 +2759,23 @@
     const save = document.getElementById('editUploadSave');
     const desc = document.getElementById('editUploadDesc');
     const descCount = document.getElementById('editUploadDescCount');
-    const addBtn = document.getElementById('editUploadAddPhotosBtn');
-    const fileInput = document.getElementById('editUploadPhotoInput');
+    const coverBtn = document.getElementById('editUploadAddCoverBtn');
+    const coverInput = document.getElementById('editUploadCoverInput');
+    const galleryBtn = document.getElementById('editUploadAddGalleryBtn');
+    const galleryInput = document.getElementById('editUploadGalleryInput');
     if (close)  close.onclick  = _closeEditUploadModal;
     if (cancel) cancel.onclick = _closeEditUploadModal;
     if (save)   save.onclick   = _saveEditUploadModal;
     if (desc && descCount) {
       desc.addEventListener('input', () => { descCount.textContent = (desc.value || '').length; });
     }
-    if (addBtn && fileInput) {
-      addBtn.onclick = () => fileInput.click();
-      fileInput.onchange = (e) => {
-        _addPhotosFromInput(e.target.files);
-        e.target.value = '';
-      };
+    if (coverBtn && coverInput) {
+      coverBtn.onclick = () => coverInput.click();
+      coverInput.onchange = (e) => { _replaceCoverFromInput(e.target.files); e.target.value = ''; };
+    }
+    if (galleryBtn && galleryInput) {
+      galleryBtn.onclick = () => galleryInput.click();
+      galleryInput.onchange = (e) => { _addGalleryFromInput(e.target.files); e.target.value = ''; };
     }
     // Click outside to close.
     const overlay = document.getElementById('editUploadModal');
