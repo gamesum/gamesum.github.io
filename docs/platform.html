@@ -2085,10 +2085,19 @@
       ? `<div class="card-props">${seq.props.map(p => `<span class="card-prop" title="${p}">${PROP_ICONS[p] || '💡'}</span>`).join('')}</div>`
       : '';
 
+    // Use the creator-uploaded cover photo when one exists; otherwise fall
+    // back to the gradient swatch.
+    const coverUrl = (seq.coverPhoto && typeof seq.coverPhoto === 'string' && seq.coverPhoto.length)
+      ? seq.coverPhoto
+      : (Array.isArray(seq.photos) && seq.photos.length ? seq.photos[0] : '');
+    const thumbStyle = coverUrl
+      ? `background-image:url('${esc(coverUrl).replace(/'/g, "\\'")}');background-size:cover;background-position:center;`
+      : `background:${seq.gradient || seq.thumbnailGradient || 'linear-gradient(135deg,#1a1a1a,#333)'};`;
+
     // Set data-name after innerHTML to avoid apostrophe breaking onclick string
     card.innerHTML = `
-      <div class="card-thumb" style="background:${seq.gradient || seq.thumbnailGradient || 'linear-gradient(135deg,#1a1a1a,#333)'};">
-        <div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow || 'rgba(212,164,58,0.2)'} 0%,transparent 70%);"></div>
+      <div class="card-thumb" style="${thumbStyle}">
+        ${coverUrl ? '' : `<div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow || 'rgba(212,164,58,0.2)'} 0%,transparent 70%);"></div>`}
         <span class="card-badge ${seq.free || seq.isFree ? 'badge-free' : 'badge-paid'}">${seq.free || seq.isFree ? 'Free' : 'Premium'}</span>
         ${hotBadge}
         ${mp3Badge}
