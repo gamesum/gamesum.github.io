@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.apiMe = exports.mintAppToken = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.apiMe = exports.mintAppToken = exports.deleteOwnReview = exports.submitReview = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -998,6 +998,152 @@ exports.getDownloadUrl = functions.https.onRequest(async (req, res) => {
         functions.logger.error("getDownloadUrl error", err);
         res.status(500).json({ error: "Internal server error" });
     }
+});
+// ─── Profanity filter for reviews/comments ───────────────────────────────────
+// Curated list of the most vulgar words (slurs + extreme profanity). Tame
+// stuff like "damn" / "hell" passes through; the goal is to catch what a
+// store reviewer would unambiguously call hate speech or pornographic.
+// All comparisons happen on a normalized form (lowercase, leet→letters,
+// non-letters stripped) so "f.u.c.k", "fuk", "f@gg0t" all match.
+const VULGAR_PATTERNS = [
+    // Hard slurs (variants and common misspellings)
+    /\b(?:n+i+g+(?:g+e+r|a+))\b/i,
+    /\b(?:f+a+g+(?:g+o+t|s)?)\b/i,
+    /\b(?:k+i+k+e+|c+h+i+n+k+|s+p+i+c+|w+e+t+b+a+c+k+|t+r+a+n+n+y+)\b/i,
+    /\b(?:r+e+t+a+r+d+(?:e+d)?)\b/i,
+    // Sexual / extreme profanity at a high bar
+    /\b(?:c+u+n+t+|c+o+c+k+s+u+c+k+e+r+|m+o+t+h+e+r+f+u+c+k+e+r+)\b/i,
+    /\b(?:f+u+c+k+(?:i+n+g+|e+r+|e+d+|s)?)\b/i,
+    /\b(?:s+h+i+t+(?:t+y+|h+e+a+d+|t+e+r+)?)\b/i,
+    /\b(?:p+u+s+s+y+|d+i+c+k+h+e+a+d+|w+h+o+r+e+|s+l+u+t+)\b/i,
+    /\b(?:b+i+t+c+h+(?:e+s|y+)?)\b/i,
+    /\b(?:a+s+s+h+o+l+e+|b+a+s+t+a+r+d+)\b/i,
+];
+function normalizeForProfanityCheck(s) {
+    // leetspeak → letters, then lowercase, then collapse repeats so "ffuuuck"→"fuck"
+    return s
+        .toLowerCase()
+        .replace(/[@4]/g, "a").replace(/[3]/g, "e").replace(/[1!|]/g, "i")
+        .replace(/[0]/g, "o").replace(/[5$]/g, "s").replace(/[7]/g, "t")
+        .replace(/[\s\-_.,*~`'"+()\[\]{}]/g, "");
+}
+function containsVulgarLanguage(text) {
+    if (!text)
+        return false;
+    const normalized = normalizeForProfanityCheck(text);
+    // Test against original (catches word-boundary matches) and against
+    // normalized (catches obfuscation). Either matching = block.
+    for (const p of VULGAR_PATTERNS) {
+        if (p.test(text))
+            return true;
+        if (p.test(normalized))
+            return true;
+    }
+    return false;
+}
+// ─── submitReview (callable) ──────────────────────────────────────────────────
+// Creator listings get one review per buyer-or-public-user. Writes to
+// /sequences/{seqId}/reviews/{uid}. Re-submitting overwrites (acts as edit).
+exports.submitReview = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign in to leave a review.");
+    }
+    const uid = context.auth.uid;
+    const sequenceId = typeof data?.sequenceId === "string" ? data.sequenceId : "";
+    const ratingRaw = typeof data?.rating === "number" ? data.rating : Number(data?.rating);
+    const commentRaw = typeof data?.comment === "string" ? data.comment : "";
+    if (!isValidId(sequenceId)) {
+        throw new functions.https.HttpsError("invalid-argument", "Invalid sequenceId.");
+    }
+    const rating = Math.round(ratingRaw);
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+        throw new functions.https.HttpsError("invalid-argument", "Rating must be 1–5.");
+    }
+    const comment = commentRaw.trim().slice(0, 1000);
+    if (containsVulgarLanguage(comment)) {
+        throw new functions.https.HttpsError("invalid-argument", "Please keep your review clean — that comment was blocked by our content filter.");
+    }
+    const seqRef = db.collection("sequences").doc(sequenceId);
+    const seqSnap = await seqRef.get();
+    if (!seqSnap.exists) {
+        throw new functions.https.HttpsError("not-found", "Sequence not found.");
+    }
+    const seqData = seqSnap.data();
+    // A creator can't review their own sequence.
+    if (seqData.creatorUid === uid) {
+        throw new functions.https.HttpsError("permission-denied", "You can't review your own show.");
+    }
+    // Resolve author display info from the user record.
+    let authorName = context.auth.token.name || context.auth.token.email || "User";
+    let authorPhotoURL = context.auth.token.picture || "";
+    try {
+        const userDoc = await db.collection("users").doc(uid).get();
+        if (userDoc.exists) {
+            const u = userDoc.data() || {};
+            authorName = u.displayName || u.name || authorName;
+            authorPhotoURL = u.photoURL || authorPhotoURL;
+        }
+    }
+    catch { /* non-fatal */ }
+    const reviewRef = seqRef.collection("reviews").doc(uid);
+    const existing = await reviewRef.get();
+    const isNew = !existing.exists;
+    await reviewRef.set({
+        uid,
+        sequenceId,
+        rating,
+        comment,
+        authorName: String(authorName).slice(0, 80),
+        authorPhotoURL: String(authorPhotoURL).slice(0, 2048),
+        createdAt: existing.exists ? (existing.data()?.createdAt ?? admin.firestore.Timestamp.now()) : admin.firestore.Timestamp.now(),
+        updatedAt: admin.firestore.Timestamp.now(),
+    });
+    // Recompute aggregate ratingAvg + ratingCount on the parent sequence doc
+    // so the store can show stars without scanning the subcollection.
+    try {
+        const allReviews = await seqRef.collection("reviews").get();
+        let total = 0;
+        allReviews.forEach((d) => { total += Number(d.data()?.rating || 0); });
+        const count = allReviews.size;
+        const avg = count > 0 ? total / count : 0;
+        await seqRef.update({
+            ratingAvg: Math.round(avg * 100) / 100,
+            ratingCount: count,
+        });
+    }
+    catch (err) {
+        functions.logger.warn("rating aggregate update failed", err);
+    }
+    return { ok: true, isNew };
+});
+// ─── deleteOwnReview (callable) ──────────────────────────────────────────────
+exports.deleteOwnReview = functions.https.onCall(async (data, context) => {
+    if (!context.auth) {
+        throw new functions.https.HttpsError("unauthenticated", "Sign in required.");
+    }
+    const uid = context.auth.uid;
+    const sequenceId = typeof data?.sequenceId === "string" ? data.sequenceId : "";
+    if (!isValidId(sequenceId)) {
+        throw new functions.https.HttpsError("invalid-argument", "Invalid sequenceId.");
+    }
+    const seqRef = db.collection("sequences").doc(sequenceId);
+    await seqRef.collection("reviews").doc(uid).delete();
+    // Refresh aggregates.
+    try {
+        const allReviews = await seqRef.collection("reviews").get();
+        let total = 0;
+        allReviews.forEach((d) => { total += Number(d.data()?.rating || 0); });
+        const count = allReviews.size;
+        const avg = count > 0 ? total / count : 0;
+        await seqRef.update({
+            ratingAvg: Math.round(avg * 100) / 100,
+            ratingCount: count,
+        });
+    }
+    catch (err) {
+        functions.logger.warn("rating aggregate update failed", err);
+    }
+    return { ok: true };
 });
 // ─── mintAppToken (callable) ──────────────────────────────────────────────────
 // Returns a Firebase custom token for the calling user, scoped to the desktop

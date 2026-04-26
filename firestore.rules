@@ -39,6 +39,14 @@ service cloud.firestore {
                         && request.resource.data.creatorUid == resource.data.creatorUid
                         && request.resource.data.diff(resource.data).affectedKeys()
                              .hasOnly(['name','title','description','tags','coverPhotoIndex','photos','coverPhoto','updatedAt']));
+
+      // Reviews + ratings: public read so the store can show stars and
+      // comments. All writes go through submitReview / deleteOwnReview
+      // Cloud Functions which enforce profanity filter and ownership.
+      match /reviews/{reviewerUid} {
+        allow read:  if true;
+        allow write: if false;
+      }
     }
 
     // Purchases: buyer reads own, admin reads all. Cloud Functions write only.

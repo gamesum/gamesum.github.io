@@ -147,6 +147,45 @@
       }
       .agv-cta.buy { background:#D4A43A; color:#000; }
       .agv-cta.free { background:#4ade80; color:#000; }
+      /* Reviews + ratings */
+      .agv-reviews { margin-top:28px; padding-top:24px; border-top:1px solid #1f1f24; }
+      .agv-reviews-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; flex-wrap:wrap; }
+      .agv-reviews-title { font-family:'Outfit',sans-serif; font-size:1.05rem; font-weight:800; color:#fff; }
+      .agv-reviews-summary { font-size:0.9rem; color:#cbd5e1; display:flex; align-items:center; gap:8px; }
+      .agv-rate-empty { color:#6b7280; font-size:0.85rem; }
+      .agv-rate-num { font-weight:700; color:#fff; }
+      .agv-rate-count { color:#94a3b8; font-size:0.82rem; }
+      .agv-stars { color:#D4A43A; letter-spacing:1px; font-size:0.95rem; }
+
+      .agv-review-form { background:#0f0f11; border:1px solid #2a2a2a; border-radius:10px; padding:14px; margin-bottom:18px; }
+      .agv-rate-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+      .agv-rate-label { font-size:0.82rem; color:#94a3b8; }
+      .agv-rate-stars { display:flex; gap:4px; }
+      .agv-rate-star { background:transparent; border:none; color:#4b5563; font-size:1.4rem; line-height:1; cursor:pointer; padding:2px 4px; transition:color 0.15s, transform 0.15s; }
+      .agv-rate-star:hover { color:#D4A43A; transform:scale(1.1); }
+      .agv-rate-star.on { color:#D4A43A; }
+      .agv-review-form textarea { width:100%; background:#080808; border:1px solid #2a2a2a; color:#e2e8f0; padding:10px 12px; border-radius:8px; font-family:Inter,sans-serif; font-size:0.88rem; line-height:1.5; resize:vertical; }
+      .agv-review-form-row { display:flex; justify-content:space-between; align-items:center; margin-top:10px; gap:10px; flex-wrap:wrap; }
+      .agv-review-count { font-size:0.72rem; color:#6b7280; }
+      .agv-review-form-actions { display:flex; gap:8px; align-items:center; }
+      .agv-review-cancel { background:transparent; border:1px solid #4a2222; color:#f87171; padding:6px 12px; border-radius:6px; font-size:0.78rem; cursor:pointer; }
+      .agv-review-submit { background:#D4A43A; color:#000; border:none; padding:7px 16px; border-radius:6px; font-size:0.85rem; font-weight:700; cursor:pointer; }
+      .agv-review-submit:disabled { opacity:0.6; cursor:not-allowed; }
+      .agv-review-error { color:#f87171; font-size:0.82rem; margin-top:8px; }
+      .agv-review-signin { background:#0f0f11; border:1px solid #2a2a2a; border-radius:10px; padding:12px 14px; margin-bottom:18px; font-size:0.85rem; color:#94a3b8; text-align:center; }
+      .agv-review-signin a { color:#D4A43A; font-weight:600; }
+
+      .agv-review-list { display:flex; flex-direction:column; gap:14px; }
+      .agv-review { background:#0f0f11; border:1px solid #1f1f24; border-radius:10px; padding:14px; }
+      .agv-review-head { display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+      .agv-review-av { flex:0 0 auto; }
+      .agv-review-meta { display:flex; flex-direction:column; }
+      .agv-review-author { font-weight:600; font-size:0.88rem; color:#e2e8f0; }
+      .agv-review-sub { display:flex; gap:8px; align-items:center; font-size:0.78rem; color:#94a3b8; }
+      .agv-review-date { color:#6b7280; }
+      .agv-review-text { font-size:0.88rem; color:#cbd5e1; line-height:1.55; white-space:pre-wrap; word-break:break-word; }
+      .agv-review-empty { color:#6b7280; font-size:0.85rem; text-align:center; padding:18px; }
+
       @media(max-width:600px){
         .agv-panel { width:100vw; height:100dvh; border-radius:0; border:none; }
         .agv-stats { grid-template-columns:repeat(3,1fr); gap:8px; }
@@ -273,6 +312,35 @@
         ${propsHtml}
         ${ytEmbed ? '<div class="agv-yt-wrap"><iframe src="' + esc(ytEmbed) + '" allowfullscreen loading="lazy"></iframe></div>' : ''}
         ${actionsHtml}
+
+        <!-- Reviews + Ratings -->
+        <div class="agv-reviews" id="agvReviews" data-seq-id="${esc(String(seq.id || ''))}">
+          <div class="agv-reviews-head">
+            <div class="agv-reviews-title">Ratings &amp; Reviews</div>
+            <div class="agv-reviews-summary" id="agvReviewsSummary">Loading…</div>
+          </div>
+          <div class="agv-review-form" id="agvReviewForm" style="display:none;">
+            <div class="agv-rate-row">
+              <span class="agv-rate-label">Your rating:</span>
+              <div class="agv-rate-stars" id="agvRateStars" role="radiogroup" aria-label="Rating">
+                ${[1,2,3,4,5].map(i => '<button type="button" class="agv-rate-star" data-val="' + i + '" aria-label="' + i + ' star' + (i===1?'':'s') + '">☆</button>').join('')}
+              </div>
+            </div>
+            <textarea id="agvReviewText" maxlength="1000" rows="3" placeholder="Tell others what you thought about this show…"></textarea>
+            <div class="agv-review-form-row">
+              <span class="agv-review-count"><span id="agvReviewCharCount">0</span> / 1000</span>
+              <span class="agv-review-form-actions">
+                <button type="button" class="agv-review-cancel" id="agvReviewDelete" style="display:none;">Delete my review</button>
+                <button type="button" class="agv-review-submit" id="agvReviewSubmit">Post review</button>
+              </span>
+            </div>
+            <div class="agv-review-error" id="agvReviewError" style="display:none;"></div>
+          </div>
+          <div class="agv-review-signin" id="agvReviewSignin" style="display:none;">
+            <a href="signin.html?redirect=platform.html">Sign in</a> to leave a review.
+          </div>
+          <div class="agv-review-list" id="agvReviewList"></div>
+        </div>
       </div>
     `;
 
@@ -310,9 +378,210 @@
       }
     });
 
+    // Wire reviews UI (async — populates after fetch completes)
+    _wireReviews(seq);
+
     const root = document.getElementById('agvRoot');
     root.classList.add('open');
     document.body.style.overflow = 'hidden';
+  }
+
+  /* ─── Reviews + Ratings ──────────────────────────────────────── */
+  function _renderStars(n) {
+    const full = Math.max(0, Math.min(5, Math.round(Number(n) || 0)));
+    return '<span class="agv-stars">'
+      + '★'.repeat(full) + '☆'.repeat(5 - full)
+      + '</span>';
+  }
+  function _fmtReviewDate(ts) {
+    try {
+      const d = ts && ts.toDate ? ts.toDate() : (ts && ts.seconds ? new Date(ts.seconds * 1000) : null);
+      if (!d) return '';
+      return d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+    } catch (_) { return ''; }
+  }
+
+  async function _wireReviews(seq) {
+    if (!seq || !seq.id) return;
+    if (!global.firebase || !global.firebase.firestore) return;
+    const fs = global.firebase.firestore();
+    const auth = global.firebase.auth ? global.firebase.auth() : null;
+    let me = auth ? auth.currentUser : null;
+    // If auth hasn't resolved yet (cached session restoring), wait one tick.
+    if (!me && auth) {
+      me = await new Promise((resolve) => {
+        let resolved = false;
+        const off = auth.onAuthStateChanged((u) => {
+          if (resolved) return;
+          resolved = true;
+          off();
+          resolve(u || null);
+        });
+        // Bail after 1.5s so we don't block the viewer forever.
+        setTimeout(() => { if (!resolved) { resolved = true; resolve(null); } }, 1500);
+      });
+    }
+    const isCreator = me && (seq.creatorUid === me.uid);
+
+    const summaryEl = document.getElementById('agvReviewsSummary');
+    const formEl    = document.getElementById('agvReviewForm');
+    const signinEl  = document.getElementById('agvReviewSignin');
+    const listEl    = document.getElementById('agvReviewList');
+    const errorEl   = document.getElementById('agvReviewError');
+    if (!summaryEl || !listEl) return;
+
+    // Show form / sign-in prompt depending on auth + creator state.
+    if (me && !isCreator) {
+      formEl.style.display = '';
+    } else if (!me) {
+      signinEl.style.display = '';
+    } else {
+      // Creator — hide form, no review allowed.
+      summaryEl.parentElement.querySelector('.agv-reviews-title').textContent = 'Ratings & Reviews';
+    }
+
+    // Load reviews.
+    let reviews = [];
+    try {
+      const snap = await fs.collection('sequences').doc(seq.id).collection('reviews').get();
+      snap.forEach(d => reviews.push(Object.assign({ _id: d.id }, d.data())));
+    } catch (err) {
+      console.warn('reviews fetch failed', err);
+    }
+    reviews.sort((a, b) => {
+      const at = (a.updatedAt && a.updatedAt.seconds) || 0;
+      const bt = (b.updatedAt && b.updatedAt.seconds) || 0;
+      return bt - at;
+    });
+
+    // Aggregate display.
+    if (!reviews.length) {
+      summaryEl.innerHTML = '<span class="agv-rate-empty">No reviews yet.</span>';
+    } else {
+      const total = reviews.reduce((s, r) => s + Number(r.rating || 0), 0);
+      const avg = total / reviews.length;
+      summaryEl.innerHTML = _renderStars(avg)
+        + ' <span class="agv-rate-num">' + avg.toFixed(1) + '</span>'
+        + ' <span class="agv-rate-count">(' + reviews.length + ' review' + (reviews.length === 1 ? '' : 's') + ')</span>';
+    }
+
+    // Pre-populate the form if user already has a review.
+    let myReview = null;
+    if (me) {
+      myReview = reviews.find(r => r.uid === me.uid) || null;
+      if (myReview) {
+        const ta = document.getElementById('agvReviewText');
+        const cc = document.getElementById('agvReviewCharCount');
+        const submitBtn = document.getElementById('agvReviewSubmit');
+        const deleteBtn = document.getElementById('agvReviewDelete');
+        if (ta) { ta.value = myReview.comment || ''; if (cc) cc.textContent = ta.value.length; }
+        _setSelectedRating(Number(myReview.rating || 0));
+        if (submitBtn) submitBtn.textContent = 'Update review';
+        if (deleteBtn) deleteBtn.style.display = '';
+      }
+    }
+
+    // Render review list (hide own review if it's already shown in the form? Show all.)
+    listEl.innerHTML = reviews.length === 0
+      ? '<div class="agv-review-empty">Be the first to review this show.</div>'
+      : reviews.map(r => {
+          const photo = r.authorPhotoURL ? esc(r.authorPhotoURL) : '';
+          const av = photo
+            ? '<img class="avatar agv-review-av" src="' + photo + '" width="32" height="32" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'avatar avatar-initials agv-review-av\',textContent:\'' + esc((r.authorName || 'U').charAt(0).toUpperCase()) + '\',style:\'width:32px;height:32px;font-size:14px;\'}));" />'
+            : '<span class="avatar avatar-initials agv-review-av" style="width:32px;height:32px;font-size:14px;">' + esc((r.authorName || 'U').charAt(0).toUpperCase()) + '</span>';
+          return ''
+            + '<div class="agv-review">'
+            +   '<div class="agv-review-head">'
+            +     av
+            +     '<div class="agv-review-meta">'
+            +       '<div class="agv-review-author">' + esc(r.authorName || 'User') + '</div>'
+            +       '<div class="agv-review-sub">' + _renderStars(r.rating) + ' <span class="agv-review-date">' + _fmtReviewDate(r.updatedAt || r.createdAt) + '</span></div>'
+            +     '</div>'
+            +   '</div>'
+            +   (r.comment ? '<div class="agv-review-text">' + esc(r.comment) + '</div>' : '')
+            + '</div>';
+        }).join('');
+
+    // Wire the star picker.
+    const starBtns = document.querySelectorAll('.agv-rate-star');
+    starBtns.forEach(btn => btn.addEventListener('click', () => {
+      const v = parseInt(btn.getAttribute('data-val'), 10);
+      _setSelectedRating(v);
+    }));
+
+    // Wire the textarea char counter.
+    const textEl = document.getElementById('agvReviewText');
+    const ccEl   = document.getElementById('agvReviewCharCount');
+    if (textEl && ccEl) {
+      textEl.addEventListener('input', () => { ccEl.textContent = textEl.value.length; });
+    }
+
+    // Wire submit.
+    const submitBtn = document.getElementById('agvReviewSubmit');
+    if (submitBtn) submitBtn.addEventListener('click', async () => {
+      const rating = _getSelectedRating();
+      const comment = (textEl && textEl.value || '').trim();
+      if (!rating) {
+        _showReviewError('Pick a rating from 1 to 5 stars.');
+        return;
+      }
+      submitBtn.disabled = true;
+      const oldText = submitBtn.textContent;
+      submitBtn.textContent = 'Posting…';
+      try {
+        const fn = global.firebase.functions().httpsCallable('submitReview');
+        await fn({ sequenceId: seq.id, rating, comment });
+        _hideReviewError();
+        // Reload the reviews block in place.
+        _wireReviews(seq);
+      } catch (err) {
+        const msg = (err && err.message) || 'Could not post review.';
+        _showReviewError(msg);
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = oldText;
+      }
+    });
+
+    // Wire delete.
+    const deleteBtn = document.getElementById('agvReviewDelete');
+    if (deleteBtn) deleteBtn.addEventListener('click', async () => {
+      if (!confirm('Delete your review?')) return;
+      try {
+        const fn = global.firebase.functions().httpsCallable('deleteOwnReview');
+        await fn({ sequenceId: seq.id });
+        _wireReviews(seq);
+      } catch (err) {
+        _showReviewError((err && err.message) || 'Could not delete review.');
+      }
+    });
+  }
+
+  function _setSelectedRating(n) {
+    const stars = document.querySelectorAll('.agv-rate-star');
+    stars.forEach((s, idx) => {
+      const v = idx + 1;
+      s.textContent = v <= n ? '★' : '☆';
+      s.classList.toggle('on', v <= n);
+      s.setAttribute('data-selected', v <= n ? '1' : '0');
+    });
+    const wrap = document.getElementById('agvRateStars');
+    if (wrap) wrap.setAttribute('data-current', String(n));
+  }
+  function _getSelectedRating() {
+    const wrap = document.getElementById('agvRateStars');
+    if (!wrap) return 0;
+    return parseInt(wrap.getAttribute('data-current') || '0', 10);
+  }
+  function _showReviewError(msg) {
+    const e = document.getElementById('agvReviewError');
+    if (!e) return;
+    e.textContent = msg;
+    e.style.display = '';
+  }
+  function _hideReviewError() {
+    const e = document.getElementById('agvReviewError');
+    if (e) e.style.display = 'none';
   }
 
   async function open(seqOrId, opts) {
