@@ -330,7 +330,7 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
         });
         return;
     }
-    const { sequenceId, name, category, durationSecs, channelCount, price, songName, youtubeUrl, hasMp3, flagged, photos, description, props } = req.body;
+    const { sequenceId, name, category, durationSecs, channelCount, propCount, price, songName, youtubeUrl, youtubeShowUrl, hasMp3, flagged, photos, description, props } = req.body;
     // Validate photos: array of <=6 Firebase Storage URLs, each < 2 KB.
     let safePhotos = [];
     if (Array.isArray(photos)) {
@@ -437,10 +437,12 @@ exports.uploadSequence = functions.https.onRequest(async (req, res) => {
             category,
             durationSecs: durationSecs ?? 0,
             channelCount: channelCount ?? 0,
+            propCount: typeof propCount === "number" && isFinite(propCount) ? Math.max(0, Math.min(9999, Math.round(propCount))) : 0,
             price: price ?? 0,
             isFree: (price ?? 0) === 0,
             songName: songName ?? "",
             youtubeUrl: youtubeUrl ?? "",
+            youtubeShowUrl: typeof youtubeShowUrl === "string" ? youtubeShowUrl.slice(0, 500) : "",
             hasMp3: hasMp3 ?? false,
             flagged: !!flagged,
             status: initialStatus,

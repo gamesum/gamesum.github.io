@@ -125,6 +125,47 @@
         background:rgba(255,255,255,0.05); border:1px solid #2a2a2a;
         border-radius:8px; padding:6px 10px; font-size:0.8rem; color:#cbd5e1;
       }
+      /* Side-by-side music + show video block */
+      .agv-yt-pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        margin-top: 18px;
+      }
+      .agv-yt-tile {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .agv-yt-tile-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+      }
+      .agv-yt-tile-frame {
+        position: relative;
+        padding-bottom: 56.25%;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #0e0e0e;
+        border: 1px solid #2a2a2a;
+      }
+      .agv-yt-tile-frame iframe {
+        position: absolute; inset: 0; width: 100%; height: 100%; border: 0;
+      }
+      .agv-yt-placeholder {
+        position: absolute; inset: 0;
+        display: flex; align-items: center; justify-content: center;
+        text-align: center; padding: 16px;
+        color: #6b7280; font-size: 0.82rem; line-height: 1.5;
+        background: repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0 8px, transparent 8px 16px), #0e0e0e;
+      }
+      .agv-yt-placeholder strong { color: #94a3b8; display: block; margin-bottom: 4px; }
+      @media (max-width: 600px) {
+        .agv-yt-pair { grid-template-columns: 1fr; }
+      }
       .agv-yt-wrap {
         position:relative; padding-bottom:56.25%; border-radius:10px;
         overflow:hidden; margin-bottom:20px;
@@ -254,16 +295,25 @@
         ).join('') + '</div>'
       : '';
 
-    let ytEmbed = null;
-    if (seq.youtubeUrl && typeof seq.youtubeUrl === 'string') {
-      let e2 = seq.youtubeUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/');
-      if (e2.indexOf('youtube.com/embed/') !== -1 && e2.indexOf('http') !== 0) e2 = 'https://' + e2;
-      ytEmbed = e2;
+    // Convert any YouTube watch URL to its embed form so we can iframe it.
+    function _ytEmbedify(u) {
+      if (!u || typeof u !== 'string') return '';
+      let e = u.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/');
+      if (e.indexOf('youtube.com/embed/') !== -1 && e.indexOf('http') !== 0) e = 'https://' + e;
+      // Strip extra YouTube query params except the video id portion.
+      // (Keep what's after the first ? on /embed/<id> URLs.)
+      return e;
     }
+    const musicEmbed = _ytEmbedify(seq.youtubeUrl);
+    const showEmbed  = _ytEmbedify(seq.youtubeShowUrl || seq.showVideoUrl);
 
     const durSecs = Number(seq.durationSecs || 0);
     const durStr = durSecs ? (Math.floor(durSecs / 60) + 'm ' + (durSecs % 60) + 's') : (seq.duration || '--');
-    const channels = seq.channels || seq.channelCount || '--';
+    // We display "Props" (the user-stated total prop count) instead of the
+    // legacy "Channels" stat. Falls back to channelCount for older docs.
+    const propCount = (typeof seq.propCount === 'number' && seq.propCount > 0)
+      ? seq.propCount
+      : (Number(seq.channelCount) > 0 ? seq.channelCount : '--');
     const downloads = seq.downloads || seq.downloadCount || 0;
     const category = seq.category ? esc(String(seq.category)) : '';
 
@@ -304,13 +354,34 @@
 
         <div class="agv-stats">
           <div class="agv-stat"><div class="agv-stat-val">${esc(durStr)}</div><div class="agv-stat-key">Duration</div></div>
-          <div class="agv-stat"><div class="agv-stat-val">${esc(String(channels))}</div><div class="agv-stat-key">Channels</div></div>
+          <div class="agv-stat"><div class="agv-stat-val">${esc(String(propCount))}</div><div class="agv-stat-key">Props</div></div>
           <div class="agv-stat"><div class="agv-stat-val">${esc(String(downloads))}</div><div class="agv-stat-key">Downloads</div></div>
         </div>
 
         ${seq.description ? '<p class="agv-desc">' + esc(seq.description) + '</p>' : ''}
         ${propsHtml}
-        ${ytEmbed ? '<div class="agv-yt-wrap"><iframe src="' + esc(ytEmbed) + '" allowfullscreen loading="lazy"></iframe></div>' : ''}
+        ${(musicEmbed || showEmbed) ? (
+          '<div class="agv-yt-pair">' +
+            '<div class="agv-yt-tile">' +
+              '<span class="agv-yt-tile-label">Music video</span>' +
+              '<div class="agv-yt-tile-frame">' +
+                (musicEmbed
+                  ? '<iframe src="' + esc(musicEmbed) + '" allowfullscreen loading="lazy"></iframe>'
+                  : '<div class="agv-yt-placeholder"><div><strong>No music video</strong>The creator didn\'t link the song.</div></div>'
+                ) +
+              '</div>' +
+            '</div>' +
+            '<div class="agv-yt-tile">' +
+              '<span class="agv-yt-tile-label">Show video</span>' +
+              '<div class="agv-yt-tile-frame">' +
+                (showEmbed
+                  ? '<iframe src="' + esc(showEmbed) + '" allowfullscreen loading="lazy"></iframe>'
+                  : '<div class="agv-yt-placeholder"><div><strong>No show video yet</strong>The creator hasn\'t added a recording of this show running.</div></div>'
+                ) +
+              '</div>' +
+            '</div>' +
+          '</div>'
+        ) : ''}
         ${actionsHtml}
 
         <!-- Reviews + Ratings -->

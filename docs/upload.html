@@ -1257,6 +1257,12 @@
           </div>
         </div>
 
+        <div class="form-group">
+          <label class="form-label">Total number of props<span class="opt">(across the whole show)</span></label>
+          <input type="number" class="form-input" id="propCount" min="1" max="9999" placeholder="e.g. 18" />
+          <div class="form-hint">Add up every prop the show drives — roofline runs, arches, mini trees, mega tree, stakes, etc. Buyers use this to match the show to their setup.</div>
+        </div>
+
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Song Name<span class="req">*</span></label>
@@ -2135,9 +2141,14 @@
       const seqId     = crypto.randomUUID();
       const props     = [...document.querySelectorAll('input[name="props"]:checked')].map(cb => cb.value);
 
-      // Support both single-field (youtubeUrl) and split-field layouts
-      const ytEl  = document.getElementById('youtubeUrl') || document.getElementById('youtubeMusicUrl');
-      const ytUrl = ytEl ? ytEl.value.trim() : '';
+      // Music video URL (used by the "Synced to" link). Show video URL is
+      // separate — that one is what the listing embeds.
+      const ytMusicEl = document.getElementById('youtubeUrl') || document.getElementById('youtubeMusicUrl');
+      const ytUrl = ytMusicEl ? ytMusicEl.value.trim() : '';
+      const ytShowEl = document.getElementById('youtubeShowUrl');
+      const ytShowUrl = ytShowEl ? ytShowEl.value.trim() : '';
+      const propCountEl = document.getElementById('propCount');
+      const propCount = propCountEl ? Math.max(0, Math.min(9999, parseInt(propCountEl.value, 10) || 0)) : 0;
 
       // Upload photos first (if any). Storage rules require the user to be signed in;
       // Firebase JS SDK uses the current auth token automatically.
@@ -2162,9 +2173,11 @@
         category:     document.getElementById('category').value,
         durationSecs: dur || 0,
         channelCount: 0,
+        propCount:    propCount,
         price:        parseFloat(priceVal) || 0,
         songName:     document.getElementById('songName').value.trim(),
-        youtubeUrl:   ytUrl,
+        youtubeUrl:      ytUrl,      // music video — used for "Synced to" link
+        youtubeShowUrl:  ytShowUrl,  // recording of the show — used for the listing preview
         hasMp3:       hasMp3,
         props:        props,
         description:  document.getElementById('description').value.trim(),
