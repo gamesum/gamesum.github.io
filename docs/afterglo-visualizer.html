@@ -737,6 +737,9 @@
         <div class="slider-row">
           <label>LEDs on this run <span id="runLedCountVal">100</span></label>
           <input type="range" id="runLedCount" min="4" max="500" value="100" oninput="updateRunLedCount()">
+          <div style="font-size:0.7rem;color:var(--muted);margin-top:6px;line-height:1.45;">
+            AFTERGLO spacing comes in <strong style="color:var(--accent);">15 lights / 10 ft</strong> or <strong style="color:var(--accent);">30 lights / 10 ft</strong>. Pick the count that matches your install.
+          </div>
         </div>
         <button class="action-btn danger" onclick="deleteSelectedRun()">✕ Delete This Run</button>
       </div>
