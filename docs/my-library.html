@@ -1962,10 +1962,10 @@
     });
   }
 
-  function saveDisplayName() {
+  async function saveDisplayName() {
     const input = document.getElementById('nameEditInput');
     if (!input) return;
-    const newName = input.value.trim();
+    const newName = input.value.trim().slice(0, 80);
     if (!newName) { input.focus(); return; }
 
     currentUser.name = newName;
@@ -1979,6 +1979,21 @@
     document.getElementById('navAvatar').textContent = initial;
 
     setProfileNameDisplay(newName);
+
+    // Persist server-side: Firebase Auth displayName + /users mirror.
+    // The /users update fires onUserDocChanged which fans the new name out
+    // to every sequence this user has published.
+    try {
+      const fbUser = firebase.auth().currentUser;
+      if (fbUser) {
+        await fbUser.updateProfile({ displayName: newName });
+        await firebase.firestore().collection('users').doc(fbUser.uid)
+          .set({ displayName: newName, name: newName }, { merge: true });
+      }
+    } catch (e) {
+      console.warn('display name persist failed', e);
+    }
+
     showToast('Display name updated!');
   }
 
