@@ -68,10 +68,12 @@
       }
       .agv-root.open .agv-panel { transform:scale(1) translateY(0); opacity:1; }
       .agv-close {
-        /* Floats above the scroll area so it always remains clickable. */
+        /* Floats above the scroll area so it always remains clickable.
+           44px = WCAG/iOS minimum touch target. */
         position:absolute; top:14px; right:14px;
         background:rgba(26,26,26,0.92); border:1px solid #333; color:#fff; border-radius:50%;
-        width:36px; height:36px; font-size:0.95rem; cursor:pointer;
+        width:44px; height:44px; font-size:1.1rem; cursor:pointer;
+        display:flex; align-items:center; justify-content:center;
         z-index:5;
         backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
       }
@@ -332,6 +334,12 @@
       : '';
 
     const showActions = opts.showActions !== false;
+    const trustRow = price > 0
+      ? `<div class="agv-trust" style="margin-top:10px;font-size:0.78rem;color:#9A9AA2;display:flex;align-items:center;gap:8px;flex-wrap:wrap;line-height:1.5;">
+           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+           <span>Secure checkout via <strong style="color:#F2F2F4;">Stripe</strong> · Cards never touch our servers · <a href="terms.html#refunds" style="color:#D4A43A;text-decoration:none;">7-day refund</a></span>
+         </div>`
+      : '';
     const actionsHtml = showActions ? `
       <div class="agv-actions">
         <div class="agv-price ${price > 0 ? 'paid' : 'free'}">
@@ -340,7 +348,8 @@
         ${price > 0
           ? '<button class="agv-cta buy" data-agv-buy>Buy $' + price.toFixed(2) + '</button>'
           : '<button class="agv-cta free" data-agv-download>+ Add to my library</button>'}
-      </div>` : '';
+      </div>
+      ${trustRow}` : '';
 
     const content = `
       <div class="agv-hero" id="agvHero">${heroHtml}</div>
@@ -519,13 +528,21 @@
       summaryEl.parentElement.querySelector('.agv-reviews-title').textContent = 'Ratings & Reviews';
     }
 
-    // Load reviews.
+    // Load reviews. 6-second timeout so the "Loading…" placeholder can't sit
+    // forever if Firestore stalls — the catch path replaces it with a Retry.
     let reviews = [];
+    let reviewsLoadFailed = false;
     try {
-      const snap = await fs.collection('sequences').doc(seq.id).collection('reviews').get();
+      const fetchPromise = fs.collection('sequences').doc(seq.id).collection('reviews').get();
+      const snap = await Promise.race([
+        fetchPromise,
+        new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 6000))
+      ]);
       snap.forEach(d => reviews.push(Object.assign({ _id: d.id }, d.data())));
     } catch (err) {
       console.warn('reviews fetch failed', err);
+      reviewsLoadFailed = true;
+      summaryEl.innerHTML = '<span class="agv-rate-empty">Reviews unavailable. <button type="button" onclick="window._agvWireReviews && window._agvWireReviews()" style="background:none;border:none;color:#D4A43A;text-decoration:underline;cursor:pointer;padding:0;font:inherit;">Retry</button></span>';
     }
     reviews.sort((a, b) => {
       const at = (a.updatedAt && a.updatedAt.seconds) || 0;

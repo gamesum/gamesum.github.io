@@ -20,30 +20,42 @@
   <!-- Google Identity Services (same client ID as signin.html) -->
   <meta name="google-signin-client_id" content="358004783589-kvqgqvvjgqsa57gcip6nfumbp0a1ntsp.apps.googleusercontent.com" />
   <script src="https://accounts.google.com/gsi/client" async defer></script>
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
-<script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="js/firebase-auth.js"></script>
-  <script src="js/sequence-viewer.js"></script>
-  <script src="js/avatar.js"></script>
-  <script src="js/collections.js" defer></script>
+  <!-- Preconnect to high-traffic origins to cut TLS+DNS on first paint -->
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+  <link rel="dns-prefetch" href="https://js.stripe.com">
+  <!-- Firebase SDK — defer so they load in order without blocking first paint -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+  <script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script defer src="js/firebase-auth.js"></script>
+  <script defer src="js/sequence-viewer.js"></script>
+  <script defer src="js/avatar.js"></script>
+  <script defer src="js/collections.js"></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    /* Global keyboard-focus ring (WCAG 2.4.7). Inputs/buttons replace UA outline
+       so a brand-gold ring is the only visible focus indicator without it. */
+    :focus-visible { outline: 2px solid #D4A43A; outline-offset: 2px; border-radius: 4px; }
+    button:focus-visible, a:focus-visible, [role="button"]:focus-visible,
+    input:focus-visible, select:focus-visible, textarea:focus-visible {
+      outline: 2px solid #D4A43A; outline-offset: 3px;
+    }
 
     :root {
-      --bg:       #080808;
+      --bg:#0F0F11;
       --bg2:      #0e0e0e;
       --bg3:      #141414;
       --bg4:      #1a1a1a;
       --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
-      --text:     #e2e8f0;
-      --muted:    #94a3b8;
+      --text:#F2F2F4;
+      --muted:#9A9AA2;
       --border:   #222222;
       --border2:  #2a2a2a;
       --radius:   12px;
@@ -815,7 +827,7 @@
     /* Toast */
     #toast {
       position: fixed;
-      bottom: 24px;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px));
       left: 16px;
       right: 16px;
       max-width: 440px;
@@ -1535,6 +1547,10 @@
       .footer-grid { grid-template-columns: 1fr; }
       .hero-stats { gap: 32px; }
       .premium-grid { grid-template-columns: 1fr; }
+      /* Filtered grid was fixed at 280px tracks → caused horizontal overflow at
+         375px viewport. Reflow to single column and let cards span the row. */
+      .seq-grid { grid-template-columns: 1fr; gap: 16px; }
+      .seq-card { width: 100%; }
       #searchInput { width: 140px; }
       /* On small screens, stack the search above the filter tabs */
       .filter-bar { flex-wrap: wrap; gap: 8px; }
@@ -1613,6 +1629,12 @@
 <!-- ─── FILTER BAR ─────────────────────────────────────────────────── -->
 <div id="filters">
   <div class="container">
+    <!-- Hardware-required disclaimer above ALL listings (was previously only
+         above the Premium Packs section, so free-show browsers never saw it). -->
+    <div style="background:rgba(212,164,58,0.07);border:1px solid rgba(212,164,58,0.25);border-radius:10px;padding:10px 16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;font-size:0.85rem;line-height:1.5;color:var(--muted);">
+      <span style="font-size:1.1rem;flex-shrink:0;">💡</span>
+      <span>These shows run on an installed AFTERGLO LED system. <a href="index.html#cta" style="color:var(--accent);text-decoration:none;">No system yet? Get a free quote →</a></span>
+    </div>
     <div class="filter-bar-wrap">
     <div class="filter-bar">
       <div class="search-wrap">
@@ -1655,8 +1677,9 @@
     <!-- Grid (shown when filtered) -->
     <div class="seq-grid" id="seqGrid" style="display:none;"></div>
     <div class="no-results" id="noResults">
-      <h3>No sequences found</h3>
-      <p>Try a different search term or filter.</p>
+      <h3>No shows match your filters</h3>
+      <p>Try a different search term — or clear filters to see everything.</p>
+      <button type="button" onclick="document.getElementById('searchInput').value=''; if(typeof setFilter==='function'){setFilter('all');} else { document.querySelectorAll('.filter-tab').forEach(b=>b.classList.toggle('active',b.dataset.filter==='all')); if(typeof render==='function') render(); }" style="margin-top:14px;background:#D4A43A;color:#000;border:none;border-radius:8px;padding:10px 20px;font-weight:700;cursor:pointer;">Clear filters</button>
     </div>
   </div>
 </section>
@@ -1669,36 +1692,36 @@
       <h2 class="section-title">All Categories</h2>
     </div>
     <div class="cat-grid">
-      <div class="cat-card fade-in" data-cat="christmas" onclick="filterByCategory('christmas')">
-        <span class="cat-icon">🎄</span>
+      <button type="button" class="cat-card fade-in" data-cat="christmas" onclick="filterByCategory('christmas')" aria-label="Browse Christmas shows">
+        <span class="cat-icon" aria-hidden="true">🎄</span>
         <div class="cat-label">Christmas</div>
         <div class="cat-count" data-cat-count="christmas">Browse</div>
-      </div>
-      <div class="cat-card fade-in fade-delay-1" data-cat="halloween" onclick="filterByCategory('halloween')">
-        <span class="cat-icon">🎃</span>
+      </button>
+      <button type="button" class="cat-card fade-in fade-delay-1" data-cat="halloween" onclick="filterByCategory('halloween')" aria-label="Browse Halloween shows">
+        <span class="cat-icon" aria-hidden="true">🎃</span>
         <div class="cat-label">Halloween</div>
         <div class="cat-count" data-cat-count="halloween">Browse</div>
-      </div>
-      <div class="cat-card fade-in fade-delay-2" data-cat="fourth" onclick="filterByCategory('fourth')">
-        <span class="cat-icon">🎆</span>
+      </button>
+      <button type="button" class="cat-card fade-in fade-delay-2" data-cat="fourth" onclick="filterByCategory('fourth')" aria-label="Browse 4th of July shows">
+        <span class="cat-icon" aria-hidden="true">🎆</span>
         <div class="cat-label">4th of July</div>
         <div class="cat-count" data-cat-count="fourth">Browse</div>
-      </div>
-      <div class="cat-card fade-in fade-delay-3" data-cat="valentine" onclick="filterByCategory('valentine')">
-        <span class="cat-icon">💝</span>
+      </button>
+      <button type="button" class="cat-card fade-in fade-delay-3" data-cat="valentine" onclick="filterByCategory('valentine')" aria-label="Browse Valentine's shows">
+        <span class="cat-icon" aria-hidden="true">💝</span>
         <div class="cat-label">Valentine's</div>
         <div class="cat-count" data-cat-count="valentine">Browse</div>
-      </div>
-      <div class="cat-card fade-in fade-delay-3" data-cat="patriotic" onclick="filterByCategory('patriotic')">
-        <span class="cat-icon">🦅</span>
+      </button>
+      <button type="button" class="cat-card fade-in fade-delay-3" data-cat="patriotic" onclick="filterByCategory('patriotic')" aria-label="Browse Patriotic shows">
+        <span class="cat-icon" aria-hidden="true">🦅</span>
         <div class="cat-label">Patriotic</div>
         <div class="cat-count" data-cat-count="patriotic">Browse</div>
-      </div>
-      <div class="cat-card fade-in fade-delay-4" data-cat="custom" onclick="filterByCategory('custom')">
-        <span class="cat-icon">✨</span>
+      </button>
+      <button type="button" class="cat-card fade-in fade-delay-4" data-cat="custom" onclick="filterByCategory('custom')" aria-label="Browse Custom shows">
+        <span class="cat-icon" aria-hidden="true">✨</span>
         <div class="cat-label">Custom</div>
         <div class="cat-count" data-cat-count="custom">Browse</div>
-      </div>
+      </button>
     </div>
   </div>
 </section>
@@ -1737,11 +1760,6 @@
         <div class="pack-body">
           <div class="pack-title">Holiday Mega Pack</div>
           <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
-          <!-- Change 3a: social proof purchase count -->
-          <div class="pack-social-proof">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-            47 AFTERGLO homes running this pack
-          </div>
           <p class="pack-desc">12 sequences covering the whole Christmas range. Calm warm-white twinkling for background ambiance, and full-energy music-synchronized shows for the nights that matter.</p>
           <div class="pack-meta">
             <div class="pack-meta-item">
@@ -1763,10 +1781,10 @@
               <div class="pack-price-sub">one-time purchase</div>
             </div>
             <!-- Change 3b: mailto request instead of broken "coming soon" toast -->
-            <a class="btn-request-pack" href="#" data-buy-id="pack_holiday_mega" onclick="event.preventDefault();handlePackBuy('pack_holiday_mega','Holiday Mega Pack',58)">
+            <button type="button" class="btn-request-pack" data-buy-id="pack_holiday_mega" onclick="handlePackBuy('pack_holiday_mega','Holiday Mega Pack',58)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
               Buy Pack $58
-            </a>
+            </button>
           </div>
           <!-- Change 3c: guarantee line -->
           <div class="pack-guarantee">
@@ -1790,10 +1808,6 @@
         <div class="pack-body">
           <div class="pack-title">Patriotic Bundle</div>
           <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
-          <div class="pack-social-proof">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-            31 AFTERGLO homes running this pack
-          </div>
           <p class="pack-desc">Six fast-paced red, white, and blue sequences built for outdoor crowds. Designed for Memorial Day, Independence Day, and Veterans Day. Music included.</p>
           <div class="pack-meta">
             <div class="pack-meta-item">
@@ -1814,10 +1828,10 @@
               <div class="pack-price"><sup>$</sup>38</div>
               <div class="pack-price-sub">one-time purchase</div>
             </div>
-            <a class="btn-request-pack" href="#" data-buy-id="pack_patriotic_bundle" onclick="event.preventDefault();handlePackBuy('pack_patriotic_bundle','Patriotic Bundle',38)">
+            <button type="button" class="btn-request-pack" data-buy-id="pack_patriotic_bundle" onclick="handlePackBuy('pack_patriotic_bundle','Patriotic Bundle',38)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
               Buy Pack $38
-            </a>
+            </button>
           </div>
           <div class="pack-guarantee">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -1840,10 +1854,6 @@
         <div class="pack-body">
           <div class="pack-title">Halloween Pack</div>
           <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
-          <div class="pack-social-proof">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-            39 AFTERGLO homes running this pack
-          </div>
           <p class="pack-desc">Eight spine-chilling shows ranging from eerie slow fades to high-speed strobe-free spooky effects. Neighborhood-approved thrills.</p>
           <div class="pack-meta">
             <div class="pack-meta-item">
@@ -1864,10 +1874,10 @@
               <div class="pack-price"><sup>$</sup>48</div>
               <div class="pack-price-sub">one-time purchase</div>
             </div>
-            <a class="btn-request-pack" href="#" data-buy-id="pack_halloween" onclick="event.preventDefault();handlePackBuy('pack_halloween','Halloween Pack',48)">
+            <button type="button" class="btn-request-pack" data-buy-id="pack_halloween" onclick="handlePackBuy('pack_halloween','Halloween Pack',48)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
               Buy Pack $48
-            </a>
+            </button>
           </div>
           <div class="pack-guarantee">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -1984,12 +1994,12 @@
         </ul>
       </div>
       <div class="footer-col">
-        <h4>Resources</h4>
+        <h4>Help</h4>
         <ul>
-          <li><a href="#">Show Design Guide (xLights)</a></li>
-          <li><a href="#">Controller Setup</a></li>
-          <li><a href="#">Light Show File Format</a></li>
-          <li><a href="#">Creator FAQ</a></li>
+          <li><a href="mailto:afterglolights@gmail.com">Contact Support</a></li>
+          <li><a href="creator-agreement.html">Creator Agreement</a></li>
+          <li><a href="dmca.html">DMCA Policy</a></li>
+          <li><a href="terms.html#refunds">Refund Policy</a></li>
         </ul>
       </div>
     </div>
@@ -2041,9 +2051,9 @@
 </div>
 
 <!-- ─── TOAST ──────────────────────────────────────────────────────────── -->
-<div id="toast">
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-  <span id="toastMsg">Sequence uploaded successfully!</span>
+<div id="toast" role="status" aria-live="polite" aria-atomic="true">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" focusable="false"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="toastMsg"></span>
 </div>
 
 <script>
@@ -2070,18 +2080,27 @@
     card.addEventListener('click', () => openDrawer(seq));
 
     const btnHtml = seq.free
-      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="event.stopPropagation();handleAddToLibrary(event,this.dataset.seqid)">
-           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-           Add
+      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" aria-label="Save ${esc(seq.name)} to my library" onclick="event.stopPropagation();handleAddToLibrary(event,this.dataset.seqid)">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true" focusable="false"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+           Save to library
          </button>`
-      : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" onclick="event.stopPropagation();handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy ${'$' + seq.price.toFixed(2)}</button>`;
+      : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" aria-label="Buy ${esc(seq.name)} for $${seq.price.toFixed(2)}" onclick="event.stopPropagation();handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy ${'$' + seq.price.toFixed(2)}</button>`;
 
     const isTrending = seq.downloads >= 450;
     const hotBadge = isTrending
       ? `<span class="card-badge badge-trending" style="position:absolute;left:auto;right:12px;top:12px;">Hot</span>`
       : '';
-    const starFull = seq.downloads >= 600 ? 5 : seq.downloads >= 350 ? 4 : 3;
-    const stars = '\u2605'.repeat(starFull) + '\u2606'.repeat(5 - starFull);
+    // Real ratings only \u2014 show stars only when at least one user has rated it.
+    // Previous behavior derived stars from download count which was visibly
+    // bogus on listings with 0 reviewers in the drawer.
+    const ratingCount = parseInt(seq.ratingCount || 0, 10);
+    const ratingAvg = parseFloat(seq.ratingAvg || 0);
+    let stars = '';
+    if (ratingCount > 0 && ratingAvg > 0) {
+      const full = Math.round(ratingAvg);
+      stars = '\u2605'.repeat(full) + '\u2606'.repeat(5 - full)
+            + ` <span class="card-rating-meta">${ratingAvg.toFixed(1)} (${ratingCount})</span>`;
+    }
 
     // MP3 badge — shown when hasMp3 is true (live data from Firestore) or seq.hasMp3 flag set
     const mp3Badge = seq.hasMp3 ? '<div class="mp3-badge">&#9834; MP3</div>' : '';
@@ -2109,12 +2128,12 @@
         ${hotBadge}
         ${mp3Badge}
         <span class="card-duration">${seq.duration || (seq.durationSecs ? Math.floor(seq.durationSecs/60)+'m '+((seq.durationSecs%60)+'s') : '')}</span>
-        <div class="card-play" onclick="event.stopPropagation(); showToast('Preview coming soon. Visit afterglolighting.org to see show demos.');">
+        ${seq.youtubeShowUrl ? `<a class="card-play" href="${esc(seq.youtubeShowUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" title="Watch demo">
           <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
+        </a>` : ''}
       </div>
       <div class="card-body">
-        <div class="card-stars">${stars}</div>
+        ${stars ? `<div class="card-stars">${stars}</div>` : ''}
         <div class="card-title">${esc(seq.name)}</div>
         <div class="card-meta">
           <span class="card-creator" style="display:inline-flex;align-items:center;gap:6px;">${(typeof avatarHtml==='function'? avatarHtml({displayName:seq.creator, email:seq.creatorEmail||'', photoURL:seq.creatorPhotoURL||seq.creatorPhoto||''}, 20):'')}${esc(seq.creator)}</span>
@@ -2667,7 +2686,7 @@
       }
     } catch (err) {
       console.error('checkout error:', err);
-      showToast('Payment system is temporarily unavailable. Please try again in a few minutes or contact support.', true);
+      showToast('Payment system unavailable — try again in a few minutes or email afterglolights@gmail.com.', true);
       if (btn) { btn.textContent = '$' + price.toFixed(2); btn.disabled = false; }
     }
   }
@@ -2824,6 +2843,10 @@
             ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#D4A43A;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy ${'$' + price.toFixed(2)}</button>`
             : `<button onclick="handleAddToLibrary(event,'${esc(String(seq.id))}');closeDrawer();" style="width:100%;background:#4ade80;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">+ Add to my library</button>`
           }
+          ${price > 0 ? `<div style="margin-top:12px;font-size:0.78rem;color:#9A9AA2;display:flex;align-items:center;gap:8px;line-height:1.5;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <span>Secure checkout via <strong style="color:#F2F2F4;">Stripe</strong> · <a href="terms.html#refunds" style="color:#D4A43A;text-decoration:none;">7-day refund</a></span>
+          </div>` : ''}
         </div>
       </div>
     `;
@@ -2852,6 +2875,9 @@
   function showToast(msg, isError) {
     const toast = document.getElementById('toast');
     const msgEl = document.getElementById('toastMsg');
+    // Errors are assertive so screen readers interrupt; success is polite.
+    toast.setAttribute('role', isError ? 'alert' : 'status');
+    toast.setAttribute('aria-live', isError ? 'assertive' : 'polite');
     msgEl.textContent = msg;
     if (isError) {
       toast.style.background = '#2e1a1a';

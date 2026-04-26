@@ -27,15 +27,15 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #080808;
+      --bg:#0F0F11;
       --bg2:      #0e0e0e;
       --bg3:      #111111;
       --bg4:      #1a1a1a;
       --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
-      --text:     #e2e8f0;
-      --muted:    #94a3b8;
+      --text:#F2F2F4;
+      --muted:#9A9AA2;
       --border:   #222222;
       --border2:  #2a2a2a;
       --radius:   12px;
@@ -996,7 +996,22 @@
           setTimeout(() => window.location.href = getRedirectUrl(), 900);
         }
       }
-    } catch (_) {}
+    } catch (err) {
+      // Surface the failure instead of swallowing it — mobile Google sign-in
+      // failures (popup blocked, account-exists-with-different-credential,
+      // etc.) used to vanish silently.
+      console.error('Google redirect sign-in failed:', err);
+      const code = err && err.code;
+      let msg = 'Couldn\'t finish signing in. Try again, or use email below.';
+      if (code === 'auth/account-exists-with-different-credential') {
+        msg = 'You already have an account with that email. Sign in with your password instead.';
+      } else if (code === 'auth/popup-blocked') {
+        msg = 'Popup was blocked — allow popups for this site, then try again.';
+      } else if (code === 'auth/network-request-failed') {
+        msg = 'Network error. Check your connection and retry.';
+      }
+      try { showToast(msg, true); } catch (_) {}
+    }
   })();
 
   /* ─── FORGOT PASSWORD ────────────────────────────────────────── */

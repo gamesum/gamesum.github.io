@@ -18,26 +18,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
-<script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="js/firebase-auth.js"></script>
-  <script src="js/avatar.js"></script>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <!-- Firebase SDK — defer to keep first paint fast; load order preserved -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+  <script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script defer src="js/firebase-auth.js"></script>
+  <script defer src="js/avatar.js"></script>
   <style>
     /* ─── RESET & BASE ─────────────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #080808;
+      --bg:#0F0F11;
       --bg2:      #0e0e0e;
       --bg3:      #141414;
       --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
-      --text:     #e2e8f0;
-      --muted:    #94a3b8;
+      --text:#F2F2F4;
+      --muted:#9A9AA2;
       --border:   #222222;
       --radius:   12px;
       --nav-h:    72px;
@@ -1188,6 +1190,10 @@
         <a href="#cta" class="btn btn-primary">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           Get a Free Quote
+        </a>
+        <a href="platform.html" class="btn btn-ghost">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Browse Light Show Store
         </a>
         <a href="afterglo-visualizer.html" class="btn btn-ghost">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.64-6.36-1.42 1.42M5.05 18.95l-1.41 1.41M18.95 18.95l-1.41-1.41M5.05 5.05 3.64 3.64"/></svg>

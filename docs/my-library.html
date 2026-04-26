@@ -10,31 +10,34 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
-<script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
-  <script src="js/firebase-auth.js"></script>
-  <script src="js/sequence-viewer.js"></script>
-  <script src="js/avatar.js"></script>
-  <script src="js/collections.js" defer></script>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://firestore.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+  <!-- Firebase SDK — defer to keep first paint fast; load order preserved -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+  <script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage-compat.js"></script>
+  <script defer src="js/firebase-auth.js"></script>
+  <script defer src="js/sequence-viewer.js"></script>
+  <script defer src="js/avatar.js"></script>
+  <script defer src="js/collections.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:       #080808;
+      --bg:#0F0F11;
       --bg2:      #0e0e0e;
       --bg3:      #111111;
       --bg4:      #1a1a1a;
       --accent:   #D4A43A;
       --accent2:  #d4a843;
       --silver:   #b8b8b8;
-      --text:     #e2e8f0;
-      --muted:    #94a3b8;
+      --text:#F2F2F4;
+      --muted:#9A9AA2;
       --border:   #222222;
       --border2:  #2a2a2a;
       --radius:   12px;
@@ -351,7 +354,74 @@
     }
     .sign-out-btn:hover { border-color: #f87171; color: #f87171; }
 
-    /* ─── SECTIONS ────────────────────────────────────────────────── */
+    /* ─── LIBRARY TABS ────────────────────────────────────────────── */
+    .lib-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 4px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 28px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .lib-tabs::-webkit-scrollbar { display: none; }
+    .lib-tab {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 10px;
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      white-space: nowrap;
+    }
+    .lib-tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+    .lib-tab.active {
+      background: var(--bg3);
+      color: var(--text);
+      box-shadow: 0 0 0 1px var(--border2), 0 1px 0 rgba(255,255,255,0.04) inset;
+    }
+    .lib-tab .lib-tab-icon { font-size: 1rem; line-height: 1; }
+    .lib-tab .lib-tab-count {
+      font-size: 0.72rem;
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 2px 8px;
+      font-weight: 700;
+    }
+    .lib-tab.active .lib-tab-count { color: var(--accent); border-color: rgba(212,164,58,0.35); background: rgba(212,164,58,0.08); }
+
+    .lib-tab-panel { display: none; }
+    .lib-tab-panel.active { display: block; }
+
+    .lib-tab-sub {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .lib-tab-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    /* Legacy section styles still referenced by JS in some paths. Hidden by
+       default; the tab-panel wrapper takes over visibility. */
     .lib-section {
       margin-bottom: 56px;
     }
@@ -1424,48 +1494,42 @@
       <button class="btn-manage-col" onclick="openManageModal()">Manage collections</button>
     </div>
 
-    <!-- My Downloads -->
-    <div class="lib-section">
-      <div class="lib-section-header">
-        <div class="lib-section-left">
-          <div class="lib-section-icon icon-downloads">⬇️</div>
-          <div>
-            <div class="lib-section-title">My Saved Shows</div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Free shows you've saved from the store</div>
-          </div>
-        </div>
-        <span class="lib-section-count" id="countDownloads">0 sequences</span>
-      </div>
+    <!-- LIBRARY TABS -->
+    <div class="lib-tabs" role="tablist" aria-label="Library sections">
+      <button type="button" class="lib-tab active" role="tab" aria-controls="libPanel-downloads" aria-selected="true" data-lib-tab="downloads">
+        <span class="lib-tab-icon">⬇️</span>
+        <span>Saved</span>
+        <span class="lib-tab-count" id="countDownloads">0</span>
+      </button>
+      <button type="button" class="lib-tab" role="tab" aria-controls="libPanel-purchases" aria-selected="false" data-lib-tab="purchases">
+        <span class="lib-tab-icon">⭐</span>
+        <span>Purchased</span>
+        <span class="lib-tab-count" id="countPurchases">0</span>
+      </button>
+      <button type="button" class="lib-tab" role="tab" aria-controls="libPanel-uploads" aria-selected="false" data-lib-tab="uploads">
+        <span class="lib-tab-icon">🚀</span>
+        <span>Uploads</span>
+        <span class="lib-tab-count" id="countUploads">0</span>
+      </button>
+    </div>
+
+    <!-- TAB: Saved (free shows added to library) -->
+    <div class="lib-tab-panel active" id="libPanel-downloads" role="tabpanel" aria-labelledby="libTab-downloads">
+      <div class="lib-tab-sub">Free shows you've saved from the store. Yours to send to a controller or AFTERGLO Studio anytime.</div>
       <div id="downloadsGrid" class="lib-grid"></div>
     </div>
 
-    <!-- My Purchases -->
-    <div class="lib-section">
-      <div class="lib-section-header">
-        <div class="lib-section-left">
-          <div class="lib-section-icon icon-purchases">⭐</div>
-          <div>
-            <div class="lib-section-title">My Purchased Packs</div><div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Premium packs you've bought. Yours to keep and replay every year.</div>
-          </div>
-        </div>
-        <span class="lib-section-count" id="countPurchases">0 packs</span>
-      </div>
+    <!-- TAB: Purchased Packs -->
+    <div class="lib-tab-panel" id="libPanel-purchases" role="tabpanel" aria-labelledby="libTab-purchases">
+      <div class="lib-tab-sub">Premium packs you've bought. Yours to keep and replay every year.</div>
       <div id="purchasesGrid" class="lib-grid"></div>
     </div>
 
-    <!-- My Uploads (single section: submission status + creator uploads combined) -->
-    <div class="lib-section">
-      <div class="lib-section-header">
-        <div class="lib-section-left">
-          <div class="lib-section-icon icon-uploads">🚀</div>
-          <div>
-            <div class="lib-section-title">My Uploads</div>
-            <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">Shows you have submitted to the Store. Each card shows its review status.</div>
-          </div>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <a id="creatorDashLink" href="creator-dashboard.html" class="btn btn-ghost" style="display:none;padding:8px 14px;font-size:0.8rem;font-weight:600;">Payouts &amp; earnings</a>
-          <span class="lib-section-count" id="countUploads">0 sequences</span>
-        </div>
+    <!-- TAB: My Uploads (status list + creator uploads combined) -->
+    <div class="lib-tab-panel" id="libPanel-uploads" role="tabpanel" aria-labelledby="libTab-uploads">
+      <div class="lib-tab-sub">Shows you have submitted to the Store. Each card shows its review status.</div>
+      <div class="lib-tab-actions">
+        <a id="creatorDashLink" href="creator-dashboard.html" class="btn btn-ghost" style="display:none;padding:8px 14px;font-size:0.8rem;font-weight:600;">Payouts &amp; earnings</a>
       </div>
       <div id="uploadStatusList" class="status-list" style="margin-bottom:14px;"></div>
       <div id="uploadsGrid" class="lib-grid"></div>
@@ -2239,9 +2303,10 @@
     document.getElementById('statPurchases').textContent = pur.length;
     document.getElementById('statUploads').textContent   = upl.length;
 
-    document.getElementById('countDownloads').textContent = lib.length + ' sequence' + (lib.length !== 1 ? 's' : '');
-    document.getElementById('countPurchases').textContent = pur.length + ' pack' + (pur.length !== 1 ? 's' : '');
-    document.getElementById('countUploads').textContent   = upl.length + ' sequence' + (upl.length !== 1 ? 's' : '');
+    // Compact pills inside the tab strip — number only.
+    document.getElementById('countDownloads').textContent = lib.length;
+    document.getElementById('countPurchases').textContent = pur.length;
+    document.getElementById('countUploads').textContent   = upl.length;
     const _dashLink = document.getElementById('creatorDashLink');
     if (_dashLink) _dashLink.style.display = upl.length > 0 ? '' : 'none';
 
@@ -2310,6 +2375,39 @@
     } catch (e) { /* non-fatal */ }
     _coverFetchInflight = false;
   }
+
+  /* ─── Library tabs ─────────────────────────────────────────────── */
+  (function initLibraryTabs() {
+    const tabs   = document.querySelectorAll('.lib-tab');
+    const panels = document.querySelectorAll('.lib-tab-panel');
+    if (!tabs.length || !panels.length) return;
+
+    function activate(name) {
+      tabs.forEach(t => {
+        const isOn = t.getAttribute('data-lib-tab') === name;
+        t.classList.toggle('active', isOn);
+        t.setAttribute('aria-selected', isOn ? 'true' : 'false');
+      });
+      panels.forEach(p => {
+        p.classList.toggle('active', p.id === ('libPanel-' + name));
+      });
+      try {
+        const url = new URL(window.location.href);
+        url.hash = name === 'downloads' ? '' : name;
+        history.replaceState(null, '', url.toString());
+      } catch (_) {}
+    }
+
+    tabs.forEach(t => t.addEventListener('click', () => {
+      activate(t.getAttribute('data-lib-tab'));
+    }));
+
+    // Honor an initial deep-link, e.g. my-library.html#uploads.
+    const initial = (window.location.hash || '').replace('#', '').toLowerCase();
+    if (initial === 'purchases' || initial === 'uploads' || initial === 'downloads') {
+      activate(initial);
+    }
+  })();
 
   function syncUploadsEmptyState() {
     const grid = document.getElementById('uploadsGrid');
@@ -2735,7 +2833,7 @@
       showToast('Show updated.', 'success');
     } catch (e) {
       console.error('Edit save failed', e);
-      showToast('Save failed: ' + (e.message || 'unknown'), 'error');
+      showToast('Couldn\'t save your changes. Try again — if it keeps failing, email afterglolights@gmail.com.', 'error');
     } finally {
       saveBtn.disabled = false;
       saveBtn.textContent = 'Save changes';
@@ -2764,7 +2862,7 @@
 
   async function _ensureFreshAuth() {
     const fbUser = firebase.auth && firebase.auth().currentUser;
-    if (!fbUser) { showToast('Sign in again — your session expired.', 'warning'); return null; }
+    if (!fbUser) { showToast('You\'ve been signed out. Sign back in to keep editing.', 'warning'); return null; }
     try { await fbUser.getIdToken(true); } catch (_) {}
     return fbUser;
   }
@@ -2784,7 +2882,8 @@
       _editUploadCtx.photos[0] = url;
     } catch (err) {
       console.error('Cover upload failed', err);
-      showToast('Cover upload failed: ' + _photoErrorMessage(err), 'error');
+      console.error('Cover upload failed:', err);
+      showToast('Couldn\'t upload that cover photo. Try a smaller image (under 5 MB) — or email afterglolights@gmail.com.', 'error');
     } finally {
       status.textContent = '';
       _renderEditPhotos();
@@ -3178,7 +3277,7 @@
       download: {
         icon:  '⬇️',
         title: 'No downloads yet',
-        text:  'Head to the Light Show Store and tap "Save Free Show" on any show you like. It will appear here, ready to use anytime.',
+        text:  'Head to the Light Show Store and tap "Save to library" on any free show. It\'ll show up here, ready to send to your controller.',
         cta:   'Go to the Light Show Store',
         link:  'platform.html#sequences'
       },
