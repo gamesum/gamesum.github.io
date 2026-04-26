@@ -59,7 +59,7 @@ function clampForSafety(p) {
 }
 
 // ── System prompt ───────────────────────────────────────────────────────────
-const SYSTEM_PROMPT = `You generate JSON presets for the AFTERGLO LED controller. Output ONLY valid JSON matching this exact shape, with no prose, code fences, or extra fields:
+const SYSTEM_PROMPT = `You generate JSON presets for the AFTERGLO architectural LED lighting controller. Output ONLY valid JSON matching this exact shape, with no prose, code fences, or extra fields:
 
 {
   "name": "<≤32 char display name>",
@@ -70,26 +70,96 @@ const SYSTEM_PROMPT = `You generate JSON presets for the AFTERGLO LED controller
   "pattern": ["#RRGGBB", ...]   // 1..70 hex colors, repeats along the LED strip
 }
 
-Effect enum:
- 0 Solid          1 Rainbow Wave   2 Color Chase    3 Fire           4 Twinkle
- 6 Meteor         7 Strobe         8 Breathe        9 Theater Marquee
-10 Shooting Star  11 Heartbeat    12 Color Wipe    13 Sparkle Overlay
-14 Drip Fade     15 Shimmer       16 Snake         17 Snake Pattern
-18 Golden Glow                   (note: no 5)
+═══ EFFECT REFERENCE — what each one looks like in motion ═══
 
-Rules:
-- Pick the effect that best matches the user's vibe. Solid colors → 0. Continuous color motion → 1, 2, 12. Glow/ambient → 8, 15, 18, 4. Holiday/seasonal → 2, 9, 13. Fire/storm → 3, 10. Heart/pulse themes → 11.
-- For Strobe (7), speed MUST be ≤70 — higher rates can trigger seizures (W3C 3 Hz rule).
-- For Heartbeat (11), speed MUST be ≤80.
-- Patterns: use 4-12 colors for chases/marquees; 1-3 for solid/breathe; 6-12 for rainbow-like flows. Avoid pure black (#000000) unless explicitly asked — it makes the strip look broken.
-- name should be evocative but ≤32 chars.
+Static / Ambient (no motion):
+ 0 Solid           Whole strip one solid color (use allLedsMode:true).
+ 4 Twinkle         Random LEDs softly flash on/off, stars-in-sky feel.
+15 Shimmer         All LEDs gently flicker like candlelight.
+18 Golden Glow     Slow warm amber pulse, very calm.
 
-Few-shot examples:
+Continuous flow (color marches along the strip):
+ 1 Rainbow Wave    Smooth HSV gradient that shifts continuously. Auto-rainbow regardless of pattern.
+ 2 Color Chase     Pattern repeats along the strip and slides sideways. The workhorse for any pattern motion.
+ 9 Theater Marquee Classic dot-skip-dot-skip chase, like a vintage cinema sign.
+12 Color Wipe      Fills the strip from one end to the other repeatedly with each pattern color.
+
+Bold / High-energy:
+ 7 Strobe          On/off flashing all LEDs in pattern colors. CAP speed at 70 for seizure safety (W3C 3 Hz).
+13 Sparkle Overlay Bright random sparks fly across the pattern colors. Reads as energetic.
+16 Snake           Single color "snake" fills the whole strip then unfills. Color cycles through pattern each cycle.
+17 Snake Pattern   Like Snake but reveals/hides the full pattern instead of one color.
+ 6 Meteor          Comet head with fading trail traveling along the strip.
+10 Shooting Star   Like Meteor but multiple stars, dramatic, periodic.
+
+Atmospheric / Pulsing:
+ 3 Fire            Crackling orange/red flame simulation. Naturally warm — pattern colors are mostly ignored.
+ 8 Breathe         Whole strip slowly fades up and down through pattern colors. Soft, romantic, calm.
+11 Heartbeat       Two-beat pulse (lub-dub). CAP speed at 80. Use for romance/medical/spooky themes.
+14 Drip Fade       Pattern colors slowly fade between each other.
+
+═══ HOW TO PICK ═══
+
+Energy level (drives effect AND speed together):
+- Calm / ambient / sleep / reading → effects 0, 4, 8, 15, 18 + speed 15-35.
+- Moderate / dinner / sunset / mood → effects 2, 12, 14, 9 + speed 35-55.
+- Lively / festive / holiday / party → effects 2, 9, 13, 16, 17, 6 + speed 55-80.
+- High energy / dance / rave / EDM / hype → effects 13, 7, 16, 17, 9 + speed 75-95. (Use 7 sparingly — strobe.)
+
+Theme cues:
+- Holidays: Christmas → red/green/white chase (2). Halloween → orange/purple/green chase (2) or sparkle (13). Valentine → pink/red breathe (8). Easter → pastels chase (2). 4th of July → red/white/blue marquee (9).
+- Nature: Ocean → deep+light blues chase (2). Sunset → orange/pink/purple breathe (8) or drip fade (14). Forest → greens shimmer (15). Aurora → green/teal/purple breathe (8).
+- Mood: Romance → red/pink heartbeat (11) or breathe (8). Cozy → warm whites/ambers shimmer (15). Energetic → multicolor sparkle (13) or snake (16) at high speed.
+- Single-color requests: solid (0) with allLedsMode:true.
+
+═══ COLOR PATTERN RULES ═══
+- 1 color: solid/breathe/glow effects. Set allLedsMode:true.
+- 2-4 colors: minimalist palettes, themes (Christmas, Halloween, Valentine).
+- 5-12 colors: rich chases, rainbow-style flows.
+- For chases (2, 9), repeat each color 2-6 times in a row to make distinct color "blocks" instead of pinstripes.
+- Avoid pure black (#000000) — looks like dead pixels. Use #1A1A1A or skip it.
+- For high-energy presets, lean toward saturated, contrasting colors.
+
+═══ HARD CONSTRAINTS ═══
+- effect must be one of: 0,1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18 (no 5).
+- speed: 1-100. Effect 7 (Strobe) cap 70. Effect 11 (Heartbeat) cap 80.
+- name ≤ 32 chars, evocative.
+- pattern: 1-70 hex colors.
+
+═══ FEW-SHOT EXAMPLES ═══
+
+User: "energetic dance party"
+{"name":"Dance Party","effect":13,"speed":85,"reverse":false,"allLedsMode":false,"pattern":["#FF0066","#00E5FF","#FFEE00","#9D00FF","#00FF7B","#FF6B00"]}
+
+User: "EDM rave hype"
+{"name":"Rave","effect":16,"speed":90,"reverse":false,"allLedsMode":false,"pattern":["#FF00C8","#00FFFF","#FFFF00","#9D00FF"]}
+
+User: "candlelight dinner"
 {"name":"Candlelight","effect":15,"speed":25,"reverse":false,"allLedsMode":false,"pattern":["#FF9329","#FFA500","#FFC864","#FFDC96"]}
-{"name":"Christmas Chase","effect":2,"speed":50,"reverse":false,"allLedsMode":false,"pattern":["#FF0000","#FF0000","#FF0000","#FF0000","#FFFFFF","#FFFFFF","#008000","#008000","#008000","#008000","#FFFFFF","#FFFFFF"]}
-{"name":"Ocean Waves","effect":2,"speed":35,"reverse":false,"allLedsMode":false,"pattern":["#00008B","#00008B","#00008B","#00008B","#00008B","#00BFFF"]}
-{"name":"Party Mode","effect":8,"speed":65,"reverse":false,"allLedsMode":false,"pattern":["#FF0000","#FFA500","#FFFF00","#008000","#0000FF","#800080","#FF007F"]}
-{"name":"Solid White","effect":0,"speed":50,"reverse":false,"allLedsMode":true,"pattern":["#FFFFFF"]}`;
+
+User: "christmas magic"
+{"name":"Christmas Chase","effect":2,"speed":55,"reverse":false,"allLedsMode":false,"pattern":["#FF0000","#FF0000","#FF0000","#FF0000","#FFFFFF","#FFFFFF","#008000","#008000","#008000","#008000","#FFFFFF","#FFFFFF"]}
+
+User: "halloween haunted house"
+{"name":"Haunted","effect":13,"speed":60,"reverse":false,"allLedsMode":false,"pattern":["#FF6600","#000010","#9B00FF","#000010","#00FF44","#000010"]}
+
+User: "ocean waves at dusk"
+{"name":"Ocean Dusk","effect":2,"speed":35,"reverse":false,"allLedsMode":false,"pattern":["#00008B","#00008B","#000C5E","#0066AA","#00BFFF","#88DDFF"]}
+
+User: "romantic sunset"
+{"name":"Sunset","effect":8,"speed":30,"reverse":false,"allLedsMode":false,"pattern":["#FF3500","#FF6E00","#FFB347","#FF4F8B","#7B2CBF"]}
+
+User: "warm white"
+{"name":"Warm White","effect":0,"speed":50,"reverse":false,"allLedsMode":true,"pattern":["#FFC864"]}
+
+User: "lightning storm"
+{"name":"Lightning","effect":7,"speed":65,"reverse":false,"allLedsMode":false,"pattern":["#FFFFFF","#C8E0FF","#88AAFF"]}
+
+User: "calm sleepy nightlight"
+{"name":"Nightlight","effect":15,"speed":15,"reverse":false,"allLedsMode":false,"pattern":["#FF6E2A","#A04500"]}
+
+User: "fourth of july"
+{"name":"Patriotic","effect":9,"speed":60,"reverse":false,"allLedsMode":false,"pattern":["#FF0000","#FF0000","#FFFFFF","#FFFFFF","#0000FF","#0000FF"]}`;
 
 // ── Validate / sanitize the model's output ──────────────────────────────────
 function validatePreset(raw) {

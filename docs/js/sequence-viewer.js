@@ -56,16 +56,24 @@
         box-shadow:0 32px 96px rgba(0,0,0,0.8);
         transform:scale(0.94) translateY(28px); opacity:0;
         transition:transform 0.28s cubic-bezier(0.34,1.2,0.64,1), opacity 0.22s ease;
-        overflow-y:auto; display:flex; flex-direction:column;
+        /* Outer panel must clip on every axis so the inner scroll container
+           respects the rounded corners (otherwise the right side ends up
+           with hard corners while the left appears rounded). */
+        overflow:hidden; display:flex; flex-direction:column;
         color:#e2e8f0;
+      }
+      .agv-panel-scroll {
+        flex:1; min-height:0; overflow-y:auto;
+        display:flex; flex-direction:column;
       }
       .agv-root.open .agv-panel { transform:scale(1) translateY(0); opacity:1; }
       .agv-close {
-        position:sticky; top:0; right:0; align-self:flex-end;
-        margin:16px 16px 0;
-        background:#1a1a1a; border:1px solid #333; color:#fff; border-radius:50%;
-        width:44px; height:44px; font-size:1.1rem; cursor:pointer;
-        z-index:2; flex-shrink:0;
+        /* Floats above the scroll area so it always remains clickable. */
+        position:absolute; top:14px; right:14px;
+        background:rgba(26,26,26,0.92); border:1px solid #333; color:#fff; border-radius:50%;
+        width:36px; height:36px; font-size:0.95rem; cursor:pointer;
+        z-index:5;
+        backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
       }
       .agv-close:hover { background:#2a2a2a; }
       .agv-hero {
@@ -241,7 +249,7 @@
       <div class="agv-backdrop" data-agv-close></div>
       <div class="agv-panel">
         <button class="agv-close" data-agv-close aria-label="Close">&#x2715;</button>
-        <div id="agvContent"></div>
+        <div class="agv-panel-scroll"><div id="agvContent"></div></div>
       </div>
     `;
     document.body.appendChild(root);
