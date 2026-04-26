@@ -117,6 +117,9 @@ async function callGemini(question, apiKey) {
         generationConfig: {
             temperature: 0.4,           // lower temp for consistent, factual answers
             maxOutputTokens: MAX_OUTPUT_TOKENS,
+            // Disable Gemini 2.5's reasoning to keep outputs fast and prevent
+            // thinking from eating the output token budget.
+            thinkingConfig: { thinkingBudget: 0 },
         },
     };
     const res = await fetch(url, {

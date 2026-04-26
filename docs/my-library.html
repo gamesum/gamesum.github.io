@@ -1506,6 +1506,36 @@
   </div>
 </div>
 
+<!-- ─── Edit Upload Modal ────────────────────────────────────────── -->
+<div id="editUploadModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#17171A;border:1px solid #2A2A32;border-radius:12px;max-width:680px;width:100%;padding:28px;max-height:90vh;overflow-y:auto;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px;">
+      <h2 style="font-family:'Outfit',sans-serif;font-size:1.3rem;font-weight:800;color:#fff;">Edit show</h2>
+      <button id="editUploadClose" style="background:transparent;border:none;color:#94a3b8;font-size:1.4rem;cursor:pointer;line-height:1;padding:0 4px;">&times;</button>
+    </div>
+
+    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:6px;">Show name</label>
+    <input id="editUploadName" type="text" maxlength="120" style="width:100%;background:#0f0f11;border:1px solid #2A2A32;color:#e2e8f0;padding:10px 12px;border-radius:8px;font-size:0.95rem;margin-bottom:18px;" />
+
+    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:6px;">Description</label>
+    <textarea id="editUploadDesc" maxlength="500" rows="4" style="width:100%;background:#0f0f11;border:1px solid #2A2A32;color:#e2e8f0;padding:10px 12px;border-radius:8px;font-size:0.92rem;line-height:1.55;font-family:Inter,sans-serif;resize:vertical;margin-bottom:6px;"></textarea>
+    <div style="text-align:right;font-size:0.72rem;color:#6b7280;margin-bottom:18px;"><span id="editUploadDescCount">0</span> / 500</div>
+
+    <label style="display:block;font-size:0.78rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;color:#94a3b8;margin-bottom:6px;">Photos <span style="color:#6b7280;text-transform:none;font-weight:400;">(up to 6, first one is the cover)</span></label>
+    <div id="editUploadPhotosGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;"></div>
+    <div style="display:flex;gap:10px;align-items:center;margin-bottom:24px;">
+      <input type="file" id="editUploadPhotoInput" accept="image/jpeg,image/png,image/webp" multiple style="display:none;" />
+      <button id="editUploadAddPhotosBtn" type="button" style="background:#1a1a1a;border:1px solid #2A2A32;color:#e2e8f0;padding:8px 16px;border-radius:8px;font-size:0.85rem;cursor:pointer;">Add photos</button>
+      <span id="editUploadPhotoStatus" style="font-size:0.78rem;color:#94a3b8;"></span>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button id="editUploadCancel" type="button" style="background:transparent;border:1px solid #2A2A32;color:#94a3b8;padding:9px 18px;border-radius:8px;font-size:0.88rem;cursor:pointer;">Cancel</button>
+      <button id="editUploadSave" type="button" style="background:#D4A43A;border:none;color:#000;padding:9px 22px;border-radius:8px;font-size:0.88rem;font-weight:700;cursor:pointer;">Save changes</button>
+    </div>
+  </div>
+</div>
+
 <!-- ─── Delete Account Modal ─────────────────────────────────────── -->
 <div id="deleteAccountModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:3000;align-items:center;justify-content:center;padding:24px;">
   <div style="background:#17171A;border:1px solid #2A2A32;border-radius:12px;max-width:520px;width:100%;padding:28px;">
@@ -2282,6 +2312,7 @@
           uploadedAt:    d.createdAt,
           downloadCount: d.downloadCount || 0,
           description:   d.description || '',
+          photos:        Array.isArray(d.photos) ? d.photos : [],
           local:         false
         };
       });
@@ -2405,23 +2436,212 @@
   }
 
   /* ─── Edit / Delete own uploads ──────────────────────────────── */
-  async function openEditUploadModal(row) {
-    const newName = prompt('Show name:', row.name);
-    if (newName === null) return;
-    const newDesc = prompt('Description (max 500 chars):', row.description || '');
-    if (newDesc === null) return;
+  // State for the edit modal — held while the modal is open.
+  let _editUploadCtx = null;
+
+  // Resize an image File to a JPEG Blob, max 1200px on the longest edge.
+  function _compressShowPhoto(file, maxDim, quality) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Could not read file.'));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error('Could not decode image.'));
+        img.onload = () => {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          c.toBlob(b => b ? resolve(b) : reject(new Error('Compression failed')), 'image/jpeg', quality);
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function _renderEditPhotos() {
+    const grid = document.getElementById('editUploadPhotosGrid');
+    if (!grid || !_editUploadCtx) return;
+    grid.innerHTML = '';
+    const photos = _editUploadCtx.photos;
+    if (!photos.length) {
+      const empty = document.createElement('div');
+      empty.style.cssText = 'grid-column:1/-1;text-align:center;color:#6b7280;font-size:0.8rem;padding:18px;border:1px dashed #2A2A32;border-radius:8px;';
+      empty.textContent = 'No photos yet. Add at least one cover.';
+      grid.appendChild(empty);
+      return;
+    }
+    photos.forEach((url, idx) => {
+      const tile = document.createElement('div');
+      tile.style.cssText = 'position:relative;aspect-ratio:1/1;background:#0f0f11;border:1px solid #2A2A32;border-radius:8px;overflow:hidden;';
+      const img = document.createElement('img');
+      img.src = url;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;';
+      tile.appendChild(img);
+      if (idx === 0) {
+        const cover = document.createElement('span');
+        cover.textContent = 'Cover';
+        cover.style.cssText = 'position:absolute;top:6px;left:6px;background:rgba(212,164,58,0.95);color:#000;font-size:0.65rem;font-weight:700;padding:3px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em;';
+        tile.appendChild(cover);
+      }
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.textContent = '×';
+      del.title = 'Remove';
+      del.style.cssText = 'position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:rgba(0,0,0,0.7);border:1px solid #4a2222;color:#f87171;font-size:1rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+      del.onclick = () => {
+        _editUploadCtx.photos.splice(idx, 1);
+        _editUploadCtx.removedPhotoUrls.push(url);
+        _renderEditPhotos();
+      };
+      tile.appendChild(del);
+      if (idx > 0) {
+        const promote = document.createElement('button');
+        promote.type = 'button';
+        promote.textContent = 'Make cover';
+        promote.style.cssText = 'position:absolute;bottom:6px;left:6px;right:6px;background:rgba(0,0,0,0.7);border:1px solid #2A2A32;color:#e2e8f0;font-size:0.7rem;padding:4px 6px;border-radius:4px;cursor:pointer;';
+        promote.onclick = () => {
+          const moved = _editUploadCtx.photos.splice(idx, 1)[0];
+          _editUploadCtx.photos.unshift(moved);
+          _renderEditPhotos();
+        };
+        tile.appendChild(promote);
+      }
+      grid.appendChild(tile);
+    });
+  }
+
+  function openEditUploadModal(row) {
+    _editUploadCtx = {
+      id: row.id,
+      photos: Array.isArray(row.photos) ? row.photos.slice() : [],
+      removedPhotoUrls: [],
+    };
+    // Pull the latest doc to be sure photos[] is current (row caches the
+    // snapshot from the last subscribe tick).
+    firebase.firestore().collection('sequences').doc(row.id).get().then((snap) => {
+      if (snap.exists) {
+        const d = snap.data() || {};
+        _editUploadCtx.photos = Array.isArray(d.photos) ? d.photos.slice() : [];
+        _editUploadCtx.original = { name: d.name || row.name, description: d.description || row.description || '' };
+        document.getElementById('editUploadName').value = _editUploadCtx.original.name || '';
+        document.getElementById('editUploadDesc').value = _editUploadCtx.original.description || '';
+        document.getElementById('editUploadDescCount').textContent = (_editUploadCtx.original.description || '').length;
+        _renderEditPhotos();
+      }
+    }).catch(() => {});
+    document.getElementById('editUploadName').value = row.name || '';
+    document.getElementById('editUploadDesc').value = row.description || '';
+    document.getElementById('editUploadDescCount').textContent = (row.description || '').length;
+    document.getElementById('editUploadPhotoStatus').textContent = '';
+    _renderEditPhotos();
+    document.getElementById('editUploadModal').style.display = 'flex';
+  }
+
+  function _closeEditUploadModal() {
+    document.getElementById('editUploadModal').style.display = 'none';
+    _editUploadCtx = null;
+  }
+
+  async function _saveEditUploadModal() {
+    if (!_editUploadCtx) return;
+    const ctx = _editUploadCtx;
+    const saveBtn = document.getElementById('editUploadSave');
+    const status = document.getElementById('editUploadPhotoStatus');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Saving…';
     try {
-      await firebase.firestore().collection('sequences').doc(row.id).update({
-        name:        newName.trim().slice(0, 120),
-        description: newDesc.trim().slice(0, 500),
+      const name = (document.getElementById('editUploadName').value || '').trim().slice(0, 120);
+      const desc = (document.getElementById('editUploadDesc').value || '').trim().slice(0, 500);
+      if (!name) throw new Error('Show name is required.');
+      // Delete photos the user removed (best-effort; storage rule allows owner).
+      if (ctx.removedPhotoUrls.length) {
+        status.textContent = 'Removing ' + ctx.removedPhotoUrls.length + ' photo(s)…';
+        await Promise.allSettled(ctx.removedPhotoUrls.map((url) => {
+          try {
+            return firebase.storage().refFromURL(url).delete();
+          } catch (e) { return Promise.resolve(); }
+        }));
+      }
+      status.textContent = 'Saving details…';
+      await firebase.firestore().collection('sequences').doc(ctx.id).update({
+        name,
+        description: desc,
+        photos:      ctx.photos,
+        coverPhoto:  ctx.photos[0] || '',
         updatedAt:   firebase.firestore.FieldValue.serverTimestamp(),
       });
-      showToast('Show details updated.', 'success');
+      _closeEditUploadModal();
+      showToast('Show updated.', 'success');
     } catch (e) {
-      console.error('Edit failed', e);
-      showToast('Edit failed: ' + (e.message || 'unknown'), 'error');
+      console.error('Edit save failed', e);
+      showToast('Save failed: ' + (e.message || 'unknown'), 'error');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Save changes';
+      if (status) status.textContent = '';
     }
   }
+
+  async function _addPhotosFromInput(files) {
+    if (!_editUploadCtx) return;
+    const remaining = 6 - _editUploadCtx.photos.length;
+    if (remaining <= 0) {
+      showToast('You can only have 6 photos. Remove one first.', 'warning');
+      return;
+    }
+    const picked = Array.from(files || []).slice(0, remaining);
+    const status = document.getElementById('editUploadPhotoStatus');
+    let i = 0;
+    for (const file of picked) {
+      i++;
+      status.textContent = 'Uploading ' + i + ' of ' + picked.length + '…';
+      try {
+        const blob = await _compressShowPhoto(file, 1200, 0.82);
+        // Use a fresh filename so we don't collide with existing photos.
+        const fname = Date.now() + '-' + Math.random().toString(36).slice(2, 8) + '.jpg';
+        const ref = firebase.storage().ref('sequence_photos/' + _editUploadCtx.id + '/' + fname);
+        await ref.put(blob, { contentType: 'image/jpeg' });
+        const url = await ref.getDownloadURL();
+        _editUploadCtx.photos.push(url);
+      } catch (err) {
+        console.warn('Photo upload failed', err);
+        showToast('Could not upload ' + file.name, 'warning');
+      }
+    }
+    status.textContent = '';
+    _renderEditPhotos();
+  }
+
+  // Wire modal controls once at load.
+  document.addEventListener('DOMContentLoaded', () => {
+    const close = document.getElementById('editUploadClose');
+    const cancel = document.getElementById('editUploadCancel');
+    const save = document.getElementById('editUploadSave');
+    const desc = document.getElementById('editUploadDesc');
+    const descCount = document.getElementById('editUploadDescCount');
+    const addBtn = document.getElementById('editUploadAddPhotosBtn');
+    const fileInput = document.getElementById('editUploadPhotoInput');
+    if (close)  close.onclick  = _closeEditUploadModal;
+    if (cancel) cancel.onclick = _closeEditUploadModal;
+    if (save)   save.onclick   = _saveEditUploadModal;
+    if (desc && descCount) {
+      desc.addEventListener('input', () => { descCount.textContent = (desc.value || '').length; });
+    }
+    if (addBtn && fileInput) {
+      addBtn.onclick = () => fileInput.click();
+      fileInput.onchange = (e) => {
+        _addPhotosFromInput(e.target.files);
+        e.target.value = '';
+      };
+    }
+    // Click outside to close.
+    const overlay = document.getElementById('editUploadModal');
+    if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) _closeEditUploadModal(); });
+  });
 
   async function deleteOwnUpload(row) {
     const ok = confirm('Delete "' + row.name + '" permanently? This removes the FSEQ file and the Store listing.');

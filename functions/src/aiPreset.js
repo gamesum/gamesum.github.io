@@ -191,8 +191,12 @@ Return only the JSON preset.`);
         contents: [{ role: "user", parts: [{ text: userParts.join("\n") }] }],
         generationConfig: {
             temperature: 0.8,
-            maxOutputTokens: 512,
+            maxOutputTokens: 2048,
             responseMimeType: "application/json",
+            // Gemini 2.5 has reasoning ON by default, which eats output tokens
+            // before any visible JSON is emitted. Turn it off — we want fast
+            // structured output, not chain-of-thought.
+            thinkingConfig: { thinkingBudget: 0 },
         },
     };
     const res = await fetch(url, {
