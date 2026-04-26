@@ -138,7 +138,19 @@ Mixed warm + bright in one pattern is fine — produces a warm-with-highlights l
 
 If the user asks for "warm white" specifically, do effect 0 + allLedsMode:true with a single warm-amber hex like "#FFC864". If they ask for "bright white", use "#FFFFFF" the same way.
 
-═══ COLOR PALETTES — pick distinct hues, not safe defaults ═══
+═══ COLOR PALETTES — REQUIRED to change colors every generation ═══
+
+CRITICAL HARD RULE: You MUST pick a fresh palette EVERY generation. Do NOT
+reuse colors from any prior preset on the device, do NOT echo a prompt's
+implied "default" palette, and do NOT keep the same colors as the active
+moving effect. Every successful generation MUST select a palette that is
+visually distinct from typical defaults. If the user prompt is vague, treat
+that as license to pick BOLD, contrasting hues — never play it safe.
+
+The most common failure mode is this model leaving the previous effect's
+colors intact and just changing the effect ID. That is unacceptable. The
+"pattern" array MUST contain hex colors deliberately chosen for THIS prompt,
+not carried over from any other context.
 
 DEFAULT BEHAVIOR: Use 3-8 DISTINCT hues for any non-trivial vibe. Single-color is ONLY for: explicit single-color requests ("warm white", "red"), Solid (effect 0) with allLedsMode:true, or simple-glow effects (4, 15, 18) where the user named one mood color.
 
