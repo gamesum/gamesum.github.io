@@ -2063,9 +2063,9 @@
     card.addEventListener('click', () => openDrawer(seq));
 
     const btnHtml = seq.free
-      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="event.stopPropagation();handleDownload(event,parseInt(this.dataset.seqid))">
-           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-           Download
+      ? `<button class="btn-card btn-card-free" data-seqid="${seq.id}" onclick="event.stopPropagation();handleAddToLibrary(event,this.dataset.seqid)">
+           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+           Add
          </button>`
       : `<button class="btn-card btn-card-paid" data-seqid="${seq.id}" data-price="${seq.price}" data-name="" onclick="event.stopPropagation();handleBuy(event,this.dataset.seqid,this.dataset.name,parseFloat(this.dataset.price))">Buy ${'$' + seq.price.toFixed(2)}</button>`;
 
@@ -2416,12 +2416,45 @@
     }
   });
 
-  /* ─── DOWNLOAD / BUY HANDLERS ────────────────────────────────────── */
-  function handleDownload(e, id) {
-    e.stopPropagation();
+  /* ─── ADD-TO-LIBRARY / BUY HANDLERS ─────────────────────────────── */
+  // Adds a free show to the user's account (persisted to Firestore via the
+  // addToLibrary callable). The firmware + native app pull from /purchases
+  // which surfaces these alongside paid purchases. No FSEQ files ever land
+  // on the user's local disk via this path.
+  async function handleAddToLibrary(e, id) {
+    if (e && e.stopPropagation) e.stopPropagation();
     if (!requireAuth()) return;
-    _doDownload(id);
+    const seqId = String(id);
+    const seq = sequences.find(s => String(s.id) === seqId) || { name: 'Show', id: seqId };
+    try {
+      if (typeof firebase !== 'undefined' && firebase.functions) {
+        const fn = firebase.functions().httpsCallable('addToLibrary');
+        const res = await fn({ sequenceId: seqId });
+        if (res && res.data && res.data.alreadyOwned) {
+          showToast('"' + seq.name + '" is already in your library.');
+        } else {
+          showToast('Added "' + seq.name + '" to your library.');
+        }
+      }
+    } catch (err) {
+      console.error('addToLibrary failed', err);
+      showToast('Could not add: ' + (err && err.message ? err.message : 'unknown error'), 'warning');
+      return;
+    }
+    // Mirror locally so the My Library counter and "Added" pill update without
+    // waiting for a Firestore round-trip.
+    const user = getUser();
+    if (user) {
+      if (!user.purchases) user.purchases = [];
+      if (!user.purchases.find(p => String(p.id) === seqId || String(p.sequenceId) === seqId)) {
+        user.purchases.push({ id: seqId, sequenceId: seqId, name: seq.name, creator: seq.creator, price: 0, kind: 'free', addedAt: Date.now() });
+        saveUser(user);
+      }
+    }
+    render();
   }
+  // Back-compat shim: older code paths still call handleDownload.
+  function handleDownload(e, id) { return handleAddToLibrary(e, id); }
 
   function _doDownload(id) {
     id = parseInt(id, 10);
@@ -2689,7 +2722,7 @@
           </div>
           ${price > 0
             ? `<button onclick="startStripeCheckout({sequenceId:'${esc(String(seq.id))}',sequenceName:'${esc(seq.name)}',creator:'${esc(seq.creator)}',price:${price}});closeDrawer();" style="width:100%;background:#D4A43A;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Buy ${'$' + price.toFixed(2)}</button>`
-            : `<button onclick="handleDownload(event,'${esc(String(seq.id))}');closeDrawer();" style="width:100%;background:#4ade80;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">Download Free</button>`
+            : `<button onclick="handleAddToLibrary(event,'${esc(String(seq.id))}');closeDrawer();" style="width:100%;background:#4ade80;color:#000;font-weight:700;font-size:1rem;padding:16px;border:none;border-radius:12px;cursor:pointer;min-height:52px;">+ Add to my library</button>`
           }
         </div>
       </div>

@@ -1276,6 +1276,70 @@ export const apiMe = functions.https.onRequest(async (req, res) => {
   }
 });
 
+// ─── addToLibrary (callable) ──────────────────────────────────────────────────
+// Adds a FREE sequence (or free pack) to the user's library by writing a
+// purchases doc with price 0. Paid shows still go through Stripe Checkout +
+// recordPurchase. Idempotent — re-adding is a no-op. The /purchases endpoint
+// already returns whatever's in the user's purchases collection, so the app +
+// firmware see this entry the same way they see paid purchases.
+export const addToLibrary = functions.https.onCall(async (data, context) => {
+  if (!context.auth) {
+    throw new functions.https.HttpsError("unauthenticated", "Sign in to add shows to your library.");
+  }
+  const uid = context.auth.uid;
+  const sequenceId = typeof data?.sequenceId === "string" ? data.sequenceId : "";
+  if (!isValidId(sequenceId)) {
+    throw new functions.https.HttpsError("invalid-argument", "Invalid sequenceId.");
+  }
+
+  const seqRef = db.collection("sequences").doc(sequenceId);
+  const seqSnap = await seqRef.get();
+  if (!seqSnap.exists) {
+    throw new functions.https.HttpsError("not-found", "Show not found.");
+  }
+  const seq = seqSnap.data() as { name?: string; creator?: string; creatorUid?: string; price?: number; isFree?: boolean; status?: string };
+
+  // Only allow add for published shows.
+  if (seq.status !== "published") {
+    throw new functions.https.HttpsError("failed-precondition", "Show is not currently available.");
+  }
+
+  const price = Number(seq.price || 0);
+  const isFree = price === 0 || seq.isFree === true;
+
+  // Paid shows must go through Stripe Checkout — refuse the freebie path.
+  if (!isFree) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "This show is paid. Use Buy to add it to your library after checkout."
+    );
+  }
+
+  const purchaseDocRef = db.collection("purchases").doc(`${uid}_${sequenceId}`);
+  const existing = await purchaseDocRef.get();
+  if (existing.exists) {
+    return { ok: true, alreadyOwned: true };
+  }
+
+  await db.runTransaction(async (tx) => {
+    const dup = await tx.get(purchaseDocRef);
+    if (dup.exists) return;
+    tx.set(purchaseDocRef, {
+      userId:       uid,
+      sequenceId,
+      sequenceName: seq.name || "",
+      creator:      seq.creator || "Unknown",
+      creatorUid:   seq.creatorUid || null,
+      price:        0,
+      kind:         "free",
+      purchasedAt:  admin.firestore.Timestamp.now(),
+    });
+    tx.update(seqRef, { downloadCount: admin.firestore.FieldValue.increment(1) });
+  });
+
+  return { ok: true, alreadyOwned: false };
+});
+
 // ─── userDeleteUpload (callable) ─────────────────────────────────────────────
 // Lets a creator delete their OWN sequence: removes FSEQ + MP3 + photos from
 // Storage, then deletes the Firestore doc. Refuses if anyone has bought the

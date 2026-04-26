@@ -281,7 +281,7 @@
         </div>
         ${price > 0
           ? '<button class="agv-cta buy" data-agv-buy>Buy $' + price.toFixed(2) + '</button>'
-          : '<button class="agv-cta free" data-agv-download>Download Free</button>'}
+          : '<button class="agv-cta free" data-agv-download>+ Add to my library</button>'}
       </div>` : '';
 
     const content = `
