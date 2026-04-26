@@ -2474,7 +2474,7 @@
         };
         if (window.AGSequenceViewer) {
           window.AGSequenceViewer.open(seq, {
-            onDownload: () => { if (typeof downloadFseq === 'function') downloadFseq(r.id); },
+            onDownload: () => addOwnUploadToLibrary(seq),
             onBuy:      () => {},
           });
         }
@@ -2797,6 +2797,34 @@
     if (overlay) overlay.addEventListener('click', (e) => { if (e.target === overlay) _closeEditUploadModal(); });
   });
 
+  // Add-to-library button inside the shared sequence viewer when invoked from
+  // My Library. Calls the addToLibrary callable so a purchases doc gets
+  // written (and the firmware/desktop app picks it up via /purchases).
+  // Refuses to issue a raw FSEQ download — that's the legacy "Download Show
+  // File" button on the upload card if the user explicitly wants the file.
+  async function addOwnUploadToLibrary(seq) {
+    try {
+      const fbUser = firebase.auth().currentUser;
+      if (!fbUser) { showToast('Sign in again to add this show.', 'warning'); return; }
+      // Free shows go through addToLibrary. Paid go through Stripe via the
+      // store's Buy flow, which we don't surface from My Library.
+      if (!(seq.isFree || (seq.price || 0) === 0)) {
+        showToast('Premium shows are added at checkout, not from your library.', 'warning');
+        return;
+      }
+      const fn = firebase.functions().httpsCallable('addToLibrary');
+      const res = await fn({ sequenceId: seq.id });
+      if (res && res.data && res.data.alreadyOwned) {
+        showToast('"' + (seq.name || 'Show') + '" is already in your library.');
+      } else {
+        showToast('Added "' + (seq.name || 'Show') + '" to your library.');
+      }
+    } catch (err) {
+      console.error('addOwnUploadToLibrary failed', err);
+      showToast('Could not add: ' + (err && err.message ? err.message : 'unknown error'), 'warning');
+    }
+  }
+
   async function deleteOwnUpload(row) {
     const ok = confirm('Delete "' + row.name + '" permanently? This removes the FSEQ file and the Store listing.');
     if (!ok) return;
@@ -2980,7 +3008,7 @@
           gradient: item.gradient,
           hasMp3: item.hasMp3
         }, {
-          onDownload: () => { if (typeof downloadFseq === 'function') downloadFseq(item.id); },
+          onDownload: () => addOwnUploadToLibrary({ id: item.id, name: item.name, isFree: (item.price || 0) === 0, price: item.price || 0 }),
           onBuy: () => { /* already owned; no buy path from library */ }
         });
       }
