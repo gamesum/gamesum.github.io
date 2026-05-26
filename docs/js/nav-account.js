@@ -38,10 +38,27 @@
 
   function buildSignedInEl(user) {
     ensureStyles();
+    var photo = (user && (user.photoURL || user.picture)) || '';
+    var initial = esc(((user && (user.displayName || user.name || user.email)) || 'U').charAt(0).toUpperCase());
+    var inlineFallback;
+    if (photo) {
+      // Render <img> directly with onerror→initials so we don't depend on avatar.js.
+      inlineFallback =
+        '<img class="avatar" src="' + esc(photo) + '" width="28" height="28" alt="" ' +
+        'style="width:28px;height:28px;border-radius:50%;object-fit:cover;display:inline-block;vertical-align:middle;" ' +
+        'onerror="this.onerror=null;this.replaceWith(Object.assign(document.createElement(\'span\'),' +
+          '{className:\'avatar avatar-initials\',textContent:\'' + initial + '\',' +
+          'style:\'width:28px;height:28px;font-size:12px;border-radius:50%;display:inline-flex;' +
+          'align-items:center;justify-content:center;background:#D4A43A;color:#1a1a1a;font-weight:700;\'}));" />';
+    } else {
+      inlineFallback =
+        '<span class="avatar avatar-initials" style="width:28px;height:28px;font-size:12px;border-radius:50%;' +
+        'display:inline-flex;align-items:center;justify-content:center;background:#D4A43A;color:#1a1a1a;font-weight:700;">' +
+        initial + '</span>';
+    }
     var avatar = (typeof window.avatarHtml === 'function')
       ? window.avatarHtml(user, 28)
-      : '<span class="avatar avatar-initials" style="width:28px;height:28px;font-size:12px;">' +
-        esc(((user && (user.displayName || user.email)) || 'U').charAt(0).toUpperCase()) + '</span>';
+      : inlineFallback;
 
     var displayLabel = (user && (user.displayName || (user.email ? user.email.split('@')[0] : ''))) || 'Account';
 
@@ -90,20 +107,45 @@
     if (!btn && !mobBtn && !existingWrap) return;
     if (!window.firebase || !firebase.auth) return;
 
-    var lastPhoto = null;
+    var lastSig = null;
     function paint(u) {
       if (mobBtn) { mobBtn.textContent = 'My Library'; mobBtn.href = 'my-library.html'; }
       var target = document.getElementById('navAccountBtn') || document.getElementById('navAccountWrap');
       if (!target) return;
       var photo = u.photoURL || '';
-      if (photo === lastPhoto) return; // no change → don't re-render
-      lastPhoto = photo;
+      var name  = u.displayName || '';
+      var email = u.email || '';
+      var sig = photo + '|' + name + '|' + email;
+      if (sig === lastSig) return; // no change → don't re-render
+      lastSig = sig;
       var wrap = buildSignedInEl({
-        displayName: u.displayName || '',
-        email:       u.email       || '',
+        displayName: name,
+        email:       email,
         photoURL:    photo,
       });
       target.replaceWith(wrap);
+    }
+    function fetchFirestoreMirror(u) {
+      if (!firebase.firestore) return;
+      firebase.firestore().collection('users').doc(u.uid).get()
+        .then(function (snap) {
+          if (!snap.exists) return;
+          var data = snap.data() || {};
+          var url = data.photoURL || '';
+          var name = data.displayName || '';
+          var fresh = firebase.auth().currentUser || u;
+          // Always paint with the freshest combination. If Auth has a photoURL
+          // that's a placeholder/missing, the Firestore mirror wins.
+          if (url || name) {
+            paint({
+              uid: u.uid,
+              email: fresh.email || u.email || '',
+              displayName: fresh.displayName || name || '',
+              photoURL: fresh.photoURL || url || '',
+            });
+          }
+        })
+        .catch(function () { /* non-fatal */ });
     }
     firebase.auth().onAuthStateChanged(function (u) {
       if (u) {
@@ -113,24 +155,13 @@
         u.reload().then(function () {
           var fresh = firebase.auth().currentUser;
           if (fresh) paint(fresh);
-        }).catch(function () { /* non-fatal */ });
-        // Belt-and-suspenders: if Auth photoURL is still empty after reload,
-        // pull from the Firestore /users/{uid} mirror that my-library.html
-        // writes on profile-picture upload.
-        if (!u.photoURL && firebase.firestore) {
-          firebase.firestore().collection('users').doc(u.uid).get()
-            .then(function (snap) {
-              if (!snap.exists) return;
-              var url = snap.data() && snap.data().photoURL;
-              if (url) paint({
-                displayName: u.displayName || '',
-                email: u.email || '',
-                uid: u.uid,
-                photoURL: url,
-              });
-            })
-            .catch(function () { /* non-fatal */ });
-        }
+          // Always consult Firestore mirror — it's authoritative for our
+          // upload flow, and Auth's photoURL can be stale or empty even
+          // after reload on some tabs.
+          fetchFirestoreMirror(fresh || u);
+        }).catch(function () {
+          fetchFirestoreMirror(u);
+        });
       } else {
         if (mobBtn) { mobBtn.textContent = 'Sign In'; mobBtn.href = 'signin.html'; }
         var wrap = document.getElementById('navAccountWrap');
