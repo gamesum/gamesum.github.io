@@ -559,6 +559,29 @@
       border: 1px solid rgba(212,164,58,0.35);
     }
 
+    /* Wishlist heart in the upper-right corner of the thumbnail. Stored
+       client-side in localStorage; future enhancement: sync to Firestore for
+       signed-in users so wishlist follows them across devices. */
+    .card-wishlist {
+      position: absolute;
+      top: 10px; right: 10px;
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: none;
+      color: #FFFFFF;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s, transform 0.1s, color 0.15s;
+      z-index: 3;
+    }
+    .card-wishlist svg { width: 18px; height: 18px; }
+    .card-wishlist:hover { background: rgba(0,0,0,0.85); transform: scale(1.06); }
+    .card-wishlist.on { background: rgba(255,82,82,0.85); color: #fff; }
+    .card-wishlist.on:hover { background: rgba(255,82,82,1); }
+
     .card-play {
       position: absolute;
       bottom: 10px;
@@ -1729,169 +1752,6 @@
   </div>
 </section>
 
-<!-- ─── PREMIUM PACKS ────────────────────────────────────────────────── -->
-<!-- Change 2: Moved premium packs ABOVE the upload section so revenue content reaches mobile users -->
-<section id="premium" class="section-pad">
-  <div class="container">
-    <div style="background:rgba(212,164,58,0.07);border:1px solid rgba(212,164,58,0.25);border-radius:12px;padding:14px 20px;margin-bottom:32px;display:flex;align-items:flex-start;gap:12px;" class="fade-in">
-      <span style="font-size:1.3rem;flex-shrink:0;">💡</span>
-      <div>
-        <div style="font-family:'Outfit',sans-serif;font-weight:700;color:#fff;font-size:0.95rem;margin-bottom:4px;">These shows run on your AFTERGLO controller</div>
-        <div style="font-size:0.84rem;color:var(--muted);line-height:1.6;">You need an AFTERGLO permanent LED system installed on your home to play these shows. <a href="index.html#cta" style="color:var(--accent);">Don't have one yet? Get a free quote first →</a></div>
-      </div>
-    </div>
-    <div style="text-align:center; margin-bottom:52px;" class="fade-in">
-      <span class="section-label">Premium</span>
-      <h2 class="section-title">Curated Show Packs</h2>
-      <p class="section-sub" style="margin: 0 auto;">Hand-picked bundles from AFTERGLO's professional animation team. Every sequence is tuned for Utah roofline installs.</p>
-    </div>
-    <div class="premium-grid">
-
-      <!-- Holiday Mega Pack -->
-      <div class="pack-card featured fade-in">
-        <div class="pack-banner" style="background: linear-gradient(135deg, #1a0a00 0%, #3d1f00 40%, #1a0a00 100%);">
-          <div style="position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(212,164,58,0.06) 0px, rgba(212,164,58,0.06) 2px, transparent 2px, transparent 16px);"></div>
-          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3.5rem; opacity:0.6;">🎄🎁🦌</div>
-          <div class="pack-badge">MOST POPULAR</div>
-          <div class="pack-previews">
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#c8000a,#007000);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ffffff,#D4A43A);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#0000a0,#c8000a);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#00a000,#ffd700);"></div>
-          </div>
-        </div>
-        <div class="pack-body">
-          <div class="pack-title">Holiday Mega Pack</div>
-          <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
-          <p class="pack-desc">12 sequences covering the whole Christmas range. Calm warm-white twinkling for background ambiance, and full-energy music-synchronized shows for the nights that matter.</p>
-          <div class="pack-meta">
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              12 sequences
-            </div>
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              6.5 hrs total
-            </div>
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
-              Music included
-            </div>
-          </div>
-          <div class="pack-footer">
-            <div>
-              <div class="pack-price"><sup>$</sup>58</div>
-              <div class="pack-price-sub">one-time purchase</div>
-            </div>
-            <!-- Change 3b: mailto request instead of broken "coming soon" toast -->
-            <button type="button" class="btn-request-pack" data-buy-id="pack_holiday_mega" onclick="handlePackBuy('pack_holiday_mega','Holiday Mega Pack',58)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
-              Buy Pack $58
-            </button>
-          </div>
-          <!-- Change 3c: guarantee line -->
-          <div class="pack-guarantee">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            7 day satisfaction guarantee
-          </div>
-        </div>
-      </div>
-
-      <!-- Patriotic Bundle -->
-      <div class="pack-card fade-in fade-delay-1">
-        <div class="pack-banner" style="background: linear-gradient(135deg, #000a1a 0%, #001a3d 40%, #1a0000 100%);">
-          <div style="position:absolute; inset:0; background: repeating-linear-gradient(-45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 2px, transparent 2px, transparent 16px);"></div>
-          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3.5rem; opacity:0.6;">🇺🇸🦅⭐</div>
-          <div class="pack-previews">
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#b22234,#ffffff);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#3c3b6e,#b22234);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ffffff,#3c3b6e);"></div>
-          </div>
-        </div>
-        <div class="pack-body">
-          <div class="pack-title">Patriotic Bundle</div>
-          <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
-          <p class="pack-desc">Six fast-paced red, white, and blue sequences built for outdoor crowds. Designed for Memorial Day, Independence Day, and Veterans Day. Music included.</p>
-          <div class="pack-meta">
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              6 sequences
-            </div>
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              3.2 hrs total
-            </div>
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
-              Music included
-            </div>
-          </div>
-          <div class="pack-footer">
-            <div>
-              <div class="pack-price"><sup>$</sup>38</div>
-              <div class="pack-price-sub">one-time purchase</div>
-            </div>
-            <button type="button" class="btn-request-pack" data-buy-id="pack_patriotic_bundle" onclick="handlePackBuy('pack_patriotic_bundle','Patriotic Bundle',38)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
-              Buy Pack $38
-            </button>
-          </div>
-          <div class="pack-guarantee">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            7 day satisfaction guarantee
-          </div>
-        </div>
-      </div>
-
-      <!-- Halloween Pack -->
-      <div class="pack-card fade-in fade-delay-2">
-        <div class="pack-banner" style="background: linear-gradient(135deg, #0d0005 0%, #2a0a00 40%, #0d0005 100%);">
-          <div style="position:absolute; inset:0; background: repeating-linear-gradient(45deg, rgba(180,60,0,0.06) 0px, rgba(180,60,0,0.06) 2px, transparent 2px, transparent 16px);"></div>
-          <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:3.5rem; opacity:0.6;">🎃👻🕷️</div>
-          <div class="pack-previews">
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#ff6600,#000000);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#6600aa,#ff6600);"></div>
-            <div class="pack-preview-dot" style="background: linear-gradient(135deg,#000000,#6600aa);"></div>
-          </div>
-        </div>
-        <div class="pack-body">
-          <div class="pack-title">Halloween Pack</div>
-          <div style="font-size:0.72rem;color:#4ade80;font-weight:600;letter-spacing:0.04em;margin-bottom:8px;">✓ One-time purchase &bull; No subscription &bull; Yours forever</div>
-          <p class="pack-desc">Eight spine-chilling shows ranging from eerie slow fades to high-speed strobe-free spooky effects. Neighborhood-approved thrills.</p>
-          <div class="pack-meta">
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-              8 sequences
-            </div>
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              4.1 hrs total
-            </div>
-            <div class="pack-meta-item">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
-              Music included
-            </div>
-          </div>
-          <div class="pack-footer">
-            <div>
-              <div class="pack-price"><sup>$</sup>48</div>
-              <div class="pack-price-sub">one-time purchase</div>
-            </div>
-            <button type="button" class="btn-request-pack" data-buy-id="pack_halloween" onclick="handlePackBuy('pack_halloween','Halloween Pack',48)">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 00 2 1.61h9.72a2 2 0 001.95-1.55L23 6H6"/></svg>
-              Buy Pack $48
-            </button>
-          </div>
-          <div class="pack-guarantee">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            7 day satisfaction guarantee
-          </div>
-        </div>
-      </div>
-
-    </div><!-- /premium-grid -->
-  </div>
-</section>
 
 <!-- ─── COMMUNITY UPLOAD ─────────────────────────────────────────────── -->
 <!-- Change 2: Upload section now comes after packs (user sees the value first, then contributes) -->
@@ -2124,12 +1984,16 @@
       : `background:${seq.gradient || seq.thumbnailGradient || 'linear-gradient(135deg,#1a1a1a,#333)'};`;
 
     // Set data-name after innerHTML to avoid apostrophe breaking onclick string
+    const isWishlisted = (window._wishlist || new Set()).has(String(seq.id));
     card.innerHTML = `
       <div class="card-thumb" style="${thumbStyle}">
         ${coverUrl ? '' : `<div class="card-glow" style="background:radial-gradient(ellipse 80% 60% at 50% 120%,${seq.glow || 'rgba(212,164,58,0.2)'} 0%,transparent 70%);"></div>`}
         <span class="card-badge ${seq.free || seq.isFree ? 'badge-free' : 'badge-paid'}">${seq.free || seq.isFree ? 'Free' : 'Premium'}</span>
         ${hotBadge}
         ${mp3Badge}
+        <button type="button" class="card-wishlist ${isWishlisted ? 'on' : ''}" data-seqid="${seq.id}" aria-label="${isWishlisted ? 'Remove from' : 'Save to'} wishlist" onclick="event.stopPropagation();toggleWishlist(this.dataset.seqid,this);" title="${isWishlisted ? 'Remove from wishlist' : 'Save to wishlist'}">
+          <svg viewBox="0 0 24 24" fill="${isWishlisted ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </button>
         <span class="card-duration">${seq.duration || (seq.durationSecs ? Math.floor(seq.durationSecs/60)+'m '+((seq.durationSecs%60)+'s') : '')}</span>
         ${seq.youtubeShowUrl ? `<a class="card-play" href="${esc(seq.youtubeShowUrl)}" target="_blank" rel="noopener noreferrer" onclick="event.stopPropagation();" title="Watch demo">
           <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -2172,32 +2036,11 @@
      It slots in at position 3 (index 3, i.e., after 3 sequence cards) so it
      appears early without disrupting the primary browsing flow.
   ──────────────────────────────────────────────────────────────────── */
-  function createInlinePackCard() {
-    const card = document.createElement('div');
-    card.className = 'seq-card pack-inline';
-    card.innerHTML = `
-      <div class="pack-inline-banner">
-        <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(212,164,58,0.06) 0px,rgba(212,164,58,0.06) 2px,transparent 2px,transparent 16px);"></div>
-        <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:3rem;opacity:0.55;">🎄🎁🦌</div>
-        <span class="pack-inline-label">Pack · Best Value</span>
-        <span class="pack-inline-seq-count">12 sequences · 6.5 hrs</span>
-      </div>
-      <div class="pack-inline-body">
-        <div class="pack-inline-title">Holiday Mega Pack</div>
-        <p class="pack-inline-desc">12 pro Christmas shows in one bundle. Trusted by 47 AFTERGLO homes.</p>
-        <div class="pack-inline-footer">
-          <div class="pack-inline-price"><sup>$</sup>58</div>
-          <a class="btn-pack-inline" href="#premium" onclick="document.getElementById('premium').scrollIntoView({behavior:'smooth'});return false;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-            View Pack
-          </a>
-        </div>
-      </div>
-    `;
-    return card;
-  }
+  // createInlinePackCard removed: it injected a hardcoded "Holiday Mega Pack"
+  // with fake "47 AFTERGLO homes" social proof and pointed at a #premium
+  // anchor that no longer exists.
 
-  /* ─── SKELETON CARDS (shown on first load) ───────────────────────── */
+/* ─── SKELETON CARDS (shown on first load) ───────────────────────── */
   function createSkeletonCard() {
     const card = document.createElement('div');
     card.className = 'skeleton-card';
@@ -2281,10 +2124,9 @@
       wrap.style.display = '';
       grid.style.display = 'none';
       noRes.classList.remove('show');
-      // Insert inline pack card at position 3 (after 3 sequence cards)
-      const INSERT_PACK_AT = 3;
-      sequences.forEach((s, i) => {
-        if (i === INSERT_PACK_AT) row.appendChild(createInlinePackCard());
+      // Inline pack card removed (was hardcoded "Holiday Mega Pack" with
+      // fake "47 AFTERGLO homes" social proof and a broken #premium anchor).
+      sequences.forEach((s) => {
         row.appendChild(createCard(s, true));
       });
     }
@@ -2883,6 +2725,37 @@
 
   /* ─── TOAST ──────────────────────────────────────────────────────── */
   let toastTimer;
+  /* ─── WISHLIST ──────────────────────────────────────────────────────────
+     Local-only (localStorage). Future: sync to a Firestore subcollection on
+     the user doc when signed in, so wishlist follows the user across devices.
+  ─────────────────────────────────────────────────────────────────────── */
+  const WISHLIST_KEY = 'ag_wishlist_v1';
+  function loadWishlist() {
+    try {
+      const raw = localStorage.getItem(WISHLIST_KEY);
+      return new Set(raw ? JSON.parse(raw) : []);
+    } catch (e) { return new Set(); }
+  }
+  function saveWishlist(set) {
+    try { localStorage.setItem(WISHLIST_KEY, JSON.stringify([...set])); } catch (e) {}
+  }
+  window._wishlist = loadWishlist();
+  function toggleWishlist(seqId, btnEl) {
+    const id = String(seqId);
+    const w = window._wishlist;
+    const wasOn = w.has(id);
+    if (wasOn) w.delete(id); else w.add(id);
+    saveWishlist(w);
+    if (btnEl) {
+      btnEl.classList.toggle('on', !wasOn);
+      const svg = btnEl.querySelector('svg');
+      if (svg) svg.setAttribute('fill', !wasOn ? 'currentColor' : 'none');
+      btnEl.title = !wasOn ? 'Remove from wishlist' : 'Save to wishlist';
+      btnEl.setAttribute('aria-label', !wasOn ? 'Remove from wishlist' : 'Save to wishlist');
+    }
+    showToast(wasOn ? 'Removed from wishlist' : 'Added to wishlist');
+  }
+
   function showToast(msg, isError) {
     const toast = document.getElementById('toast');
     const msgEl = document.getElementById('toastMsg');
