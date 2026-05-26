@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PestX Coach — Delete Your Account &amp; Data</title>
+  <meta name="description" content="How to permanently delete your PestX Coach account and all associated data." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #080808;
+      --bg2:    #0e0e0e;
+      --accent: #D4A43A;
+      --text:   #e2e8f0;
+      --muted:  #94a3b8;
+      --border: #222222;
+      --danger: #ef4444;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: #fff; }
+    h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.02em; }
+    h2 { font-size: 1.3rem; font-weight: 700; margin: 2.4rem 0 0.6rem; color: var(--accent); }
+    p  { margin: 0.6rem 0; }
+    ol, ul { margin: 0.6rem 0 0.6rem 1.4rem; }
+    li { margin: 0.35rem 0; }
+    a  { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    strong { color: #fff; }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 24px 60px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 0.4rem;
+    }
+
+    .app-card {
+      margin: 1.6rem 0;
+      padding: 16px 18px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .app-card .row {
+      display: flex;
+      gap: 8px;
+      align-items: baseline;
+      font-size: 0.95rem;
+    }
+    .app-card .row + .row { margin-top: 4px; }
+    .app-card .label {
+      color: var(--muted);
+      min-width: 92px;
+      font-size: 0.88rem;
+    }
+    .app-card .val {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .callout-danger {
+      margin: 1.4rem 0;
+      padding: 14px 18px;
+      background: rgba(239,68,68,0.07);
+      border-left: 3px solid var(--danger);
+      border-radius: 8px;
+    }
+
+    .footer {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>PestX Coach — Delete Your Account &amp; Data</h1>
+
+    <div class="app-card">
+      <div class="row"><span class="label">App:</span> <span class="val">PestX Coach</span></div>
+      <div class="row"><span class="label">Developer:</span> <span class="val">PestX</span></div>
+      <div class="row"><span class="label">Last updated:</span> <span class="val">May 26, 2026</span></div>
+    </div>
+
+    <p>This page explains how to permanently delete your PestX Coach account and all data associated with it.</p>
+
+    <h2>Option 1: Delete from inside the app (instant)</h2>
+    <p>The fastest way:</p>
+    <ol>
+      <li>Open the PestX Coach app.</li>
+      <li>Sign in to the account you want to delete.</li>
+      <li>Tap your profile avatar in the top-right corner.</li>
+      <li>Tap <strong>Delete account</strong>.</li>
+      <li>Confirm. Your account and all data are removed within seconds.</li>
+    </ol>
+
+    <h2>Option 2: Request deletion by email</h2>
+    <p>If you no longer have access to the app or prefer not to delete it yourself, email us:</p>
+    <p><strong><a href="mailto:office@pestx.org?subject=PestX%20Coach%20account%20deletion%20request">office@pestx.org</a></strong></p>
+    <p>Include:</p>
+    <ul>
+      <li>The email address associated with your PestX Coach account</li>
+      <li>A short note stating that you want your account and data deleted</li>
+    </ul>
+    <p>We will process your request and confirm by email within 7 business days.</p>
+
+    <h2>What gets deleted</h2>
+    <p>When you delete your account, the following is permanently removed:</p>
+    <ul>
+      <li>Your Firebase Authentication record (you can no longer sign in)</li>
+      <li>Your user profile (display name, photo, role, storage settings)</li>
+      <li><strong>Every audio recording</strong> you uploaded or recorded, from Cloud Storage</li>
+      <li><strong>Every transcript</strong> generated from your recordings, from Firestore</li>
+      <li><strong>Every coaching response</strong> generated for your recordings, from Firestore</li>
+      <li>The chat history between you and the AI coach for each recording</li>
+    </ul>
+
+    <h2>What gets kept</h2>
+    <p>Nothing user-identifying is retained. We do not keep backup copies of your recordings, transcripts, or profile after deletion.</p>
+    <p>The only exception: aggregate, fully anonymous usage statistics from Google Cloud (e.g., total bytes stored in the project, total function invocations) may remain in Google's analytics dashboards. These cannot be linked back to you.</p>
+
+    <h2>Retention period</h2>
+    <div class="callout-danger">
+      <strong>Zero retention.</strong> Deletion is immediate and irreversible. There is no grace period or recovery window — once you confirm deletion, the data is gone.
+    </div>
+
+    <h2>Contact</h2>
+    <p>
+      <strong>PestX</strong><br />
+      611 W 7250 South, Midvale UT 84047<br />
+      (801) 871-9233<br />
+      <a href="mailto:office@pestx.org">office@pestx.org</a>
+    </p>
+
+    <p style="margin-top:2rem;"><a href="pestx-privacy.html">← Back to PestX Coach Privacy Policy</a></p>
+  </main>
+
+  <footer class="footer">
+    &copy; <span id="year"></span> PestX
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
