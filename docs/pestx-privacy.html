@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PestX Coach — Privacy Policy</title>
+  <meta name="description" content="Privacy Policy for the PestX Coach mobile application." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #080808;
+      --bg2:    #0e0e0e;
+      --accent: #D4A43A;
+      --text:   #e2e8f0;
+      --muted:  #94a3b8;
+      --border: #222222;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.2; color: #fff; }
+    h1 { font-size: 2.4rem; font-weight: 800; letter-spacing: -0.02em; }
+    h2 { font-size: 1.35rem; font-weight: 700; margin: 2.4rem 0 0.6rem; color: var(--accent); }
+    h3 { font-size: 1.05rem; font-weight: 600; margin: 1.4rem 0 0.4rem; color: #fff; }
+    p  { margin: 0.6rem 0; color: var(--text); }
+    ul { margin: 0.6rem 0 0.6rem 1.4rem; }
+    li { margin: 0.3rem 0; }
+    a  { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+    strong { color: #fff; }
+    em { color: var(--muted); }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 80px 24px 60px;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 0.4rem;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.4rem 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.8rem 0 1.2rem;
+      font-size: 0.93rem;
+    }
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background: var(--bg2);
+      color: var(--accent);
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.02em;
+    }
+
+    .footer {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 0 24px 60px;
+      color: var(--muted);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .footnote {
+      margin-top: 2.4rem;
+      padding-top: 1.4rem;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>PestX Coach — Privacy Policy</h1>
+    <p class="meta"><strong>Last updated:</strong> May 26, 2026</p>
+
+    <p>PestX ("we", "us") operates the PestX Coach mobile application (the "App"), a sales coaching tool for door-to-door pest control representatives. This Privacy Policy explains what we collect, how we use it, and your rights.</p>
+
+    <h2>1. Information We Collect</h2>
+
+    <h3>Account information</h3>
+    <ul>
+      <li>Email address, display name, profile photo (if provided)</li>
+      <li>Sign-in provider (Google or email/password)</li>
+      <li>A unique user ID assigned by Firebase Authentication</li>
+      <li>The date your account was created and the last time you opened the App</li>
+    </ul>
+
+    <h3>Recordings and transcripts</h3>
+    <ul>
+      <li>Audio files you record or upload through the App</li>
+      <li>Text transcripts you paste directly</li>
+      <li>Automated transcripts generated from your audio recordings</li>
+      <li>AI-generated coaching feedback associated with each recording</li>
+    </ul>
+
+    <h3>Usage data</h3>
+    <ul>
+      <li>Recording file size and metadata (filename, upload time)</li>
+      <li>Storage usage totals per account</li>
+      <li>Manager-curated training materials added to the knowledge base</li>
+    </ul>
+
+    <p>We do not collect device contacts, location, or other personal information beyond what is described above.</p>
+
+    <h2>2. How We Use Your Information</h2>
+    <p>We use the information we collect to:</p>
+    <ul>
+      <li>Provide coaching feedback on the sales calls you submit</li>
+      <li>Allow you to review your own past calls</li>
+      <li>Allow your team manager to review your performance and provide feedback</li>
+      <li>Maintain the App and operate the service</li>
+      <li>Enforce usage limits (e.g., storage caps)</li>
+    </ul>
+
+    <h2>3. Where Your Data Is Stored</h2>
+    <p>Your data is stored on Google Cloud (Firebase) servers operated under Google's infrastructure and policies. Specifically:</p>
+    <ul>
+      <li><strong>Audio files</strong> are stored in Firebase Cloud Storage, scoped to your user account.</li>
+      <li><strong>Transcripts, coaching feedback, and account metadata</strong> are stored in Cloud Firestore.</li>
+      <li><strong>Authentication</strong> is handled by Firebase Authentication.</li>
+    </ul>
+    <p>Audio files and transcripts are accessible only to:</p>
+    <ul>
+      <li>You (the account holder), and</li>
+      <li>Designated managers within your team (managers can review recordings belonging to reps on their team).</li>
+    </ul>
+
+    <h2>4. Third-Party Services</h2>
+    <p>The App relies on the following third-party services:</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Purpose</th>
+          <th>Data shared</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Firebase (Google Cloud)</td>
+          <td>Auth, storage, database, serverless functions</td>
+          <td>Account info, audio files, transcripts, usage data</td>
+        </tr>
+        <tr>
+          <td>Google Cloud Speech-to-Text</td>
+          <td>Converting your audio recordings into text transcripts</td>
+          <td>Audio recordings (for transcription only — not retained by Google for training)</td>
+        </tr>
+        <tr>
+          <td>Anthropic (Claude API)</td>
+          <td>Generating AI coaching feedback from transcripts</td>
+          <td>Transcripts only (no audio sent to Anthropic)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>Each provider operates under its own privacy policy. We do not sell your data to any third party.</p>
+
+    <h2>5. Consent for Recording</h2>
+    <p>You are responsible for ensuring that any audio you upload was recorded in compliance with applicable laws. Some U.S. states (including California, Washington, Florida, Pennsylvania, and others) require all parties to a conversation to consent before being recorded. <strong>Do not upload recordings that were captured without the required consent in your jurisdiction.</strong></p>
+
+    <h2>6. Data Retention</h2>
+    <ul>
+      <li>Recordings, transcripts, and coaching feedback are retained until you (or a manager) delete them.</li>
+      <li>You can delete any individual recording from the Timeline tab in the App.</li>
+      <li>You can delete your entire account, including all associated data, from the account menu (avatar → Delete account). This is irreversible and removes:
+        <ul>
+          <li>All recordings (Firestore + Cloud Storage)</li>
+          <li>Your user profile</li>
+          <li>Your Firebase Authentication record</li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>7. Your Rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li>Access the data we hold about you (visible in-app: account menu and Timeline)</li>
+      <li>Correct your display name or other profile fields</li>
+      <li>Delete individual recordings or your entire account</li>
+      <li>Request export of your data by contacting us at the address below</li>
+    </ul>
+
+    <h2>8. Children</h2>
+    <p>The App is not directed to children under 13. We do not knowingly collect data from anyone under 13.</p>
+
+    <h2>9. Security</h2>
+    <p>We use Firebase Security Rules to restrict data access:</p>
+    <ul>
+      <li>Each user can read and write only their own recordings.</li>
+      <li>Only managers (designated by an existing manager) can read other users' recordings or modify the team knowledge base.</li>
+      <li>API keys used for AI processing are stored server-side and are not embedded in the App.</li>
+    </ul>
+    <p>No system is perfectly secure. If you believe your account has been compromised, contact us immediately at the address below.</p>
+
+    <h2>10. Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. The "Last updated" date at the top reflects the most recent revision. Material changes will be announced within the App.</p>
+
+    <h2>11. Contact</h2>
+    <p>For questions, data requests, or complaints:</p>
+    <p>
+      <strong>PestX</strong><br />
+      611 W 7250 South, Midvale UT 84047<br />
+      (801) 871-9233<br />
+      <a href="mailto:office@pestx.org">office@pestx.org</a>
+    </p>
+
+    <p class="footnote">This document was created on 2026-05-26 for the PestX Coach Android application, package <code>com.pestx.pestxCoach</code>.</p>
+  </main>
+
+  <footer class="footer">
+    &copy; <span id="year"></span> PestX
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
