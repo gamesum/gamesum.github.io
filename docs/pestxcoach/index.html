@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PestX Sales Coach 🦟 — AI Coaching for Door-to-Door Pest Control Reps</title>
+  <meta name="description" content="PestX Sales Coach is an AI-powered tool for door-to-door pest control sales reps. Record your pitches, get instant coaching, track commissions, and stay connected with your team." />
+  <meta property="og:title" content="PestX Sales Coach — AI Coaching for Pest Control Reps" />
+  <meta property="og:description" content="Record sales calls, get AI coaching, track commissions, and stay in sync with your team." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #09080b;
+      --bg2:      #0f0d13;
+      --bg3:      #16131c;
+      --plum:     #7A1E55;
+      --plum-lt:  #9b2569;
+      --plum-dim: #4a1233;
+      --gold:     #D4AF37;
+      --gold-lt:  #e8c84a;
+      --text:     #ede8e3;
+      --muted:    #9a92a0;
+      --border:   #221e2b;
+      --radius:   14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      line-height: 1.15;
+    }
+
+    a { text-decoration: none; color: inherit; }
+
+    /* ── NAV ──────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      background: rgba(9, 8, 11, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.15rem;
+      letter-spacing: -0.01em;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-logo .dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--plum);
+      display: inline-block;
+      box-shadow: 0 0 8px var(--plum);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-cta {
+      background: var(--plum);
+      color: #fff !important;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-weight: 600 !important;
+      transition: background 0.2s !important;
+    }
+
+    .nav-cta:hover { background: var(--plum-lt) !important; color: #fff !important; }
+
+    /* ── HERO ─────────────────────────────────────────────────────── */
+    .hero {
+      padding: 148px 28px 96px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -120px; left: 50%;
+      transform: translateX(-50%);
+      width: 680px; height: 680px;
+      background: radial-gradient(circle, rgba(122, 30, 85, 0.28) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(122, 30, 85, 0.18);
+      border: 1px solid rgba(122, 30, 85, 0.45);
+      color: #c96fa8;
+      font-size: 0.82rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+    }
+
+    .hero-badge svg {
+      width: 14px; height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: -0.03em;
+      max-width: 780px;
+      margin: 0 auto 18px;
+    }
+
+    .hero h1 span { color: var(--plum-lt); }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.2rem);
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 44px;
+      line-height: 1.7;
+    }
+
+    .hero-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--plum);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      padding: 14px 32px;
+      border-radius: 10px;
+      border: 2px solid transparent;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+      box-shadow: 0 4px 24px rgba(122, 30, 85, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: var(--plum-lt);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 32px rgba(122, 30, 85, 0.5);
+    }
+
+    .btn-primary svg {
+      width: 18px; height: 18px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--muted);
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 14px 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .btn-secondary:hover { color: var(--text); border-color: #3a3346; }
+
+    .hero-note {
+      margin-top: 20px;
+      font-size: 0.83rem;
+      color: var(--muted);
+    }
+
+    /* ── PHONE MOCKUP ─────────────────────────────────────────────── */
+    .phone-wrap {
+      max-width: 320px;
+      margin: 72px auto 0;
+      position: relative;
+    }
+
+    .phone-frame {
+      background: var(--bg3);
+      border: 2px solid var(--border);
+      border-radius: 36px;
+      padding: 14px;
+      box-shadow:
+        0 0 0 1px rgba(122,30,85,0.15),
+        0 32px 80px rgba(0,0,0,0.7),
+        0 0 60px rgba(122,30,85,0.12);
+    }
+
+    .phone-screen {
+      background: var(--bg2);
+      border-radius: 26px;
+      overflow: hidden;
+      padding: 20px 16px 24px;
+    }
+
+    .phone-status {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .phone-time {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text);
+    }
+
+    .phone-icons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .phone-icons span {
+      display: block;
+      background: var(--text);
+      border-radius: 1px;
+    }
+
+    .phone-app-header {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .phone-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+    }
+
+    .phone-card-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .phone-card-value {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--gold);
+    }
+
+    .phone-card-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .coaching-bubble {
+      background: rgba(122, 30, 85, 0.2);
+      border: 1px solid rgba(122, 30, 85, 0.4);
+      border-radius: 12px;
+      padding: 11px 13px;
+      margin-bottom: 10px;
+    }
+
+    .coaching-label {
+      font-size: 0.67rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #c96fa8;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .coaching-text {
+      font-size: 0.75rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .waveform {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      height: 28px;
+      padding: 0 14px;
+      margin-bottom: 10px;
+    }
+
+    .wave-bar {
+      flex: 1;
+      border-radius: 2px;
+      background: var(--plum);
+      opacity: 0.6;
+      animation: wave 1.2s ease-in-out infinite alternate;
+    }
+
+    @keyframes wave {
+      from { transform: scaleY(0.3); opacity: 0.4; }
+      to   { transform: scaleY(1);   opacity: 0.9; }
+    }
+
+    .wave-bar:nth-child(1)  { height: 60%; animation-delay: 0.0s; }
+    .wave-bar:nth-child(2)  { height: 100%; animation-delay: 0.1s; }
+    .wave-bar:nth-child(3)  { height: 50%; animation-delay: 0.2s; }
+    .wave-bar:nth-child(4)  { height: 80%; animation-delay: 0.3s; }
+    .wave-bar:nth-child(5)  { height: 40%; animation-delay: 0.4s; }
+    .wave-bar:nth-child(6)  { height: 90%; animation-delay: 0.5s; }
+    .wave-bar:nth-child(7)  { height: 55%; animation-delay: 0.6s; }
+    .wave-bar:nth-child(8)  { height: 75%; animation-delay: 0.7s; }
+    .wave-bar:nth-child(9)  { height: 35%; animation-delay: 0.8s; }
+    .wave-bar:nth-child(10) { height: 65%; animation-delay: 0.9s; }
+    .wave-bar:nth-child(11) { height: 85%; animation-delay: 1.0s; }
+    .wave-bar:nth-child(12) { height: 45%; animation-delay: 1.1s; }
+
+    /* ── SECTION SHARED ───────────────────────────────────────────── */
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 28px;
+    }
+
+    .section-pad { padding: 96px 0; }
+
+    .section-label {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--plum-lt);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: clamp(1.7rem, 4vw, 2.5rem);
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    .section-sub {
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── STATS BAR ────────────────────────────────────────────────── */
+    .stats {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+
+    .stat {
+      padding: 36px 28px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+    }
+
+    .stat:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      color: var(--gold);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* ── FEATURES ─────────────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+    }
+
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--plum), var(--plum-lt));
+      opacity: 0;
+      transition: opacity 0.25s;
+    }
+
+    .feature-card:hover { border-color: rgba(122, 30, 85, 0.5); transform: translateY(-2px); }
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      width: 52px; height: 52px;
+      border-radius: 12px;
+      background: rgba(122, 30, 85, 0.15);
+      border: 1px solid rgba(122, 30, 85, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      font-size: 1.45rem;
+    }
+
+    .feature-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      font-size: 0.93rem;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 14px;
+    }
+
+    .feature-list li {
+      font-size: 0.88rem;
+      color: var(--muted);
+      padding: 5px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .feature-list li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--plum-lt);
+      font-weight: 700;
+    }
+
+    /* ── HOW IT WORKS ─────────────────────────────────────────────── */
+    .how-it-works {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: 56px;
+      position: relative;
+    }
+
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 28px;
+      left: calc(12.5% + 12px);
+      right: calc(12.5% + 12px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--plum-dim), var(--plum), var(--plum-dim));
+      z-index: 0;
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-num {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: var(--plum);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      box-shadow: 0 0 20px rgba(122, 30, 85, 0.4);
+    }
+
+    .step-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .step-desc {
+      font-size: 0.87rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── MANAGER SECTION ──────────────────────────────────────────── */
+    .manager-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .manager-visual {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .manager-visual-header {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .analytics-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .analytics-row:last-child { border-bottom: none; }
+
+    .analytics-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--plum-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .analytics-name {
+      flex: 1;
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .analytics-bar-wrap {
+      flex: 2;
+      height: 6px;
+      background: var(--bg3);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .analytics-bar {
+      height: 100%;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--plum), var(--plum-lt));
+    }
+
+    .analytics-count {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--gold);
+      min-width: 30px;
+      text-align: right;
+    }
+
+    .manager-features {
+      list-style: none;
+      margin-top: 28px;
+    }
+
+    .manager-features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      font-size: 0.94rem;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .manager-features li:last-child { border-bottom: none; }
+
+    .manager-features li .check {
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: rgba(122, 30, 85, 0.18);
+      border: 1px solid rgba(122, 30, 85, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: #c96fa8;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* ── MESSAGING SECTION ────────────────────────────────────────── */
+    .messaging-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+
+    .chat-mock {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-header-avatar {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--plum-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+    }
+
+    .chat-header-info .chat-name {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .chat-header-info .chat-status {
+      font-size: 0.72rem;
+      color: #4caf7b;
+    }
+
+    .chat-body { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+
+    .msg {
+      max-width: 82%;
+      border-radius: 14px;
+      padding: 9px 13px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .msg.them {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      align-self: flex-start;
+      border-radius: 4px 14px 14px 14px;
+    }
+
+    .msg.me {
+      background: var(--plum);
+      color: #fff;
+      align-self: flex-end;
+      border-radius: 14px 4px 14px 14px;
+    }
+
+    .msg.gif-msg {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px 14px 14px 14px;
+      padding: 6px;
+      align-self: flex-start;
+    }
+
+    .gif-placeholder {
+      background: linear-gradient(135deg, var(--plum-dim), #1a0e22);
+      border-radius: 10px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    .msg-meta {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 3px;
+      text-align: right;
+    }
+
+    .msg.them + .msg-meta, .msg.gif-msg + .msg-meta { text-align: left; }
+
+    /* ── GET ACCESS ───────────────────────────────────────────────── */
+    .access-section {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+    }
+
+    .access-inner {
+      max-width: 640px;
+      margin: 0 auto;
+      text-align: center;
+      padding: 96px 28px;
+    }
+
+    .access-inner .section-label { display: block; margin-bottom: 12px; }
+
+    .access-card {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px 40px;
+      margin-top: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .access-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top, rgba(122,30,85,0.12) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .access-card h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .access-card p {
+      font-size: 0.93rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.65;
+    }
+
+    .access-email-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--plum);
+      color: #fff;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 13px 28px;
+      border-radius: 9px;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 20px rgba(122, 30, 85, 0.35);
+    }
+
+    .access-email-link:hover { background: var(--plum-lt); transform: translateY(-1px); }
+
+    .access-email-link svg {
+      width: 16px; height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .access-or {
+      margin: 20px 0 16px;
+      color: var(--muted);
+      font-size: 0.88rem;
+      position: relative;
+    }
+
+    .access-or::before, .access-or::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 38%;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .access-or::before { left: 0; }
+    .access-or::after  { right: 0; }
+
+    .access-email-text {
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+
+    .access-email-text a {
+      color: var(--gold);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      padding: 40px 28px;
+      text-align: center;
+    }
+
+    .footer-logo {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin: 14px 0 18px;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-copy {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ── RESPONSIVE ───────────────────────────────────────────────── */
+    @media (max-width: 840px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:nth-child(odd) { border-right: 1px solid var(--border); }
+      .stat:last-child, .stat:nth-last-child(2):nth-child(odd) { border-bottom: none; }
+
+      .features-grid { grid-template-columns: 1fr; }
+
+      .steps-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+      }
+
+      .steps-grid::before { display: none; }
+
+      .manager-grid, .messaging-grid { grid-template-columns: 1fr; gap: 40px; }
+      .messaging-order { order: -1; }
+
+      .access-card { padding: 28px 22px; }
+    }
+
+    @media (max-width: 540px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+
+      .hero { padding: 120px 20px 72px; }
+
+      .steps-grid { grid-template-columns: 1fr; }
+
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+
+      .container { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <div class="nav-logo">
+        <span class="dot"></span>
+        PestX Sales Coach
+      </div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="#for-managers">For Managers</a></li>
+        <li><a href="#get-access" class="nav-cta">Get Access</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      AI-Powered Sales Coaching
+    </div>
+    <h1>Close more doors.<br /><span>Coach smarter.</span></h1>
+    <p class="hero-sub">PestX Sales Coach 🦟 gives door-to-door pest control reps instant AI feedback on every pitch — plus team messaging, commission tracking, and manager analytics, all in one app.</p>
+    <div class="hero-cta">
+      <a href="#" class="btn-primary" id="apk-download">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2zm0 2c1.29 0 2.5.3 3.57.84L5.84 15.57A7.96 7.96 0 0 1 4 12c0-4.41 3.59-8 8-8zm0 16c-1.29 0-2.5-.3-3.57-.84l9.73-9.73A7.96 7.96 0 0 1 20 12c0 4.41-3.59 8-8 8z"/><path d="M12 16l-4-4h2.5V8h3v4H16l-4 4z"/></svg>
+        Download APK
+      </a>
+      <a href="#get-access" class="btn-secondary">Request Access →</a>
+    </div>
+    <p class="hero-note">Android · Free during early access · APK sideload</p>
+
+    <!-- Phone Mockup -->
+    <div class="phone-wrap">
+      <div class="phone-frame">
+        <div class="phone-screen">
+          <div class="phone-status">
+            <span class="phone-time">9:41</span>
+            <div class="phone-icons">
+              <span style="width:14px;height:3px;border-radius:1px;"></span>
+              <span style="width:4px;height:4px;border-radius:50%;"></span>
+              <span style="width:14px;height:6px;border-radius:2px;background:rgba(255,255,255,0.5);border:1px solid rgba(255,255,255,0.3);position:relative;display:flex;align-items:center;padding:1px;"><span style="height:100%;background:white;border-radius:1px;width:75%;"></span></span>
+            </div>
+          </div>
+          <div class="phone-app-header">🦟 PestX Coach</div>
+
+          <div class="phone-card">
+            <div class="phone-card-label">Commission This Month</div>
+            <div class="phone-card-value">$2,847</div>
+            <div class="phone-card-sub">14 accounts · +$340 projected year-end bonus</div>
+          </div>
+
+          <div class="coaching-bubble">
+            <div class="coaching-label">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg>
+              AI Coaching · Today's Call
+            </div>
+            <div class="coaching-text">Strong opener! Try pausing after the price reveal — give the customer space to respond before jumping to objections.</div>
+          </div>
+
+          <div class="waveform">
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+            <div class="wave-bar"></div><div class="wave-bar"></div>
+          </div>
+
+          <div class="phone-card">
+            <div class="phone-card-label">Team Messages</div>
+            <div class="phone-card-value" style="font-size:1rem;color:var(--text);font-weight:600;">3 new from Jordan 🎉</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-num">AI</div>
+          <div class="stat-label">Coaching on every pitch</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Real-time</div>
+          <div class="stat-label">Team messaging + GIFs</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Auto</div>
+          <div class="stat-label">Commission calculator</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">Full</div>
+          <div class="stat-label">Manager analytics dashboard</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <section class="section-pad" id="features">
+    <div class="container">
+      <div style="max-width:580px;">
+        <span class="section-label">Features</span>
+        <h2 class="section-title">Everything your team needs in the field</h2>
+        <p class="section-sub">Built specifically for door-to-door pest control — from the first knock to the year-end bonus check.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <div class="feature-title">AI Sales Coaching</div>
+          <p class="feature-desc">Record your pitch on the spot or upload audio afterward. Claude AI transcribes the call and delivers instant, actionable coaching tailored to pest control door-knocking.</p>
+          <ul class="feature-list">
+            <li>Tone, pacing, and objection-handling feedback</li>
+            <li>Specific line-by-line suggestions</li>
+            <li>Full transcripts saved to your timeline</li>
+            <li>Paste a transcript manually if you prefer</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💬</div>
+          <div class="feature-title">Team Messaging</div>
+          <p class="feature-desc">Stay connected with your crew without leaving the app. Real-time chat built for reps who spend the day on doorsteps.</p>
+          <ul class="feature-list">
+            <li>GIF support to celebrate wins</li>
+            <li>Photo and file attachments</li>
+            <li>Push notifications for new messages</li>
+            <li>Manager-to-team broadcast messages</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">💰</div>
+          <div class="feature-title">Commission Dashboard</div>
+          <p class="feature-desc">Never wonder what you've earned. The commission dashboard automatically calculates your upfront payout and projects your year-end bonus as accounts accumulate.</p>
+          <ul class="feature-list">
+            <li>Upfront commission per account</li>
+            <li>Year-end payout projection</li>
+            <li>Monthly and season totals</li>
+            <li>Always in sync with your recorded sales</li>
+          </ul>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📚</div>
+          <div class="feature-title">Training Knowledge Base</div>
+          <p class="feature-desc">Managers can upload scripts, training materials, and guides directly into the app. Reps always have the latest resources at their fingertips — no group chats, no lost PDFs.</p>
+          <ul class="feature-list">
+            <li>Manager-curated content library</li>
+            <li>Sales scripts and rebuttals</li>
+            <li>Product and service reference docs</li>
+            <li>Instantly available to the whole team</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-it-works section-pad" id="how-it-works">
+    <div class="container">
+      <div style="text-align:center;max-width:560px;margin:0 auto;">
+        <span class="section-label">How It Works</span>
+        <h2 class="section-title">From doorstep to coaching in seconds</h2>
+        <p class="section-sub">No complicated setup. Record, submit, and improve — all from your phone.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-title">Record Your Pitch</div>
+          <p class="step-desc">Tap record before you knock, or upload audio afterward. You can also paste a transcript directly.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-title">AI Transcribes</div>
+          <p class="step-desc">Google Cloud Speech-to-Text converts your audio into a clean transcript — no manual work required.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-title">Get Coaching</div>
+          <p class="step-desc">Claude AI analyzes the transcript and delivers personalized, specific coaching notes within seconds.</p>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-title">Improve & Earn</div>
+          <p class="step-desc">Apply the feedback, track your accounts, and watch your commission dashboard grow.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOR MANAGERS -->
+  <section class="section-pad" id="for-managers">
+    <div class="container">
+      <div class="manager-grid">
+        <div>
+          <span class="section-label">For Managers</span>
+          <h2 class="section-title">Full visibility into your team's performance</h2>
+          <p class="section-sub">See what your reps are doing, how they're doing it, and how much storage the team is using — without chasing anyone down.</p>
+
+          <ul class="manager-features">
+            <li>
+              <span class="check">✓</span>
+              <span>Listen to any rep's recordings and read their AI coaching feedback</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Track recording volume per rep — see who's putting in the reps</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Monitor team storage usage to stay within limits</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Add and remove team members with role-based access control</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Publish training materials to the knowledge base instantly</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Send broadcast messages to the whole team at once</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="manager-visual">
+          <div class="manager-visual-header">
+            📊 Team Activity — This Week
+          </div>
+          <div class="analytics-row">
+            <div class="analytics-avatar">👤</div>
+            <div class="analytics-name">Jordan M.</div>
+            <div class="analytics-bar-wrap"><div class="analytics-bar" style="width:92%"></div></div>
+            <div class="analytics-count">23</div>
+          </div>
+          <div class="analytics-row">
+            <div class="analytics-avatar">👤</div>
+            <div class="analytics-name">Taylor R.</div>
+            <div class="analytics-bar-wrap"><div class="analytics-bar" style="width:74%"></div></div>
+            <div class="analytics-count">18</div>
+          </div>
+          <div class="analytics-row">
+            <div class="analytics-avatar">👤</div>
+            <div class="analytics-name">Casey B.</div>
+            <div class="analytics-bar-wrap"><div class="analytics-bar" style="width:60%"></div></div>
+            <div class="analytics-count">15</div>
+          </div>
+          <div class="analytics-row">
+            <div class="analytics-avatar">👤</div>
+            <div class="analytics-name">Alex P.</div>
+            <div class="analytics-bar-wrap"><div class="analytics-bar" style="width:44%"></div></div>
+            <div class="analytics-count">11</div>
+          </div>
+          <div class="analytics-row">
+            <div class="analytics-avatar">👤</div>
+            <div class="analytics-name">Morgan S.</div>
+            <div class="analytics-bar-wrap"><div class="analytics-bar" style="width:28%"></div></div>
+            <div class="analytics-count">7</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MESSAGING -->
+  <section class="section-pad" style="background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
+    <div class="container">
+      <div class="messaging-grid">
+        <div class="messaging-order">
+          <div class="chat-mock">
+            <div class="chat-header">
+              <div class="chat-header-avatar">🏆</div>
+              <div class="chat-header-info">
+                <div class="chat-name">Summer Team 2026</div>
+                <div class="chat-status">● 8 members active</div>
+              </div>
+            </div>
+            <div class="chat-body">
+              <div>
+                <div class="msg them">Just hit my 10th account this week 🙌</div>
+                <div class="msg-meta">Jordan · 2:14 PM</div>
+              </div>
+              <div>
+                <div class="msg gif-msg">
+                  <div class="gif-placeholder">🎉</div>
+                </div>
+                <div class="msg-meta">Casey · 2:16 PM</div>
+              </div>
+              <div>
+                <div class="msg me">New training script is in the knowledge base — check it before your afternoon routes!</div>
+                <div class="msg-meta" style="text-align:right;">Manager · 2:21 PM</div>
+              </div>
+              <div>
+                <div class="msg them">On it 💪 heading out now</div>
+                <div class="msg-meta">Taylor · 2:23 PM</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <span class="section-label">Team Messaging</span>
+          <h2 class="section-title">Keep the energy up all day long</h2>
+          <p class="section-sub">Door-to-door sales is a grind. The built-in team chat keeps reps motivated, informed, and connected — with GIFs to celebrate every win.</p>
+          <ul class="feature-list" style="margin-top:24px;">
+            <li style="font-size:0.94rem;color:var(--muted);padding:8px 0;padding-left:20px;">Real-time messaging with read receipts</li>
+            <li style="font-size:0.94rem;color:var(--muted);padding:8px 0;padding-left:20px;">GIF search and sharing built in</li>
+            <li style="font-size:0.94rem;color:var(--muted);padding:8px 0;padding-left:20px;">Photo and file attachments</li>
+            <li style="font-size:0.94rem;color:var(--muted);padding:8px 0;padding-left:20px;">Push notifications so no message is missed</li>
+            <li style="font-size:0.94rem;color:var(--muted);padding:8px 0;padding-left:20px;">Manager broadcast to the whole team at once</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GET ACCESS -->
+  <section class="access-section" id="get-access">
+    <div class="access-inner">
+      <span class="section-label">Get Access</span>
+      <h2 class="section-title" style="font-size:2rem;">Ready to level up your team?</h2>
+      <p class="section-sub" style="margin:0 auto;">PestX Sales Coach is currently in early access, distributed as an Android APK. Reach out to get your team onboarded.</p>
+
+      <div class="access-card">
+        <h3>Download the App</h3>
+        <p>Get the latest APK and install it directly on Android. No app store required.</p>
+        <a href="#" class="btn-primary" style="display:inline-flex;" id="apk-download-2">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor" width="18" height="18"><path d="M5 20h14v-2H5v2zm7-18L5.33 9h3.84v5h5.66V9h3.84L12 2z"/></svg>
+          Download APK
+        </a>
+
+        <div class="access-or">or</div>
+
+        <p class="access-email-text">Email us to request access, ask questions, or get your team set up:</p>
+        <div style="margin-top:14px;">
+          <a href="mailto:shaneward852@gmail.com" class="access-email-link">
+            <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            shaneward852@gmail.com
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">PestX Sales Coach 🦟</div>
+    <div class="footer-links">
+      <a href="/pestx-privacy.html">Privacy Policy</a>
+      <a href="/pestx-delete-account.html">Delete Account</a>
+      <a href="mailto:shaneward852@gmail.com">Contact</a>
+    </div>
+    <div class="footer-copy">&copy; <span id="year"></span> PestX. Android only &middot; iOS coming soon.</div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      const href = a.getAttribute('href');
+      if (href === '#') return;
+      a.addEventListener('click', e => {
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        const offset = 72;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
