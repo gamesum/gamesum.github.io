@@ -98,12 +98,25 @@
       font-size: 0.9rem;
       font-style: italic;
     }
+
+    .callout {
+      background: var(--bg2);
+      border-left: 3px solid var(--accent);
+      padding: 14px 18px;
+      border-radius: 0 6px 6px 0;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
   </style>
 </head>
 <body>
   <main class="wrap">
     <h1>PestX Coach — Privacy Policy</h1>
-    <p class="meta"><strong>Last updated:</strong> May 26, 2026</p>
+    <p class="meta"><strong>Last updated:</strong> June 6, 2026</p>
+
+    <div class="callout">
+      The privacy of your data — and it is <em>your</em> data, not ours — is a big deal to us. We will never sell your personal information to any third party, period.
+    </div>
 
     <p>PestX ("we", "us") operates the PestX Coach mobile application (the "App"), a sales coaching tool for door-to-door pest control representatives. This Privacy Policy explains what we collect, how we use it, and your rights.</p>
 
@@ -112,7 +125,7 @@
     <h3>Account information</h3>
     <ul>
       <li>Email address, display name, profile photo (if provided)</li>
-      <li>Sign-in provider (Google or email/password)</li>
+      <li>Sign-in provider (Google, Apple, or email/password)</li>
       <li>A unique user ID assigned by Firebase Authentication</li>
       <li>The date your account was created and the last time you opened the App</li>
     </ul>
@@ -125,27 +138,38 @@
       <li>AI-generated coaching feedback associated with each recording</li>
     </ul>
 
-    <h3>Usage data</h3>
+    <h3>Usage and security data</h3>
     <ul>
       <li>Recording file size and metadata (filename, upload time)</li>
       <li>Storage usage totals per account</li>
       <li>Manager-curated training materials added to the knowledge base</li>
+      <li>IP addresses logged at sign-in for security and fraud prevention (not used for advertising)</li>
     </ul>
 
-    <p>We do not collect device contacts, location, or other personal information beyond what is described above.</p>
+    <p>We do not collect device contacts, precise location, or other personal information beyond what is described above.</p>
 
     <h2>2. How We Use Your Information</h2>
     <p>We use the information we collect to:</p>
     <ul>
-      <li>Provide coaching feedback on the sales calls you submit</li>
-      <li>Allow you to review your own past calls</li>
+      <li>Provide AI coaching feedback on the sales calls you submit</li>
+      <li>Allow you to review your own past calls and performance score</li>
       <li>Allow your team manager to review your performance and provide feedback</li>
+      <li>Send push notifications for chat messages, incentives, and team broadcasts</li>
       <li>Maintain the App and operate the service</li>
       <li>Enforce usage limits (e.g., storage caps)</li>
+      <li>Investigate and prevent unauthorized access or abuse</li>
     </ul>
 
-    <h2>3. Where Your Data Is Stored</h2>
-    <p>Your data is stored on Google Cloud (Firebase) servers operated under Google's infrastructure and policies. Specifically:</p>
+    <h2>3. AI Processing &amp; Your Data</h2>
+    <p>The App uses AI models (Anthropic Claude) to generate coaching feedback from call transcripts. We want to be explicit about how this works:</p>
+    <ul>
+      <li><strong>Your transcripts are not used to train AI foundation models.</strong> Anthropic processes your data under an enterprise agreement that prohibits using customer data to train or improve their general models.</li>
+      <li>Audio is never sent to Anthropic — only the text transcript is.</li>
+      <li>Your data is isolated from other customers' data at all times.</li>
+    </ul>
+
+    <h2>4. Where Your Data Is Stored</h2>
+    <p>Your data is stored on Google Cloud (Firebase) servers in the United States, operated under Google's infrastructure and policies. Specifically:</p>
     <ul>
       <li><strong>Audio files</strong> are stored in Firebase Cloud Storage, scoped to your user account.</li>
       <li><strong>Transcripts, coaching feedback, and account metadata</strong> are stored in Cloud Firestore.</li>
@@ -157,7 +181,7 @@
       <li>Designated managers within your team (managers can review recordings belonging to reps on their team).</li>
     </ul>
 
-    <h2>4. Third-Party Services</h2>
+    <h2>5. Third-Party Services</h2>
     <p>The App relies on the following third-party services:</p>
     <table>
       <thead>
@@ -170,7 +194,7 @@
       <tbody>
         <tr>
           <td>Firebase (Google Cloud)</td>
-          <td>Auth, storage, database, serverless functions</td>
+          <td>Auth, storage, database, serverless functions, push notifications</td>
           <td>Account info, audio files, transcripts, usage data</td>
         </tr>
         <tr>
@@ -181,53 +205,65 @@
         <tr>
           <td>Anthropic (Claude API)</td>
           <td>Generating AI coaching feedback from transcripts</td>
-          <td>Transcripts only (no audio sent to Anthropic)</td>
+          <td>Transcripts only (no audio sent; enterprise agreement prohibits training use)</td>
+        </tr>
+        <tr>
+          <td>Apple / Google Sign-In</td>
+          <td>Optional third-party authentication</td>
+          <td>Email address and display name from your Apple or Google account</td>
         </tr>
       </tbody>
     </table>
-    <p>Each provider operates under its own privacy policy. We do not sell your data to any third party.</p>
+    <p>Each provider operates under its own privacy policy. <strong>We do not sell your data to any third party.</strong></p>
 
-    <h2>5. Consent for Recording</h2>
+    <h2>6. Consent for Recording</h2>
     <p>You are responsible for ensuring that any audio you upload was recorded in compliance with applicable laws. Some U.S. states (including California, Washington, Florida, Pennsylvania, and others) require all parties to a conversation to consent before being recorded. <strong>Do not upload recordings that were captured without the required consent in your jurisdiction.</strong></p>
 
-    <h2>6. Data Retention</h2>
+    <h2>7. Data Retention</h2>
     <ul>
       <li>Recordings, transcripts, and coaching feedback are retained until you (or a manager) delete them.</li>
       <li>You can delete any individual recording from the Timeline tab in the App.</li>
-      <li>You can delete your entire account, including all associated data, from the account menu (avatar → Delete account). Full instructions and an email-request option are documented on the <a href="pestx-delete-account.html">Delete Account</a> page. This is irreversible and removes:
+      <li>You can delete your entire account from the account menu (avatar → Delete account). Full instructions and an email-request option are on the <a href="pestx-delete-account.html">Delete Account</a> page. Account deletion removes:
         <ul>
           <li>All recordings (Firestore + Cloud Storage)</li>
-          <li>Your user profile</li>
+          <li>Your user profile and coaching history</li>
           <li>Your Firebase Authentication record</li>
         </ul>
       </li>
+      <li>Residual data in system backups is purged within 60 days of account closure.</li>
     </ul>
 
-    <h2>7. Your Rights</h2>
+    <h2>8. Your Rights</h2>
     <p>You have the right to:</p>
     <ul>
-      <li>Access the data we hold about you (visible in-app: account menu and Timeline)</li>
-      <li>Correct your display name or other profile fields</li>
-      <li>Delete individual recordings or your entire account</li>
-      <li>Request export of your data by contacting us at the address below</li>
+      <li><strong>Access</strong> the data we hold about you (visible in-app: account menu and Timeline)</li>
+      <li><strong>Correct</strong> your display name or other profile fields</li>
+      <li><strong>Delete</strong> individual recordings or your entire account</li>
+      <li><strong>Portability</strong> — request an export of your data by emailing us at the address below</li>
+      <li><strong>Object</strong> to processing in certain circumstances</li>
     </ul>
+    <p>California residents may have additional rights under the CCPA, including the right to know what personal information we collect and to opt out of any sale of personal information (we do not sell personal information). To exercise any right, contact us at the address below.</p>
 
-    <h2>8. Children</h2>
-    <p>The App is not directed to children under 13. We do not knowingly collect data from anyone under 13.</p>
+    <h2>9. Government Requests</h2>
+    <p>We will not disclose your data to government agencies or law enforcement unless we are legally compelled to do so by a valid court order, subpoena, or warrant. Where legally permitted, we will notify you before disclosing your data.</p>
 
-    <h2>9. Security</h2>
-    <p>We use Firebase Security Rules to restrict data access:</p>
+    <h2>10. Security</h2>
+    <p>We use industry-standard security measures to protect your data:</p>
     <ul>
-      <li>Each user can read and write only their own recordings.</li>
+      <li>All data in transit is encrypted using SSL/TLS.</li>
+      <li>Firebase Security Rules restrict data access so each user can read and write only their own recordings.</li>
       <li>Only managers (designated by an existing manager) can read other users' recordings or modify the team knowledge base.</li>
-      <li>API keys used for AI processing are stored server-side and are not embedded in the App.</li>
+      <li>API keys used for AI processing are stored server-side in Cloud Functions and are never embedded in the App.</li>
     </ul>
     <p>No system is perfectly secure. If you believe your account has been compromised, contact us immediately at the address below.</p>
 
-    <h2>10. Changes to This Policy</h2>
+    <h2>11. Children</h2>
+    <p>The App is not directed to children under 13. We do not knowingly collect data from anyone under 13.</p>
+
+    <h2>12. Changes to This Policy</h2>
     <p>We may update this Privacy Policy from time to time. The "Last updated" date at the top reflects the most recent revision. Material changes will be announced within the App.</p>
 
-    <h2>11. Contact</h2>
+    <h2>13. Contact</h2>
     <p>For questions, data requests, or complaints:</p>
     <p>
       <strong>PestX</strong><br />
@@ -236,11 +272,13 @@
       <a href="mailto:office@pestx.org">office@pestx.org</a>
     </p>
 
-    <p class="footnote">This document was created on 2026-05-26 for the PestX Coach Android application, package <code>com.pestx.pestxCoach</code>.</p>
+    <p class="footnote">This document applies to the PestX Coach application, package <code>com.pestx.pestxCoach</code>. Also see our <a href="pestx-terms.html">Terms of Service</a>.</p>
   </main>
 
   <footer class="footer">
-    &copy; <span id="year"></span> PestX
+    &copy; <span id="year"></span> PestX &nbsp;·&nbsp;
+    <a href="pestx-terms.html">Terms of Service</a> &nbsp;·&nbsp;
+    <a href="pestx-delete-account.html">Delete Account</a>
   </footer>
 
   <script>
