@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://js.stripe.com https://apis.google.com https://accounts.google.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://www.google.com https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.run.app https://firebasestorage.googleapis.com https://api.stripe.com wss://*.firebaseio.com; frame-src https://js.stripe.com https://hooks.stripe.com https://accounts.google.com https://*.firebaseapp.com https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Support | AFTERGLO</title>
+  <meta name="description" content="Get help with AFTERGLO controllers, the AFTERGLO app, and the sequence marketplace. Contact us, browse common questions, or request account changes." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080808;
+      --bg2:      #0e0e0e;
+      --bg3:      #111111;
+      --bg4:      #1a1a1a;
+      --accent:   #D4A43A;
+      --accent2:  #d4a843;
+      --silver:   #b8b8b8;
+      --text:     #e2e8f0;
+      --muted:    #94a3b8;
+      --border:   #222222;
+      --border2:  #2a2a2a;
+      --radius:   12px;
+      --nav-h:    72px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s, background 0.2s, border-color 0.2s;
+      border: none;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      box-shadow: 0 4px 20px rgba(212,164,58,0.35);
+    }
+    .btn-primary:hover {
+      background: var(--accent2);
+      box-shadow: 0 6px 28px rgba(212,164,58,0.5);
+    }
+    .btn-sm { padding: 8px 16px; font-size: 0.82rem; }
+
+    /* ─── NAVBAR ──────────────────────────────────────────────────── */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: var(--nav-h);
+      z-index: 1000;
+      background: rgba(13,17,23,0.92);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      box-shadow: 0 1px 0 var(--border);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nav-h);
+    }
+
+    .nav-logo {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: #fff;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .nav-logo span {
+      color: var(--accent);
+      text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 10px;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px; height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: var(--nav-h); left: 0; right: 0;
+      background: rgba(13,17,23,0.98);
+      backdrop-filter: blur(16px);
+      padding: 24px;
+      flex-direction: column;
+      gap: 24px;
+      z-index: 999;
+      border-bottom: 1px solid var(--border);
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--text);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border);
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+
+    /* ─── PAGE CONTENT ────────────────────────────────────────────── */
+    .page-content {
+      padding-top: calc(var(--nav-h) + 60px);
+      padding-bottom: 100px;
+    }
+
+    .legal-hero {
+      background: linear-gradient(135deg, var(--bg2), var(--bg3));
+      border-bottom: 1px solid var(--border);
+      padding: 52px 0 44px;
+      margin-bottom: 56px;
+    }
+
+    .legal-hero-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .legal-hero h1 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      color: #fff;
+      margin-bottom: 14px;
+    }
+
+    .legal-hero-meta {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
+    /* ─── LEGAL BODY ──────────────────────────────────────────────── */
+    .legal-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .legal-toc {
+      position: sticky;
+      top: calc(var(--nav-h) + 24px);
+    }
+
+    .legal-toc h3 {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+
+    .legal-toc ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .legal-toc ul a {
+      display: block;
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 6px 10px;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+      border-left: 2px solid transparent;
+    }
+
+    .legal-toc ul a:hover {
+      background: var(--bg2);
+      color: var(--text);
+      border-left-color: var(--accent);
+    }
+
+    .legal-body section {
+      margin-bottom: 44px;
+    }
+
+    .legal-body h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #fff;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .legal-body h3 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #fff;
+      margin: 18px 0 8px;
+    }
+
+    .legal-body p {
+      font-size: 0.925rem;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.75;
+    }
+
+    .legal-body ul {
+      list-style: none;
+      margin: 0 0 12px 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .legal-body ul li {
+      font-size: 0.925rem;
+      color: var(--text);
+      padding-left: 18px;
+      position: relative;
+      line-height: 1.7;
+    }
+
+    .legal-body ul li::before {
+      content: "–";
+      position: absolute;
+      left: 0;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .legal-body a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .legal-body a:hover { color: var(--accent2); }
+
+    .legal-highlight {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-left: 3px solid var(--accent);
+      border-radius: 8px;
+      padding: 16px 20px;
+      margin: 16px 0;
+    }
+
+    .legal-highlight p {
+      margin-bottom: 0;
+      font-size: 0.875rem;
+      color: var(--silver);
+    }
+
+    /* ─── FOOTER ──────────────────────────────────────────────────── */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 56px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 40px;
+    }
+
+    .footer-brand .nav-logo { font-size: 1.3rem; }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 14px;
+      line-height: 1.7;
+    }
+
+    .footer-brand-sub {
+      font-size: 0.8rem;
+      color: #444;
+      margin-top: 10px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.04em;
+      margin-bottom: 16px;
+    }
+
+    .footer-col ul { list-style: none; }
+    .footer-col ul li { margin-bottom: 10px; }
+    .footer-col ul a {
+      font-size: 0.85rem;
+      color: var(--muted);
+      transition: color 0.2s;
+    }
+    .footer-col ul a:hover { color: var(--text); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-bottom p { font-size: 0.82rem; color: #444; }
+    .footer-bottom a { color: var(--muted); transition: color 0.2s; text-decoration: none; }
+    .footer-bottom a:hover { color: var(--accent); }
+
+    /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .legal-layout { grid-template-columns: 1fr; }
+      .legal-toc { display: none; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAVBAR ─────────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+
+      <ul class="nav-links">
+        <li><a href="arches.html">Light Shows</a></li>
+        <li><a href="index.html#gallery">Gallery</a></li>
+        <li><a href="index.html#testimonials">Reviews</a></li>
+        <li><a href="platform.html">Light Show Store</a></li>
+        <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
+      </ul>
+
+      <div class="nav-right">
+        <a id="navAccountBtn" href="signin.html" class="btn btn-ghost btn-sm nav-cta">Account</a>
+        <a href="index.html#cta" class="btn btn-primary btn-sm nav-cta">Get a Quote</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="arches.html" onclick="closeMenu()">Light Shows</a>
+    <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
+    <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
+    <a href="platform.html" onclick="closeMenu()">Store</a>
+    <a href="afterglo-visualizer.html" onclick="closeMenu()">&#10022; Visualizer</a>
+    <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()">Account</a>
+    <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ───────────────────────────────────────────────────────── -->
+<div class="page-content">
+  <div class="legal-hero">
+    <div class="container">
+      <div class="legal-hero-label">Help</div>
+      <h1>Support</h1>
+      <p class="legal-hero-meta">We aim to respond within 1 business day &nbsp;·&nbsp; Salt Lake City, Utah</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="legal-layout">
+
+      <!-- Sidebar TOC -->
+      <nav class="legal-toc">
+        <h3>On this page</h3>
+        <ul>
+          <li><a href="#contact">1. Contact Us</a></li>
+          <li><a href="#app">2. AFTERGLO App</a></li>
+          <li><a href="#controllers">3. Controllers &amp; Lights</a></li>
+          <li><a href="#account">4. Account &amp; Purchases</a></li>
+          <li><a href="#privacy">5. Privacy &amp; Data Requests</a></li>
+          <li><a href="#bugs">6. Bugs &amp; Feedback</a></li>
+        </ul>
+      </nav>
+
+      <!-- Body -->
+      <div class="legal-body">
+
+        <section id="contact">
+          <h2>1. Contact Us</h2>
+          <p>The fastest way to reach us is email. We read every message and aim to respond within 1 business day; complex issues (refunds, account recovery, sequence file repairs) may take up to 5 business days.</p>
+          <ul>
+            <li><strong>Email:</strong> <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a></li>
+            <li><strong>Phone:</strong> <a href="tel:+13853374144">(385) 337-4144</a> &nbsp;·&nbsp; Salt Lake City, Utah, USA</li>
+            <li><strong>Mailing:</strong> Ward Legacy Group LLC &nbsp;·&nbsp; Salt Lake City, UT</li>
+          </ul>
+          <div class="legal-highlight">
+            <p>When emailing about an installation or controller issue, please include your controller's serial number or the device name shown in the app, plus a brief description of what you were doing when the problem appeared. That single piece of context cuts our turnaround in half.</p>
+          </div>
+        </section>
+
+        <section id="app">
+          <h2>2. AFTERGLO App</h2>
+
+          <h3>The app can't find my controller</h3>
+          <p>The app discovers controllers using mDNS and UDP broadcast on your local Wi-Fi. Make sure your phone is on the same Wi-Fi network as the controller (not on cellular and not on a guest network with client isolation enabled). If discovery still fails, you can add a controller manually by its IP address from the device list screen.</p>
+
+          <h3>The controller appears but won't connect</h3>
+          <p>Power-cycle the controller (unplug 10 seconds, plug back in), wait about 30 seconds for it to rejoin Wi-Fi, then refresh the device list. If the issue persists, the controller may be on a different Wi-Fi network than the one you last set up — see the AP-mode reset section on your controller's printed quick-start card.</p>
+
+          <h3>App permissions</h3>
+          <p>The Android app declares only five network permissions (<code>INTERNET</code>, <code>ACCESS_NETWORK_STATE</code>, <code>ACCESS_WIFI_STATE</code>, <code>CHANGE_NETWORK_STATE</code>, <code>CHANGE_WIFI_MULTICAST_STATE</code>). It does not request location, camera, microphone, contacts, or storage. Full details in the <a href="privacy.html#data-collected">Privacy Policy</a>.</p>
+
+          <h3>Updating the app</h3>
+          <p>Updates ship through the Google Play Store. Controllers update separately, over the air, the next time you open the app while connected to your home Wi-Fi.</p>
+        </section>
+
+        <section id="controllers">
+          <h2>3. Controllers &amp; Lights</h2>
+
+          <h3>Lights past a certain count don't turn on</h3>
+          <p>This was a known firmware issue affecting installations with more than ~277 LEDs total on a 350W power supply. Firmware version 3.28.4 (and later) fixes this by automatically detecting and using the full 600W PSU capacity. Update your controller through the app — open the app while connected to your home Wi-Fi and the update will offer itself.</p>
+
+          <h3>Resetting Wi-Fi credentials</h3>
+          <p>Hold the controller's reset button for 10 seconds. The lights will briefly flash to confirm; the controller will then open its own "AFTERGLO Setup" Wi-Fi network. Connect to it from your phone and use the captive portal to rejoin your home Wi-Fi.</p>
+
+          <h3>Brightness seems lower than expected</h3>
+          <p>Each controller has a configurable brightness cap (defaults to 50% to protect both the LEDs and the power supply over long-term use). You can raise it up to 100% from the Advanced Settings in the app's LED tab.</p>
+
+          <h3>Scheduling and timers not firing on time</h3>
+          <p>Make sure the controller has been online for at least one minute since boot — it needs to sync time over NTP before schedules will fire. If you suspect the time zone is wrong, set it explicitly from the AG Connect tab in settings.</p>
+        </section>
+
+        <section id="account">
+          <h2>4. Account &amp; Purchases</h2>
+
+          <h3>I can't sign in</h3>
+          <p>Use the password reset link on the sign-in screen. If you used Google Sign-In, sign in with the same Google account on your phone. Accounts are tied to the email address you registered with; if you registered with a different email than you remember, contact us and we can help locate it.</p>
+
+          <h3>I bought a sequence but it's not showing up</h3>
+          <p>Pull-to-refresh the My Library screen. Purchases usually appear within seconds, but Stripe occasionally takes a couple of minutes to confirm the charge. If it's been more than 10 minutes, forward us the Stripe receipt email and we'll restore the purchase to your library.</p>
+
+          <h3>Refunds</h3>
+          <p>Digital sequence purchases are eligible for refund within 14 days of purchase if the sequence file is corrupted or substantially different from its description. Email us with your receipt and a brief explanation. Refunds are processed through Stripe and typically appear on your card within 5–10 business days.</p>
+
+          <h3>Creator payouts</h3>
+          <p>Creators receive monthly payouts via Stripe Connect. Payouts are issued on the first business day of each month for the previous month's earnings. If a scheduled payout did not arrive, check your Stripe Connect dashboard first for any flagged onboarding steps, then contact us.</p>
+        </section>
+
+        <section id="privacy">
+          <h2>5. Privacy &amp; Data Requests</h2>
+          <p>To access, correct, export, or delete your personal data, see <a href="privacy.html#rights">Section 8 of the Privacy Policy</a> or email us at <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a> with "Privacy Request" in the subject line.</p>
+          <p>Standard response time for privacy requests is within 30 days as described in the policy. We will confirm receipt of your request within 1 business day.</p>
+        </section>
+
+        <section id="bugs">
+          <h2>6. Bugs &amp; Feedback</h2>
+          <p>Found a bug or have a feature suggestion? We genuinely want to hear it — AFTERGLO is built by a small team and most of the recent improvements came directly from customer feedback. Email <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a> with as much detail as you can provide:</p>
+          <ul>
+            <li>What you were trying to do when the issue appeared</li>
+            <li>What actually happened (with a screenshot if applicable)</li>
+            <li>Your controller's firmware version (shown at the bottom of the app's home screen)</li>
+            <li>Your phone's OS version (Android or iOS) and app version</li>
+          </ul>
+          <p>Bug reports go straight to the engineering inbox and typically get a follow-up question or fix ETA within a day or two.</p>
+        </section>
+
+      </div><!-- /legal-body -->
+    </div><!-- /legal-layout -->
+  </div><!-- /container -->
+</div><!-- /page-content -->
+
+<!-- ─── FOOTER ──────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="nav-logo">AFTER<span>GLO</span></span>
+        <p>Permanent LED roofline lighting installed across Utah. Music-synchronized Christmas light shows. And a growing library of FSEQ sequences for the xLights community.</p>
+        <p class="footer-brand-sub">Salt Lake City, Utah &bull; (385) 337-4144</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <ul>
+          <li><a href="platform.html#sequences">Browse Sequences</a></li>
+          <li><a href="platform.html#categories">Categories</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="arches.html">Light Shows</a></li>
+          <li><a href="afterglo-visualizer.html">Visualizer</a></li>
+          <li><a href="support.html">Support</a></li>
+          <li><a href="index.html#cta">Get a Quote</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms of Service</a></li>
+          <li><a href="creator-agreement.html">Creator Agreement</a></li>
+          <li><a href="dmca.html">DMCA</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 AFTERGLO by Ward Legacy Group LLC. All rights reserved.</p>
+      <div style="display:flex; gap:20px;">
+        <a href="support.html">Support</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="creator-agreement.html">Creator Agreement</a>
+        <a href="dmca.html">DMCA</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const hamburger  = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  let menuOpen = false;
+
+  hamburger.addEventListener('click', () => {
+    menuOpen = !menuOpen;
+    mobileMenu.classList.toggle('open', menuOpen);
+    const spans = hamburger.querySelectorAll('span');
+    if (menuOpen) {
+      spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+      spans[1].style.opacity   = '0';
+      spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+    } else {
+      spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+  });
+
+  function closeMenu() {
+    menuOpen = false;
+    mobileMenu.classList.remove('open');
+    hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
+
+  document.addEventListener('click', e => {
+    if (menuOpen && !mobileMenu.contains(e.target) && !hamburger.contains(e.target)) closeMenu();
+  });
+</script>
+</body>
+</html>
