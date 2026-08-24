@@ -599,6 +599,48 @@
       color: #fff;
     }
 
+    /* ─── DAY / NIGHT ──────────────────────────────────────────────── */
+    #day-night { padding: 96px 0; background: var(--bg); }
+    .dn-card {
+      position: relative;
+      max-width: 900px;
+      margin: 0 auto;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--border);
+      aspect-ratio: 16/10;
+      background: var(--bg3);
+    }
+    .dn-card img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+      transition: opacity 0.35s ease;
+    }
+    .dn-toggle {
+      position: absolute;
+      bottom: 20px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 4px;
+      background: rgba(8,8,8,0.7);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 4px;
+      backdrop-filter: blur(6px);
+    }
+    .dn-btn {
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 8px 20px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.25s, color 0.25s;
+    }
+    .dn-btn.active { background: var(--accent); color: #0e0e0e; }
+
     /* ─── TESTIMONIALS ─────────────────────────────────────────────── */
     #testimonials {
       background: var(--bg2);
@@ -1155,11 +1197,11 @@
           <li><a href="arches.html">Light Shows</a></li>
           <li><a href="index.html#gallery">Gallery</a></li>
           <li><a href="index.html#testimonials">Reviews</a></li>
-          <li><a href="platform.html">Light Show Store</a></li>
-          <li><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
+          <li style="display:none;"><a href="platform.html">Light Show Store</a></li>
+          <li style="display:none;"><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
         </ul>
 
-        <a id="navAccountBtn" href="signin.html" class="btn btn-ghost nav-cta">Account</a>
+        <a id="navAccountBtn" href="signin.html" class="btn btn-ghost nav-cta" style="display:none;">Account</a>
         <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
 
         <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -1171,9 +1213,9 @@
       <a href="arches.html" onclick="closeMenu()">Light Shows</a>
       <a href="index.html#gallery" onclick="closeMenu()">Gallery</a>
       <a href="index.html#testimonials" onclick="closeMenu()">Reviews</a>
-      <a href="platform.html" onclick="closeMenu()">Light Show Store</a>
-      <a href="afterglo-visualizer.html" onclick="closeMenu()">✦ Visualizer</a>
-      <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()">Account</a>
+      <a href="platform.html" onclick="closeMenu()" style="display:none;">Light Show Store</a>
+      <a href="afterglo-visualizer.html" onclick="closeMenu()" style="display:none;">✦ Visualizer</a>
+      <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()" style="display:none;">Account</a>
       <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
     </div>
   </nav>
@@ -1191,11 +1233,11 @@
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           Get a Free Quote
         </a>
-        <a href="platform.html" class="btn btn-ghost">
+        <a href="platform.html" class="btn btn-ghost" style="display:none;">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           Browse Light Show Store
         </a>
-        <a href="afterglo-visualizer.html" class="btn btn-ghost">
+        <a href="afterglo-visualizer.html" class="btn btn-ghost" style="display:none;">
           <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2m-3.64-6.36-1.42 1.42M5.05 18.95l-1.41 1.41M18.95 18.95l-1.41-1.41M5.05 5.05 3.64 3.64"/></svg>
           Try the Visualizer
         </a>
@@ -1423,7 +1465,7 @@
   </section>
 
   <!-- ─── VISUALIZER TEASER ──────────────────────────────────── -->
-  <section id="visualizer-teaser" style="padding:96px 0;background:var(--bg);overflow:hidden;">
+  <section id="visualizer-teaser" style="display:none;padding:96px 0;background:var(--bg);overflow:hidden;">
     <div class="container">
       <div class="viz-split">
 
@@ -1539,6 +1581,24 @@
         <div class="g-item g-vertical fade-in fade-delay-3">
           <img src="Resources/House%20Images/thumbs/20260227_214611~2.jpg" data-full="Resources/House%20Images/20260227_214611~2.jpg" alt="LED roofline night shot">
           <div class="g-caption">Night Roofline, Close Up</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DAY / NIGHT ─────────────────────────────────────── -->
+  <section id="day-night">
+    <div class="container">
+      <div class="gallery-header fade-in" style="text-align:center;">
+        <div class="section-label">Same Install</div>
+        <h2 class="section-title">Invisible by Day.<br>Unforgettable by Night.</h2>
+        <p class="section-sub" style="margin:0 auto; text-align:center;">Flush-mounted fixtures disappear into your roofline until you flip them on.</p>
+      </div>
+      <div class="dn-card fade-in">
+        <img id="dnImg" src="Resources/House%20Images/20260131_164616.jpg" alt="Daytime view of flush-mounted LED fixtures on fascia">
+        <div class="dn-toggle">
+          <button type="button" class="dn-btn active" data-mode="day">☀ Day</button>
+          <button type="button" class="dn-btn" data-mode="night">☾ Night</button>
         </div>
       </div>
     </div>
@@ -1660,7 +1720,7 @@
             <li><a href="#why">Permanent Roofline Lighting</a></li>
             <li><a href="#lightshow">Christmas Light Shows</a></li>
             <li><a href="arches.html">Arches &amp; Yard Props</a></li>
-            <li><a href="afterglo-visualizer.html">Visualizer</a></li>
+            <li style="display:none;"><a href="afterglo-visualizer.html">Visualizer</a></li>
             <li><a href="#cta">Free Consultation</a></li>
           </ul>
         </div>
@@ -2333,6 +2393,36 @@
   function signOut() { signOutUser(); window.location.href = 'index.html'; }
 
   /* Nav avatar/login button is rendered by js/nav-account.js. */
+  </script>
+
+  <script>
+    // ── Day / Night toggle ───────────────────────────────────────────
+    (function() {
+      const dnImg  = document.getElementById('dnImg');
+      const dnBtns = document.querySelectorAll('.dn-btn');
+      if (!dnImg || !dnBtns.length) return;
+      const IMAGES = {
+        day:   'Resources/House%20Images/20260131_164616.jpg',
+        night: 'Resources/House%20Images/20260131_233040.jpg'
+      };
+      const ALT = {
+        day:   'Daytime view of flush-mounted LED fixtures on fascia',
+        night: 'Same home lit up at night with the LED roofline on'
+      };
+      dnBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const mode = btn.dataset.mode;
+          if (btn.classList.contains('active')) return;
+          dnBtns.forEach(b => b.classList.toggle('active', b === btn));
+          dnImg.style.opacity = '0';
+          setTimeout(() => {
+            dnImg.src = IMAGES[mode];
+            dnImg.alt = ALT[mode];
+            dnImg.style.opacity = '1';
+          }, 350);
+        });
+      });
+    })();
   </script>
   <script src="js/nav-account.js"></script>
 </body>

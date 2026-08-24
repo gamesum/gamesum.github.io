@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Thank You | AFTERGLO Lighting</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0F0F11;
+      --bg2:      #0e0e0e;
+      --bg3:      #141414;
+      --accent:   #D4A43A;
+      --accent2:  #d4a843;
+      --text:     #F2F2F4;
+      --muted:    #9A9AA2;
+      --border:   #222222;
+      --radius:   12px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+
+    header {
+      padding: 24px;
+      text-align: center;
+    }
+    .logo {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 900;
+      font-size: 1.3rem;
+      letter-spacing: 0.02em;
+      color: #fff;
+    }
+    .logo span { color: var(--accent); }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .card {
+      max-width: 520px;
+      width: 100%;
+      text-align: center;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 56px 40px;
+    }
+
+    .check {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 24px;
+      border-radius: 50%;
+      background: rgba(212,164,58,0.12);
+      border: 1px solid rgba(212,164,58,0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .check svg { color: var(--accent); }
+
+    h1 {
+      font-size: clamp(1.6rem, 4vw, 2.1rem);
+      color: #fff;
+      margin-bottom: 12px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 0.95rem;
+      max-width: 380px;
+      margin: 0 auto 32px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #0e0e0e;
+      width: 100%;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(212,164,58,0.25); }
+
+    .btn-secondary {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .btn-secondary:hover { color: var(--text); }
+
+    .stars { color: var(--accent); font-size: 1.1rem; letter-spacing: 3px; margin-bottom: 16px; }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="logo">AFTER<span>GLO</span></a>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="check">
+        <svg width="30" height="30" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+          <path d="M20 6L9 17l-5-5"/>
+        </svg>
+      </div>
+      <h1>Payment Received — Thank You!</h1>
+      <p class="sub">Your payment went through and your invoice is settled. We really appreciate your business — if you have a minute, a review helps us out more than you know.</p>
+      <div class="stars">★★★★★</div>
+      <a href="https://share.google/bKEyrEnfDW35vyhKL" target="_blank" rel="noopener" class="btn btn-primary">Leave Us a Review</a>
+      <div>
+        <a href="index.html" class="btn-secondary">← Back to afterglolighting.org</a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; <span id="year"></span> AFTERGLO Lighting
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
