@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>(function(){try{var t=localStorage.getItem('afterglo-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
   <meta charset="UTF-8" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://js.stripe.com https://apis.google.com https://accounts.google.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://www.google.com https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.run.app https://firebasestorage.googleapis.com https://api.stripe.com wss://*.firebaseio.com; frame-src https://js.stripe.com https://hooks.stripe.com https://accounts.google.com https://*.firebaseapp.com https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com" />
@@ -43,6 +44,19 @@
       --border:   #2E2E34;
       --radius:   12px;
       --nav-h:    72px;
+      --heading:  #fff;
+    }
+
+    [data-theme="light"] {
+      --bg:       #FAF8F2;
+      --bg2:      #F1ECE0;
+      --bg3:      #FFFFFF;
+      --accent:   #A8791E;
+      --accent2:  #8f6a17;
+      --text:     #201F1C;
+      --muted:    #6B6659;
+      --border:   #E4DECF;
+      --heading:  #14130F;
     }
 
     html { scroll-behavior: smooth; }
@@ -87,7 +101,7 @@
     .section-title {
       font-size: clamp(2rem, 4vw, 3rem);
       font-weight: 800;
-      color: #fff;
+      color: var(--heading);
       margin-bottom: 16px;
     }
 
@@ -156,6 +170,10 @@
       height: var(--nav-h);
       z-index: 1000;
       transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
+      background: rgba(13,17,23,0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; --accent2: #d4a843;
     }
     #navbar.scrolled {
       background: rgba(13,17,23,0.92);
@@ -175,7 +193,7 @@
       font-family: 'Outfit', sans-serif;
       font-size: 1.5rem;
       font-weight: 700;
-      color: #fff;
+      color: var(--heading);
       letter-spacing: 0.06em;
       text-transform: uppercase;
     }
@@ -198,7 +216,7 @@
       transition: color 0.2s;
       white-space: nowrap;
     }
-    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover { color: var(--heading); }
 
     .nav-cta { margin-left: 16px; }
 
@@ -354,7 +372,7 @@
     .hero-headline {
       font-size: clamp(3rem, 7vw, 5.5rem);
       font-weight: 800;
-      color: #fff;
+      color: var(--heading);
       line-height: 1.05;
       letter-spacing: -0.03em;
       margin-bottom: 24px;
@@ -442,7 +460,7 @@
       pointer-events: none;
     }
     .svc-card-body { padding: 28px; }
-    .svc-card-body h3 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: #fff; margin-bottom: 10px; }
+    .svc-card-body h3 { font-family: 'Outfit', sans-serif; font-size: 1.6rem; color: var(--heading); margin-bottom: 10px; }
     .svc-card-body p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 18px; }
     .svc-link { color: var(--accent); font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
 
@@ -521,7 +539,7 @@
     #reviewsPanel.open { display: flex; }
     .rp-header { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .rp-header .rb-google { display: flex; flex-shrink: 0; }
-    .rp-header h3 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; color: #fff; }
+    .rp-header h3 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; color: var(--heading); }
     .rp-header p { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
     .rp-close { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.06); color: var(--muted); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .rp-close:hover { color: var(--text); }
@@ -575,7 +593,7 @@
       font-family: 'Outfit', sans-serif;
       font-size: 0.95rem;
       font-weight: 700;
-      color: #fff;
+      color: var(--heading);
       margin-top: 2px;
     }
     #dealBadgeBtn .db-time span { font-size: 0.6rem; font-weight: 500; color: rgba(212,164,58,0.7); margin-left: 1px; }
@@ -611,7 +629,7 @@
     }
     #dealPanel .dp-body { padding: 24px; }
     #dealPanel .dp-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
-    #dealPanel h3 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: #fff; margin-top: 8px; line-height: 1.25; }
+    #dealPanel h3 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--heading); margin-top: 8px; line-height: 1.25; }
     #dealPanel h3 strong { color: var(--accent); font-weight: 800; }
     #dealPanel p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-top: 10px; }
     #dealPanel .btn { width: 100%; margin-top: 16px; }
@@ -698,7 +716,7 @@
       font-family: 'Outfit', sans-serif;
       font-size: 1.25rem;
       font-weight: 700;
-      color: #fff;
+      color: var(--heading);
       margin-bottom: 12px;
     }
     .step-desc { font-size: 0.9rem; color: var(--muted); line-height: 1.7; }
@@ -908,7 +926,7 @@
       object-fit: cover;
       border-radius: 50%;
     }
-    .testi-name { font-weight: 600; font-size: 0.9rem; color: #fff; }
+    .testi-name { font-weight: 600; font-size: 0.9rem; color: var(--heading); }
     .testi-loc  { font-size: 0.8rem; color: var(--muted); }
 
     /* ─── PRICING / CTA BANNER ─────────────────────────────────────── */
@@ -952,7 +970,7 @@
     .cta-headline {
       font-size: clamp(1.8rem, 4vw, 3rem);
       font-weight: 800;
-      color: #fff;
+      color: var(--heading);
       margin-bottom: 16px;
     }
     .cta-price {
@@ -972,6 +990,7 @@
       background: #070b10;
       border-top: 1px solid var(--border);
       padding: 64px 0 32px;
+      --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --bg3: #232328; --accent: #D4A43A; --accent2: #d4a843;
     }
 
     .footer-grid {
@@ -985,7 +1004,7 @@
       font-family: 'Outfit', sans-serif;
       font-size: 1.5rem;
       font-weight: 700;
-      color: #fff;
+      color: var(--heading);
       letter-spacing: 0.06em;
       text-transform: uppercase;
       margin-bottom: 16px;
@@ -1330,6 +1349,19 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
+
+    /* ─── THEME TOGGLE ───────────────────────────────────── */
+    .theme-toggle { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); cursor: pointer; flex-shrink: 0; transition: color 0.2s, border-color 0.2s; }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .theme-toggle svg { display: block; }
+    .theme-toggle .tt-moon { display: none; }
+    [data-theme="light"] .theme-toggle .tt-sun { display: none; }
+    [data-theme="light"] .theme-toggle .tt-moon { display: block; }
+    .mobile-theme-toggle { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--border); min-height: 44px; background: none; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .mobile-theme-toggle svg { flex-shrink: 0; }
+    .mobile-theme-toggle .tt-moon { display: none; }
+    [data-theme="light"] .mobile-theme-toggle .tt-sun { display: none; }
+    [data-theme="light"] .mobile-theme-toggle .tt-moon { display: block; }
   </style>
 
   <!-- Structured data for Google / Gemini -->
@@ -1410,6 +1442,7 @@
           <li><a href="gallery.html">Gallery</a></li>
           <li style="display:none;"><a href="platform.html">Light Show Store</a></li>
           <li style="display:none;"><a href="afterglo-visualizer.html" style="color:var(--accent);" title="Preview what a light show looks like on a house before you download it">✦ Visualizer</a></li>
+          <li><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button></li>
         </ul>
 
         <a id="navAccountBtn" href="signin.html" class="btn btn-ghost nav-cta" style="display:none;">Account</a>
@@ -1430,6 +1463,7 @@
       <a href="afterglo-visualizer.html" onclick="closeMenu()" style="display:none;">✦ Visualizer</a>
       <a id="mobileAccountBtn" href="signin.html" onclick="closeMenu()" style="display:none;">Account</a>
       <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
+      <button type="button" class="mobile-theme-toggle" id="mobileThemeToggle"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><span>Toggle Theme</span></button>
     </div>
   </nav>
 
@@ -2771,5 +2805,22 @@
     })();
   </script>
   <script src="js/nav-account.js"></script>
+  <script>
+    (function() {
+      const root = document.documentElement;
+      function setTheme(t) {
+        root.setAttribute('data-theme', t);
+        try { localStorage.setItem('afterglo-theme', t); } catch (e) {}
+      }
+      function toggleTheme() {
+        const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        setTheme(next);
+      }
+      const tBtn = document.getElementById('themeToggle');
+      const tBtnMobile = document.getElementById('mobileThemeToggle');
+      tBtn && tBtn.addEventListener('click', toggleTheme);
+      tBtnMobile && tBtnMobile.addEventListener('click', toggleTheme);
+    })();
+  </script>
 </body>
 </html>

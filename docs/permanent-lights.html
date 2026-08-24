@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <script>(function(){try{var t=localStorage.getItem('afterglo-theme')||'light';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','light');}})();</script>
   <meta charset="UTF-8" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,6 +25,19 @@
       --border:   #2E2E34;
       --radius:   12px;
       --nav-h:    72px;
+      --heading:  #fff;
+    }
+
+    [data-theme="light"] {
+      --bg:       #FAF8F2;
+      --bg2:      #F1ECE0;
+      --bg3:      #FFFFFF;
+      --accent:   #A8791E;
+      --accent2:  #8f6a17;
+      --text:     #201F1C;
+      --muted:    #6B6659;
+      --border:   #E4DECF;
+      --heading:  #14130F;
     }
 
     html { scroll-behavior: smooth; }
@@ -35,7 +49,7 @@
 
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
     .section-label { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
-    .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: #fff; margin-bottom: 16px; }
+    .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--heading); margin-bottom: 16px; }
     .section-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.75; }
 
     .fade-in { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
@@ -52,7 +66,7 @@
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ─── NAVBAR ─────────────────────────────────────────────── */
-    #navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 1000; transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s; }
+    #navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 1000; transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s; background: rgba(13,17,23,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; --accent2: #d4a843; }
     #navbar.scrolled { background: rgba(13,17,23,0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 1px 0 var(--border); }
     .nav-inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
     .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; }
@@ -60,7 +74,7 @@
     .nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
     .nav-links li { white-space: nowrap; }
     .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--muted); transition: color 0.2s; text-decoration: none; white-space: nowrap; }
-    .nav-links a:hover { color: #fff; }
+    .nav-links a:hover { color: var(--heading); }
     .nav-links a.active { color: var(--accent); }
     .nav-cta { margin-left: 16px; }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 10px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
@@ -73,7 +87,7 @@
     #page-hero { padding-top: var(--nav-h); min-height: 75vh; display: flex; align-items: center; position: relative; overflow: hidden; }
     .page-hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 30% 100%, rgba(212,164,58,0.14) 0%, transparent 65%), linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
     .page-hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; padding: 80px 0; }
-    .hero-text-col .hero-headline { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: #fff; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
+    .hero-text-col .hero-headline { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: var(--heading); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
     .hero-text-col .hero-headline span { color: var(--accent); }
     .hero-text-col .hero-sub { font-size: 1.1rem; color: var(--muted); line-height: 1.75; margin-bottom: 36px; max-width: 480px; }
     .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -96,8 +110,19 @@
     .feature-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; }
     .feat-row { display: flex; gap: 20px; align-items: flex-start; }
     .feat-num { width: 40px; height: 40px; border-radius: 10px; background: rgba(212,164,58,0.1); border: 1px solid rgba(212,164,58,0.25); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; color: var(--accent); flex-shrink: 0; }
-    .feat-body h4 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 4px; }
+    .feat-body h4 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 4px; }
     .feat-body p { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+
+    /* ─── OCCASIONS ──────────────────────────────────────── */
+    #occasions { padding: 96px 0; }
+    .occasions-header { text-align: center; margin-bottom: 56px; }
+    .occasions-header .section-sub { margin: 0 auto; text-align: center; }
+    .occasions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .occ-item { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/5; background: var(--bg3); border: 1px solid var(--border); position: relative; }
+    .occ-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .occ-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%); padding: 24px 16px 14px; font-size: 0.85rem; color: #fff; font-weight: 600; }
+    @media (max-width: 900px) { .occasions-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .occasions-grid { grid-template-columns: 1fr 1fr; } }
 
     /* ─── SPECS ──────────────────────────────────────────── */
     #specs { padding: 96px 0; }
@@ -111,7 +136,7 @@
     #perm-cta .section-sub { margin: 0 auto 32px; text-align: center; }
 
     /* ─── FOOTER ─────────────────────────────────────────── */
-    #footer { background: #0e0e11; border-top: 1px solid var(--border); padding: 64px 0 40px; }
+    #footer { background: #0e0e11; border-top: 1px solid var(--border); padding: 64px 0 40px; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --bg3: #232328; --accent: #D4A43A; --accent2: #d4a843; }
     .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
     .footer-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
     .footer-logo span { color: var(--accent); text-shadow: 0 0 20px rgba(212,164,58,0.7), 0 0 40px rgba(212,164,58,0.3); }
@@ -159,7 +184,7 @@
     #reviewsPanel.open { display: flex; }
     .rp-header { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
     .rp-header .rb-google { display: flex; flex-shrink: 0; }
-    .rp-header h3 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; color: #fff; }
+    .rp-header h3 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; color: var(--heading); }
     .rp-header p { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
     .rp-close { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.06); color: var(--muted); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     .rp-close:hover { color: var(--text); }
@@ -174,7 +199,7 @@
     #dealBadgeBtn { display: flex; align-items: center; gap: 12px; background: rgba(20,20,20,0.95); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.4); border-radius: 18px; padding: 12px 16px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-family: 'Inter', sans-serif; color: var(--text); position: relative; }
     #dealBadgeBtn .db-icon { width: 36px; height: 36px; border-radius: 50%; background: rgba(212,164,58,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     #dealBadgeBtn .db-label { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
-    #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: #fff; margin-top: 2px; }
+    #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
     #dealBadgeBtn .db-cta { font-size: 0.62rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
     @media (max-width: 600px) { #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; } #dealBadgeBtn { padding: 12px; border-radius: 50%; } }
     #dealPanel { display: none; position: fixed; right: 20px; bottom: 92px; z-index: 301; width: min(340px, calc(100vw - 40px)); background: var(--bg2); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
@@ -182,10 +207,23 @@
     #dealPanel .dp-close { position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.5); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     #dealPanel .dp-body { padding: 24px; }
     #dealPanel .dp-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
-    #dealPanel h3 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: #fff; margin-top: 8px; line-height: 1.25; }
+    #dealPanel h3 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--heading); margin-top: 8px; line-height: 1.25; }
     #dealPanel h3 strong { color: var(--accent); font-weight: 800; }
     #dealPanel p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-top: 10px; }
     #dealPanel .btn { width: 100%; margin-top: 16px; }
+
+    /* ─── THEME TOGGLE ───────────────────────────────────── */
+    .theme-toggle { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); cursor: pointer; flex-shrink: 0; transition: color 0.2s, border-color 0.2s; }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .theme-toggle svg { display: block; }
+    .theme-toggle .tt-moon { display: none; }
+    [data-theme="light"] .theme-toggle .tt-sun { display: none; }
+    [data-theme="light"] .theme-toggle .tt-moon { display: block; }
+    .mobile-theme-toggle { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--border); min-height: 44px; background: none; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .mobile-theme-toggle svg { flex-shrink: 0; }
+    .mobile-theme-toggle .tt-moon { display: none; }
+    [data-theme="light"] .mobile-theme-toggle .tt-sun { display: none; }
+    [data-theme="light"] .mobile-theme-toggle .tt-moon { display: block; }
   </style>
 </head>
 <body>
@@ -201,6 +239,7 @@
           <li><a href="seasonal-lights.html">Seasonal Lights</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="gallery.html">Gallery</a></li>
+          <li><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button></li>
         </ul>
         <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
         <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
@@ -213,6 +252,7 @@
       <a href="about.html" onclick="closeMenu()">About</a>
       <a href="gallery.html" onclick="closeMenu()">Gallery</a>
       <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
+      <button type="button" class="mobile-theme-toggle" id="mobileThemeToggle"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><span>Toggle Theme</span></button>
     </div>
   </nav>
 
@@ -270,6 +310,43 @@
         <div class="feat-row fade-in fade-delay-3">
           <div class="feat-num">4</div>
           <div class="feat-body"><h4>Commercial-Grade Fixtures</h4><p>Backed by a multi-year warranty and built for Utah weather, from summer heat to winter snow load.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── OCCASIONS ────────────────────────────────────── -->
+  <section id="occasions">
+    <div class="container">
+      <div class="occasions-header fade-in">
+        <div class="section-label">One System, Every Look</div>
+        <h2 class="section-title">Real Homes, 16 Million Colors.</h2>
+        <p class="section-sub">Same fixtures, same app: change the scene for every holiday and every occasion, all year long.</p>
+      </div>
+      <div class="occasions-grid">
+        <div class="occ-item fade-in">
+          <img src="Resources/permanent/perm-christmas-rainbow.jpg" alt="Home with rainbow-colored permanent LED roofline lighting for Christmas">
+          <div class="occ-label">Christmas</div>
+        </div>
+        <div class="occ-item fade-in fade-delay-1">
+          <img src="Resources/permanent/perm-gameday-redblue.jpg" alt="Home with red and blue permanent LED lighting for game day">
+          <div class="occ-label">Game Day</div>
+        </div>
+        <div class="occ-item fade-in fade-delay-2">
+          <img src="Resources/permanent/perm-july4-redwhiteblue.jpg" alt="Home with red, white, and blue permanent LED lighting for the 4th of July">
+          <div class="occ-label">4th of July</div>
+        </div>
+        <div class="occ-item fade-in">
+          <img src="Resources/permanent/perm-halloween-purpleorange.jpg" alt="Home with purple and orange permanent LED lighting for Halloween">
+          <div class="occ-label">Halloween</div>
+        </div>
+        <div class="occ-item fade-in fade-delay-1">
+          <img src="Resources/permanent/perm-security-white.jpg" alt="Home with bright white permanent LED security lighting">
+          <div class="occ-label">Security Mode</div>
+        </div>
+        <div class="occ-item fade-in fade-delay-2">
+          <img src="Resources/permanent/perm-accent-warmwhite.jpg" alt="Home with warm white permanent LED accent lighting">
+          <div class="occ-label">Everyday Accent</div>
         </div>
       </div>
     </div>
@@ -507,6 +584,23 @@
         tick();
         setInterval(tick, 1000);
       }
+    })();
+  </script>
+  <script>
+    (function() {
+      const root = document.documentElement;
+      function setTheme(t) {
+        root.setAttribute('data-theme', t);
+        try { localStorage.setItem('afterglo-theme', t); } catch (e) {}
+      }
+      function toggleTheme() {
+        const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        setTheme(next);
+      }
+      const tBtn = document.getElementById('themeToggle');
+      const tBtnMobile = document.getElementById('mobileThemeToggle');
+      tBtn && tBtn.addEventListener('click', toggleTheme);
+      tBtnMobile && tBtnMobile.addEventListener('click', toggleTheme);
     })();
   </script>
 </body>
