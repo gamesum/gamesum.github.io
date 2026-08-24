@@ -603,8 +603,7 @@
     #day-night { padding: 96px 0; background: var(--bg); }
     .dn-card {
       position: relative;
-      max-width: 900px;
-      margin: 0 auto;
+      width: 100%;
       border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--border);
@@ -1263,6 +1262,26 @@
     </div>
   </section>
 
+  <!-- ─── DAY / NIGHT ─────────────────────────────────────── -->
+  <section id="day-night">
+    <div class="container">
+      <div class="viz-split">
+        <div class="fade-in">
+          <div class="section-label">Same Install</div>
+          <h2 class="section-title">Invisible by Day.<br>Unforgettable by Night.</h2>
+          <p class="section-sub">Flush-mounted fixtures disappear into your roofline until you flip them on.</p>
+        </div>
+        <div class="dn-card fade-in fade-delay-1">
+          <img id="dnImg" src="Resources/House%20Images/20260131_164616.jpg" alt="Daytime view of flush-mounted LED fixtures on fascia">
+          <div class="dn-toggle">
+            <button type="button" class="dn-btn active" data-mode="day">☀ Day</button>
+            <button type="button" class="dn-btn" data-mode="night">☾ Night</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── WHY PERMANENT ────────────────────────────────────── -->
   <section id="why" style="display:none;">
     <div class="container">
@@ -1581,24 +1600,6 @@
         <div class="g-item g-vertical fade-in fade-delay-3">
           <img src="Resources/House%20Images/thumbs/20260227_214611~2.jpg" data-full="Resources/House%20Images/20260227_214611~2.jpg" alt="LED roofline night shot">
           <div class="g-caption">Night Roofline, Close Up</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── DAY / NIGHT ─────────────────────────────────────── -->
-  <section id="day-night">
-    <div class="container">
-      <div class="gallery-header fade-in" style="text-align:center;">
-        <div class="section-label">Same Install</div>
-        <h2 class="section-title">Invisible by Day.<br>Unforgettable by Night.</h2>
-        <p class="section-sub" style="margin:0 auto; text-align:center;">Flush-mounted fixtures disappear into your roofline until you flip them on.</p>
-      </div>
-      <div class="dn-card fade-in">
-        <img id="dnImg" src="Resources/House%20Images/20260131_164616.jpg" alt="Daytime view of flush-mounted LED fixtures on fascia">
-        <div class="dn-toggle">
-          <button type="button" class="dn-btn active" data-mode="day">☀ Day</button>
-          <button type="button" class="dn-btn" data-mode="night">☾ Night</button>
         </div>
       </div>
     </div>
