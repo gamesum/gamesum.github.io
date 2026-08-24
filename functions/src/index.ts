@@ -11,6 +11,9 @@ export { aiPreset } from "./aiPreset";
 // AI product-knowledge assistant — see ./aiAsk.js.
 export { aiAsk } from "./aiAsk";
 
+// Admin-only AI site editor — see ./siteEdit.
+export { siteEdit } from "./siteEdit";
+
 admin.initializeApp({
   storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });

@@ -81,6 +81,12 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // Site editor request/result log: admin read only. Admin SDK writes only.
+    match /admin_site_edits/{entryId} {
+      allow read:  if isAdmin();
+      allow write: if false;
+    }
+
     // DMCA notices: anonymous public legal-notice submission with shape validation
     // to limit spam/abuse. Admins read/mutate via Cloud Functions.
     match /dmca_notices/{noticeId} {

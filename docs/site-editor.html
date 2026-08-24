@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.run.app wss://*.firebaseio.com; frame-ancestors 'none'; object-src 'none'; base-uri 'self'" />
+  <script>if (self !== top) { top.location = self.location; }</script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Site Editor | AFTERGLO</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
+  <script>window.AFTERGLO_APPCHECK_SITE_KEY = "6Lc_jcgsAAAAADt2B0iAUvbhQefKVWpLE_Wuf8yp";</script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-functions-compat.js"></script>
+  <script src="js/firebase-auth.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --surface: #0F0F11; --surface2: #17171A; --surface3: #1D1D22;
+      --border: #2A2A32; --border2: #3A3A44;
+      --gold: #D4A43A; --gold2: #F0C04A;
+      --text: #F2F2F4; --muted: #9A9AA2;
+      --success: #3DCB73; --danger: #F05A4A; --radius: 12px;
+    }
+    body {
+      font-family: 'Inter', sans-serif; background: var(--surface); color: var(--text);
+      line-height: 1.6; min-height: 100vh;
+    }
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; letter-spacing: 0.01em; }
+    code, .mono { font-family: 'JetBrains Mono', monospace; }
+    a { color: var(--gold2); }
+    input, button, select, textarea { font-family: inherit; }
+
+    .gate { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .gate-card { max-width: 420px; text-align: center; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 40px 32px; }
+    .gate-card h2 { font-size: 1.3rem; margin-bottom: 10px; }
+    .gate-card p { color: var(--muted); margin-bottom: 20px; font-size: 0.95rem; }
+    .spinner { width: 32px; height: 32px; border: 3px solid var(--border2); border-top-color: var(--gold); border-radius: 50%; margin: 0 auto 20px; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .btn { display: inline-block; padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border2); background: var(--surface3); color: var(--text); cursor: pointer; font-size: 0.9rem; font-weight: 600; text-decoration: none; }
+    .btn:hover { border-color: var(--gold); }
+    .btn-primary { background: var(--gold); border-color: var(--gold); color: #14140F; }
+    .btn-primary:hover { background: var(--gold2); }
+    .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+    #navbar { position: sticky; top: 0; z-index: 10; background: rgba(15,15,17,0.95); border-bottom: 1px solid var(--border); backdrop-filter: blur(8px); }
+    .nav-inner { max-width: 900px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-logo { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 1.15rem; color: var(--text); text-decoration: none; }
+    .nav-logo span { color: var(--gold); }
+    .nav-tag { margin-left: 10px; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); border: 1px solid var(--border2); border-radius: 999px; padding: 3px 9px; }
+    .nav-right { display: flex; align-items: center; gap: 14px; font-size: 0.9rem; color: var(--muted); }
+
+    .wrap { max-width: 900px; margin: 0 auto; padding: 32px 24px 80px; }
+    .lede { color: var(--muted); margin-bottom: 28px; font-size: 0.95rem; }
+    .warn { background: rgba(240,90,74,0.08); border: 1px solid rgba(240,90,74,0.35); color: #FCA79C; border-radius: 10px; padding: 12px 16px; font-size: 0.85rem; margin-bottom: 28px; }
+
+    .panel { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; margin-bottom: 28px; }
+    label { display: block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-bottom: 8px; }
+    select, textarea {
+      width: 100%; background: var(--surface3); border: 1px solid var(--border2); border-radius: 8px;
+      color: var(--text); padding: 12px 14px; font-size: 0.95rem;
+    }
+    select { margin-bottom: 20px; }
+    textarea { resize: vertical; min-height: 110px; margin-bottom: 16px; }
+    .row-actions { display: flex; align-items: center; gap: 14px; }
+    .char-count { font-size: 0.78rem; color: var(--muted); margin-left: auto; }
+
+    .history { display: flex; flex-direction: column; gap: 14px; }
+    .entry { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
+    .entry-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+    .entry-file { font-size: 0.78rem; color: var(--gold2); }
+    .entry-time { font-size: 0.75rem; color: var(--muted); }
+    .entry-instruction { font-size: 0.95rem; margin-bottom: 8px; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+    .pill-running { background: rgba(212,164,58,0.14); color: var(--gold2); border: 1px solid rgba(212,164,58,0.4); }
+    .pill-committed { background: rgba(61,203,115,0.12); color: var(--success); border: 1px solid rgba(61,203,115,0.4); }
+    .pill-error { background: rgba(240,90,74,0.12); color: var(--danger); border: 1px solid rgba(240,90,74,0.4); }
+    .entry-error { font-size: 0.85rem; color: var(--danger); margin-top: 8px; }
+    .entry-link { font-size: 0.85rem; margin-top: 8px; display: inline-block; }
+    .empty-state { color: var(--muted); font-size: 0.9rem; text-align: center; padding: 30px 0; }
+  </style>
+</head>
+<body>
+
+<!-- ─── LOADING GATE ───────────────────────────────────────────────── -->
+<div class="gate" id="gateLoading">
+  <div class="gate-card">
+    <div class="spinner"></div>
+    <h2>Checking admin access</h2>
+    <p>One moment while we verify your credentials.</p>
+  </div>
+</div>
+
+<!-- ─── SIGN-IN REQUIRED ───────────────────────────────────────────── -->
+<div class="gate" id="gateSignIn" style="display:none;">
+  <div class="gate-card">
+    <h2>Admin access requires sign-in</h2>
+    <p>This tool edits the live site. Sign in with your admin account to continue.</p>
+    <a href="signin.html?redirect=site-editor.html" class="btn btn-primary">Sign In</a>
+  </div>
+</div>
+
+<!-- ─── NOT AUTHORIZED ─────────────────────────────────────────────── -->
+<div class="gate" id="gateDenied" style="display:none;">
+  <div class="gate-card">
+    <h2>Not authorized</h2>
+    <p>You don't have admin access. If you believe this is an error, contact the site owner.</p>
+    <button class="btn" id="deniedSignOut">Sign out</button>
+  </div>
+</div>
+
+<!-- ─── MAIN ────────────────────────────────────────────────────────── -->
+<div id="app" style="display:none;">
+  <nav id="navbar">
+    <div class="nav-inner">
+      <div>
+        <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+        <span class="nav-tag">Site Editor</span>
+      </div>
+      <div class="nav-right">
+        <span id="navUser"></span>
+        <button class="btn" id="signOutBtn">Sign out</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <p class="lede">Describe a change in plain English. Claude rewrites the page and commits it straight to <code class="mono">main</code> — GitHub Pages picks it up automatically, usually within a minute.</p>
+    <div class="warn">This pushes directly to the live site. There's no preview or approval step — double-check the instruction before submitting.</div>
+
+    <div class="panel">
+      <label for="fileSelect">Page</label>
+      <select id="fileSelect"></select>
+
+      <label for="instruction">Instruction</label>
+      <textarea id="instruction" maxlength="2000" placeholder="e.g. Change the hero headline to say &quot;Permanent lighting, zero maintenance&quot; and make the CTA button gold instead of white."></textarea>
+
+      <div class="row-actions">
+        <button class="btn btn-primary" id="submitBtn">Apply change</button>
+        <span class="char-count"><span id="charCount">0</span>/2000</span>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:14px;font-size:1.05rem;">Recent edits</h3>
+    <div class="history" id="history">
+      <div class="empty-state">No edits yet.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  var EDITABLE_FILES = [
+    "index.html", "platform.html", "arches.html", "circuit-board.html",
+    "firmware.html", "support.html", "privacy.html", "terms.html",
+    "creator-agreement.html", "creator-dashboard.html", "my-library.html",
+    "upload.html", "signin.html", "account.html", "afterglo-visualizer.html"
+  ];
+
+  var gateLoading = document.getElementById('gateLoading');
+  var gateSignIn  = document.getElementById('gateSignIn');
+  var gateDenied  = document.getElementById('gateDenied');
+  var app         = document.getElementById('app');
+  var navUser     = document.getElementById('navUser');
+  var signOutBtn  = document.getElementById('signOutBtn');
+  var deniedSignOutBtn = document.getElementById('deniedSignOut');
+  var fileSelect  = document.getElementById('fileSelect');
+  var instructionEl = document.getElementById('instruction');
+  var charCount   = document.getElementById('charCount');
+  var submitBtn   = document.getElementById('submitBtn');
+  var historyEl   = document.getElementById('history');
+
+  function showOnly(el) {
+    [gateLoading, gateSignIn, gateDenied, app].forEach(function (e) {
+      e.style.display = (e === el) ? (e === app ? 'block' : 'flex') : 'none';
+    });
+  }
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  }
+
+  EDITABLE_FILES.forEach(function (f) {
+    var opt = document.createElement('option');
+    opt.value = f;
+    opt.textContent = f;
+    fileSelect.appendChild(opt);
+  });
+
+  instructionEl.addEventListener('input', function () {
+    charCount.textContent = instructionEl.value.length;
+  });
+
+  var fbFunctions = null;
+  var fbFirestore = null;
+
+  function call(name, payload) {
+    return fbFunctions.httpsCallable(name)(payload || {}).then(function (r) { return r.data; });
+  }
+
+  function fmtTime(ts) {
+    try {
+      var d = ts && typeof ts.toDate === 'function' ? ts.toDate() : new Date(ts);
+      return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    } catch (e) { return ''; }
+  }
+
+  function renderHistory(docs) {
+    if (!docs.length) {
+      historyEl.innerHTML = '<div class="empty-state">No edits yet.</div>';
+      return;
+    }
+    historyEl.innerHTML = docs.map(function (d) {
+      var pillClass = d.status === 'committed' ? 'pill-committed' : (d.status === 'error' ? 'pill-error' : 'pill-running');
+      var pillLabel = d.status === 'committed' ? 'Committed' : (d.status === 'error' ? 'Failed' : 'Running');
+      var link = d.commitUrl ? '<a class="entry-link" href="' + esc(d.commitUrl) + '" target="_blank" rel="noopener">View commit &rarr;</a>' : '';
+      var err = d.error ? '<div class="entry-error">' + esc(d.error) + '</div>' : '';
+      return '<div class="entry">' +
+        '<div class="entry-top">' +
+          '<span class="entry-file mono">' + esc(d.file) + '</span>' +
+          '<span class="entry-time">' + fmtTime(d.createdAt) + '</span>' +
+        '</div>' +
+        '<div class="entry-instruction">' + esc(d.instruction) + '</div>' +
+        '<span class="pill ' + pillClass + '">' + pillLabel + '</span>' +
+        err + link +
+      '</div>';
+    }).join('');
+  }
+
+  function watchHistory() {
+    fbFirestore.collection('admin_site_edits')
+      .orderBy('createdAt', 'desc')
+      .limit(20)
+      .onSnapshot(function (snap) {
+        var docs = snap.docs.map(function (d) { return d.data(); });
+        renderHistory(docs);
+      }, function (err) {
+        console.error('history listener failed', err);
+      });
+  }
+
+  submitBtn.addEventListener('click', function () {
+    var file = fileSelect.value;
+    var instruction = instructionEl.value.trim();
+    if (!instruction) return;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Applying…';
+    call('siteEdit', { file: file, instruction: instruction })
+      .then(function () {
+        instructionEl.value = '';
+        charCount.textContent = '0';
+      })
+      .catch(function (err) {
+        alert('Edit failed: ' + (err && err.message ? err.message : err));
+      })
+      .finally(function () {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Apply change';
+      });
+  });
+
+  signOutBtn.addEventListener('click', function () { firebase.auth().signOut(); });
+  deniedSignOutBtn.addEventListener('click', function () { firebase.auth().signOut(); });
+
+  async function boot() {
+    showOnly(gateLoading);
+    if (typeof firebase === 'undefined' || !firebase.auth) {
+      alert('Firebase failed to load.');
+      return;
+    }
+    fbFirestore = firebase.firestore();
+    fbFunctions = firebase.functions();
+
+    firebase.auth().onAuthStateChanged(async function (user) {
+      if (!user) { showOnly(gateSignIn); return; }
+      navUser.textContent = user.email || user.displayName || '';
+
+      var SUPER_ADMIN_EMAILS = ['shaneward852@gmail.com'];
+      var emailLc = (user.email || '').toLowerCase();
+      var isSuper = SUPER_ADMIN_EMAILS.indexOf(emailLc) !== -1;
+
+      try {
+        var result = await user.getIdTokenResult(true);
+        var isAdminClaim = !!(result.claims && result.claims.admin === true);
+
+        if (!isAdminClaim && isSuper) {
+          try {
+            await call('ensureSuperAdminClaim');
+            await user.getIdToken(true);
+            result = await user.getIdTokenResult(true);
+            isAdminClaim = !!(result.claims && result.claims.admin === true);
+          } catch (e) { console.debug('ensureSuperAdminClaim failed silently', e); }
+        }
+
+        if (isAdminClaim) {
+          showOnly(app);
+          watchHistory();
+        } else {
+          showOnly(gateDenied);
+        }
+      } catch (err) {
+        console.error('Token claim check failed', err);
+        showOnly(gateDenied);
+      }
+    });
+  }
+
+  boot();
+</script>
+</body>
+</html>
