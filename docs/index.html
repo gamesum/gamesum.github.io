@@ -573,21 +573,16 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 16px;
     }
-    .gallery-grid .g-item:first-child { grid-column: span 2; }
-    .gallery-grid .g-item:nth-child(4) { grid-column: span 2; }
 
     .g-item {
       border-radius: var(--radius);
       overflow: hidden;
-      aspect-ratio: 16/10;
+      aspect-ratio: 4/3;
       position: relative;
       background: var(--bg3);
       border: 1px solid var(--border);
       cursor: pointer;
     }
-    .g-item:first-child  { aspect-ratio: 16/9; }
-    .g-item:nth-child(4) { aspect-ratio: 16/9; }
-    .g-item.g-vertical   { aspect-ratio: 3/4; }
     .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
     .g-item:hover img { transform: scale(1.04); }
     .g-caption {
@@ -937,8 +932,6 @@
       }
 
       .gallery-grid { grid-template-columns: 1fr 1fr; }
-      .gallery-grid .g-item:first-child,
-      .gallery-grid .g-item:nth-child(4) { grid-column: span 2; }
     }
 
     @media (max-width: 600px) {
@@ -949,7 +942,6 @@
       .footer-grid > div:first-child { grid-column: auto; }
       .cta-inner { padding: 48px 24px; }
       .gallery-grid { grid-template-columns: 1fr; }
-      .gallery-grid .g-item:first-child { grid-column: auto; }
       /* Visualizer preview images: single column on very small screens */
       #visualizer-teaser .viz-split > div:last-child > div { grid-template-columns: 1fr 1fr; }
       /* App side inner flex row: stack phone + feature list vertically */
@@ -1262,26 +1254,6 @@
     </div>
   </section>
 
-  <!-- ─── DAY / NIGHT ─────────────────────────────────────── -->
-  <section id="day-night">
-    <div class="container">
-      <div class="viz-split">
-        <div class="fade-in">
-          <div class="section-label">Same Install</div>
-          <h2 class="section-title">Invisible by Day.<br>Unforgettable by Night.</h2>
-          <p class="section-sub">Flush-mounted fixtures disappear into your roofline until you flip them on.</p>
-        </div>
-        <div class="dn-card fade-in fade-delay-1">
-          <img id="dnImg" src="Resources/House%20Images/20260131_164616.jpg" alt="Daytime view of flush-mounted LED fixtures on fascia">
-          <div class="dn-toggle">
-            <button type="button" class="dn-btn active" data-mode="day">☀ Day</button>
-            <button type="button" class="dn-btn" data-mode="night">☾ Night</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ─── WHY PERMANENT ────────────────────────────────────── -->
   <section id="why" style="display:none;">
     <div class="container">
@@ -1471,14 +1443,31 @@
           </div>
 
           <div class="arches-cta-row">
-            <a href="arches.html" class="btn btn-primary">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
-              See the Light Show Props
-            </a>
+            <span class="btn btn-ghost" style="cursor:default;opacity:0.7;">Light Show Props — Coming Soon</span>
             <a href="#cta" class="btn btn-ghost">Get a Quote</a>
           </div>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DAY / NIGHT ─────────────────────────────────────── -->
+  <section id="day-night">
+    <div class="container">
+      <div class="viz-split">
+        <div class="fade-in">
+          <div class="section-label">Same Install</div>
+          <h2 class="section-title">Invisible by Day.<br>Unforgettable by Night.</h2>
+          <p class="section-sub">Flush-mounted fixtures disappear into your roofline until you flip them on.</p>
+        </div>
+        <div class="dn-card fade-in fade-delay-1">
+          <img id="dnImg" src="Resources/House%20Images/20260131_164616.jpg" alt="Daytime view of flush-mounted LED fixtures on fascia">
+          <div class="dn-toggle">
+            <button type="button" class="dn-btn active" data-mode="day">☀ Day</button>
+            <button type="button" class="dn-btn" data-mode="night">☾ Night</button>
+          </div>
+        </div>
       </div>
     </div>
   </section>
