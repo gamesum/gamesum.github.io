@@ -4,9 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Seasonal Lights | AFTERGLO Lighting Co.</title>
-  <meta name="description" content="Full-scale, music-synchronized Christmas light shows in your yard: pixel-addressable LED arches, giant trees, and candy cane props, controlled from one app. Only in Utah, only AFTERGLO." />
-  <link rel="icon" type="image/png" href="afterglo-logo-flat.png" />
+  <title>Seasonal Christmas Lights | AFTERGLO Lighting Co.</title>
+  <meta name="description" content="Traditional C9 string Christmas lights, installed on your roofline and trees, maintained all season, and taken down after the holidays. Full-service seasonal lighting across Utah." />
+  <link rel="icon" type="image/png" href="afterglo-favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -145,6 +145,8 @@
     }
 
     /* ─── FLOATING BADGES ─────────────────────────────────────────── */
+    #reviewsBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+    #reviewsBackdrop.open { display:block; }
     #reviewsWidget { position: fixed; left: 20px; bottom: 20px; z-index: 300; }
     #reviewsBadgeBtn { display: flex; align-items: center; gap: 10px; background: rgba(20,20,20,0.9); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.25); border-radius: 100px; padding: 10px 16px; font-size: 0.8rem; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,0.35); cursor: pointer; font-family: 'Inter', sans-serif; }
     #reviewsBadgeBtn .rb-google { width: 18px; height: 18px; flex-shrink: 0; display: flex; }
@@ -215,18 +217,18 @@
 
   <!-- ─── PAGE HERO ─────────────────────────────────────── -->
   <section id="page-hero">
-    <div class="page-hero-bg"><img src="Resources/PXL_20260423_024821941.jpg" alt="Full-scale music-synced Christmas light show with LED arches"></div>
+    <div class="page-hero-bg"><img src="Resources/seasonal/seasonal-warmwhite-roofline.jpg" alt="Traditional warm white C9 Christmas string lights on a roofline and tree"></div>
     <div class="container">
       <div class="page-hero-inner fade-in">
-        <div class="section-label">Only in Utah. Only AFTERGLO.</div>
-        <h1 class="hero-headline">Full-Scale Christmas<br>Light Shows. <span>In Your Yard.</span></h1>
-        <p class="hero-sub">The only company in the country bringing full-scale, music-synchronized Christmas light shows to residential homes. Arches, giant trees, candy canes: choreographed to music, controlled from one app.</p>
+        <div class="section-label">Traditional Christmas Lighting</div>
+        <h1 class="hero-headline">Classic C9 String Lights.<br><span>Done for You.</span></h1>
+        <p class="hero-sub">Real hand-hung C9 Christmas string lights on your roofline, gutters, and trees. We handle the ladder work: install before Thanksgiving, service through the season, and take it all down after New Year's.</p>
         <div class="hero-actions">
           <a href="index.html#cta" class="btn btn-primary">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
             Get a Free Quote
           </a>
-          <a href="arches.html" class="btn btn-ghost">Explore Arches &amp; Props</a>
+          <a href="permanent-lights.html" class="btn btn-ghost">Compare to Permanent Lights</a>
         </div>
       </div>
     </div>
@@ -236,25 +238,25 @@
   <section id="props">
     <div class="container">
       <div class="props-header fade-in">
-        <div class="section-label">Show Elements</div>
-        <h2 class="section-title">Every Prop, One System.</h2>
-        <p class="section-sub">Everything runs on the same pixel-addressable technology and the same app as your roofline.</p>
+        <div class="section-label">Full-Service Seasonal</div>
+        <h2 class="section-title">Install, Maintain, Takedown.</h2>
+        <p class="section-sub">One call books your whole season. No ladders, no tangled totes in the garage.</p>
       </div>
       <div class="props-grid">
         <div class="prop-card fade-in">
-          <div class="prop-icon">🌈</div>
-          <h3>LED Arches</h3>
-          <p>Pixel-addressable, music-synced arches that frame your yard or driveway.</p>
+          <div class="prop-icon">🪜</div>
+          <h3>Professional Install</h3>
+          <p>Commercial-grade C9 string lights hand-clipped to your roofline, gutters, and trees before Thanksgiving.</p>
         </div>
         <div class="prop-card fade-in fade-delay-1">
-          <div class="prop-icon">🎄</div>
-          <h3>Giant Trees</h3>
-          <p>Full-size, fully lit trees that anchor the show.</p>
+          <div class="prop-icon">🔧</div>
+          <h3>Season-Long Maintenance</h3>
+          <p>If a bulb or strand goes out mid-season, we come fix it, no charge, no hassle.</p>
         </div>
         <div class="prop-card fade-in fade-delay-2">
-          <div class="prop-icon">🍬</div>
-          <h3>Candy Canes</h3>
-          <p>Choreographed to the beat, right alongside the rest of the show.</p>
+          <div class="prop-icon">📦</div>
+          <h3>Takedown &amp; Storage</h3>
+          <p>We take everything down after the holidays so it's never on you to get back up on the roof.</p>
         </div>
       </div>
     </div>
@@ -265,16 +267,32 @@
     <div class="container">
       <div class="props-header fade-in">
         <div class="section-label">See It in Action</div>
-        <h2 class="section-title">Two Scenes, One Setup.</h2>
+        <h2 class="section-title">Real Homes, Real Installs.</h2>
       </div>
       <div class="show-gallery-grid">
         <div class="sg-item fade-in">
-          <img src="Resources/PXL_20260423_024821941.jpg" alt="LED arches in a red, green and white Christmas scene">
-          <div class="sg-label">Christmas Scene</div>
+          <img src="Resources/seasonal/seasonal-snow-gable.jpg" alt="Warm white and red C9 string lights on a roofline in the snow">
+          <div class="sg-label">Roofline &amp; Gable Lighting</div>
         </div>
         <div class="sg-item fade-in fade-delay-1">
-          <img src="Resources/PXL_20260423_024510091.jpg" alt="Same LED arches in a patriotic red, white and blue scene">
-          <div class="sg-label">Patriotic Scene</div>
+          <img src="Resources/seasonal/seasonal-tree-wrap-red.jpg" alt="Trees wrapped in red and white C9 Christmas string lights">
+          <div class="sg-label">Tree Wraps</div>
+        </div>
+        <div class="sg-item fade-in">
+          <img src="Resources/seasonal/seasonal-sparkle-redwhite.jpg" alt="Red and white sparkling Christmas lights along a roofline">
+          <div class="sg-label">Red &amp; White</div>
+        </div>
+        <div class="sg-item fade-in fade-delay-1">
+          <img src="Resources/seasonal/seasonal-uplighting-redgreen.jpg" alt="Red and green Christmas string lights with matching uplighting">
+          <div class="sg-label">Red &amp; Green</div>
+        </div>
+        <div class="sg-item fade-in">
+          <img src="Resources/seasonal/seasonal-wreath-medallion.jpg" alt="Wreath medallion and wrapped porch columns with Christmas string lights">
+          <div class="sg-label">Wreaths &amp; Columns</div>
+        </div>
+        <div class="sg-item fade-in fade-delay-1">
+          <img src="Resources/seasonal/seasonal-tree-colorful.jpg" alt="A tree wrapped in multicolor Christmas lights">
+          <div class="sg-label">Multicolor Trees</div>
         </div>
       </div>
     </div>
@@ -288,10 +306,10 @@
         <h2 class="section-title">Built for the Full Season.</h2>
       </div>
       <ul class="show-features-list">
-        <li class="fade-in"><span class="sf-icon">🎵</span><div><strong>Music-Synchronized</strong><span>Every prop and light choreographed to the beat using our show design software.</span></div></li>
-        <li class="fade-in fade-delay-1"><span class="sf-icon">📱</span><div><strong>One App, Everything</strong><span>Roofline, arches, trees, and candy canes: all connected and controlled together.</span></div></li>
-        <li class="fade-in fade-delay-2"><span class="sf-icon">🎨</span><div><strong>16 Million Colors</strong><span>Every prop independently color-programmable.</span></div></li>
-        <li class="fade-in fade-delay-3"><span class="sf-icon">✨</span><div><strong>Standalone or Full Show</strong><span>Run props solo any time of year, or fire up the full synchronized Christmas show.</span></div></li>
+        <li class="fade-in"><span class="sf-icon">💡</span><div><strong>Commercial-Grade C9 Bulbs</strong><span>Durable, energy-efficient LED C9 strands rated for outdoor Utah winters.</span></div></li>
+        <li class="fade-in fade-delay-1"><span class="sf-icon">🎨</span><div><strong>Your Color, Your Choice</strong><span>Classic warm white, red &amp; green, red &amp; white, or full multicolor.</span></div></li>
+        <li class="fade-in fade-delay-2"><span class="sf-icon">🧗</span><div><strong>No Ladders for You</strong><span>Our crew handles every install, from single-story roofs to tall gables and trees.</span></div></li>
+        <li class="fade-in fade-delay-3"><span class="sf-icon">📅</span><div><strong>Booked Before Thanksgiving</strong><span>Reserve your spot early: seasonal install slots fill up fast every fall.</span></div></li>
       </ul>
     </div>
   </section>
@@ -300,8 +318,8 @@
   <section id="seasonal-cta">
     <div class="container">
       <div class="section-label" style="text-align:center;display:block;">We Handle Install, Maintenance &amp; Takedown</div>
-      <h2 class="section-title" style="text-align:center;">Book Your Show This Season.</h2>
-      <p class="section-sub">Free on-site consultation. We design, install, run, and take down the whole show.</p>
+      <h2 class="section-title" style="text-align:center;">Book Your Season Now.</h2>
+      <p class="section-sub">Free on-site consultation. We install, maintain, and take it all down when the season's over.</p>
       <a href="index.html#cta" class="btn btn-primary">Get a Free Quote</a>
     </div>
   </section>
@@ -326,7 +344,7 @@
           <h4 class="footer-col-title">Services</h4>
           <ul class="footer-links">
             <li><a href="permanent-lights.html">Permanent Roofline Lighting</a></li>
-            <li><a href="seasonal-lights.html">Christmas Light Shows</a></li>
+            <li><a href="seasonal-lights.html">Seasonal Christmas Lights</a></li>
             <li><a href="arches.html">Arches &amp; Yard Props</a></li>
             <li><a href="index.html#cta">Free Consultation</a></li>
           </ul>
@@ -372,6 +390,7 @@
   </footer>
 
   <!-- ─── FLOATING BADGES ─────────────────────────────────────── -->
+  <div id="reviewsBackdrop"></div>
   <div id="reviewsWidget">
     <button type="button" id="reviewsBadgeBtn" aria-label="Read our Google reviews">
       <span class="rb-google"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
@@ -477,10 +496,12 @@
       const reviewsBtn = document.getElementById('reviewsBadgeBtn');
       const reviewsPanel = document.getElementById('reviewsPanel');
       const reviewsClose = document.getElementById('reviewsPanelClose');
-      if (reviewsBtn && reviewsPanel) {
-        reviewsBtn.addEventListener('click', () => reviewsPanel.classList.toggle('open'));
-        reviewsClose && reviewsClose.addEventListener('click', () => reviewsPanel.classList.remove('open'));
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') reviewsPanel.classList.remove('open'); });
+      const reviewsBackdrop = document.getElementById('reviewsBackdrop');
+      if (reviewsBtn && reviewsPanel && reviewsBackdrop) {
+        reviewsBackdrop.addEventListener('click', () => { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); });
+        reviewsBtn.addEventListener('click', () => { reviewsPanel.classList.toggle('open'); reviewsBackdrop.classList.toggle('open'); });
+        reviewsClose && reviewsClose.addEventListener('click', () => { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); } });
       }
       const dTime = document.getElementById('dbTime');
       if (dTime) {

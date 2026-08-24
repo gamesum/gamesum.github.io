@@ -13,8 +13,8 @@
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:image" content="https://afterglolighting.org/afterglo-logo-flat.png" />
-  <link rel="icon" type="image/png" href="afterglo-logo-flat.png" />
-  <link rel="apple-touch-icon" href="afterglo-logo-flat.png" />
+  <link rel="icon" type="image/png" href="afterglo-favicon.png" />
+  <link rel="apple-touch-icon" href="afterglo-favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -508,6 +508,8 @@
     }
 
     /* ─── FLOATING BADGES ─────────────────────────────────────────── */
+    #reviewsBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+    #reviewsBackdrop.open { display:block; }
     #reviewsWidget { position: fixed; left: 20px; bottom: 20px; z-index: 300; }
     #reviewsBadgeBtn { display: flex; align-items: center; gap: 10px; background: rgba(20,20,20,0.9); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.25); border-radius: 100px; padding: 10px 16px; font-size: 0.8rem; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,0.35); cursor: pointer; font-family: 'Inter', sans-serif; }
     #reviewsBadgeBtn .rb-google { width: 18px; height: 18px; flex-shrink: 0; display: flex; }
@@ -1372,8 +1374,8 @@
               "@type": "Offer",
               "itemOffered": {
                 "@type": "Service",
-                "name": "Music-Synchronized Christmas Light Shows",
-                "description": "AFTERGLO is the only company in the United States that professionally installs full-scale, music-synchronized Christmas light shows for residential homes. Includes pixel-addressable LED arches, giant Christmas trees, and candy cane props. All choreographed to music using xLights and AFTERGLO's proprietary software, and controlled through one app."
+                "name": "Seasonal Christmas String Lights",
+                "description": "Traditional commercial-grade C9 Christmas string lights, professionally installed on rooflines, gutters, and trees. Includes full-season maintenance and takedown after the holidays."
               }
             },
             {
@@ -1505,17 +1507,17 @@
         <div class="svc-card fade-in fade-delay-1">
           <div class="svc-card-media">
             <div class="ba-slider" data-ba-slider>
-              <img class="ba-after" src="Resources/PXL_20260423_024821941.jpg" alt="Full-scale music-synced Christmas light show with LED arches in red, green and white" draggable="false">
-              <img class="ba-before" src="Resources/PXL_20260423_024510091.jpg" alt="Same LED arches in a patriotic red, white and blue scene" draggable="false">
-              <span class="ba-label ba-label-before">Patriotic</span>
-              <span class="ba-label ba-label-after">Christmas</span>
+              <img class="ba-after" src="Resources/seasonal/seasonal-warmwhite-roofline.jpg" alt="Home with traditional warm white C9 Christmas string lights on the roofline and tree" draggable="false">
+              <img class="ba-before" src="Resources/seasonal/seasonal-sparkle-redwhite.jpg" alt="Home with red and white C9 Christmas string lights" draggable="false">
+              <span class="ba-label ba-label-before">Red &amp; White</span>
+              <span class="ba-label ba-label-after">Warm White</span>
               <div class="ba-divider"><div class="ba-handle"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></div></div>
             </div>
             <span class="svc-tag">Holiday Installs</span>
           </div>
           <div class="svc-card-body">
             <h3>Seasonal Lights</h3>
-            <p>Full-scale, music-synchronized Christmas light shows: arches, giant trees, candy canes. We design, install, run the show, and take it all down after.</p>
+            <p>Traditional C9 string Christmas lights on your roofline and trees. We handle the ladder work: install, mid-season maintenance, and takedown, all included.</p>
             <a href="seasonal-lights.html" class="svc-link">Learn more
               <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
             </a>
@@ -1934,7 +1936,7 @@
           <h4 class="footer-col-title">Services</h4>
           <ul class="footer-links">
             <li><a href="permanent-lights.html">Permanent Roofline Lighting</a></li>
-            <li><a href="seasonal-lights.html">Christmas Light Shows</a></li>
+            <li><a href="seasonal-lights.html">Seasonal Christmas Lights</a></li>
             <li><a href="arches.html">Arches &amp; Yard Props</a></li>
             <li style="display:none;"><a href="afterglo-visualizer.html">Visualizer</a></li>
             <li><a href="index.html#cta">Free Consultation</a></li>
@@ -1984,6 +1986,7 @@
   </footer>
 
   <!-- ─── FLOATING BADGES ─────────────────────────────────────── -->
+  <div id="reviewsBackdrop"></div>
   <div id="reviewsWidget">
     <button type="button" id="reviewsBadgeBtn" aria-label="Read our Google reviews">
       <span class="rb-google"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
@@ -2741,10 +2744,12 @@
       const reviewsBtn = document.getElementById('reviewsBadgeBtn');
       const reviewsPanel = document.getElementById('reviewsPanel');
       const reviewsClose = document.getElementById('reviewsPanelClose');
-      if (reviewsBtn && reviewsPanel) {
-        reviewsBtn.addEventListener('click', () => reviewsPanel.classList.toggle('open'));
-        reviewsClose && reviewsClose.addEventListener('click', () => reviewsPanel.classList.remove('open'));
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') reviewsPanel.classList.remove('open'); });
+      const reviewsBackdrop = document.getElementById('reviewsBackdrop');
+      if (reviewsBtn && reviewsPanel && reviewsBackdrop) {
+        reviewsBackdrop.addEventListener('click', () => { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); });
+        reviewsBtn.addEventListener('click', () => { reviewsPanel.classList.toggle('open'); reviewsBackdrop.classList.toggle('open'); });
+        reviewsClose && reviewsClose.addEventListener('click', () => { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); } });
       }
 
       const dTime = document.getElementById('dbTime');
