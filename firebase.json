@@ -20,7 +20,7 @@
     "rules": "storage.rules"
   },
   "hosting": {
-    "public": ".",
+    "public": "docs",
     "ignore": [
       "firebase.json",
       "firebase.json.*",
@@ -28,18 +28,11 @@
       ".firebase/**",
       "**/.*",
       "**/node_modules/**",
-      "functions/**",
-      "scripts/**",
       "_private/**",
       "_secrets/**",
       "*.md",
-      "*.rules",
-      "*.indexes.json",
       "*service-account*.json",
-      "*-firebase-adminsdk-*.json",
-      "*.code-workspace",
-      "package.json",
-      "package-lock.json"
+      "*-firebase-adminsdk-*.json"
     ],
     "rewrites": [
       { "source": "/api/purchases", "function": "purchases" },
