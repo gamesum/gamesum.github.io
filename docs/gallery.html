@@ -95,7 +95,7 @@
     .g-item { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/3; position: relative; background: var(--bg3); border: 1px solid var(--border); cursor: pointer; }
     .g-item img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; }
     .g-item:hover img { transform: scale(1.04); }
-    .g-caption { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%); padding: 24px 16px 14px; font-size: 0.8rem; color: #fff; }
+    .g-caption { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
 
     /* ─── FOOTER ─────────────────────────────────────────── */
     #footer { background: #0e0e11; border-top: 1px solid var(--border); padding: 64px 0 40px; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --bg3: #232328; --accent: #D4A43A; --accent2: #d4a843; }
@@ -245,29 +245,9 @@
   <section id="full-gallery">
     <div class="container">
       <div class="gallery-grid">
-        <div class="g-item fade-in">
-          <img src="Resources/House%20Images/thumbs/20251226_224806(0).jpg" data-full="Resources/House%20Images/20251226_224806(0).jpg" alt="Warm white RGBW roofline on brick home at night">
-          <div class="g-caption">Warm White Roofline, Brick Two-Story</div>
-        </div>
-        <div class="g-item fade-in fade-delay-1">
-          <img src="Resources/House%20Images/thumbs/20260131_164616.jpg" data-full="Resources/House%20Images/20260131_164616.jpg" alt="Close-up of RGBW LED channel mounted on fascia">
-          <div class="g-caption">RGBW LED Channel, Fascia Mount</div>
-        </div>
-        <div class="g-item fade-in fade-delay-1">
-          <img src="Resources/House%20Images/thumbs/20260131_233040.jpg" data-full="Resources/House%20Images/20260131_233040.jpg" alt="Full warm white roofline install at night">
-          <div class="g-caption">Full Roofline Install, Warm White</div>
-        </div>
-        <div class="g-item fade-in fade-delay-2">
-          <img src="Resources/House%20Images/thumbs/20260130_223252.jpg" data-full="Resources/House%20Images/20260130_223252.jpg" alt="Custom red and blue LED roofline at night">
-          <div class="g-caption">Custom Color Scene, Full Roofline</div>
-        </div>
         <div class="g-item fade-in fade-delay-2">
           <img src="Resources/House%20Images/thumbs/20251227_072523.jpg" data-full="Resources/House%20Images/20251227_072523.jpg" alt="LED roofline install detail" style="object-position: center 35%;">
           <div class="g-caption">Roofline Install, Detail Shot</div>
-        </div>
-        <div class="g-item fade-in fade-delay-3">
-          <img src="Resources/House%20Images/thumbs/20260203_150434.jpg" data-full="Resources/House%20Images/20260203_150434.jpg" alt="Daytime roofline LED channel install" style="object-position: center 35%;">
-          <div class="g-caption">Clean Daytime Install, Eave Detail</div>
         </div>
         <div class="g-item fade-in fade-delay-3">
           <img src="Resources/House%20Images/thumbs/20260306_184759.jpg" data-full="Resources/House%20Images/20260306_184759.jpg" alt="LED roofline lighting at dusk">
@@ -308,6 +288,10 @@
         <div class="g-item fade-in fade-delay-2">
           <img src="Resources/seasonal/seasonal-wreath-medallion.jpg" alt="Wreath medallion and wrapped porch columns with Christmas string lights">
           <div class="g-caption">Seasonal Wreath &amp; Columns</div>
+        </div>
+        <div class="g-item fade-in fade-delay-3">
+          <img src="Resources/House%20Images/thumbs/20260203_150434.jpg" data-full="Resources/House%20Images/20260203_150434.jpg" alt="Daytime roofline LED channel install" style="object-position: center 35%;">
+          <div class="g-caption">Clean Daytime Install, Eave Detail</div>
         </div>
       </div>
     </div>
