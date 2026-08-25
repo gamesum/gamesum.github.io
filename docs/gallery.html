@@ -174,16 +174,21 @@
     #dealBadgeBtn .db-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
     #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
     #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
-    #dealBadgeBtn { z-index: 0; }
-    #dealBadgeBtn::before {
-      content: '';
+    #dealBadgeBtn { z-index: 1; }
+    .deal-glow {
       position: absolute;
       inset: -3px;
       border-radius: 23px;
-      background: conic-gradient(from 0deg, transparent 0%, var(--accent2) 12%, var(--accent) 25%, transparent 40%);
-      z-index: -1;
-      animation: dealBorderSpin 3.5s linear infinite;
+      overflow: hidden;
       pointer-events: none;
+      z-index: 0;
+    }
+    .deal-glow::before {
+      content: '';
+      position: absolute;
+      inset: -75%;
+      background: conic-gradient(from 0deg, transparent 0%, var(--accent2) 12%, var(--accent) 25%, transparent 40%);
+      animation: dealBorderSpin 3.5s linear infinite;
     }
     @keyframes dealBorderSpin { to { transform: rotate(360deg); } }
     @media (max-width: 600px) { #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; } #dealBadgeBtn { padding: 12px; border-radius: 50%; } }
@@ -433,6 +438,7 @@
     </div>
   </div>
   <div id="dealBadge">
+    <div class="deal-glow"></div>
     <button type="button" id="dealBadgeBtn" aria-label="Limited August offer">
       <span class="db-icon">
         <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
