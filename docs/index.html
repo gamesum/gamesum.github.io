@@ -593,6 +593,20 @@
     }
     #dealBadgeBtn .db-time span { font-size: 0.7rem; font-weight: 500; color: rgba(212,164,58,0.7); margin-left: 1px; }
     #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+    #dealBadgeBtn::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 23px;
+      padding: 2px;
+      background: conic-gradient(from 0deg, transparent 0%, var(--accent2) 12%, var(--accent) 25%, transparent 40%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: dealBorderSpin 3.5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes dealBorderSpin { to { transform: rotate(360deg); } }
     @media (max-width: 600px) {
       #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; }
       #dealBadgeBtn { padding: 12px; border-radius: 50%; }

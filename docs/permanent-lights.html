@@ -201,6 +201,20 @@
     #dealBadgeBtn .db-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
     #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
     #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+    #dealBadgeBtn::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 23px;
+      padding: 2px;
+      background: conic-gradient(from 0deg, transparent 0%, var(--accent2) 12%, var(--accent) 25%, transparent 40%);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      animation: dealBorderSpin 3.5s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes dealBorderSpin { to { transform: rotate(360deg); } }
     @media (max-width: 600px) { #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; } #dealBadgeBtn { padding: 12px; border-radius: 50%; } }
     #dealPanel { display: none; position: fixed; right: 20px; bottom: 92px; z-index: 301; width: min(340px, calc(100vw - 40px)); background: var(--bg2); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
     #dealPanel.open { display: block; }
