@@ -169,16 +169,11 @@
       top: 0; left: 0; right: 0;
       height: var(--nav-h);
       z-index: 1000;
-      transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s;
-      background: rgba(13,17,23,0.55);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      transition: box-shadow 0.3s;
+      background: #0D1117;
       --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; --accent2: #d4a843;
     }
     #navbar.scrolled {
-      background: rgba(13,17,23,0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
       box-shadow: 0 1px 0 var(--border);
     }
 
@@ -248,8 +243,7 @@
       position: fixed;
       top: var(--nav-h);
       left: 0; right: 0;
-      background: rgba(13,17,23,0.98);
-      backdrop-filter: blur(16px);
+      background: #0D1117;
       padding: 24px;
       flex-direction: column;
       gap: 24px;

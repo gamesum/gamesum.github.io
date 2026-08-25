@@ -66,8 +66,8 @@
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
     /* ─── NAVBAR ─────────────────────────────────────────────── */
-    #navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 1000; transition: background 0.3s, backdrop-filter 0.3s, box-shadow 0.3s; background: rgba(13,17,23,0.55); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; --accent2: #d4a843; }
-    #navbar.scrolled { background: rgba(13,17,23,0.92); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); box-shadow: 0 1px 0 var(--border); }
+    #navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 1000; transition: box-shadow 0.3s; background: #0D1117; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; --accent2: #d4a843; }
+    #navbar.scrolled { box-shadow: 0 1px 0 var(--border); }
     .nav-inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
     .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; }
     .nav-logo span { color: var(--accent); text-shadow: 0 0 20px rgba(212,164,58,0.8), 0 0 40px rgba(212,164,58,0.4); }
@@ -79,7 +79,7 @@
     .nav-cta { margin-left: 16px; }
     .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 10px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
     .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
-    .mobile-menu { display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; background: rgba(13,17,23,0.98); backdrop-filter: blur(16px); padding: 24px; flex-direction: column; gap: 24px; z-index: 999; border-bottom: 1px solid var(--border); }
+    .mobile-menu { display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; background: #0D1117; padding: 24px; flex-direction: column; gap: 24px; z-index: 999; border-bottom: 1px solid var(--border); }
     .mobile-menu.open { display: flex; }
     .mobile-menu a { font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--border); min-height: 44px; display: flex; align-items: center; }
 
