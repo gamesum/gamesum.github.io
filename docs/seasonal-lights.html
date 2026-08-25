@@ -184,28 +184,13 @@
     .rp-author strong { color: var(--text); font-weight: 600; }
     .rp-footer { padding: 14px 18px; border-top: 1px solid var(--border); text-align: center; flex-shrink: 0; }
     .rp-footer a { font-size: 0.8rem; color: var(--accent); font-weight: 600; }    #dealBadge { position: fixed; right: 20px; bottom: 20px; z-index: 300; --text: #F2F2F4; --muted: #ADADB6; --accent: #D4A43A; --accent2: #d4a843; --heading: #fff; --border: #2E2E34; --bg2: #1B1B1F; --bg3: #232328; }
-    #dealBadgeBtn { display: flex; align-items: center; gap: 18px; background: rgb(15,15,15); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.4); border-radius: 20px; padding: 20px 28px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-family: 'Inter', sans-serif; color: var(--text); position: relative; }
+    #dealBadgeBtn { display: flex; align-items: center; gap: 18px; background: linear-gradient(rgb(15,15,15), rgb(15,15,15)) padding-box, conic-gradient(from var(--deal-angle, 0deg), transparent 0%, #D4A43A 25%, #FFF3C4 50%, #D4A43A 75%, transparent 100%) border-box; backdrop-filter: blur(8px); border: 3px solid transparent; border-radius: 20px; padding: 18px 26px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-family: 'Inter', sans-serif; color: var(--text); position: relative; animation: dealBorderSpin 3.5s linear infinite; }
+    @property --deal-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    @keyframes dealBorderSpin { to { --deal-angle: 360deg; } }
     #dealBadgeBtn .db-icon { width: 54px; height: 54px; border-radius: 50%; background: rgba(212,164,58,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
     #dealBadgeBtn .db-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
     #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
     #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
-    #dealBadgeBtn { z-index: 1; }
-    .deal-glow {
-      position: absolute;
-      inset: -4px;
-      border-radius: 24px;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .deal-glow::before {
-      content: '';
-      position: absolute;
-      inset: -75%;
-      background: conic-gradient(from 0deg, transparent 0%, #D4A43A 20%, #FFF3C4 45%, #D4A43A 60%, transparent 78%);
-      animation: dealBorderSpin 3.5s linear infinite;
-    }
-    @keyframes dealBorderSpin { to { transform: rotate(360deg); } }
     @media (max-width: 600px) { #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; } #dealBadgeBtn { padding: 12px; border-radius: 50%; } }
     #dealPanel { display: none; position: fixed; right: 20px; bottom: 92px; z-index: 301; width: min(340px, calc(100vw - 40px)); background: var(--bg2); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
     #dealPanel.open { display: block; }
@@ -480,7 +465,6 @@
     </div>
   </div>
   <div id="dealBadge">
-    <div class="deal-glow"></div>
     <button type="button" id="dealBadgeBtn" aria-label="Limited August offer">
       <span class="db-icon">
         <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
