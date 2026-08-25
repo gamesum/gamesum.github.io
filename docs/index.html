@@ -934,14 +934,13 @@
     /* ─── PRICING / CTA BANNER ─────────────────────────────────────── */
     #cta { padding: 80px 0; }
     .cta-inner {
-      background: linear-gradient(135deg, #232328 0%, #1a1f2e 100%);
+      background: linear-gradient(135deg, var(--bg3) 0%, var(--bg2) 100%);
       border: 1px solid var(--border);
       border-radius: 20px;
       padding: 72px 48px;
       text-align: center;
       position: relative;
       overflow: hidden;
-      --heading: #fff; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --accent: #D4A43A; --accent2: #d4a843;
     }
     .cta-inner::before {
       content: '';
@@ -1932,18 +1931,18 @@
         <p class="cta-note">✦ No hard sell &nbsp;·&nbsp; Same-day quote &nbsp;·&nbsp; Licensed &amp; insured in Utah</p>
 
         <!-- Email signup -->
-        <div style="margin-top:36px;padding-top:32px;border-top:1px solid rgba(255,255,255,0.07);">
-          <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:14px;letter-spacing:0.02em;">We'll let you know when new light show packs drop and when install slots open up. We book fast.</p>
+        <div style="margin-top:36px;padding-top:32px;border-top:1px solid var(--border);">
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;letter-spacing:0.02em;">We'll let you know when new light show packs drop and when install slots open up. We book fast.</p>
           <form id="ctaEmailForm" onsubmit="submitCtaEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
             <input id="ctaEmailInput" type="email" placeholder="Your email address" required
-              style="background:#1a1a1a;border:1px solid #555;border-radius:8px;padding:12px 16px;color:#e2e8f0;font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:min(220px, 100%);transition:border-color 0.2s;"
-              onfocus="this.style.borderColor='rgba(212,164,58,0.8)'" onblur="this.style.borderColor='#555'">
-            <button type="submit" style="background:rgba(212,164,58,0.15);color:#D4A43A;border:1px solid rgba(212,164,58,0.3);border-radius:8px;padding:12px 22px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;">
+              style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:min(220px, 100%);transition:border-color 0.2s;"
+              onfocus="this.style.borderColor='rgba(212,164,58,0.8)'" onblur="this.style.borderColor='var(--border)'">
+            <button type="submit" style="background:rgba(212,164,58,0.15);color:var(--accent);border:1px solid rgba(212,164,58,0.3);border-radius:8px;padding:12px 22px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;">
               Keep Me Posted
             </button>
           </form>
-          <p id="ctaEmailThanks" style="display:none;font-size:0.85rem;color:#D4A43A;margin-top:10px;">You're in! We'll be in touch.</p>
-          <p style="font-size:0.7rem;color:#64748b;margin-top:10px;">By submitting your email you agree to receive marketing communications from AFTERGLO. We will never sell your information. Unsubscribe at any time.</p>
+          <p id="ctaEmailThanks" style="display:none;font-size:0.85rem;color:var(--accent);margin-top:10px;">You're in! We'll be in touch.</p>
+          <p style="font-size:0.7rem;color:var(--muted);margin-top:10px;">By submitting your email you agree to receive marketing communications from AFTERGLO. We will never sell your information. Unsubscribe at any time.</p>
         </div>
       </div>
     </div>
