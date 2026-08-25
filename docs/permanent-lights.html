@@ -96,7 +96,8 @@
     .hero-media { position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 4/3; }
     .ba-slider { position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none; touch-action: pan-y; cursor: ew-resize; }
     .ba-slider img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-    .ba-slider .ba-before { clip-path: inset(0 50% 0 0); }
+    .ba-slider .ba-after { object-position: 49% 33%; }
+    .ba-slider .ba-before { object-position: 46% 31%; clip-path: inset(0 50% 0 0); }
     .ba-label { position: absolute; top: 14px; z-index: 2; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 11px; border-radius: 100px; pointer-events: none; }
     .ba-label.ba-label-before { left: 14px; }
     .ba-label.ba-label-after { right: 14px; }
@@ -174,11 +175,11 @@
     #reviewsBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
     #reviewsBackdrop.open { display:block; }
     #reviewsWidget { position: fixed; left: 20px; bottom: 20px; z-index: 300; --text: #F2F2F4; --muted: #ADADB6; --accent: #D4A43A; --accent2: #d4a843; --heading: #fff; --border: #2E2E34; --bg2: #1B1B1F; --bg3: #232328; }
-    #reviewsBadgeBtn { display: flex; align-items: center; gap: 12px; background: rgb(15,15,15); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.35); border-radius: 100px; padding: 14px 22px; font-size: 0.95rem; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,0.35); cursor: pointer; font-family: 'Inter', sans-serif; }
-    #reviewsBadgeBtn .rb-google { width: 24px; height: 24px; flex-shrink: 0; display: flex; }
+    #reviewsBadgeBtn { display: flex; align-items: center; gap: 16px; background: rgb(15,15,15); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.35); border-radius: 100px; padding: 18px 28px; font-size: 1.1rem; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,0.35); cursor: pointer; font-family: 'Inter', sans-serif; }
+    #reviewsBadgeBtn .rb-google { width: 30px; height: 30px; flex-shrink: 0; display: flex; }
     #reviewsBadgeBtn .rb-info { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.3; }
-    #reviewsBadgeBtn .rb-stars { color: var(--accent); letter-spacing: 1px; font-size: 0.9rem; }
-    #reviewsBadgeBtn .rb-text { color: var(--muted); font-size: 0.85rem; }
+    #reviewsBadgeBtn .rb-stars { color: var(--accent); letter-spacing: 1px; font-size: 1.05rem; }
+    #reviewsBadgeBtn .rb-text { color: var(--muted); font-size: 1rem; }
     @media (max-width: 640px) { #reviewsWidget { display: none; } }
     #reviewsPanel { display: none; position: fixed; left: 20px; bottom: 92px; z-index: 301; width: min(360px, calc(100vw - 40px)); max-height: 70vh; background: var(--bg2); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; flex-direction: column; }
     #reviewsPanel.open { display: flex; }
@@ -196,11 +197,11 @@
     .rp-author strong { color: var(--text); font-weight: 600; }
     .rp-footer { padding: 14px 18px; border-top: 1px solid var(--border); text-align: center; flex-shrink: 0; }
     .rp-footer a { font-size: 0.8rem; color: var(--accent); font-weight: 600; }    #dealBadge { position: fixed; right: 20px; bottom: 20px; z-index: 300; --text: #F2F2F4; --muted: #ADADB6; --accent: #D4A43A; --accent2: #d4a843; --heading: #fff; --border: #2E2E34; --bg2: #1B1B1F; --bg3: #232328; }
-    #dealBadgeBtn { display: flex; align-items: center; gap: 14px; background: rgb(15,15,15); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.4); border-radius: 20px; padding: 16px 22px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-family: 'Inter', sans-serif; color: var(--text); position: relative; }
-    #dealBadgeBtn .db-icon { width: 46px; height: 46px; border-radius: 50%; background: rgba(212,164,58,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    #dealBadgeBtn .db-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
-    #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
-    #dealBadgeBtn .db-cta { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+    #dealBadgeBtn { display: flex; align-items: center; gap: 18px; background: rgb(15,15,15); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.4); border-radius: 20px; padding: 20px 28px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-family: 'Inter', sans-serif; color: var(--text); position: relative; }
+    #dealBadgeBtn .db-icon { width: 54px; height: 54px; border-radius: 50%; background: rgba(212,164,58,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    #dealBadgeBtn .db-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+    #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
+    #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
     @media (max-width: 600px) { #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; } #dealBadgeBtn { padding: 12px; border-radius: 50%; } }
     #dealPanel { display: none; position: fixed; right: 20px; bottom: 92px; z-index: 301; width: min(340px, calc(100vw - 40px)); background: var(--bg2); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
     #dealPanel.open { display: block; }
@@ -309,7 +310,7 @@
         </div>
         <div class="feat-row fade-in fade-delay-3">
           <div class="feat-num">4</div>
-          <div class="feat-body"><h4>Commercial-Grade Fixtures</h4><p>Backed by a multi-year warranty and built for Utah weather, from summer heat to winter snow load.</p></div>
+          <div class="feat-body"><h4>Commercial-Grade Fixtures</h4><p>Backed by a multi-year warranty and built for Utah weather, from summer heat to winter snow.</p></div>
         </div>
       </div>
     </div>
@@ -333,7 +334,7 @@
           <div class="occ-label">Game Day</div>
         </div>
         <div class="occ-item fade-in fade-delay-2">
-          <img src="Resources/permanent/perm-july4-purple.jpg" alt="Home with permanent LED lighting for the 4th of July">
+          <img src="Resources/permanent/perm-july4-redwhiteblue2.jpg" alt="Home with red, white, and blue permanent LED lighting for the 4th of July">
           <div class="occ-label">4th of July</div>
         </div>
         <div class="occ-item fade-in">
@@ -446,7 +447,7 @@
   <div id="reviewsBackdrop"></div>
   <div id="reviewsWidget">
     <button type="button" id="reviewsBadgeBtn" aria-label="Read our Google reviews">
-      <span class="rb-google"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
+      <span class="rb-google"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
       <span class="rb-info">
         <span class="rb-stars">★★★★★</span>
         <span class="rb-text">Google Reviews</span>
@@ -486,11 +487,11 @@
   <div id="dealBadge">
     <button type="button" id="dealBadgeBtn" aria-label="Limited August offer">
       <span class="db-icon">
-        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+        <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
       </span>
       <span>
         <div class="db-label">First 5 in August · $599 Off</div>
-        <div class="db-time" id="dbTime">--d --h --m</div>
+        <div class="db-time" id="dbTime">--d --h --m --s</div>
         <div class="db-cta">Click here for offer</div>
       </span>
     </button>
@@ -582,7 +583,8 @@
           const d = Math.floor(diff / 86400000);
           const h = Math.floor((diff / 3600000) % 24);
           const m = Math.floor((diff / 60000) % 60);
-          dTime.textContent = `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m`;
+          const s = Math.floor((diff / 1000) % 60);
+          dTime.textContent = `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
         }
         tick();
         setInterval(tick, 1000);
