@@ -111,6 +111,15 @@
     .sg-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .sg-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%); padding: 24px 16px 14px; font-size: 0.85rem; color: #fff; }
 
+    /* ─── COLOR OPTIONS ──────────────────────────────────── */
+    #color-options { padding: 96px 0; background: var(--bg2); }
+    .color-options-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
+    .co-item { border-radius: var(--radius); overflow: hidden; aspect-ratio: 3/4; background: var(--bg3); border: 1px solid var(--border); position: relative; }
+    .co-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .co-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%); padding: 20px 10px 10px; font-size: 0.72rem; font-weight: 600; text-align: center; color: #fff; }
+    @media (max-width: 900px) { .color-options-grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 480px) { .color-options-grid { grid-template-columns: repeat(2, 1fr); } }
+
     /* ─── FEATURES ───────────────────────────────────────── */
     #show-features { padding: 96px 0; background: var(--bg2); }
     .show-features-list { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 24px; }
@@ -325,9 +334,42 @@
           <img src="Resources/seasonal/seasonal-tree-colorful.jpg" alt="A tree wrapped in multicolor Christmas lights">
           <div class="sg-label">Multicolor Trees</div>
         </div>
-        <div class="sg-item fade-in">
-          <img src="Resources/seasonal/seasonal-warmwhite-classic.jpg" alt="Home with classic warm white Christmas string lights on the roofline">
-          <div class="sg-label">Classic Warm White</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── COLOR OPTIONS ────────────────────────────────── -->
+  <section id="color-options">
+    <div class="container">
+      <div class="props-header fade-in">
+        <div class="section-label">Your Color, Your Choice</div>
+        <h2 class="section-title">6 Color Options Available.</h2>
+        <p class="section-sub" style="margin:0 auto;text-align:center;">Same home, same fixtures: pick the palette that fits your holiday.</p>
+      </div>
+      <div class="color-options-grid">
+        <div class="co-item fade-in">
+          <img src="Resources/seasonal/color-warmwhite.jpg" alt="Home with classic warm white Christmas string lights on the roofline">
+          <div class="co-label">Warm White</div>
+        </div>
+        <div class="co-item fade-in fade-delay-1">
+          <img src="Resources/seasonal/color-redgold.jpg" alt="Home with red and gold Christmas string lights on the roofline">
+          <div class="co-label">Red &amp; Gold</div>
+        </div>
+        <div class="co-item fade-in fade-delay-2">
+          <img src="Resources/seasonal/color-redgreen.jpg" alt="Home with red and green Christmas string lights on the roofline">
+          <div class="co-label">Red &amp; Green</div>
+        </div>
+        <div class="co-item fade-in">
+          <img src="Resources/seasonal/color-redwhite.jpg" alt="Home with red and white Christmas string lights on the roofline">
+          <div class="co-label">Red &amp; White</div>
+        </div>
+        <div class="co-item fade-in fade-delay-1">
+          <img src="Resources/seasonal/color-bluewhite.jpg" alt="Home with blue and white Christmas string lights on the roofline">
+          <div class="co-label">Blue &amp; White</div>
+        </div>
+        <div class="co-item fade-in fade-delay-2">
+          <img src="Resources/seasonal/color-multicolor.jpg" alt="Home with multicolor Christmas string lights on the roofline">
+          <div class="co-label">Multicolor</div>
         </div>
       </div>
     </div>
@@ -342,7 +384,7 @@
       </div>
       <ul class="show-features-list">
         <li class="fade-in"><span class="sf-icon">💡</span><div><strong>Commercial-Grade C9 Bulbs</strong><span>Durable, energy-efficient LED C9 strands rated for outdoor Utah winters.</span></div></li>
-        <li class="fade-in fade-delay-1"><span class="sf-icon">🎨</span><div><strong>6 Color Options Available</strong><span>Warm white, red &amp; green, red &amp; white, multicolor, blue &amp; white, or all blue.</span></div></li>
+        <li class="fade-in fade-delay-1"><span class="sf-icon">🎨</span><div><strong>6 Color Options Available</strong><span>Warm white, red &amp; gold, red &amp; green, red &amp; white, blue &amp; white, or multicolor.</span></div></li>
         <li class="fade-in fade-delay-2"><span class="sf-icon">🧗</span><div><strong>No Ladders for You</strong><span>Our crew handles every install, from single-story roofs to tall gables and trees.</span></div></li>
         <li class="fade-in fade-delay-3"><span class="sf-icon">🎄</span><div><strong>A Classic Christmas Look</strong><span>Traditional C9 bulbs give your home that timeless, nostalgic holiday glow.</span></div></li>
       </ul>
