@@ -201,16 +201,14 @@
     #dealBadgeBtn .db-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
     #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
     #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+    #dealBadgeBtn { z-index: 0; }
     #dealBadgeBtn::before {
       content: '';
       position: absolute;
       inset: -3px;
       border-radius: 23px;
-      padding: 2px;
       background: conic-gradient(from 0deg, transparent 0%, var(--accent2) 12%, var(--accent) 25%, transparent 40%);
-      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-      -webkit-mask-composite: xor;
-      mask-composite: exclude;
+      z-index: -1;
       animation: dealBorderSpin 3.5s linear infinite;
       pointer-events: none;
     }
