@@ -546,6 +546,8 @@
     .rp-footer { padding: 14px 18px; border-top: 1px solid var(--border); text-align: center; flex-shrink: 0; }
     .rp-footer a { font-size: 0.8rem; color: var(--accent); font-weight: 600; }
 
+        #dealBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+    #dealBackdrop.open { display:block; }
     #dealBadge {
       position: fixed;
       right: 20px; bottom: 20px;
@@ -2092,6 +2094,7 @@
       </div>
     </div>
   </div>
+  <div id="dealBackdrop"></div>
   <div id="dealBadge">
     <button type="button" id="dealBadgeBtn" aria-label="Limited August offer">
       <span class="db-icon">
@@ -2801,10 +2804,12 @@
       const dealBtn   = document.getElementById('dealBadgeBtn');
       const dealPanel = document.getElementById('dealPanel');
       const dealClose = document.getElementById('dealPanelClose');
+      const dealBackdrop = document.getElementById('dealBackdrop');
       if (dealBtn && dealPanel) {
-        dealBtn.addEventListener('click', () => dealPanel.classList.toggle('open'));
-        dealClose && dealClose.addEventListener('click', () => dealPanel.classList.remove('open'));
-        document.addEventListener('keydown', e => { if (e.key === 'Escape') dealPanel.classList.remove('open'); });
+        dealBtn.addEventListener('click', () => { dealPanel.classList.toggle('open'); dealBackdrop && dealBackdrop.classList.toggle('open'); });
+        dealClose && dealClose.addEventListener('click', () => { dealPanel.classList.remove('open'); dealBackdrop && dealBackdrop.classList.remove('open'); });
+        dealBackdrop && dealBackdrop.addEventListener('click', () => { dealPanel.classList.remove('open'); dealBackdrop.classList.remove('open'); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { dealPanel.classList.remove('open'); dealBackdrop && dealBackdrop.classList.remove('open'); } });
       }
 
       const reviewsBtn = document.getElementById('reviewsBadgeBtn');
