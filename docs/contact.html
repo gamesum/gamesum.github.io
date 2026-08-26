@@ -94,6 +94,7 @@
 
     .contact-form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 40px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row-3 { grid-template-columns: 1.6fr 1fr 1fr; }
     .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
     .form-field label { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
     .form-field input, .form-field select, .form-field textarea {
@@ -114,8 +115,6 @@
     .address-suggestions.show { display: block; }
     .address-suggestion { padding: 10px 14px; font-size: 0.9rem; color: var(--text); cursor: pointer; }
     .address-suggestion:hover, .address-suggestion.active { background: var(--bg2); color: var(--accent); }
-    #cfAddress.needs-match { border-color: #e5533d; }
-    #cfAddress.matched { border-color: #4caf50; }
     #contactHoneypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
     .form-submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
     .form-status { font-size: 0.85rem; }
@@ -143,6 +142,7 @@
       .contact-split { grid-template-columns: 1fr; }
       .contact-form-card { padding: 28px; }
       .form-row { grid-template-columns: 1fr; gap: 0; }
+      .form-row-3 { grid-template-columns: 1fr; }
     }
 
     /* ─── FOOTER ─────────────────────────────────────────── */
@@ -318,10 +318,28 @@
               </select>
             </div>
             <div class="form-field" style="position: relative;">
-              <label for="cfAddress">Address or City *</label>
-              <input type="text" id="cfAddress" required maxlength="299" autocomplete="off" placeholder="Start typing and pick a suggestion…" />
+              <label for="cfAddressSearch">Search Your Address</label>
+              <input type="text" id="cfAddressSearch" maxlength="299" autocomplete="off" placeholder="Start typing to auto-fill the fields below…" />
               <div id="cfAddressSuggestions" class="address-suggestions"></div>
-              <span id="cfAddressHint" style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Please select an address from the suggestions.</span>
+              <span style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Optional — pick a suggestion to auto-fill the fields below, or just type your address in manually.</span>
+            </div>
+            <div class="form-field">
+              <label for="cfStreet">Street Address *</label>
+              <input type="text" id="cfStreet" required maxlength="200" autocomplete="address-line1" />
+            </div>
+            <div class="form-row form-row-3">
+              <div class="form-field">
+                <label for="cfCity">City *</label>
+                <input type="text" id="cfCity" required maxlength="100" autocomplete="address-level2" />
+              </div>
+              <div class="form-field">
+                <label for="cfState">State *</label>
+                <input type="text" id="cfState" required maxlength="50" autocomplete="address-level1" />
+              </div>
+              <div class="form-field">
+                <label for="cfZip">ZIP *</label>
+                <input type="text" id="cfZip" required maxlength="20" autocomplete="postal-code" />
+              </div>
             </div>
             <div class="form-field">
               <label for="cfMessage">Tell us about your project</label>
@@ -593,26 +611,21 @@
     })();
   </script>
 
-  <!-- Address autocomplete (Photon / komoot.io, no API key required) -->
+  <!-- Address autocomplete (Photon / komoot.io, no API key required) — optional recommendation only, fills the street/city/state/zip boxes below -->
   <script>
     (function() {
-      const input = document.getElementById('cfAddress');
+      const input = document.getElementById('cfAddressSearch');
       const box = document.getElementById('cfAddressSuggestions');
-      const hint = document.getElementById('cfAddressHint');
+      const streetEl = document.getElementById('cfStreet');
+      const cityEl = document.getElementById('cfCity');
+      const stateEl = document.getElementById('cfState');
+      const zipEl = document.getElementById('cfZip');
       if (!input || !box) return;
 
-      window.cfAddressMatched = false;
       let debounceTimer;
       let controller;
 
-      function markUnmatched() {
-        window.cfAddressMatched = false;
-        window.cfAddressParts = null;
-        input.classList.remove('matched');
-      }
-
       input.addEventListener('input', () => {
-        markUnmatched();
         clearTimeout(debounceTimer);
         const q = input.value.trim();
         if (q.length < 3) { box.classList.remove('show'); box.innerHTML = ''; return; }
@@ -623,13 +636,13 @@
         if (controller) controller.abort();
         controller = new AbortController();
         try {
-          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7608&lon=-111.8910&limit=6`;
+          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7608&lon=-111.8910&limit=8`;
           const res = await fetch(url, { signal: controller.signal });
           if (!res.ok) return;
           const data = await res.json();
-          const features = (data.features || []).filter(f => f.properties && f.properties.countrycode === 'US');
+          const features = (data.features || []).filter(f => f.properties);
           renderSuggestions(features);
-        } catch (e) { /* aborted or network error — silently ignore, it's a nice-to-have */ }
+        } catch (e) { /* aborted or network error — it's a nice-to-have, fail silently */ }
       }
 
       function renderSuggestions(features) {
@@ -637,7 +650,7 @@
         box.innerHTML = features.map((f, i) => {
           const p = f.properties || {};
           const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
-          const label = [street, p.city || p.county, p.state, p.postcode].filter(Boolean).join(', ');
+          const label = [street, p.city || p.county, p.state, p.postcode, p.country].filter(Boolean).join(', ');
           return `<div class="address-suggestion" data-idx="${i}" data-label="${label.replace(/"/g, '&quot;')}">${label}</div>`;
         }).join('');
         box.classList.add('show');
@@ -653,16 +666,11 @@
         input.value = item.getAttribute('data-label');
         box.classList.remove('show');
         box.innerHTML = '';
-        window.cfAddressMatched = true;
-        window.cfAddressParts = {
-          street: [p.housenumber, p.street || p.name].filter(Boolean).join(' '),
-          city: p.city || p.county || '',
-          state: p.state || '',
-          zip: p.postcode || '',
-        };
-        input.classList.remove('needs-match');
-        input.classList.add('matched');
-        if (hint) hint.style.display = 'none';
+        const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+        if (streetEl && street) streetEl.value = street;
+        if (cityEl && (p.city || p.county)) cityEl.value = p.city || p.county;
+        if (stateEl && p.state) stateEl.value = p.state;
+        if (zipEl && p.postcode) zipEl.value = p.postcode;
       });
 
       document.addEventListener('click', (e) => {
@@ -715,25 +723,21 @@
         const name = `${firstName} ${lastName}`.trim();
         const email = document.getElementById('cfEmail').value.trim();
         const phone = document.getElementById('cfPhone').value.trim();
-        const address = document.getElementById('cfAddress').value.trim();
+        const addressStreet = document.getElementById('cfStreet').value.trim();
+        const addressCity = document.getElementById('cfCity').value.trim();
+        const addressState = document.getElementById('cfState').value.trim();
+        const addressZip = document.getElementById('cfZip').value.trim();
+        const address = [addressStreet, addressCity, [addressState, addressZip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
         const interest = document.getElementById('cfService').value;
         const message = document.getElementById('cfMessage').value.trim();
 
-        if (!firstName || !lastName || !email || !phone || !address) {
+        if (!firstName || !lastName || !email || !phone || !addressStreet || !addressCity || !addressState || !addressZip) {
           statusEl.textContent = 'Please fill out all required fields.';
           statusEl.className = 'form-status error';
           return;
         }
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
           statusEl.textContent = 'Please enter a valid email address.';
-          statusEl.className = 'form-status error';
-          return;
-        }
-        if (!window.cfAddressMatched) {
-          const addressInput = document.getElementById('cfAddress');
-          addressInput.classList.add('needs-match');
-          addressInput.focus();
-          statusEl.textContent = 'Please select your address from the suggestions list.';
           statusEl.className = 'form-status error';
           return;
         }
@@ -747,13 +751,12 @@
         submitBtn.textContent = 'Sending…';
 
         try {
-          const parts = window.cfAddressParts || {};
           await db.collection('contact_submissions').add({
             name, email, phone, address, interest, message,
-            addressStreet: (parts.street || '').slice(0, 200),
-            addressCity: (parts.city || '').slice(0, 100),
-            addressState: (parts.state || '').slice(0, 50),
-            addressZip: (parts.zip || '').slice(0, 20),
+            addressStreet: addressStreet.slice(0, 200),
+            addressCity: addressCity.slice(0, 100),
+            addressState: addressState.slice(0, 50),
+            addressZip: addressZip.slice(0, 20),
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),
