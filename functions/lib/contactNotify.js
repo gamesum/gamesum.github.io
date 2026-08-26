@@ -36,13 +36,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.onContactSubmissionCreated = void 0;
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
-const nodemailer = __importStar(require("nodemailer"));
-const GMAIL_APP_PASSWORD = (0, params_1.defineSecret)("GMAIL_APP_PASSWORD");
 const ZAPIER_CONTACT_WEBHOOK_URL = (0, params_1.defineSecret)("ZAPIER_CONTACT_WEBHOOK_URL");
-const NOTIFY_TO = "afterglolights@gmail.com";
-const NOTIFY_FROM = "afterglolights@gmail.com";
+// Zapier handles all outbound notification emails for contact form leads.
+// This function's only job is to relay the new submission to the Zapier
+// catch webhook; Zapier's own automation takes it from there.
 exports.onContactSubmissionCreated = functions
-    .runWith({ secrets: ["GMAIL_APP_PASSWORD", "ZAPIER_CONTACT_WEBHOOK_URL"] })
+    .runWith({ secrets: ["ZAPIER_CONTACT_WEBHOOK_URL"] })
     .firestore.document("contact_submissions/{submissionId}")
     .onCreate(async (snap, context) => {
     const data = snap.data() || {};
@@ -53,31 +52,6 @@ exports.onContactSubmissionCreated = functions
     const address = String(data.address || "").slice(0, 300);
     const interest = String(data.interest || "").slice(0, 100);
     const message = String(data.message || "").slice(0, 5000);
-    const subject = `New Contact Form Lead — ${name || "Unknown"} (${interest || "Not Sure"})`;
-    const text = [
-        "New lead from afterglolighting.org/contact.html", "",
-        `Name: ${name}`, `Phone: ${phone}`, `Email: ${email}`,
-        `Interested In: ${interest}`, `Address / City: ${address}`,
-        `Message: ${message || "(none)"}`, "",
-        `Submission ID: ${submissionId}`,
-    ].join("\n");
-    try {
-        const transporter = nodemailer.createTransport({
-            service: "gmail",
-            auth: { user: NOTIFY_FROM, pass: GMAIL_APP_PASSWORD.value() },
-        });
-        await transporter.sendMail({
-            from: `Afterglo Website <${NOTIFY_FROM}>`,
-            to: NOTIFY_TO,
-            replyTo: email || undefined,
-            subject,
-            text,
-        });
-        functions.logger.info(`onContactSubmissionCreated: emailed lead ${submissionId}`);
-    }
-    catch (err) {
-        functions.logger.error("onContactSubmissionCreated: email send failed", err);
-    }
     const zapierUrl = ZAPIER_CONTACT_WEBHOOK_URL.value();
     if (zapierUrl && zapierUrl !== "unset") {
         try {
@@ -90,11 +64,14 @@ exports.onContactSubmissionCreated = functions
                     submittedAt: new Date().toISOString(),
                 }),
             });
-            functions.logger.info(`onContactSubmissionCreated: Zapier responded ${res.status}`);
+            functions.logger.info(`onContactSubmissionCreated: Zapier responded ${res.status} for ${submissionId}`);
         }
         catch (err) {
             functions.logger.error("onContactSubmissionCreated: Zapier webhook failed", err);
         }
+    }
+    else {
+        functions.logger.warn(`onContactSubmissionCreated: ZAPIER_CONTACT_WEBHOOK_URL not configured, skipped ${submissionId}`);
     }
     return null;
 });
