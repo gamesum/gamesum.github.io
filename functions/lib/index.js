@@ -36,7 +36,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.addToLibrary = exports.onUserDocChanged = exports.apiMe = exports.mintAppToken = exports.deleteOwnReview = exports.submitReview = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.aiAsk = exports.aiPreset = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.addToLibrary = exports.onUserDocChanged = exports.apiMe = exports.mintAppToken = exports.deleteOwnReview = exports.submitReview = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.onContactSubmissionCreated = exports.aiAsk = exports.aiPreset = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -49,6 +49,10 @@ Object.defineProperty(exports, "aiPreset", { enumerable: true, get: function () 
 // AI product-knowledge assistant — see ./aiAsk.js.
 var aiAsk_1 = require("./aiAsk");
 Object.defineProperty(exports, "aiAsk", { enumerable: true, get: function () { return aiAsk_1.aiAsk; } });
+// Emails afterglolights@gmail.com (and optionally posts to a Zapier webhook)
+// whenever a new lead is written to contact_submissions — see ./contactNotify.ts.
+var contactNotify_1 = require("./contactNotify");
+Object.defineProperty(exports, "onContactSubmissionCreated", { enumerable: true, get: function () { return contactNotify_1.onContactSubmissionCreated; } });
 admin.initializeApp({
     storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });

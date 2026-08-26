@@ -11,6 +11,10 @@ export { aiPreset } from "./aiPreset";
 // AI product-knowledge assistant — see ./aiAsk.js.
 export { aiAsk } from "./aiAsk";
 
+// Emails afterglolights@gmail.com (and optionally posts to a Zapier webhook)
+// whenever a new lead is written to contact_submissions — see ./contactNotify.ts.
+export { onContactSubmissionCreated } from "./contactNotify";
+
 admin.initializeApp({
   storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });

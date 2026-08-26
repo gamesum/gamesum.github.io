@@ -284,28 +284,32 @@
             <input type="text" id="contactHoneypot" name="company" tabindex="-1" autocomplete="off" />
             <div class="form-row">
               <div class="form-field">
-                <label for="cfName">Full Name *</label>
-                <input type="text" id="cfName" required maxlength="199" autocomplete="name" />
+                <label for="cfFirstName">First Name *</label>
+                <input type="text" id="cfFirstName" required maxlength="99" autocomplete="given-name" />
               </div>
               <div class="form-field">
-                <label for="cfPhone">Phone *</label>
-                <input type="tel" id="cfPhone" required maxlength="39" autocomplete="tel" />
+                <label for="cfLastName">Last Name *</label>
+                <input type="text" id="cfLastName" required maxlength="99" autocomplete="family-name" />
               </div>
             </div>
             <div class="form-row">
               <div class="form-field">
+                <label for="cfPhone">Phone *</label>
+                <input type="tel" id="cfPhone" required maxlength="39" autocomplete="tel" />
+              </div>
+              <div class="form-field">
                 <label for="cfEmail">Email *</label>
                 <input type="email" id="cfEmail" required maxlength="319" autocomplete="email" />
               </div>
-              <div class="form-field">
-                <label for="cfService">Interested In</label>
-                <select id="cfService">
-                  <option value="Permanent Lights">Permanent Roofline Lighting</option>
-                  <option value="Seasonal Lights">Seasonal Christmas Lights</option>
-                  <option value="Both">Both</option>
-                  <option value="Not Sure">Not Sure Yet</option>
-                </select>
-              </div>
+            </div>
+            <div class="form-field">
+              <label for="cfService">Interested In</label>
+              <select id="cfService">
+                <option value="Permanent Lights">Permanent Roofline Lighting</option>
+                <option value="Seasonal Lights">Seasonal Christmas Lights</option>
+                <option value="Both">Both</option>
+                <option value="Not Sure">Not Sure Yet</option>
+              </select>
             </div>
             <div class="form-field">
               <label for="cfAddress">Address or City *</label>
@@ -349,7 +353,7 @@
           <div class="info-card">
             <h3>What to Expect</h3>
             <div class="info-row"><span>✦</span><span>Same-day response, most days</span></div>
-            <div class="info-row"><span>✦</span><span>Free on-site consultation, no pressure</span></div>
+            <div class="info-row"><span>✦</span><span>Free on-site consultation</span></div>
             <div class="info-row"><span>✦</span><span>Licensed &amp; insured statewide</span></div>
           </div>
         </div>
@@ -617,14 +621,16 @@
           return;
         }
 
-        const name = document.getElementById('cfName').value.trim();
+        const firstName = document.getElementById('cfFirstName').value.trim();
+        const lastName = document.getElementById('cfLastName').value.trim();
+        const name = `${firstName} ${lastName}`.trim();
         const email = document.getElementById('cfEmail').value.trim();
         const phone = document.getElementById('cfPhone').value.trim();
         const address = document.getElementById('cfAddress').value.trim();
         const interest = document.getElementById('cfService').value;
         const message = document.getElementById('cfMessage').value.trim();
 
-        if (!name || !email || !phone || !address) {
+        if (!firstName || !lastName || !email || !phone || !address) {
           statusEl.textContent = 'Please fill out all required fields.';
           statusEl.className = 'form-status error';
           return;
@@ -650,8 +656,7 @@
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),
           });
-          form.style.display = 'none';
-          successEl.classList.add('show');
+          window.location.href = 'contact-thank-you.html';
         } catch (err) {
           statusEl.textContent = 'Something went wrong sending your request. Please call or email us directly.';
           statusEl.className = 'form-status error';
