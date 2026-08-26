@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>(function(){try{var t=localStorage.getItem('afterglo-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, follow" />
+  <title>Free Quote | AFTERGLO Lighting Co.</title>
+  <meta name="description" content="Get a free quote from AFTERGLO Lighting — Utah's premier permanent LED lighting and Christmas light show company. Licensed, insured, and backed by a 5-year warranty." />
+  <link rel="icon" type="image/png" href="afterglo-favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #17171B;
+      --bg2:      #1B1B1F;
+      --bg3:      #232328;
+      --accent:   #D4A43A;
+      --accent2:  #d4a843;
+      --text:     #F2F2F4;
+      --muted:    #ADADB6;
+      --border:   #2E2E34;
+      --radius:   12px;
+      --nav-h:    72px;
+      --heading:  #fff;
+    }
+
+    [data-theme="light"] {
+      --bg:       #FAF8F3;
+      --bg2:      #F6F3EA;
+      --bg3:      #FFFFFF;
+      --accent:   #A8791E;
+      --accent2:  #8f6a17;
+      --text:     #201F1C;
+      --muted:    #6B6659;
+      --border:   #E9E2D0;
+      --heading:  #14130F;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; }
+    section { width: 100%; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section-label { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--heading); margin-bottom: 16px; }
+    .section-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.75; }
+
+    .fade-in { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-delay-1 { transition-delay: 0.1s; }
+    .fade-delay-2 { transition-delay: 0.2s; }
+
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; border: none; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: #D4A43A; color: #000; box-shadow: 0 4px 16px rgba(212,164,58,0.25); }
+    .btn-primary:hover { background: #F0C04A; box-shadow: 0 6px 20px rgba(212,164,58,0.35); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-lg { padding: 16px 34px; font-size: 1.02rem; }
+    .btn-block { width: 100%; justify-content: center; }
+
+    /* ─── MINIMAL HEADER ─────────────────────────────────────── */
+    #topbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 1000; background: #0D1117; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; }
+    .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
+    .topbar-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; }
+    .topbar-logo span { color: var(--accent); text-shadow: 0 0 14px rgba(212,164,58,0.55); }
+    .topbar-call { display: flex; align-items: center; gap: 8px; color: var(--text); font-weight: 600; font-size: 0.95rem; }
+    .topbar-call svg { color: var(--accent); }
+
+    /* ─── HERO ───────────────────────────────────────────────── */
+    #hero { padding-top: var(--nav-h); position: relative; overflow: hidden; }
+    .hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 30% 100%, rgba(212,164,58,0.14) 0%, transparent 65%), linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
+    .hero-grid { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 56px; align-items: center; padding: 56px 0 72px; }
+    .hero-copy h1 { font-size: clamp(2.1rem, 4.4vw, 3.1rem); }
+    .hero-copy .section-sub { max-width: 100%; margin-bottom: 28px; }
+    .hero-stats { display: flex; gap: 32px; margin-top: 36px; flex-wrap: wrap; }
+    .hero-stat strong { display: block; font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; color: var(--heading); }
+    .hero-stat span { font-size: 0.8rem; color: var(--muted); }
+    .hero-photo { border-radius: 20px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 60px rgba(0,0,0,0.35); }
+    .hero-photo img { aspect-ratio: 4/3; object-fit: cover; }
+
+    /* ─── TRUST ──────────────────────────────────────────────── */
+    #trust { padding: 72px 0; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .trust-head { text-align: center; max-width: 620px; margin: 0 auto 48px; }
+    .trust-head .section-sub { margin: 0 auto; }
+    .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+    .trust-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 28px 24px; text-align: center; }
+    .trust-card .tc-icon { width: 52px; height: 52px; margin: 0 auto 16px; border-radius: 50%; background: rgba(212,164,58,0.12); color: var(--accent); display: flex; align-items: center; justify-content: center; }
+    .trust-card h3 { font-size: 1.02rem; color: var(--heading); margin-bottom: 8px; }
+    .trust-card p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ─── PHOTO STRIP ────────────────────────────────────────── */
+    #photos { padding: 72px 0; }
+    .photo-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .photo-strip figure { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); }
+    .photo-strip img { aspect-ratio: 5/4; object-fit: cover; }
+
+    /* ─── QUOTE FORM ─────────────────────────────────────────── */
+    #quote { padding: 24px 0 88px; }
+    .quote-head { text-align: center; max-width: 640px; margin: 0 auto 40px; }
+    .quote-head .section-sub { margin: 0 auto; }
+    .quote-card { max-width: 720px; margin: 0 auto; background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 44px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row-3 { grid-template-columns: 1.6fr 1fr 1fr; }
+    .form-checkbox-field { margin-bottom: 20px; }
+    .checkbox-label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .checkbox-label input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-field label { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+    .form-field input, .form-field select, .form-field textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+    .form-field textarea { resize: vertical; min-height: 90px; font-family: 'Inter', sans-serif; }
+    .address-suggestions { position: absolute; top: 100%; left: 0; right: 0; z-index: 20; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; margin-top: 4px; max-height: 220px; overflow-y: auto; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+    .address-suggestions.show { display: block; }
+    .address-suggestion { padding: 10px 14px; font-size: 0.9rem; color: var(--text); cursor: pointer; }
+    .address-suggestion:hover, .address-suggestion.active { background: var(--bg2); color: var(--accent); }
+    #lpHoneypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+    .form-submit-row { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 8px; }
+    .form-status { font-size: 0.85rem; }
+    .form-status.error { color: #e5533d; }
+    .form-status.ok { color: #4caf50; }
+    .form-fineprint { font-size: 0.78rem; color: var(--muted); text-align: center; }
+
+    .quote-success { display: none; text-align: center; padding: 40px 20px; }
+    .quote-success.show { display: block; }
+    .quote-success .check-circle { width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; background: rgba(212,164,58,0.12); border: 1px solid rgba(212,164,58,0.35); display: flex; align-items: center; justify-content: center; color: var(--accent); }
+    .quote-success h3 { font-size: 1.4rem; color: var(--heading); margin-bottom: 10px; }
+    .quote-success p { color: var(--muted); font-size: 0.95rem; }
+
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; padding: 40px 0 56px; }
+      .hero-photo { order: -1; }
+      .trust-grid { grid-template-columns: 1fr 1fr; }
+      .photo-strip { grid-template-columns: 1fr 1fr; }
+      .quote-card { padding: 28px; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .form-row-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .trust-grid { grid-template-columns: 1fr; }
+      .photo-strip { grid-template-columns: 1fr; }
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    #footer { background: #0e0e11; border-top: 1px solid var(--border); padding: 48px 0 32px; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; }
+    .footer-inner { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; }
+    .footer-logo { font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; }
+    .footer-logo span { color: var(--accent); }
+    .footer-contact-inline { display: flex; gap: 24px; flex-wrap: wrap; font-size: 0.85rem; color: var(--muted); }
+    .footer-contact-inline a { color: var(--muted); transition: color 0.2s; }
+    .footer-contact-inline a:hover { color: var(--accent); }
+    .footer-copy { font-size: 0.78rem; color: var(--muted); width: 100%; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border); text-align: center; }
+  </style>
+</head>
+<body>
+
+  <!-- ─── MINIMAL HEADER ─────────────────────────────────────── -->
+  <header id="topbar">
+    <div class="container">
+      <div class="topbar-inner">
+        <span class="topbar-logo">AFTER<span>GLO</span></span>
+        <a href="tel:+13853374144" class="topbar-call">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>(385) 337-4144</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── HERO ───────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy fade-in">
+          <div class="section-label">Free, No-Pressure Quote</div>
+          <h1>Utah's Highest-Rated Permanent &amp; Christmas Lighting</h1>
+          <p class="section-sub">Tell us a little about your home and we'll follow up fast with a free quote — permanent RGBW roofline lighting, traditional Christmas string lights, or a full music-synchronized light show.</p>
+          <a href="#quote" class="btn btn-primary btn-lg">Get My Free Quote</a>
+          <div class="hero-stats">
+            <div class="hero-stat"><strong>3,500+</strong><span>Lights Placed</span></div>
+            <div class="hero-stat"><strong>5★</strong><span>Average Rating</span></div>
+            <div class="hero-stat"><strong>5 yr</strong><span>Fixture Warranty</span></div>
+          </div>
+        </div>
+        <div class="hero-photo fade-in fade-delay-1">
+          <img src="Resources/House Images/dn-night-rgbw.jpg" alt="AFTERGLO permanent RGBW roofline lighting installed on a Utah home at night" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── WHY TRUST US ───────────────────────────────────────── -->
+  <section id="trust">
+    <div class="container">
+      <div class="trust-head fade-in">
+        <div class="section-label">Why Homeowners Trust Us</div>
+        <h2 class="section-title" style="font-size:clamp(1.7rem,3.4vw,2.3rem);">Built by a Local Utah Team, Not a Franchise</h2>
+        <p class="section-sub">AFTERGLO installs with its own proprietary controllers, software, and technology — every job is backed the same way.</p>
+      </div>
+      <div class="trust-grid">
+        <div class="trust-card fade-in">
+          <div class="tc-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>Licensed &amp; Insured</h3>
+          <p>Fully licensed and insured statewide, so your home and your install are protected.</p>
+        </div>
+        <div class="trust-card fade-in fade-delay-1">
+          <div class="tc-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 15a3 3 0 100-6 3 3 0 000 6z"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg></div>
+          <h3>5-Year Fixture Warranty</h3>
+          <p>Every install ships with a 5-year fixture warranty and lifetime installation support.</p>
+        </div>
+        <div class="trust-card fade-in fade-delay-2">
+          <div class="tc-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+          <h3>Local Utah Team</h3>
+          <p>Not a franchise or reseller — a real local crew you can call, with proprietary tech we built ourselves.</p>
+        </div>
+        <div class="trust-card fade-in fade-delay-2">
+          <div class="tc-icon"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <h3>Same-Day Quotes</h3>
+          <p>Most requests get a real reply the same day — no call centers, no waiting a week to hear back.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PHOTO STRIP ────────────────────────────────────────── -->
+  <section id="photos">
+    <div class="container">
+      <div class="photo-strip">
+        <figure class="fade-in"><img src="Resources/seasonal/seasonal-snow-redgold.jpg" alt="AFTERGLO Christmas light installation, red and gold roofline" /></figure>
+        <figure class="fade-in fade-delay-1"><img src="Resources/permanent/perm-christmas-redgreen.jpg" alt="AFTERGLO permanent lighting set to red and green for Christmas" /></figure>
+        <figure class="fade-in fade-delay-2"><img src="Resources/House Images/dn-day-fascia.jpg" alt="AFTERGLO fixture mounted cleanly on home fascia, daytime detail shot" /></figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── QUOTE FORM ─────────────────────────────────────────── -->
+  <section id="quote">
+    <div class="container">
+      <div class="quote-head fade-in">
+        <div class="section-label">Get Started</div>
+        <h2 class="section-title" style="font-size:clamp(1.7rem,3.4vw,2.3rem);">Get Your Free Quote</h2>
+        <p class="section-sub">Takes under 2 minutes. We'll follow up fast with pricing and next steps.</p>
+      </div>
+
+      <div class="quote-card fade-in fade-delay-1">
+        <form id="quoteForm">
+          <input type="text" id="lpHoneypot" name="company" tabindex="-1" autocomplete="off" />
+          <div class="form-row">
+            <div class="form-field">
+              <label for="lpFirstName">First Name *</label>
+              <input type="text" id="lpFirstName" required maxlength="99" autocomplete="given-name" />
+            </div>
+            <div class="form-field">
+              <label for="lpLastName">Last Name *</label>
+              <input type="text" id="lpLastName" required maxlength="99" autocomplete="family-name" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-field">
+              <label for="lpPhone">Phone *</label>
+              <input type="tel" id="lpPhone" required maxlength="39" autocomplete="tel" />
+            </div>
+            <div class="form-field">
+              <label for="lpEmail">Email *</label>
+              <input type="email" id="lpEmail" required maxlength="319" autocomplete="email" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="lpService">Interested In</label>
+            <select id="lpService">
+              <option value="Permanent Lights">Permanent Roofline Lighting</option>
+              <option value="Seasonal Lights">Seasonal Christmas Lights</option>
+              <option value="Both">Both</option>
+              <option value="Not Sure">Not Sure Yet</option>
+            </select>
+          </div>
+          <div class="form-field" style="position: relative;">
+            <label for="lpAddressSearch">Search Your Address</label>
+            <input type="text" id="lpAddressSearch" maxlength="299" autocomplete="off" placeholder="Start typing to auto-fill the fields below…" />
+            <div id="lpAddressSuggestions" class="address-suggestions"></div>
+            <span style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Optional — pick a suggestion to auto-fill the fields below, or just type your address in manually.</span>
+          </div>
+          <div class="form-field">
+            <label for="lpStreet">Street Address *</label>
+            <input type="text" id="lpStreet" required maxlength="200" autocomplete="address-line1" />
+          </div>
+          <div class="form-row form-row-3">
+            <div class="form-field">
+              <label for="lpCity">City *</label>
+              <input type="text" id="lpCity" required maxlength="100" autocomplete="address-level2" />
+            </div>
+            <div class="form-field">
+              <label for="lpState">State *</label>
+              <input type="text" id="lpState" required maxlength="50" autocomplete="address-level1" />
+            </div>
+            <div class="form-field">
+              <label for="lpZip">ZIP *</label>
+              <input type="text" id="lpZip" required maxlength="20" autocomplete="postal-code" />
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="lpMessage">Tell us about your project</label>
+            <textarea id="lpMessage" maxlength="4999" placeholder="Roofline length, home style, timeline, anything else that helps us quote accurately."></textarea>
+          </div>
+          <div class="form-field form-checkbox-field">
+            <label class="checkbox-label">
+              <input type="checkbox" id="lpMarketingOptIn" />
+              <span>Keep me updated on seasonal deals and promotions by email</span>
+            </label>
+          </div>
+          <div class="form-submit-row">
+            <button type="submit" class="btn btn-primary btn-lg btn-block" id="lpSubmitBtn">Get My Free Quote</button>
+            <span class="form-status" id="lpStatus"></span>
+            <p class="form-fineprint">Licensed &amp; insured in Utah · Same-day response, most days</p>
+          </div>
+        </form>
+
+        <div class="quote-success" id="quoteSuccess">
+          <div class="check-circle">
+            <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h3>Got it — thank you!</h3>
+          <p>We'll follow up shortly. If it's urgent, call us at <a href="tel:+13853374144" style="color:var(--accent);">(385) 337-4144</a>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────── -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">AFTER<span>GLO</span></span>
+        <div class="footer-contact-inline">
+          <a href="tel:+13853374144">(385) 337-4144</a>
+          <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a>
+          <span>South Jordan, Utah — serving all of Utah</span>
+        </div>
+        <p class="footer-copy">© 2026 Ward Legacy Group LLC. Afterglo is a division of Ward Legacy Group LLC. Licensed &amp; Insured in Utah.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase SDK (compat build) for direct Firestore contact-form writes -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+  </script>
+
+  <!-- Address autocomplete (Photon / komoot.io, no API key required) — optional recommendation only, fills the street/city/state/zip boxes below -->
+  <script>
+    (function() {
+      const input = document.getElementById('lpAddressSearch');
+      const box = document.getElementById('lpAddressSuggestions');
+      const streetEl = document.getElementById('lpStreet');
+      const cityEl = document.getElementById('lpCity');
+      const stateEl = document.getElementById('lpState');
+      const zipEl = document.getElementById('lpZip');
+      if (!input || !box) return;
+
+      let debounceTimer;
+      let controller;
+
+      input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const q = input.value.trim();
+        if (q.length < 3) { box.classList.remove('show'); box.innerHTML = ''; return; }
+        debounceTimer = setTimeout(() => fetchSuggestions(q), 250);
+      });
+
+      async function fetchSuggestions(q) {
+        if (controller) controller.abort();
+        controller = new AbortController();
+        try {
+          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7608&lon=-111.8910&limit=8`;
+          const res = await fetch(url, { signal: controller.signal });
+          if (!res.ok) return;
+          const data = await res.json();
+          const features = (data.features || []).filter(f => f.properties);
+          renderSuggestions(features);
+        } catch (e) { /* aborted or network error — it's a nice-to-have, fail silently */ }
+      }
+
+      function renderSuggestions(features) {
+        if (!features.length) { box.classList.remove('show'); box.innerHTML = ''; return; }
+        box.innerHTML = features.map((f, i) => {
+          const p = f.properties || {};
+          const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+          const label = [street, p.city || p.county, p.state, p.postcode, p.country].filter(Boolean).join(', ');
+          return `<div class="address-suggestion" data-idx="${i}" data-label="${label.replace(/"/g, '&quot;')}">${label}</div>`;
+        }).join('');
+        box.classList.add('show');
+        box._features = features;
+      }
+
+      box.addEventListener('click', (e) => {
+        const item = e.target.closest('.address-suggestion');
+        if (!item) return;
+        const idx = parseInt(item.getAttribute('data-idx'), 10);
+        const f = (box._features || [])[idx];
+        const p = (f && f.properties) || {};
+        input.value = item.getAttribute('data-label');
+        box.classList.remove('show');
+        box.innerHTML = '';
+        const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+        if (streetEl && street) streetEl.value = street;
+        if (cityEl && (p.city || p.county)) cityEl.value = p.city || p.county;
+        if (stateEl && p.state) stateEl.value = p.state;
+        if (zipEl && p.postcode) zipEl.value = p.postcode;
+      });
+
+      document.addEventListener('click', (e) => {
+        if (e.target !== input && !box.contains(e.target)) { box.classList.remove('show'); }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') box.classList.remove('show');
+      });
+    })();
+  </script>
+
+  <!-- Landing page quote form submission -->
+  <script>
+    (function() {
+      const firebaseConfig = {
+        apiKey: "AIzaSyAQ7L46n1Nos6nmNcDCAJu8tY1pFdn-zQY",
+        authDomain: "afterglo-website-fbb89.firebaseapp.com",
+        projectId: "afterglo-website-fbb89",
+        storageBucket: "afterglo-website-fbb89.firebasestorage.app",
+        messagingSenderId: "307927449736",
+        appId: "1:307927449736:web:0a44b789fd7cab37d41f3d",
+      };
+      let app;
+      try {
+        app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(firebaseConfig);
+      } catch (e) {
+        app = firebase.apps[0] || null;
+      }
+      const db = app ? firebase.firestore() : null;
+
+      const form = document.getElementById('quoteForm');
+      const statusEl = document.getElementById('lpStatus');
+      const submitBtn = document.getElementById('lpSubmitBtn');
+      const successEl = document.getElementById('quoteSuccess');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        statusEl.textContent = '';
+        statusEl.className = 'form-status';
+
+        // Honeypot: if filled, silently drop (bot)
+        if (document.getElementById('lpHoneypot').value) {
+          successEl.classList.add('show');
+          form.style.display = 'none';
+          return;
+        }
+
+        const firstName = document.getElementById('lpFirstName').value.trim();
+        const lastName = document.getElementById('lpLastName').value.trim();
+        const name = `${firstName} ${lastName}`.trim();
+        const email = document.getElementById('lpEmail').value.trim();
+        const phone = document.getElementById('lpPhone').value.trim();
+        const addressStreet = document.getElementById('lpStreet').value.trim();
+        const addressCity = document.getElementById('lpCity').value.trim();
+        const addressState = document.getElementById('lpState').value.trim();
+        const addressZip = document.getElementById('lpZip').value.trim();
+        const address = [addressStreet, addressCity, [addressState, addressZip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+        const interest = document.getElementById('lpService').value;
+        const message = document.getElementById('lpMessage').value.trim();
+        const marketingOptIn = document.getElementById('lpMarketingOptIn').checked;
+
+        if (!firstName || !lastName || !email || !phone || !addressStreet || !addressCity || !addressState || !addressZip) {
+          statusEl.textContent = 'Please fill out all required fields.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+          statusEl.textContent = 'Please enter a valid email address.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!db) {
+          statusEl.textContent = 'Something went wrong. Please call or email us directly.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        try {
+          await db.collection('contact_submissions').add({
+            name, email, phone, address, interest, message,
+            addressStreet: addressStreet.slice(0, 200),
+            addressCity: addressCity.slice(0, 100),
+            addressState: addressState.slice(0, 50),
+            addressZip: addressZip.slice(0, 20),
+            marketingOptIn,
+            source: 'landing page',
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'new',
+            userAgent: navigator.userAgent.slice(0, 300),
+          });
+          window.location.href = 'contact-thank-you.html';
+        } catch (err) {
+          statusEl.textContent = 'Something went wrong sending your request. Please call or email us directly.';
+          statusEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Get My Free Quote';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

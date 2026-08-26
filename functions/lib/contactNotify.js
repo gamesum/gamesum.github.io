@@ -57,6 +57,7 @@ exports.onContactSubmissionCreated = functions
     const interest = String(data.interest || "").slice(0, 100);
     const message = String(data.message || "").slice(0, 5000);
     const marketingOptIn = data.marketingOptIn === true;
+    const source = String(data.source || "contact form").slice(0, 100);
     const zapierUrl = ZAPIER_CONTACT_WEBHOOK_URL.value();
     if (zapierUrl && zapierUrl !== "unset") {
         try {
@@ -64,7 +65,7 @@ exports.onContactSubmissionCreated = functions
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-                    source: "contact form",
+                    source,
                     submissionId, name, email, phone, address,
                     addressStreet, addressCity, addressState, addressZip,
                     interest, message, marketingOptIn,
