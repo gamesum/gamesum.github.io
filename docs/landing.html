@@ -71,8 +71,15 @@
     .topbar-inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
     .topbar-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; }
     .topbar-logo span { color: var(--accent); text-shadow: 0 0 14px rgba(212,164,58,0.55); }
+    .topbar-right { display: flex; align-items: center; gap: 20px; }
     .topbar-call { display: flex; align-items: center; gap: 8px; color: var(--text); font-weight: 600; font-size: 0.95rem; }
     .topbar-call svg { color: var(--accent); }
+    .theme-toggle { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); cursor: pointer; flex-shrink: 0; transition: color 0.2s, border-color 0.2s; }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .theme-toggle svg { display: block; }
+    .theme-toggle .tt-moon { display: none; }
+    [data-theme="light"] .theme-toggle .tt-sun { display: none; }
+    [data-theme="light"] .theme-toggle .tt-moon { display: block; }
 
     /* ─── HERO ───────────────────────────────────────────────── */
     #hero { padding-top: var(--nav-h); position: relative; overflow: hidden; }
@@ -178,10 +185,13 @@
     <div class="container">
       <div class="topbar-inner">
         <span class="topbar-logo">AFTER<span>GLO</span></span>
-        <a href="tel:+13853374144" class="topbar-call">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
-          <span>(385) 337-4144</span>
-        </a>
+        <div class="topbar-right">
+          <a href="tel:+13853374144" class="topbar-call">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            <span>(385) 337-4144</span>
+          </a>
+          <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button>
+        </div>
       </div>
     </div>
   </header>
@@ -370,6 +380,22 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.12 });
     fadeEls.forEach(el => observer.observe(el));
+  </script>
+
+  <script>
+    (function() {
+      const root = document.documentElement;
+      function setTheme(t) {
+        root.setAttribute('data-theme', t);
+        try { localStorage.setItem('afterglo-theme', t); } catch (e) {}
+      }
+      function toggleTheme() {
+        const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        setTheme(next);
+      }
+      const tBtn = document.getElementById('themeToggle');
+      tBtn && tBtn.addEventListener('click', toggleTheme);
+    })();
   </script>
 
   <!-- Address autocomplete (Photon / komoot.io, no API key required) — optional recommendation only, fills the street/city/state/zip boxes below -->
