@@ -105,6 +105,31 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Contact form submissions: anonymous public create with shape validation
+    // to limit spam/abuse. Admins read via the admin console only.
+    match /contact_submissions/{submissionId} {
+      allow read:   if isAdmin();
+      allow create: if request.resource.data.keys().hasOnly([
+                        'name','email','phone','address','interest','message',
+                        'submittedAt','status','userAgent'
+                      ])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() < 200
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() < 320
+                    && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+                    && request.resource.data.phone is string
+                    && request.resource.data.phone.size() < 40
+                    && request.resource.data.address is string
+                    && request.resource.data.address.size() < 300
+                    && request.resource.data.interest is string
+                    && request.resource.data.interest.size() < 100
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() < 5000;
+      allow update, delete: if false;
+    }
+
     // GDPR/CCPA data requests: requester reads own, admin reads all.
     match /data_requests/{requestId} {
       allow read:  if isAdmin()

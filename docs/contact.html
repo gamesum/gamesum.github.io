@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Permanent Lights | AFTERGLO Lighting Co.</title>
-  <meta name="description" content="Professionally installed permanent RGBW roofline lighting, controlled from your phone. Flush-mounted fixtures, 16M+ colors, 5+ year warranty. Starting at $1,500 installed in Utah." />
+  <title>Contact | AFTERGLO Lighting Co.</title>
+  <meta name="description" content="Get a free quote from AFTERGLO Lighting. Tell us about your home and what you're looking for — permanent roofline lighting, seasonal string lights, or a full light show — and we'll follow up fast." />
   <link rel="icon" type="image/png" href="afterglo-favicon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -55,13 +55,12 @@
     .fade-in { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
     .fade-delay-1 { transition-delay: 0.1s; }
-    .fade-delay-2 { transition-delay: 0.2s; }
-    .fade-delay-3 { transition-delay: 0.3s; }
 
     .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; border: none; }
     .btn:hover { transform: translateY(-2px); }
     .btn-primary { background: #D4A43A; color: #000; box-shadow: 0 4px 16px rgba(212,164,58,0.25); }
     .btn-primary:hover { background: #F0C04A; box-shadow: 0 6px 20px rgba(212,164,58,0.35); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
     .btn-ghost { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
     .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
@@ -84,56 +83,61 @@
     .mobile-menu a { font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--border); min-height: 44px; display: flex; align-items: center; }
 
     /* ─── PAGE HERO ──────────────────────────────────────── */
-    #page-hero { padding-top: var(--nav-h); min-height: 75vh; display: flex; align-items: center; position: relative; overflow: hidden; }
+    #page-hero { padding-top: var(--nav-h); min-height: 40vh; display: flex; align-items: center; position: relative; overflow: hidden; }
     .page-hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 30% 100%, rgba(212,164,58,0.14) 0%, transparent 65%), linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
-    .page-hero-inner { position: relative; z-index: 1; display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; padding: 80px 0; }
-    .hero-text-col .hero-headline { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; color: var(--heading); line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 20px; }
-    .hero-text-col .hero-headline span { color: var(--accent); }
-    .hero-text-col .hero-sub { font-size: 1.1rem; color: var(--muted); line-height: 1.75; margin-bottom: 36px; max-width: 480px; }
-    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; }
+    #page-hero .container { position: relative; z-index: 1; padding: 64px 24px 48px; }
+    #page-hero .section-sub { max-width: 640px; }
 
-    /* Before/after slider (media column) */
-    .hero-media { position: relative; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 4/3; }
-    .ba-slider { position: relative; width: 100%; height: 100%; overflow: hidden; user-select: none; touch-action: pan-y; cursor: ew-resize; }
-    .ba-slider img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
-    .ba-slider .ba-before { clip-path: inset(0 50% 0 0); }
-    .ba-label { position: absolute; top: 14px; z-index: 2; background: rgba(0,0,0,0.6); color: #fff; font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 5px 11px; border-radius: 100px; pointer-events: none; }
-    .ba-label.ba-label-before { left: 14px; }
-    .ba-label.ba-label-after { right: 14px; }
-    .ba-divider { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; background: rgba(255,255,255,0.9); box-shadow: 0 0 12px rgba(0,0,0,0.5); z-index: 2; pointer-events: none; }
-    .ba-handle { position: absolute; top: 50%; left: 50%; width: 40px; height: 40px; transform: translate(-50%, -50%); background: #fff; border-radius: 50%; box-shadow: 0 4px 14px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; color: #0e0e0e; pointer-events: none; }
+    /* ─── CONTACT ──────────────────────────────────────── */
+    #contact { padding: 0 0 96px; }
+    .contact-split { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: start; }
 
-    /* ─── FEATURES ───────────────────────────────────────── */
-    #features { padding: 96px 0; background: var(--bg2); }
-    .features-header { text-align: center; margin-bottom: 56px; }
-    .features-header .section-sub { margin: 0 auto; text-align: center; }
-    .feature-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; }
-    .feat-row { display: flex; gap: 20px; align-items: flex-start; }
-    .feat-num { width: 40px; height: 40px; border-radius: 10px; background: rgba(212,164,58,0.1); border: 1px solid rgba(212,164,58,0.25); display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 800; color: var(--accent); flex-shrink: 0; }
-    .feat-body h4 { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; color: var(--heading); margin-bottom: 4px; }
-    .feat-body p { font-size: 0.875rem; color: var(--muted); line-height: 1.65; }
+    .contact-form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 40px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-field label { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+    .form-field input, .form-field select, .form-field textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+    .form-field textarea { resize: vertical; min-height: 110px; font-family: 'Inter', sans-serif; }
+    #contactHoneypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+    .form-submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+    .form-status { font-size: 0.85rem; }
+    .form-status.error { color: #e5533d; }
+    .form-status.ok { color: #4caf50; }
 
-    /* ─── OCCASIONS ──────────────────────────────────────── */
-    #occasions { padding: 96px 0; }
-    .occasions-header { text-align: center; margin-bottom: 56px; }
-    .occasions-header .section-sub { margin: 0 auto; text-align: center; }
-    .occasions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .occ-item { border-radius: var(--radius); overflow: hidden; aspect-ratio: 4/5; background: var(--bg3); border: 1px solid var(--border); position: relative; }
-    .occ-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .occ-label { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(0deg, rgba(0,0,0,0.75) 0%, transparent 100%); padding: 24px 16px 14px; font-size: 0.85rem; color: #fff; font-weight: 600; }
-    @media (max-width: 900px) { .occasions-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 600px) { .occasions-grid { grid-template-columns: 1fr 1fr; } }
+    .contact-success { display: none; text-align: center; padding: 40px 20px; }
+    .contact-success.show { display: block; }
+    .contact-success .check-circle { width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; background: rgba(212,164,58,0.12); border: 1px solid rgba(212,164,58,0.35); display: flex; align-items: center; justify-content: center; color: var(--accent); }
+    .contact-success h3 { font-size: 1.4rem; color: var(--heading); margin-bottom: 10px; }
+    .contact-success p { color: var(--muted); font-size: 0.95rem; }
 
-    /* ─── SPECS ──────────────────────────────────────────── */
-    #specs { padding: 96px 0; }
-    .specs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 24px; text-align: center; }
-    .spec-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 32px 20px; }
-    .spec-card strong { display: block; font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-bottom: 6px; }
-    .spec-card span { font-size: 0.85rem; color: var(--muted); }
+    .contact-info { display: flex; flex-direction: column; gap: 24px; }
+    .info-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .info-card h3 { font-size: 1.05rem; color: var(--heading); margin-bottom: 14px; }
+    .info-row { display: flex; align-items: flex-start; gap: 12px; font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-row a { color: var(--muted); transition: color 0.2s; }
+    .info-row a:hover { color: var(--accent); }
+    .info-row svg { flex-shrink: 0; margin-top: 2px; color: var(--accent); }
 
-    /* ─── CTA ──────────────────────────────────────────── */
-    #perm-cta { padding: 96px 0; text-align: center; background: var(--bg2); }
-    #perm-cta .section-sub { margin: 0 auto 32px; text-align: center; }
+    @media (max-width: 900px) {
+      .hamburger { display: flex; }
+      .nav-links, .nav-cta { display: none; }
+      .contact-split { grid-template-columns: 1fr; }
+      .contact-form-card { padding: 28px; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+    }
 
     /* ─── FOOTER ─────────────────────────────────────────── */
     #footer { background: #0e0e11; border-top: 1px solid var(--border); padding: 64px 0 40px; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --bg3: #232328; --accent: #D4A43A; --accent2: #d4a843; }
@@ -159,9 +163,6 @@
     .footer-legal a:hover { color: var(--accent); }
 
     @media (max-width: 900px) {
-      .page-hero-inner { grid-template-columns: 1fr; gap: 40px; padding: 60px 0; }
-      .hamburger { display: flex; }
-      .nav-links, .nav-cta { display: none; }
       .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
       .footer-grid > div:first-child { grid-column: span 2; }
     }
@@ -195,7 +196,8 @@
     .rp-author { margin-top: 8px; font-size: 0.75rem; color: var(--muted); }
     .rp-author strong { color: var(--text); font-weight: 600; }
     .rp-footer { padding: 14px 18px; border-top: 1px solid var(--border); text-align: center; flex-shrink: 0; }
-    .rp-footer a { font-size: 0.8rem; color: var(--accent); font-weight: 600; }        #dealBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+    .rp-footer a { font-size: 0.8rem; color: var(--accent); font-weight: 600; }
+    #dealBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
     #dealBackdrop.open { display:block; }
     #dealBadge { position: fixed; right: 20px; bottom: 20px; z-index: 300; --text: #F2F2F4; --muted: #ADADB6; --accent: #D4A43A; --accent2: #d4a843; --heading: #fff; --border: #2E2E34; --bg2: #1B1B1F; --bg3: #232328; }
     #dealBadgeBtn { display: flex; align-items: center; gap: 18px; background: linear-gradient(rgb(15,15,15), rgb(15,15,15)) padding-box, conic-gradient(from var(--deal-angle, 0deg), transparent 0%, #D4A43A 25%, #FFF3C4 50%, #D4A43A 75%, transparent 100%) border-box; backdrop-filter: blur(8px); border: 3px solid transparent; border-radius: 20px; padding: 18px 26px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-family: 'Inter', sans-serif; color: var(--text); position: relative; animation: dealBorderSpin 3.5s linear infinite; }
@@ -239,14 +241,14 @@
         <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
         <ul class="nav-links">
           <li><a href="index.html">Home</a></li>
-          <li><a href="permanent-lights.html" class="active">Permanent Lights</a></li>
+          <li><a href="permanent-lights.html">Permanent Lights</a></li>
           <li><a href="seasonal-lights.html">Seasonal Lights</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="gallery.html">Gallery</a></li>
-          <li><a href="contact.html">Contact</a></li>
+          <li><a href="contact.html" class="active">Contact</a></li>
           <li><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button></li>
         </ul>
-        <a href="index.html#cta" class="btn btn-primary nav-cta">Get a Quote</a>
+        <a href="contact.html" class="btn btn-primary nav-cta">Get a Quote</a>
         <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
       </div>
     </div>
@@ -257,7 +259,7 @@
       <a href="about.html" onclick="closeMenu()">About</a>
       <a href="gallery.html" onclick="closeMenu()">Gallery</a>
       <a href="contact.html" onclick="closeMenu()">Contact</a>
-      <a href="index.html#cta" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
+      <a href="contact.html" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
       <button type="button" class="mobile-theme-toggle" id="mobileThemeToggle"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><span>Toggle Theme</span></button>
     </div>
   </nav>
@@ -266,117 +268,93 @@
   <section id="page-hero">
     <div class="page-hero-bg"></div>
     <div class="container">
-      <div class="page-hero-inner">
-        <div class="hero-text-col fade-in">
-          <div class="section-label">Year-Round</div>
-          <h1 class="hero-headline">Permanent<br><span>Roofline Lighting</span></h1>
-          <p class="hero-sub">Professionally installed architectural lighting, controlled from your phone. Flush-mounted fixtures disappear into your roofline by day and light up in any of 16 million colors by night. Holidays, game days, every day.</p>
-          <div class="hero-actions">
-            <a href="index.html#cta" class="btn btn-primary">
-              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-              Get a Free Quote
-            </a>
-            <a href="gallery.html" class="btn btn-ghost">See Installs</a>
+      <div class="section-label fade-in">Get In Touch</div>
+      <h1 class="section-title fade-in fade-delay-1" style="font-size:clamp(2.2rem,5vw,3.5rem);">Let's Talk About Your Home.</h1>
+      <p class="section-sub fade-in fade-delay-1">Fill out the form below and we'll follow up with a free, no-pressure quote. Same-day response, most days.</p>
+    </div>
+  </section>
+
+  <!-- ─── CONTACT ──────────────────────────────────────── -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-split">
+
+        <div class="contact-form-card fade-in">
+          <form id="contactForm">
+            <input type="text" id="contactHoneypot" name="company" tabindex="-1" autocomplete="off" />
+            <div class="form-row">
+              <div class="form-field">
+                <label for="cfName">Full Name *</label>
+                <input type="text" id="cfName" required maxlength="199" autocomplete="name" />
+              </div>
+              <div class="form-field">
+                <label for="cfPhone">Phone *</label>
+                <input type="tel" id="cfPhone" required maxlength="39" autocomplete="tel" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="cfEmail">Email *</label>
+                <input type="email" id="cfEmail" required maxlength="319" autocomplete="email" />
+              </div>
+              <div class="form-field">
+                <label for="cfService">Interested In</label>
+                <select id="cfService">
+                  <option value="Permanent Lights">Permanent Roofline Lighting</option>
+                  <option value="Seasonal Lights">Seasonal Christmas Lights</option>
+                  <option value="Both">Both</option>
+                  <option value="Not Sure">Not Sure Yet</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="cfAddress">Address or City *</label>
+              <input type="text" id="cfAddress" required maxlength="299" autocomplete="street-address" placeholder="e.g. South Jordan, UT" />
+            </div>
+            <div class="form-field">
+              <label for="cfMessage">Tell us about your project</label>
+              <textarea id="cfMessage" maxlength="4999" placeholder="Roofline length, home style, timeline, anything else that helps us quote accurately."></textarea>
+            </div>
+            <div class="form-submit-row">
+              <button type="submit" class="btn btn-primary" id="cfSubmitBtn">Send My Request</button>
+              <span class="form-status" id="cfStatus"></span>
+            </div>
+          </form>
+
+          <div class="contact-success" id="contactSuccess">
+            <div class="check-circle">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h3>Got it — thank you!</h3>
+            <p>We'll follow up shortly. If it's urgent, call us at <a href="tel:+13853374144" style="color:var(--accent);">(385) 337-4144</a>.</p>
           </div>
         </div>
-        <div class="hero-media fade-in fade-delay-1">
-          <div class="ba-slider" data-ba-slider>
-            <img class="ba-after" src="Resources/permanent/perm-slider-rainbow2.jpg" alt="Home with rainbow-colored permanent LED roofline lighting" draggable="false">
-            <img class="ba-before" src="Resources/permanent/perm-slider-warmwhite2.jpg" alt="Same home with warm white permanent LED accent lighting" draggable="false">
-            <span class="ba-label ba-label-before">Warm White</span>
-            <span class="ba-label ba-label-after">Full Color</span>
-            <div class="ba-divider"><div class="ba-handle"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4"/></svg></div></div>
+
+        <div class="contact-info fade-in fade-delay-1">
+          <div class="info-card">
+            <h3>Reach Us Directly</h3>
+            <div class="info-row">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <a href="tel:+13853374144">(385) 337-4144</a>
+            </div>
+            <div class="info-row">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a>
+            </div>
+            <div class="info-row">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              <span>South Jordan, Utah 84095 — serving all of Utah</span>
+            </div>
+          </div>
+          <div class="info-card">
+            <h3>What to Expect</h3>
+            <div class="info-row"><span>✦</span><span>Same-day response, most days</span></div>
+            <div class="info-row"><span>✦</span><span>Free on-site consultation, no pressure</span></div>
+            <div class="info-row"><span>✦</span><span>Licensed &amp; insured statewide</span></div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- ─── FEATURES ─────────────────────────────────────── -->
-  <section id="features">
-    <div class="container">
-      <div class="features-header fade-in">
-        <div class="section-label">Why Permanent</div>
-        <h2 class="section-title">One Install. Every Occasion.</h2>
-        <p class="section-sub">Never climb a ladder again. Everything runs from an app on your phone.</p>
       </div>
-      <div class="feature-breakdown">
-        <div class="feat-row fade-in">
-          <div class="feat-num">1</div>
-          <div class="feat-body"><h4>Seamless Install with Color-Matched Tracking</h4><p>Custom color tracks made to match any home's color and blend in seamlessly.</p></div>
-        </div>
-        <div class="feat-row fade-in fade-delay-1">
-          <div class="feat-num">2</div>
-          <div class="feat-body"><h4>Professional App Design</h4><p>No cheap Chinese units that don't work and are a hassle to use.</p></div>
-        </div>
-        <div class="feat-row fade-in fade-delay-2">
-          <div class="feat-num">3</div>
-          <div class="feat-body"><h4>Security Lighting Built In</h4><p>Dedicated white LEDs so the whites are actually white, not a blue-gray.</p></div>
-        </div>
-        <div class="feat-row fade-in fade-delay-3">
-          <div class="feat-num">4</div>
-          <div class="feat-body"><h4>Commercial-Grade Fixtures</h4><p>Backed by a multi-year warranty and built for Utah weather, from summer heat to winter snow.</p></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── OCCASIONS ────────────────────────────────────── -->
-  <section id="occasions">
-    <div class="container">
-      <div class="occasions-header fade-in">
-        <div class="section-label">One System, Every Look</div>
-        <h2 class="section-title">Real Homes, 16 Million Colors.</h2>
-        <p class="section-sub">Same fixtures, same app: change the scene for every holiday and every occasion, all year long.</p>
-      </div>
-      <div class="occasions-grid">
-        <div class="occ-item fade-in">
-          <img src="Resources/permanent/perm-christmas-redgreen.jpg" alt="Home with red, green, and white permanent LED roofline lighting for Christmas">
-          <div class="occ-label">Christmas</div>
-        </div>
-        <div class="occ-item fade-in fade-delay-1">
-          <img src="Resources/permanent/perm-gameday-redblue.jpg" alt="Home with red and blue permanent LED lighting for game day">
-          <div class="occ-label">Game Day</div>
-        </div>
-        <div class="occ-item fade-in fade-delay-2">
-          <img src="Resources/permanent/perm-july4-redwhiteblue2.jpg" alt="Home with red, white, and blue permanent LED lighting for the 4th of July">
-          <div class="occ-label">4th of July</div>
-        </div>
-        <div class="occ-item fade-in">
-          <img src="Resources/permanent/perm-halloween-purpleorange.jpg" alt="Home with purple and orange permanent LED lighting for Halloween">
-          <div class="occ-label">Halloween</div>
-        </div>
-        <div class="occ-item fade-in fade-delay-1">
-          <img src="Resources/permanent/perm-security-white.jpg" alt="Home with bright white permanent LED security lighting">
-          <div class="occ-label">Security Mode</div>
-        </div>
-        <div class="occ-item fade-in fade-delay-2">
-          <img src="Resources/permanent/perm-accent-pergola.jpg" alt="Home with warm white permanent LED accent lighting on a pergola">
-          <div class="occ-label">Everyday Accent</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── SPECS ────────────────────────────────────────── -->
-  <section id="specs">
-    <div class="container">
-      <div class="specs-grid">
-        <div class="spec-card fade-in"><strong>3,500+</strong><span>Lights Placed</span></div>
-        <div class="spec-card fade-in fade-delay-1"><strong>16M+</strong><span>Color Options</span></div>
-        <div class="spec-card fade-in fade-delay-2"><strong>5★</strong><span>Average Rating</span></div>
-        <div class="spec-card fade-in fade-delay-3"><strong>5 yr</strong><span>Fixture Warranty</span></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ─── CTA ──────────────────────────────────────────── -->
-  <section id="perm-cta">
-    <div class="container">
-      <div class="section-label" style="text-align:center;display:block;">Starting at $1,500 Installed</div>
-      <h2 class="section-title" style="text-align:center;">Stop Putting Up Lights Every Year.</h2>
-      <p class="section-sub">Pricing varies by linear footage. Free on-site consultation.</p>
-      <a href="index.html#cta" class="btn btn-primary">Get a Free Quote</a>
     </div>
   </section>
 
@@ -410,12 +388,12 @@
         <div>
           <h4 class="footer-col-title">Service Areas</h4>
           <ul class="footer-links">
-            <li><a href="index.html#cta">All of Utah</a></li>
-            <li><a href="index.html#cta">Salt Lake County</a></li>
-            <li><a href="index.html#cta">Utah County</a></li>
-            <li><a href="index.html#cta">Davis &amp; Weber County</a></li>
-            <li><a href="index.html#cta">South Jordan &amp; Draper</a></li>
-            <li><a href="index.html#cta">St. George &amp; Park City</a></li>
+            <li><a href="contact.html">All of Utah</a></li>
+            <li><a href="contact.html">Salt Lake County</a></li>
+            <li><a href="contact.html">Utah County</a></li>
+            <li><a href="contact.html">Davis &amp; Weber County</a></li>
+            <li><a href="contact.html">South Jordan &amp; Draper</a></li>
+            <li><a href="contact.html">St. George &amp; Park City</a></li>
           </ul>
         </div>
         <div>
@@ -506,11 +484,14 @@
         <div class="dp-tag">Limited August Offer</div>
         <h3>First <strong>5 homeowners</strong> in August get <strong>$600 off</strong></h3>
         <p>Book your permanent lighting install this August and save $600. Only 5 spots available — first come, first served.</p>
-        <a href="index.html#cta" class="btn btn-primary" onclick="document.getElementById('dealPanel').classList.remove('open')">Claim Your Spot</a>
+        <a href="#contact" class="btn btn-primary" onclick="document.getElementById('dealPanel').classList.remove('open')">Claim Your Spot</a>
       </div>
     </div>
   </div>
 
+  <!-- Firebase SDK (compat build) for direct Firestore contact-form writes -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <script>
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
@@ -541,22 +522,6 @@
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.12 });
     fadeEls.forEach(el => observer.observe(el));
-
-    // Before/after slider
-    (function() {
-      document.querySelectorAll('[data-ba-slider]').forEach(slider => {
-        let dragging = false;
-        function setPos(clientX) {
-          const rect = slider.getBoundingClientRect();
-          const pct = Math.max(0, Math.min(100, ((clientX - rect.left) / rect.width) * 100));
-          slider.querySelector('.ba-before').style.clipPath = `inset(0 ${100 - pct}% 0 0)`;
-          slider.querySelector('.ba-divider').style.left = pct + '%';
-        }
-        slider.addEventListener('pointerdown', e => { dragging = true; setPos(e.clientX); e.preventDefault(); });
-        window.addEventListener('pointermove', e => { if (dragging) setPos(e.clientX); });
-        window.addEventListener('pointerup', () => { dragging = false; });
-      });
-    })();
 
     (function() {
       const dealBtn = document.getElementById('dealBadgeBtn');
@@ -613,6 +578,87 @@
       const tBtnMobile = document.getElementById('mobileThemeToggle');
       tBtn && tBtn.addEventListener('click', toggleTheme);
       tBtnMobile && tBtnMobile.addEventListener('click', toggleTheme);
+    })();
+  </script>
+
+  <!-- Contact form submission -->
+  <script>
+    (function() {
+      const firebaseConfig = {
+        apiKey: "AIzaSyAQ7L46n1Nos6nmNcDCAJu8tY1pFdn-zQY",
+        authDomain: "afterglo-website-fbb89.firebaseapp.com",
+        projectId: "afterglo-website-fbb89",
+        storageBucket: "afterglo-website-fbb89.firebasestorage.app",
+        messagingSenderId: "307927449736",
+        appId: "1:307927449736:web:0a44b789fd7cab37d41f3d",
+      };
+      let app;
+      try {
+        app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(firebaseConfig);
+      } catch (e) {
+        app = firebase.apps[0] || null;
+      }
+      const db = app ? firebase.firestore() : null;
+
+      const form = document.getElementById('contactForm');
+      const statusEl = document.getElementById('cfStatus');
+      const submitBtn = document.getElementById('cfSubmitBtn');
+      const successEl = document.getElementById('contactSuccess');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        statusEl.textContent = '';
+        statusEl.className = 'form-status';
+
+        // Honeypot: if filled, silently drop (bot)
+        if (document.getElementById('contactHoneypot').value) {
+          successEl.classList.add('show');
+          form.style.display = 'none';
+          return;
+        }
+
+        const name = document.getElementById('cfName').value.trim();
+        const email = document.getElementById('cfEmail').value.trim();
+        const phone = document.getElementById('cfPhone').value.trim();
+        const address = document.getElementById('cfAddress').value.trim();
+        const interest = document.getElementById('cfService').value;
+        const message = document.getElementById('cfMessage').value.trim();
+
+        if (!name || !email || !phone || !address) {
+          statusEl.textContent = 'Please fill out all required fields.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+          statusEl.textContent = 'Please enter a valid email address.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!db) {
+          statusEl.textContent = 'Something went wrong. Please call or email us directly.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        try {
+          await db.collection('contact_submissions').add({
+            name, email, phone, address, interest, message,
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'new',
+            userAgent: navigator.userAgent.slice(0, 300),
+          });
+          form.style.display = 'none';
+          successEl.classList.add('show');
+        } catch (err) {
+          statusEl.textContent = 'Something went wrong sending your request. Please call or email us directly.';
+          statusEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send My Request';
+        }
+      });
     })();
   </script>
 </body>
