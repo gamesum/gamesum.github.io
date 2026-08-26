@@ -112,7 +112,7 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasOnly([
                         'name','email','phone','address','interest','message',
                         'addressStreet','addressCity','addressState','addressZip',
-                        'submittedAt','status','userAgent'
+                        'marketingOptIn','submittedAt','status','userAgent'
                       ])
                     && request.resource.data.name is string
                     && request.resource.data.name.size() > 0
@@ -131,7 +131,8 @@ service cloud.firestore {
                     && (!('addressStreet' in request.resource.data) || (request.resource.data.addressStreet is string && request.resource.data.addressStreet.size() < 200))
                     && (!('addressCity' in request.resource.data) || (request.resource.data.addressCity is string && request.resource.data.addressCity.size() < 100))
                     && (!('addressState' in request.resource.data) || (request.resource.data.addressState is string && request.resource.data.addressState.size() < 50))
-                    && (!('addressZip' in request.resource.data) || (request.resource.data.addressZip is string && request.resource.data.addressZip.size() < 20));
+                    && (!('addressZip' in request.resource.data) || (request.resource.data.addressZip is string && request.resource.data.addressZip.size() < 20))
+                    && (!('marketingOptIn' in request.resource.data) || request.resource.data.marketingOptIn is bool);
       allow update, delete: if false;
     }
 

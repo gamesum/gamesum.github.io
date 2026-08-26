@@ -56,6 +56,7 @@ exports.onContactSubmissionCreated = functions
     const addressZip = String(data.addressZip || "").slice(0, 20);
     const interest = String(data.interest || "").slice(0, 100);
     const message = String(data.message || "").slice(0, 5000);
+    const marketingOptIn = data.marketingOptIn === true;
     const zapierUrl = ZAPIER_CONTACT_WEBHOOK_URL.value();
     if (zapierUrl && zapierUrl !== "unset") {
         try {
@@ -66,7 +67,7 @@ exports.onContactSubmissionCreated = functions
                     source: "contact form",
                     submissionId, name, email, phone, address,
                     addressStreet, addressCity, addressState, addressZip,
-                    interest, message,
+                    interest, message, marketingOptIn,
                     submittedAt: new Date().toISOString(),
                 }),
             });
