@@ -50,6 +50,10 @@ exports.onContactSubmissionCreated = functions
     const email = String(data.email || "").slice(0, 320);
     const phone = String(data.phone || "").slice(0, 40);
     const address = String(data.address || "").slice(0, 300);
+    const addressStreet = String(data.addressStreet || "").slice(0, 200);
+    const addressCity = String(data.addressCity || "").slice(0, 100);
+    const addressState = String(data.addressState || "").slice(0, 50);
+    const addressZip = String(data.addressZip || "").slice(0, 20);
     const interest = String(data.interest || "").slice(0, 100);
     const message = String(data.message || "").slice(0, 5000);
     const zapierUrl = ZAPIER_CONTACT_WEBHOOK_URL.value();
@@ -60,7 +64,9 @@ exports.onContactSubmissionCreated = functions
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     source: "contact form",
-                    submissionId, name, email, phone, address, interest, message,
+                    submissionId, name, email, phone, address,
+                    addressStreet, addressCity, addressState, addressZip,
+                    interest, message,
                     submittedAt: new Date().toISOString(),
                 }),
             });

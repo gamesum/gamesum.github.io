@@ -89,7 +89,7 @@
     #page-hero .section-sub { max-width: 640px; }
 
     /* ─── CONTACT ──────────────────────────────────────── */
-    #contact { padding: 0 0 96px; }
+    #contact { padding: 32px 0 96px; }
     .contact-split { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: start; }
 
     .contact-form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 40px; }
@@ -607,6 +607,7 @@
 
       function markUnmatched() {
         window.cfAddressMatched = false;
+        window.cfAddressParts = null;
         input.classList.remove('matched');
       }
 
@@ -622,7 +623,7 @@
         if (controller) controller.abort();
         controller = new AbortController();
         try {
-          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&osm_tag=place&limit=6`;
+          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7608&lon=-111.8910&limit=6`;
           const res = await fetch(url, { signal: controller.signal });
           if (!res.ok) return;
           const data = await res.json();
@@ -633,21 +634,32 @@
 
       function renderSuggestions(features) {
         if (!features.length) { box.classList.remove('show'); box.innerHTML = ''; return; }
-        box.innerHTML = features.map(f => {
+        box.innerHTML = features.map((f, i) => {
           const p = f.properties || {};
-          const label = [p.name, p.city || p.county, p.state, p.postcode].filter(Boolean).join(', ');
-          return `<div class="address-suggestion" data-label="${label.replace(/"/g, '&quot;')}">${label}</div>`;
+          const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+          const label = [street, p.city || p.county, p.state, p.postcode].filter(Boolean).join(', ');
+          return `<div class="address-suggestion" data-idx="${i}" data-label="${label.replace(/"/g, '&quot;')}">${label}</div>`;
         }).join('');
         box.classList.add('show');
+        box._features = features;
       }
 
       box.addEventListener('click', (e) => {
         const item = e.target.closest('.address-suggestion');
         if (!item) return;
+        const idx = parseInt(item.getAttribute('data-idx'), 10);
+        const f = (box._features || [])[idx];
+        const p = (f && f.properties) || {};
         input.value = item.getAttribute('data-label');
         box.classList.remove('show');
         box.innerHTML = '';
         window.cfAddressMatched = true;
+        window.cfAddressParts = {
+          street: [p.housenumber, p.street || p.name].filter(Boolean).join(' '),
+          city: p.city || p.county || '',
+          state: p.state || '',
+          zip: p.postcode || '',
+        };
         input.classList.remove('needs-match');
         input.classList.add('matched');
         if (hint) hint.style.display = 'none';
@@ -735,8 +747,13 @@
         submitBtn.textContent = 'Sending…';
 
         try {
+          const parts = window.cfAddressParts || {};
           await db.collection('contact_submissions').add({
             name, email, phone, address, interest, message,
+            addressStreet: (parts.street || '').slice(0, 200),
+            addressCity: (parts.city || '').slice(0, 100),
+            addressState: (parts.state || '').slice(0, 50),
+            addressZip: (parts.zip || '').slice(0, 20),
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),
