@@ -606,7 +606,8 @@
     #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
     @media (max-width: 600px) {
       #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; }
-      #dealBadgeBtn { padding: 12px; border-radius: 50%; }
+      #dealBadgeBtn > span:last-child { display: none; }
+      #dealBadgeBtn { padding: 12px; border-radius: 50%; gap: 0; }
     }
 
     #dealPanel {
