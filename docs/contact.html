@@ -110,6 +110,12 @@
     }
     .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
     .form-field textarea { resize: vertical; min-height: 110px; font-family: 'Inter', sans-serif; }
+    .address-suggestions { position: absolute; top: 100%; left: 0; right: 0; z-index: 20; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; margin-top: 4px; max-height: 220px; overflow-y: auto; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+    .address-suggestions.show { display: block; }
+    .address-suggestion { padding: 10px 14px; font-size: 0.9rem; color: var(--text); cursor: pointer; }
+    .address-suggestion:hover, .address-suggestion.active { background: var(--bg2); color: var(--accent); }
+    #cfAddress.needs-match { border-color: #e5533d; }
+    #cfAddress.matched { border-color: #4caf50; }
     #contactHoneypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
     .form-submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
     .form-status { font-size: 0.85rem; }
@@ -311,9 +317,11 @@
                 <option value="Not Sure">Not Sure Yet</option>
               </select>
             </div>
-            <div class="form-field">
+            <div class="form-field" style="position: relative;">
               <label for="cfAddress">Address or City *</label>
-              <input type="text" id="cfAddress" required maxlength="299" autocomplete="street-address" placeholder="e.g. South Jordan, UT" />
+              <input type="text" id="cfAddress" required maxlength="299" autocomplete="off" placeholder="Start typing and pick a suggestion…" />
+              <div id="cfAddressSuggestions" class="address-suggestions"></div>
+              <span id="cfAddressHint" style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Please select an address from the suggestions.</span>
             </div>
             <div class="form-field">
               <label for="cfMessage">Tell us about your project</label>
@@ -585,6 +593,75 @@
     })();
   </script>
 
+  <!-- Address autocomplete (Photon / komoot.io, no API key required) -->
+  <script>
+    (function() {
+      const input = document.getElementById('cfAddress');
+      const box = document.getElementById('cfAddressSuggestions');
+      const hint = document.getElementById('cfAddressHint');
+      if (!input || !box) return;
+
+      window.cfAddressMatched = false;
+      let debounceTimer;
+      let controller;
+
+      function markUnmatched() {
+        window.cfAddressMatched = false;
+        input.classList.remove('matched');
+      }
+
+      input.addEventListener('input', () => {
+        markUnmatched();
+        clearTimeout(debounceTimer);
+        const q = input.value.trim();
+        if (q.length < 3) { box.classList.remove('show'); box.innerHTML = ''; return; }
+        debounceTimer = setTimeout(() => fetchSuggestions(q), 250);
+      });
+
+      async function fetchSuggestions(q) {
+        if (controller) controller.abort();
+        controller = new AbortController();
+        try {
+          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&osm_tag=place&limit=6`;
+          const res = await fetch(url, { signal: controller.signal });
+          if (!res.ok) return;
+          const data = await res.json();
+          const features = (data.features || []).filter(f => f.properties && f.properties.countrycode === 'US');
+          renderSuggestions(features);
+        } catch (e) { /* aborted or network error — silently ignore, it's a nice-to-have */ }
+      }
+
+      function renderSuggestions(features) {
+        if (!features.length) { box.classList.remove('show'); box.innerHTML = ''; return; }
+        box.innerHTML = features.map(f => {
+          const p = f.properties || {};
+          const label = [p.name, p.city || p.county, p.state, p.postcode].filter(Boolean).join(', ');
+          return `<div class="address-suggestion" data-label="${label.replace(/"/g, '&quot;')}">${label}</div>`;
+        }).join('');
+        box.classList.add('show');
+      }
+
+      box.addEventListener('click', (e) => {
+        const item = e.target.closest('.address-suggestion');
+        if (!item) return;
+        input.value = item.getAttribute('data-label');
+        box.classList.remove('show');
+        box.innerHTML = '';
+        window.cfAddressMatched = true;
+        input.classList.remove('needs-match');
+        input.classList.add('matched');
+        if (hint) hint.style.display = 'none';
+      });
+
+      document.addEventListener('click', (e) => {
+        if (e.target !== input && !box.contains(e.target)) { box.classList.remove('show'); }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') box.classList.remove('show');
+      });
+    })();
+  </script>
+
   <!-- Contact form submission -->
   <script>
     (function() {
@@ -637,6 +714,14 @@
         }
         if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
           statusEl.textContent = 'Please enter a valid email address.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!window.cfAddressMatched) {
+          const addressInput = document.getElementById('cfAddress');
+          addressInput.classList.add('needs-match');
+          addressInput.focus();
+          statusEl.textContent = 'Please select your address from the suggestions list.';
           statusEl.className = 'form-status error';
           return;
         }
