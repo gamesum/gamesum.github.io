@@ -493,11 +493,36 @@
           <p>We do not collect payment card numbers, bank account numbers, or any other financial information directly. See <a href="#stripe">Section 5</a> for how payments are handled.</p>
           <p><strong>Information accessed by the AFTERGLO Android app:</strong></p>
           <ul>
-            <li><strong>Network permissions:</strong> the app declares <code>INTERNET</code>, <code>ACCESS_NETWORK_STATE</code>, <code>ACCESS_WIFI_STATE</code>, <code>CHANGE_NETWORK_STATE</code>, and <code>CHANGE_WIFI_MULTICAST_STATE</code>. These are used to communicate with your AFTERGLO controllers on your local WiFi network and with our backend services. The app does not request location, camera, microphone, contacts, or storage permissions.</li>
+            <li><strong>Network permissions:</strong> the app declares <code>INTERNET</code>, <code>ACCESS_NETWORK_STATE</code>, <code>ACCESS_WIFI_STATE</code>, <code>CHANGE_NETWORK_STATE</code>, and <code>CHANGE_WIFI_MULTICAST_STATE</code>. These are used to communicate with your AFTERGLO controllers on your local WiFi network and with our backend services.</li>
+            <li><strong>Location permission:</strong> the app declares <code>ACCESS_FINE_LOCATION</code> on Android and asks for location while in use on iOS. Both platforms classify the name of the WiFi network your phone is joined to as location data, so this permission is what lets the app show you which network you are on and confirm it matches your controllers. <strong>Your location is never collected, stored, or transmitted.</strong> It is read on your phone and used on your phone. The app does not request camera, microphone, contacts, or storage permissions.</li>
             <li><strong>Local device discovery:</strong> the app uses standard mDNS and UDP broadcast on your local network to find AFTERGLO controllers. This discovery happens entirely on your local WiFi; controller addresses are not transmitted to us.</li>
             <li><strong>Locally stored device list:</strong> the list of controllers you have added (their friendly names, IP addresses, and basic settings) is stored on your device only and is not uploaded to our servers.</li>
             <li><strong>Account and marketplace activity:</strong> when you sign in to the app, the same Firebase backed account, purchase, and download data described above applies.</li>
+            <li><strong>Community preset sharing (optional):</strong> if you choose to share a
+            lighting pattern, we upload that pattern: its name, the author name shown on it, and
+            its colours, effect and speed. It goes to a public collection that every other
+            AFTERGLO user can read. A random identifier created by the app is stored alongside it
+            so that a specific uploader can be blocked or banned if they abuse the feature. That
+            identifier is not a device ID, is not linked to your account or your lights, and is
+            replaced if you reinstall the app. Nothing is uploaded unless you tap to share, and no
+            community content is shown to you until you have accepted the sharing terms.</li>
+            <li><strong>Abuse reports:</strong> if you report a shared pattern, we store which
+            pattern you reported, the reason you chose, and the random identifiers of both the
+            uploader and the reporter. Reports cannot be read back by any app user.</li>
+            <li><strong>AI pattern generation (optional):</strong> if you use the AI feature, the
+            description you type is sent to our service to be turned into a lighting pattern.
+            Nothing else is sent with it: not your location, not your controllers, not your
+            account. We do not use your descriptions to build advertising profiles.</li>
           </ul>
+          <p><strong>Community content moderation.</strong> Patterns shared by users are not
+          reviewed before they appear. Every shared pattern can be reported, and its uploader
+          blocked, from directly within the app in one tap. We review reports and remove content
+          that is offensive, misleading, impersonates another person, or advertises. Uploaders who
+          repeatedly break these terms are banned from sharing, and their existing shares stop
+          being shown to anyone. Shared patterns cannot be edited after upload. To request removal
+          of something you shared, contact us using the details in
+          <a href="#contact">Section 12</a>. Please include the pattern name and roughly when you
+          shared it, as shares are not tied to an account.</p>
         </section>
 
         <section id="how-used">
