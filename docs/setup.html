@@ -453,7 +453,7 @@
           <li><a href="#before">1. Before You Start</a></li>
           <li><a href="#which">2. Which Method Do I Need?</a></li>
           <li><a href="#new">3. Setting Up a New Controller</a></li>
-          <li><a href="#original">4. Setting Up an Original Controller</a></li>
+          <li><a href="#original">4. Setting Up a Legacy Controller</a></li>
           <li><a href="#manual">5. Joining the Setup Network Yourself</a></li>
           <li><a href="#byip">6. Adding a Controller by IP Address</a></li>
           <li><a href="#direct">7. Using Your Lights Away From Home</a></li>
@@ -472,9 +472,10 @@
           <ul>
             <li><strong>Your controller powered on.</strong> Give it about 20 seconds after switching on before you begin.</li>
             <li><strong>Your WiFi password.</strong> The controller joins your home network, so you will be asked for it once.</li>
-            <li><strong>Your phone on 2.4GHz WiFi.</strong> AFTERGLO controllers use 2.4GHz only, which is normal for smart home devices. If your router splits its networks into two names, connect your phone to the 2.4GHz one before you start. If it uses a single name for both, you do not need to do anything.</li>
+            <li><strong>To know which of your networks is 2.4GHz.</strong> AFTERGLO controllers connect to 2.4GHz only, which is normal for smart home devices. If your router uses one name for both bands, there is nothing to think about. If it uses two names, you will need to pick the 2.4GHz one when the app asks which network the lights should join.</li>
           </ul>
           <p><strong>You do not need to join the controller's network yourself.</strong> The app does that part for you. Section 5 covers the manual route for the rare cases where it cannot.</p>
+          <p><strong>It does not matter which band your own phone is on.</strong> Your phone can stay on 5GHz throughout. During setup it joins the controller's own network for a moment, and afterwards a phone on 5GHz and a controller on 2.4GHz are on the same router and can see each other normally. The 2.4GHz requirement applies only to the network you choose for the lights.</p>
         </section>
 
         <section id="which">
@@ -506,10 +507,10 @@
         </section>
 
         <section id="original">
-          <h2>4. Setting Up an Original Controller</h2>
+          <h2>4. Setting Up a Legacy Controller</h2>
           <p>Controllers installed before 2026 broadcast a network called <strong>AG-Setup</strong> rather than AFTERGLO-Setup. The steps are otherwise identical to section 3, and the app tries both automatically, so you do not normally need to know which one you have.</p>
           <p>If you are setting one up by hand, use <strong>AG-Setup</strong> with the password <strong>afterglo</strong>, and open <strong>http://4.3.2.1</strong> in your browser.</p>
-          <p>Once an original controller is on your WiFi, the app can update it to current AFTERGLO firmware. Open the controller in <strong>Setup</strong> and look for the update option. Your WiFi details carry across on their own, so you will not have to set it up again afterwards.</p>
+          <p>Once a legacy controller is on your WiFi, the app can update it to current AFTERGLO firmware. Open the controller in <strong>Setup</strong> and look for the update option. Your WiFi details carry across on their own, so you will not have to set it up again afterwards.</p>
         </section>
 
         <section id="manual">
@@ -520,7 +521,7 @@
             <li>Open your phone's <strong>Settings</strong>, then <strong>WiFi</strong>.</li>
             <li>Join the network called <strong>AFTERGLO-Setup</strong>. The password is <strong>afterglo</strong>. Older controllers use <strong>AG-Setup</strong> with the same password.</li>
             <li>Your phone will warn you that this network has no internet. That is expected. Choose to stay connected.</li>
-            <li>A setup page usually opens on its own. If it does not, open your browser and go to <strong>http://192.168.4.1</strong>, or <strong>http://4.3.2.1</strong> for an original controller.</li>
+            <li>A setup page usually opens on its own. If it does not, open your browser and go to <strong>http://192.168.4.1</strong>, or <strong>http://4.3.2.1</strong> for a legacy controller.</li>
             <li>Pick your home WiFi, enter the password, and save.</li>
             <li>The controller restarts and joins your network. Reconnect your phone to your home WiFi, open the app, and tap <strong>SEARCH NETWORK</strong>.</li>
           </ol>
@@ -566,7 +567,7 @@
           <p>Your phone joined the controller's network, but nothing answered on it. The controller may still be starting up. Wait a few seconds and pull down on the home screen to search again.</p>
 
           <h3>It cannot find my WiFi network in the list</h3>
-          <p>The controller only supports 2.4GHz WiFi, so 5GHz networks will not appear. If your router uses separate names for its 2.4GHz and 5GHz networks, pick the 2.4GHz one. Networks that hide their name will not be listed either, and have to be typed in by hand.</p>
+          <p>The list comes from what your phone can see, which includes 5GHz networks the controller cannot use. If your router uses separate names for its two bands, choose the 2.4GHz one; picking a 5GHz name will look like it worked and then fail to connect. Networks that hide their name do not appear at all and have to be typed in by hand.</p>
 
           <h3>It joins, then drops off a few minutes later</h3>
           <p>This is usually signal strength. Controllers are often installed at the edge of WiFi range, under an eave or in a garage. A mesh point or extender nearer the controller normally solves it.</p>
