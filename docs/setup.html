@@ -5,8 +5,8 @@
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://cdn.jsdelivr.net https://unpkg.com https://cdnjs.cloudflare.com https://js.stripe.com https://apis.google.com https://accounts.google.com https://www.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; media-src 'self' blob: https:; connect-src 'self' https://www.google.com https://www.gstatic.com https://*.googleapis.com https://*.firebaseio.com https://*.cloudfunctions.net https://*.run.app https://firebasestorage.googleapis.com https://api.stripe.com wss://*.firebaseio.com; frame-src https://js.stripe.com https://hooks.stripe.com https://accounts.google.com https://*.firebaseapp.com https://www.google.com https://www.youtube.com https://www.youtube-nocookie.com; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Support | AFTERGLO</title>
-  <meta name="description" content="Get help with AFTERGLO controllers, the AFTERGLO app, and the sequence marketplace. Contact us, browse common questions, or request account changes." />
+  <title>Setting Up Your Controller | AFTERGLO</title>
+  <meta name="description" content="Step by step instructions for connecting an AFTERGLO controller to your WiFi, using every available method, plus what to do when it will not connect." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
@@ -438,8 +438,8 @@
   <div class="legal-hero">
     <div class="container">
       <div class="legal-hero-label">Help</div>
-      <h1>Support</h1>
-      <p class="legal-hero-meta">We aim to respond within 1 business day &nbsp;·&nbsp; Salt Lake City, Utah</p>
+      <h1>Setting Up Your Controller</h1>
+      <p class="legal-hero-meta">Every method, step by step &nbsp;·&nbsp; Most setups take about two minutes</p>
     </div>
   </div>
 
@@ -450,95 +450,150 @@
       <nav class="legal-toc">
         <h3>On this page</h3>
         <ul>
-          <li><a href="#contact">1. Contact Us</a></li>
-          <li><a href="#app">2. AFTERGLO App</a></li>
-          <li><a href="#controllers">3. Controllers &amp; Lights</a></li>
-          <li><a href="#account">4. Account &amp; Purchases</a></li>
-          <li><a href="#privacy">5. Privacy &amp; Data Requests</a></li>
-          <li><a href="#bugs">6. Bugs &amp; Feedback</a></li>
+          <li><a href="#before">1. Before You Start</a></li>
+          <li><a href="#which">2. Which Method Do I Need?</a></li>
+          <li><a href="#new">3. Setting Up a New Controller</a></li>
+          <li><a href="#original">4. Setting Up an Original Controller</a></li>
+          <li><a href="#manual">5. Joining the Setup Network Yourself</a></li>
+          <li><a href="#byip">6. Adding a Controller by IP Address</a></li>
+          <li><a href="#direct">7. Using Your Lights Away From Home</a></li>
+          <li><a href="#more">8. Adding More Controllers</a></li>
+          <li><a href="#trouble">9. When It Will Not Connect</a></li>
+          <li><a href="#help">10. Still Stuck</a></li>
         </ul>
       </nav>
 
       <!-- Body -->
       <div class="legal-body">
 
-        <section id="contact">
-          <h2>1. Contact Us</h2>
-          <p>The fastest way to reach us is email. We read every message and aim to respond within 1 business day; complex issues (refunds, account recovery, sequence file repairs) may take up to 5 business days.</p>
+        <section id="before">
+          <h2>1. Before You Start</h2>
+          <p>You will need three things:</p>
+          <ul>
+            <li><strong>Your controller powered on.</strong> Give it about 20 seconds after switching on before you begin.</li>
+            <li><strong>Your WiFi password.</strong> The controller joins your home network, so you will be asked for it once.</li>
+            <li><strong>Your phone on 2.4GHz WiFi.</strong> AFTERGLO controllers use 2.4GHz only, which is normal for smart home devices. If your router splits its networks into two names, connect your phone to the 2.4GHz one before you start. If it uses a single name for both, you do not need to do anything.</li>
+          </ul>
+          <p><strong>You do not need to join the controller's network yourself.</strong> The app does that part for you. Section 5 covers the manual route for the rare cases where it cannot.</p>
+        </section>
+
+        <section id="which">
+          <h2>2. Which Method Do I Need?</h2>
+          <p>Almost everyone wants section 3. The others exist for specific situations:</p>
+          <ul>
+            <li><strong>A controller you just bought or just reset:</strong> section 3.</li>
+            <li><strong>A controller installed before 2026:</strong> section 4. The app usually detects this on its own.</li>
+            <li><strong>The app cannot join the setup network:</strong> section 5.</li>
+            <li><strong>The controller is already on your WiFi but the app cannot see it:</strong> section 6.</li>
+            <li><strong>Showing your lights off somewhere else, away from their usual WiFi:</strong> section 7.</li>
+          </ul>
+        </section>
+
+        <section id="new">
+          <h2>3. Setting Up a New Controller</h2>
+          <p>This is the normal path, and the one the app will guide you through.</p>
+          <ol>
+            <li>Power the controller on and wait about 20 seconds.</li>
+            <li>Open the AFTERGLO app.</li>
+            <li>Tap <strong>SET UP NEW CONTROLLER</strong>. You will find it on the home screen, and also under <strong>FIND CONTROLLERS</strong>.</li>
+            <li>Your phone will ask permission to join a WiFi network called <strong>AFTERGLO-Setup</strong>. Tap <strong>Connect</strong> or <strong>Allow</strong>.</li>
+            <li>Choose your home WiFi network from the list, and enter its password.</li>
+            <li>Wait while the controller restarts and joins your network. This takes up to a minute.</li>
+            <li>Your lights appear on the home screen. Give the controller a name if you would like one.</li>
+          </ol>
+          <p><strong>About the permission request.</strong> Android asks for location permission before it will let an app join a network. This is an Android rule, not ours: the name of the WiFi network you are near counts as location information. AFTERGLO uses it only to make the connection. Your location is never stored and never sent anywhere.</p>
+          <p><strong>If you have two controllers powered on at once</strong>, they both broadcast the same setup network, and the app connects to whichever is closest. Set them up one at a time: power on the first, set it up, then power on the second.</p>
+        </section>
+
+        <section id="original">
+          <h2>4. Setting Up an Original Controller</h2>
+          <p>Controllers installed before 2026 broadcast a network called <strong>AG-Setup</strong> rather than AFTERGLO-Setup. The steps are otherwise identical to section 3, and the app tries both automatically, so you do not normally need to know which one you have.</p>
+          <p>If you are setting one up by hand, use <strong>AG-Setup</strong> with the password <strong>afterglo</strong>, and open <strong>http://4.3.2.1</strong> in your browser.</p>
+          <p>Once an original controller is on your WiFi, the app can update it to current AFTERGLO firmware. Open the controller in <strong>Setup</strong> and look for the update option. Your WiFi details carry across on their own, so you will not have to set it up again afterwards.</p>
+        </section>
+
+        <section id="manual">
+          <h2>5. Joining the Setup Network Yourself</h2>
+          <p>Use this if the app cannot join the network for you, or if your phone does not support letting apps join networks directly.</p>
+          <ol>
+            <li>Power the controller on and wait about 20 seconds.</li>
+            <li>Open your phone's <strong>Settings</strong>, then <strong>WiFi</strong>.</li>
+            <li>Join the network called <strong>AFTERGLO-Setup</strong>. The password is <strong>afterglo</strong>. Older controllers use <strong>AG-Setup</strong> with the same password.</li>
+            <li>Your phone will warn you that this network has no internet. That is expected. Choose to stay connected.</li>
+            <li>A setup page usually opens on its own. If it does not, open your browser and go to <strong>http://192.168.4.1</strong>, or <strong>http://4.3.2.1</strong> for an original controller.</li>
+            <li>Pick your home WiFi, enter the password, and save.</li>
+            <li>The controller restarts and joins your network. Reconnect your phone to your home WiFi, open the app, and tap <strong>SEARCH NETWORK</strong>.</li>
+          </ol>
+        </section>
+
+        <section id="byip">
+          <h2>6. Adding a Controller by IP Address</h2>
+          <p>Use this when a controller is already on your WiFi but the app cannot find it. Some routers block the automatic discovery that the app relies on, particularly on guest networks or networks with client isolation switched on.</p>
+          <ol>
+            <li>Find the controller's IP address in your router's list of connected devices. It will be named something like <strong>ag-bb3754</strong>.</li>
+            <li>In the app, tap <strong>FIND CONTROLLERS</strong>, then <strong>ADD BY IP</strong>.</li>
+            <li>Type the address, for example <strong>192.168.1.42</strong>, and confirm.</li>
+          </ol>
+          <p>If this works but automatic searching does not, the cause is almost always router settings rather than the controller. Client isolation, AP isolation, and strict guest network modes all prevent devices on the same WiFi from seeing each other.</p>
+        </section>
+
+        <section id="direct">
+          <h2>7. Using Your Lights Away From Home</h2>
+          <p>When a controller cannot reach the WiFi it was set up on, it broadcasts its own network instead. That means you can still drive it with no router involved, which is useful for showing lights off at somebody else's house.</p>
+          <ol>
+            <li>Power the controller on, away from its usual WiFi, and wait about 20 seconds.</li>
+            <li>Open the app and tap <strong>CONNECT DIRECTLY TO LIGHTS</strong>. It is on the home screen when no controllers are found, and inside <strong>FIND CONTROLLERS</strong>.</li>
+            <li>Approve the WiFi request when your phone asks.</li>
+            <li>Your lights appear and you can control them normally.</li>
+          </ol>
+          <p><strong>Your phone will have no internet</strong> while it is connected this way, because the controller is not a router. Rejoin your usual WiFi when you are finished.</p>
+          <p>This only works when the controller genuinely cannot see its saved network. A controller sitting happily on your home WiFi does not broadcast its own network, and does not need to, because the app can already reach it.</p>
+        </section>
+
+        <section id="more">
+          <h2>8. Adding More Controllers</h2>
+          <p>Repeat section 3 for each controller, one at a time. Every controller you add appears on the home screen, and you switch between them by tapping the one you want.</p>
+          <p>Presets, patterns and timers belong to the controller they were set on, not to the app, so each controller keeps its own. That is also why your timers keep running when your phone is switched off or away from home: the controller runs them itself.</p>
+        </section>
+
+        <section id="trouble">
+          <h2>9. When It Will Not Connect</h2>
+
+          <h3>Nothing happens when I tap connect</h3>
+          <p>Your phone cannot see the controller's setup network. Check the controller has power, and that you are within range of it. A controller only broadcasts a setup network when it is new, has been reset, or cannot reach the WiFi it was set up on. One that is already connected to your WiFi will not appear this way.</p>
+
+          <h3>It says it connected, but no lights appear</h3>
+          <p>Your phone joined the controller's network, but nothing answered on it. The controller may still be starting up. Wait a few seconds and pull down on the home screen to search again.</p>
+
+          <h3>It cannot find my WiFi network in the list</h3>
+          <p>The controller only supports 2.4GHz WiFi, so 5GHz networks will not appear. If your router uses separate names for its 2.4GHz and 5GHz networks, pick the 2.4GHz one. Networks that hide their name will not be listed either, and have to be typed in by hand.</p>
+
+          <h3>It joins, then drops off a few minutes later</h3>
+          <p>This is usually signal strength. Controllers are often installed at the edge of WiFi range, under an eave or in a garage. A mesh point or extender nearer the controller normally solves it.</p>
+
+          <h3>The lights flicker</h3>
+          <p>Flickering is nearly always wiring rather than WiFi. The most common causes are a data wire run alongside a power line over a long distance, and a ground return path that goes through the controller instead of back to the power supply. Contact us and we will work through it with you.</p>
+
+          <h3>My timers stopped running</h3>
+          <p>Timers run on the controller and need it to know the time, which it gets from the internet. A controller that has lost internet access keeps its timers but cannot run them accurately. Check it is still connected to your WiFi.</p>
+
+          <h3>I want to start over</h3>
+          <p>Setting a controller up again from scratch is safe. Follow section 3; the new WiFi details replace the old ones.</p>
+        </section>
+
+        <section id="help">
+          <h2>10. Still Stuck</h2>
+          <p>Send us a message and we will help. It speeds things up if you can tell us:</p>
+          <ul>
+            <li>What the app shows on screen, including any error message word for word.</li>
+            <li>Roughly when the controller was installed.</li>
+            <li>Whether the lights come on at all.</li>
+          </ul>
           <ul>
             <li><strong>Email:</strong> <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a></li>
             <li><strong>Phone:</strong> <a href="tel:+13853374144">(385) 337-4144</a> &nbsp;·&nbsp; Salt Lake City, Utah, USA</li>
-            <li><strong>Mailing:</strong> Ward Legacy Group LLC &nbsp;·&nbsp; Salt Lake City, UT</li>
           </ul>
-          <div class="legal-highlight">
-            <p>When emailing about an installation or controller issue, please include your controller's serial number or the device name shown in the app, plus a brief description of what you were doing when the problem appeared. That single piece of context cuts our turnaround in half.</p>
-          </div>
-        </section>
-
-        <section id="app">
-          <h2>2. AFTERGLO App</h2>
-
-          <h3>The app can't find my controller</h3>
-          <p>The app discovers controllers using mDNS and UDP broadcast on your local Wi-Fi. Make sure your phone is on the same Wi-Fi network as the controller (not on cellular and not on a guest network with client isolation enabled). If discovery still fails, you can add a controller manually by its IP address from the device list screen.</p>
-
-          <h3>The controller appears but won't connect</h3>
-          <p>Power-cycle the controller (unplug 10 seconds, plug back in), wait about 30 seconds for it to rejoin Wi-Fi, then refresh the device list. If the issue persists, the controller may be on a different Wi-Fi network than the one you last set up — see the AP-mode reset section on your controller's printed quick-start card.</p>
-
-          <h3>App permissions</h3>
-          <p>The Android app declares only five network permissions (<code>INTERNET</code>, <code>ACCESS_NETWORK_STATE</code>, <code>ACCESS_WIFI_STATE</code>, <code>CHANGE_NETWORK_STATE</code>, <code>CHANGE_WIFI_MULTICAST_STATE</code>). It does not request location, camera, microphone, contacts, or storage. Full details in the <a href="privacy.html#data-collected">Privacy Policy</a>.</p>
-
-          <h3>Updating the app</h3>
-          <p>Updates ship through the Google Play Store. Controllers update separately, over the air, the next time you open the app while connected to your home Wi-Fi.</p>
-        </section>
-
-        <section id="controllers">
-          <h2>3. Controllers &amp; Lights</h2>
-
-          <h3>Lights past a certain count don't turn on</h3>
-          <p>This was a known firmware issue affecting installations with more than ~277 LEDs total on a 350W power supply. Firmware version 3.28.4 (and later) fixes this by automatically detecting and using the full 600W PSU capacity. Update your controller through the app — open the app while connected to your home Wi-Fi and the update will offer itself.</p>
-
-          <h3>Resetting Wi-Fi credentials</h3>
-          <p>Hold the controller's reset button for 10 seconds. The lights will briefly flash to confirm; the controller will then open its own "AFTERGLO Setup" Wi-Fi network. Connect to it from your phone and use the captive portal to rejoin your home Wi-Fi.</p>
-
-          <h3>Brightness seems lower than expected</h3>
-          <p>Each controller has a configurable brightness cap (defaults to 50% to protect both the LEDs and the power supply over long-term use). You can raise it up to 100% from the Advanced Settings in the app's LED tab.</p>
-
-          <h3>Scheduling and timers not firing on time</h3>
-          <p>Make sure the controller has been online for at least one minute since boot — it needs to sync time over NTP before schedules will fire. If you suspect the time zone is wrong, set it explicitly from the AG Connect tab in settings.</p>
-        </section>
-
-        <section id="account">
-          <h2>4. Account &amp; Purchases</h2>
-
-          <h3>I can't sign in</h3>
-          <p>Use the password reset link on the sign-in screen. If you used Google Sign-In, sign in with the same Google account on your phone. Accounts are tied to the email address you registered with; if you registered with a different email than you remember, contact us and we can help locate it.</p>
-
-          <h3>I bought a sequence but it's not showing up</h3>
-          <p>Pull-to-refresh the My Library screen. Purchases usually appear within seconds, but Stripe occasionally takes a couple of minutes to confirm the charge. If it's been more than 10 minutes, forward us the Stripe receipt email and we'll restore the purchase to your library.</p>
-
-          <h3>Refunds</h3>
-          <p>Digital sequence purchases are eligible for refund within 14 days of purchase if the sequence file is corrupted or substantially different from its description. Email us with your receipt and a brief explanation. Refunds are processed through Stripe and typically appear on your card within 5–10 business days.</p>
-
-          <h3>Creator payouts</h3>
-          <p>Creators receive monthly payouts via Stripe Connect. Payouts are issued on the first business day of each month for the previous month's earnings. If a scheduled payout did not arrive, check your Stripe Connect dashboard first for any flagged onboarding steps, then contact us.</p>
-        </section>
-
-        <section id="privacy">
-          <h2>5. Privacy &amp; Data Requests</h2>
-          <p>To access, correct, export, or delete your personal data, see <a href="privacy.html#rights">Section 8 of the Privacy Policy</a> or email us at <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a> with "Privacy Request" in the subject line.</p>
-          <p>Standard response time for privacy requests is within 30 days as described in the policy. We will confirm receipt of your request within 1 business day.</p>
-        </section>
-
-        <section id="bugs">
-          <h2>6. Bugs &amp; Feedback</h2>
-          <p>Found a bug or have a feature suggestion? We genuinely want to hear it — AFTERGLO is built by a small team and most of the recent improvements came directly from customer feedback. Email <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a> with as much detail as you can provide:</p>
-          <ul>
-            <li>What you were trying to do when the issue appeared</li>
-            <li>What actually happened (with a screenshot if applicable)</li>
-            <li>Your controller's firmware version (shown at the bottom of the app's home screen)</li>
-            <li>Your phone's OS version (Android or iOS) and app version</li>
-          </ul>
-          <p>Bug reports go straight to the engineering inbox and typically get a follow-up question or fix ETA within a day or two.</p>
+          <p>See also our <a href="support.html">support page</a>.</p>
         </section>
 
       </div><!-- /legal-body -->
