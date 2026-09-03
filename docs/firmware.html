@@ -103,7 +103,7 @@
     .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 100px; background: rgba(212,164,58,0.1); border: 1px solid rgba(212,164,58,0.3); color: var(--accent); font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px; }
 
     /* ─── FIRMWARE MAIN ──────────────────────────────────── */
-    #firmware-main { padding: 0 0 96px; }
+    #firmware-main { padding: 48px 0 96px; }
     .fw-notice { display: flex; align-items: flex-start; gap: 14px; background: rgba(212,164,58,0.08); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); padding: 18px 22px; margin-bottom: 40px; color: var(--text); font-size: 0.9rem; line-height: 1.6; }
     .fw-notice svg { flex-shrink: 0; margin-top: 2px; color: var(--accent); }
     .fw-notice strong { color: var(--heading); }
@@ -283,14 +283,7 @@
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-7 9 7M5 10v10h14V10"/></svg>
               Roofline
             </button>
-            <button type="button" class="fw-family-btn" data-family="arch">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V11a8 8 0 0116 0v9"/></svg>
-              Arch
-            </button>
-            <button type="button" class="fw-family-btn" data-family="tree">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l4 6h-2.5l3.5 5.5h-3L18 20H6l3-6.5H6l3.5-5.5H7z"/></svg>
-              Tree
-            </button>
+            <!-- Arch and Tree hidden for now — re-add data-family buttons here once those builds are ready to offer. -->
           </div>
 
           <div class="fw-chip-info" id="fwVersionInfo" style="display:none;">
@@ -550,13 +543,13 @@
         manifestFetchFailed = true;
         showNotice("Couldn't reach the firmware server. Try reloading this page in a minute, or email <a href=\"mailto:afterglolights@gmail.com\" style=\"color:var(--accent);\">afterglolights@gmail.com</a>.");
       }
+      selectFamily('roofline'); // only fixture type offered right now — see the picker's HTML comment
     }
     loadManifest();
 
-    familyPicker.addEventListener('click', (e) => {
-      const btn = e.target.closest('.fw-family-btn');
-      if (!btn) return;
-      selectedFamily = btn.dataset.family;
+    function selectFamily(family) {
+      selectedFamily = family;
+      const btn = familyPicker.querySelector(`.fw-family-btn[data-family="${family}"]`);
       familyPicker.querySelectorAll('.fw-family-btn').forEach(b => b.classList.toggle('selected', b === btn));
 
       if (manifestFetchFailed) {
@@ -573,6 +566,12 @@
       flashBtn.disabled = !(serialSupported && secureContext);
       flashBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Connect &amp; Flash Controller';
       downloadBtn.disabled = false;
+    }
+
+    familyPicker.addEventListener('click', (e) => {
+      const btn = e.target.closest('.fw-family-btn');
+      if (!btn) return;
+      selectFamily(btn.dataset.family);
     });
 
     // ─── Fetch + verify the selected build ──────────────────────────────────
