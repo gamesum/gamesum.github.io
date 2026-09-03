@@ -1,60 +1,63 @@
-# Publishing a firmware build
+# How firmware.html gets its firmware
 
-`firmware.html` (served at `afterglolighting.org/firmware.html`) is a
-browser-based flasher built on [ESP Web Tools](https://esphome.github.io/esp-web-tools/)
-v10, wired up and ready — it just doesn't have a real build to install yet.
+`firmware.html` (served at `afterglolighting.org/firmware.html`) does **not**
+host its own firmware binaries. It live-fetches the same manifest the
+AFTERGLO app uses:
 
-## To publish a build
+```
+https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest.json
+```
 
-1. Compile firmware for the AFTERGLO Controller (ESP32-S3).
-2. Drop these four files into `esp32s3/` next to this README:
+That's a static file (not the GitHub API, to avoid rate limits), listing one
+build per fixture family (`tree` / `roofline` / `arch`) with a download URL
+and sha256 hash. Binaries live on GitHub Releases in that same repo.
+**Publishing a new release to `gamesum/firmware-update` is the only thing
+that updates this page** — there is nothing to sync here.
 
-   | File | Flash offset |
-   |---|---|
-   | `bootloader.bin` | `0x0` |
-   | `partitions.bin` | `0x8000` (32768) |
-   | `boot_app0.bin` | `0xe000` (57344) |
-   | `firmware.bin` | `0x10000` (65536) |
+## SHARED CONTRACT — read before changing the manifest shape
 
-   These offsets are already set in `manifest.json` — don't change them
-   unless the partition table changes. **Do not copy an ESP32 (non-S3)
-   bootloader offset here** — ESP32 classic uses `0x1000`, not `0x0`. Mixing
-   these up bricks the board until a full erase.
+This page, `app/lib/data/firmware_update_service.dart` in
+`gamesum/Afterglo-Fable`, and `gamesum/firmware-update`'s manifest itself are
+one contract across three repos. Both consumers expect:
 
-3. Update `manifest.json`'s `"version"` field to the real firmware version.
-4. In `../firmware.html`, find the line:
+```json
+{
+  "version": "1.0.15",
+  "images": {
+    "<family>": {
+      "asset": "afterglo2_<family>.bin",
+      "url": "https://github.com/.../releases/download/.../afterglo2_<family>.bin",
+      "sha256": "...",
+      "size": 763136
+    }
+  }
+}
+```
 
-   ```js
-   const FIRMWARE_PUBLISHED = false;
-   ```
+If you rename a field, add/remove a family key, or change the hash
+algorithm, both consumers break silently until someone notices. Update the
+comments at the top of `firmware.html` and in `firmware_update_service.dart`
+together with any schema change.
 
-   and flip it to `true`. This removes the "not published yet" banner and
-   enables the install button.
-5. Deploy (`firebase deploy --only hosting` from the repo root).
+## What this page does with it
 
-## Firmware prerequisites
+- **Flash from your browser (USB)** — connects over Web Serial (via
+  `esptool-js`), downloads the selected family's binary, verifies its
+  sha256, and writes it to **both** OTA slots (`0x10000` and `0x190000`,
+  per `firmware/partitions_custom.csv` in Afterglo-Fable). Writing both
+  slots means it works regardless of which one is currently active,
+  without needing to read or write the `otadata` partition — see the code
+  comment above `OTA_SLOT_OFFSETS` in `firmware.html` for why. It never
+  touches the bootloader, partition table, NVS, or otadata.
+- **Update over Wi-Fi** — same fetch-and-verify, but since browsers block
+  an HTTPS page from talking to a plain-HTTP address on your LAN (mixed
+  content), it hands the visitor a verified file to upload themselves at
+  their controller's own `/update` page, rather than pushing it directly.
 
-- **Improv Serial**, so the page can read the currently-installed version
-  off the device: add `-D WLED_ENABLE_IMPROV` (or the equivalent for
-  whatever firmware base this ships) to `platformio.ini`'s `build_flags`.
-  `"improv": true` is already set in `manifest.json`.
-- **HTTPS only** — Web Serial refuses to run on a plain HTTP page. This is
-  already satisfied since the whole site is served over HTTPS.
+## Known gap: recovering a bricked controller
 
-## Recommended before a wide rollout
-
-- **Self-host the ESP Web Tools script.** `firmware.html` currently loads
-  `install-button.js` from `unpkg.com`. That's a third-party dependency
-  sitting in the recovery path for a customer with a dead controller.
-  Download the `esp-web-tools` package and its chunk files, drop them under
-  this `firmware/` folder, and change the `<script type="module" src="...">`
-  in `firmware.html` to point at the local copy.
-- **Test "Erase and factory reset"** (the option inside the install
-  dialog) on a deliberately bricked unit before telling customers about it.
-- **Test in Chrome and Edge, Windows and macOS**, and confirm mobile
-  browsers correctly show the "unsupported" message rather than a broken
-  button.
-- If you later need multiple firmware versions selectable in the UI (not
-  just "latest"), that requires a custom flasher built on `esptool-js`
-  directly — `esp-web-install-button` only installs whatever one build its
-  manifest points to.
+There is no "erase and start over" path. That would need a full image
+(bootloader + partition table + app) published somewhere, plus care around
+not clobbering `otadata` inconsistently. Nothing here currently publishes
+that. If a customer's controller won't boot at all, that's a manual/support
+case for now, not something this page can fix.

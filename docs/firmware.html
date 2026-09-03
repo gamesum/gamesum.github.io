@@ -1,3 +1,14 @@
+<!--
+  SHARED CONTRACT — not just this file: the AFTERGLO Flutter app
+  (gamesum/Afterglo-Fable, app/lib/data/firmware_update_service.dart)
+  live-fetches https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest.json
+  as its single source of truth for "what firmware is current," and this
+  page is meant to read the exact same manifest for its browser-based
+  update flow. Same JSON shape (version/images/<family>/{asset,url,sha256,size}),
+  same sha256 verification. If that manifest's schema, field names, or
+  family keys ever change, this page breaks silently until someone checks
+  it — go update the Dart file's comment and this one together.
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -113,17 +124,24 @@
     .fw-status { display: none; align-items: center; gap: 8px; font-size: 0.85rem; border-radius: 8px; padding: 10px 14px; margin-top: 14px; }
     .fw-status.show { display: flex; }
     .fw-status.error { background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.25); }
+    .fw-status.ok { background: rgba(34,197,94,0.1); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
 
-    esp-web-install-button[install-unsupported] { display: block; }
+    .fw-family-picker { display: flex; gap: 10px; flex-wrap: wrap; margin: 18px 0; }
+    .fw-family-btn { display: flex; align-items: center; gap: 8px; padding: 12px 18px; border-radius: 10px; background: var(--bg2); border: 1.5px solid var(--border); color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: border-color 0.2s, color 0.2s, background 0.2s; }
+    .fw-family-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .fw-family-btn.selected { border-color: var(--accent); color: var(--accent); background: rgba(212,164,58,0.1); }
+
+    .progress-wrap { margin-top: 16px; }
+    .progress-label { display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--muted); margin-bottom: 6px; }
+    .progress-bar { height: 8px; border-radius: 4px; background: var(--bg2); overflow: hidden; }
+    .progress-fill { height: 100%; background: var(--accent); border-radius: 4px; transition: width 0.3s ease; width: 0%; }
+
+    .fw-log { margin-top: 14px; max-height: 180px; overflow-y: auto; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-family: 'SFMono-Regular', Consolas, 'Courier New', monospace; font-size: 0.75rem; color: var(--muted); white-space: pre-wrap; }
+    .fw-log .log-ok { color: #22c55e; }
+    .fw-log .log-err { color: #ef4444; }
+
     .fw-unsupported, .fw-not-allowed { display: flex; align-items: flex-start; gap: 10px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25); border-radius: 10px; padding: 14px 16px; font-size: 0.85rem; color: var(--text); line-height: 1.6; }
 
-    .fw-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 0.85rem; }
-    .fw-table th, .fw-table td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); }
-    .fw-table th { color: var(--muted); font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; }
-    .fw-table td { color: var(--text); }
-    .fw-table td:last-child, .fw-table th:last-child { text-align: center; }
-    .fw-check { color: #22c55e; }
-    .fw-cross { color: #ef4444; }
 
     #fw-wifi { margin-bottom: 24px; }
     .fw-wifi-row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
@@ -250,78 +268,90 @@
   <section id="firmware-main">
     <div class="container">
 
-      <div class="fw-notice fade-in" id="fwNotice">
+      <div class="fw-notice fade-in" id="fwNotice" style="display:none;">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        <span><strong>Firmware builds aren't published yet.</strong> This page is wired up and ready to go, but we haven't posted a firmware build for it to install. Check back soon, or reach out at <a href="mailto:afterglolights@gmail.com" style="color:var(--accent);">afterglolights@gmail.com</a> if you need firmware sooner.</span>
+        <span id="fwNoticeText">Couldn't reach the firmware server. Try reloading this page in a minute, or email <a href="mailto:afterglolights@gmail.com" style="color:var(--accent);">afterglolights@gmail.com</a>.</span>
       </div>
 
       <div class="fw-grid">
         <div class="fw-card fade-in">
           <h2>Flash From Your Browser</h2>
-          <p>Plug your controller into this computer with a USB-C cable, click the button below, and select it from the port list. The tool reads your controller's chip automatically and only writes firmware built for it.</p>
+          <p>Pick your fixture type, plug the controller in over USB-C, and flash. We fetch the current build straight from our firmware release feed — the same one the AFTERGLO app checks — and verify it before writing anything.</p>
 
-          <div class="fw-chip-info">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg>
-            <span>Supports the <strong>AFTERGLO Controller (ESP32-S3)</strong> via its native USB-C port.</span>
+          <div class="fw-family-picker" id="fwFamilyPicker">
+            <button type="button" class="fw-family-btn" data-family="roofline">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-7 9 7M5 10v10h14V10"/></svg>
+              Roofline
+            </button>
+            <button type="button" class="fw-family-btn" data-family="arch">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V11a8 8 0 0116 0v9"/></svg>
+              Arch
+            </button>
+            <button type="button" class="fw-family-btn" data-family="tree">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l4 6h-2.5l3.5 5.5h-3L18 20H6l3-6.5H6l3.5-5.5H7z"/></svg>
+              Tree
+            </button>
           </div>
 
-          <esp-web-install-button manifest="firmware/manifest.json" id="fwInstall">
-            <button slot="activate" class="btn btn-primary" id="fwInstallBtn" type="button">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              Connect &amp; Install Firmware
-            </button>
-            <div slot="unsupported" class="fw-unsupported">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span>Your browser doesn't support Web Serial. Use <a href="https://www.google.com/chrome" style="color:var(--accent2);text-decoration:underline;">Google Chrome</a> or <a href="https://www.microsoft.com/edge" style="color:var(--accent2);text-decoration:underline;">Microsoft Edge</a> on a desktop or laptop computer.</span>
-            </div>
-            <div slot="not-allowed" class="fw-not-allowed">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              <span>This page needs to be loaded over HTTPS to flash a device. Try reloading at <strong>https://afterglolighting.org/firmware.html</strong>.</span>
-            </div>
-          </esp-web-install-button>
+          <div class="fw-chip-info" id="fwVersionInfo" style="display:none;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+            <span>Current build: <strong id="fwVersionText">—</strong></span>
+          </div>
 
-          <p class="fw-hint">Choosing "Erase and factory reset" inside the dialog will also clear your Wi-Fi credentials, presets, and pixel layout — only use it to recover a controller that won't boot.</p>
+          <button class="btn btn-primary" id="fwFlashBtn" type="button" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Select a Fixture Type Above
+          </button>
+
+          <div class="fw-unsupported" id="fwUnsupported" style="display:none;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>Your browser doesn't support Web Serial. Use <a href="https://www.google.com/chrome" style="color:var(--accent2);text-decoration:underline;">Google Chrome</a> or <a href="https://www.microsoft.com/edge" style="color:var(--accent2);text-decoration:underline;">Microsoft Edge</a> on a desktop or laptop computer.</span>
+          </div>
+
+          <div class="progress-wrap" id="fwProgressWrap" style="display:none;">
+            <div class="progress-label"><span id="fwProgressLabel">Preparing…</span><span id="fwProgressPct">0%</span></div>
+            <div class="progress-bar"><div class="progress-fill" id="fwProgressFill"></div></div>
+          </div>
+          <div class="fw-log" id="fwLog" style="display:none;"></div>
+
+          <div class="fw-status error" id="fwHashError">This file failed verification and was not flashed. Please try again or contact us.</div>
+          <div class="fw-status ok" id="fwFlashOk">Flash complete — your controller is restarting.</div>
+
+          <p class="fw-hint">This writes to both firmware slots on your controller, so it works no matter which one is currently active. Your Wi-Fi credentials, presets, and pixel layout are untouched — this only replaces the running firmware.</p>
         </div>
 
         <div class="fw-card fade-in fade-delay-1">
-          <h3>What Survives a Flash</h3>
-          <table class="fw-table">
-            <thead>
-              <tr><th>Setting</th><th>Install</th><th>Erase &amp; Reset</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Wi-Fi credentials</td><td class="fw-check">✓</td><td class="fw-cross">✕</td></tr>
-              <tr><td>Presets &amp; schedules</td><td class="fw-check">✓</td><td class="fw-cross">✕</td></tr>
-              <tr><td>Pixel &amp; accent layout</td><td class="fw-check">✓</td><td class="fw-cross">✕</td></tr>
-              <tr><td>Bootloader (can't be overwritten by this tool)</td><td class="fw-check">✓</td><td class="fw-check">✓</td></tr>
-            </tbody>
-          </table>
+          <h3>Prefer Wi-Fi Instead?</h3>
+          <p>If your controller is already online, you can push the same verified build from its own update page instead of using USB. Pick a fixture type above first.</p>
+          <button class="btn btn-ghost" id="fwDownloadBtn" type="button" disabled>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v13m0 0l-4-4m4 4l4-4M4 21h16"/></svg>
+            Download Verified Build
+          </button>
+          <div class="fw-wifi-row">
+            <input type="text" id="fwIpInput" placeholder="Controller IP, e.g. 192.168.1.42" inputmode="numeric" autocomplete="off" />
+            <button class="btn btn-ghost" id="fwWifiBtn" type="button">Open Update Page →</button>
+          </div>
+          <div class="fw-status error" id="fwIpError">Enter a valid IPv4 address, like 192.168.1.42.</div>
+          <p class="fw-hint">Opens <code>http://&lt;your-controller-ip&gt;/update</code> in a new tab, where you upload the file you downloaded above. Your browser will flag it as "not secure" — that's expected, it's a plain HTTP page served by the controller itself on your local network.</p>
         </div>
-      </div>
-
-      <div class="fw-card fade-in" id="fw-wifi">
-        <h3>Update Over Wi-Fi Instead</h3>
-        <p>If your controller is already online and running AFTERGLO firmware, you can push an update from its own web page instead of using USB.</p>
-        <div class="fw-wifi-row">
-          <input type="text" id="fwIpInput" placeholder="Controller IP, e.g. 192.168.1.42" inputmode="numeric" autocomplete="off" />
-          <button class="btn btn-ghost" id="fwWifiBtn" type="button">Open Update Page →</button>
-        </div>
-        <div class="fw-status error" id="fwIpError">Enter a valid IPv4 address, like 192.168.1.42.</div>
-        <p class="fw-hint">This opens <code>http://&lt;your-controller-ip&gt;/update</code> in a new tab. Your browser will flag it as "not secure" since it's a plain HTTP page served by the controller itself on your local network — that's expected.</p>
       </div>
 
       <div class="fw-disclosures fade-in">
         <details>
-          <summary>My controller isn't showing up in the port list</summary>
-          <p>Make sure it's in bootloader mode: hold <strong>BOOT</strong>, press and release <strong>RST</strong>, then release BOOT. Confirm you're using a data-capable USB-C cable — charge-only cables won't show a port. Try a different USB port, and close any other program (like a serial monitor) that might already have the port open.</p>
+          <summary>My controller isn't showing up when I click Connect</summary>
+          <p>Make sure it's plugged in with a data-capable USB-C cable — charge-only cables won't show a port. Try a different USB port, and close any other program (like a serial monitor) that might already have the port open. Some boards need you to hold <strong>BOOT</strong>, press and release <strong>RST</strong>, then release BOOT before they'll appear.</p>
         </details>
         <details>
-          <summary>Is my board supported?</summary>
-          <p>This tool checks your controller's chip automatically and only proceeds if a matching build is available. Right now that's the AFTERGLO Controller (ESP32-S3). If you're on an older or third-party board, this tool isn't for you — reach out to us directly.</p>
+          <summary>How do I find my controller's IP address, for the Wi-Fi option?</summary>
+          <p>Open the AFTERGLO app, tap your controller, and its IP address is shown in its device details. You can also check your Wi-Fi router's connected-devices list for a device named "AFTERGLO" or similar.</p>
         </details>
         <details>
-          <summary>The flash failed partway through — is my controller bricked?</summary>
-          <p>Almost certainly not. The bootloader lives in a protected region of the chip that this tool cannot overwrite. Put the board back into bootloader mode and try again. If it keeps failing, try a different USB cable or port before reaching out to us.</p>
+          <summary>Which fixture type do I pick?</summary>
+          <p>Whichever this specific controller drives: your roofline lighting, an arch, or a tree. If you have more than one controller for different fixtures, you'll need to repeat this for each one.</p>
+        </details>
+        <details>
+          <summary>Will this erase my settings?</summary>
+          <p>No. This only replaces the running application firmware — the same thing the app does when it updates your controller. Wi-Fi credentials, presets, and pixel layout are untouched.</p>
         </details>
       </div>
 
@@ -337,20 +367,20 @@
       </div>
       <div class="faq-list">
         <details class="fade-in">
-          <summary>Will this erase my settings and light sequences?</summary>
-          <p>No, not by default. "Connect &amp; Install Firmware" only writes to the application partition — your Wi-Fi credentials, presets, and pixel layout are untouched. The dialog also offers a full erase option for recovering a controller that won't boot; that option does clear everything.</p>
+          <summary>Is this really the same firmware the app installs?</summary>
+          <p>Yes. This page fetches the exact same release feed the AFTERGLO app checks, so it's never behind. Both check the file's checksum before trusting it.</p>
         </details>
         <details class="fade-in">
-          <summary>I only have Safari or Firefox — can I still update?</summary>
-          <p>Not from this page. The Web Serial API this tool relies on is only available in Chromium-based browsers — <a href="https://www.google.com/chrome">Google Chrome</a> or <a href="https://www.microsoft.com/edge">Microsoft Edge</a> on a desktop or laptop. It isn't available on any mobile browser, including Chrome on Android or iOS. If your controller is already online, use the Over Wi-Fi option above instead.</p>
+          <summary>Why does the Wi-Fi option make me upload the file myself?</summary>
+          <p>Browsers block a secure page like this one from directly talking to a plain, unencrypted address on your home network — that's a security protection, not something we can turn off. Verifying and downloading the file for you is what this page can safely do over Wi-Fi; the last step of handing it to your controller has to happen on your controller's own page. USB skips this entirely since your browser talks straight to the controller.</p>
         </details>
         <details class="fade-in">
-          <summary>Can I flash over Wi-Fi instead of USB?</summary>
-          <p>Yes — once your controller is online and running AFTERGLO firmware, visit <code>http://&lt;controller-ip&gt;/update</code> to upload a firmware file directly from its own built-in updater. See the Over Wi-Fi card above.</p>
+          <summary>Does flashing over USB erase my settings?</summary>
+          <p>No. It only rewrites the two firmware slots your controller boots from — never the bootloader, never your saved settings. Wi-Fi credentials, presets, and pixel layout are stored separately and untouched.</p>
         </details>
         <details class="fade-in">
           <summary>Does this send anything about my controller to AFTERGLO?</summary>
-          <p>No. The connection between your browser and your controller happens directly over USB using the Web Serial API — it never touches our servers. We only serve the static firmware files this page downloads to write to your device.</p>
+          <p>No. This page only downloads a public firmware file and checks its checksum in your browser — it never talks to your controller directly, and we don't learn anything about your device from using it.</p>
         </details>
       </div>
     </div>
@@ -425,31 +455,250 @@
     </div>
   </footer>
 
-  <script type="module" src="https://unpkg.com/esp-web-tools@10/dist/web/install-button.js?module"></script>
-  <script>
-    // Flip to true once real .bin files are published under firmware/esp32s3/
-    // and firmware/manifest.json — see firmware/README.md for the checklist.
-    const FIRMWARE_PUBLISHED = false;
+  <!-- esptool-js from Espressif (official Web Serial flasher library) -->
+  <script src="https://unpkg.com/esptool-js@0.4.3/bundle.js"
+          integrity="sha384-iwW6H8CGiBQVAcwhyjSlLPkKyTve/uDWfHKRp4aCn6vAPnblp2erU5xjmzU5gHaz"
+          crossorigin="anonymous"></script>
+  <!-- CryptoJS, needed internally by esptool-js's write_flash (MD5 per block) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"
+          integrity="sha384-mgWScxWVKP8F7PBbpNp7i/aSb17kN0LcifBpahAplF3Mn0GR4/u1oMpWIm2rD8yY"
+          crossorigin="anonymous"></script>
 
-    if (!FIRMWARE_PUBLISHED) {
-      const btn = document.getElementById('fwInstallBtn');
-      if (btn) { btn.disabled = true; btn.setAttribute('aria-disabled', 'true'); }
-    } else {
-      document.getElementById('fwNotice')?.remove();
+  <script>
+    // ─── Live firmware manifest ─────────────────────────────────────────────
+    // See the SHARED CONTRACT comment at the top of this file: this must stay
+    // in sync with app/lib/data/firmware_update_service.dart in
+    // gamesum/Afterglo-Fable.
+    const MANIFEST_URL = 'https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest.json';
+
+    // Dual-OTA-slot offsets from firmware/partitions_custom.csv (Afterglo-Fable).
+    // We write the SAME verified image to both app0 and app1 rather than
+    // guessing which slot is currently active — see otadata in that same
+    // partition table. Never touches the bootloader or otadata itself, so a
+    // failed or interrupted write can't leave the board without a bootable
+    // slot: whichever slot isn't mid-write still has its last-known-good copy.
+    // If that partition table ever changes, update these offsets too.
+    const OTA_SLOT_OFFSETS = [0x10000, 0x190000];
+
+    let manifest = null;
+    let manifestFetchFailed = false;
+    let selectedFamily = null;
+    let verifiedImage = null; // { bytes: Uint8Array, family, version, assetName }
+    let isBusy = false;
+
+    const familyPicker = document.getElementById('fwFamilyPicker');
+    const versionInfo = document.getElementById('fwVersionInfo');
+    const versionText = document.getElementById('fwVersionText');
+    const flashBtn = document.getElementById('fwFlashBtn');
+    const downloadBtn = document.getElementById('fwDownloadBtn');
+    const unsupportedBox = document.getElementById('fwUnsupported');
+    const fwNotice = document.getElementById('fwNotice');
+    const fwNoticeText = document.getElementById('fwNoticeText');
+    const hashError = document.getElementById('fwHashError');
+    const flashOk = document.getElementById('fwFlashOk');
+    const progressWrap = document.getElementById('fwProgressWrap');
+    const progressLabel = document.getElementById('fwProgressLabel');
+    const progressPct = document.getElementById('fwProgressPct');
+    const progressFill = document.getElementById('fwProgressFill');
+    const logBox = document.getElementById('fwLog');
+
+    const serialSupported = 'serial' in navigator;
+    const secureContext = window.isSecureContext;
+    if (!serialSupported || !secureContext) {
+      unsupportedBox.style.display = 'flex';
+      flashBtn.disabled = true;
     }
 
-    // ─── Over Wi-Fi ──────────────────────────────────────────
+    function setProgress(label, pct) {
+      progressWrap.style.display = 'block';
+      progressLabel.textContent = label;
+      progressPct.textContent = `${pct}%`;
+      progressFill.style.width = `${pct}%`;
+    }
+    function log(msg, cls) {
+      logBox.style.display = 'block';
+      const span = document.createElement('span');
+      if (cls) span.className = `log-${cls}`;
+      span.textContent = msg + '\n';
+      logBox.appendChild(span);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+    function showNotice(text) {
+      fwNoticeText.innerHTML = text;
+      fwNotice.style.display = 'flex';
+    }
+
+    async function hex(buf) {
+      const digest = await crypto.subtle.digest('SHA-256', buf);
+      return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    function bufToBinaryString(buf) {
+      const bytes = new Uint8Array(buf);
+      let s = '';
+      for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+      return s;
+    }
+
+    // ─── Manifest + family selection ────────────────────────────────────────
+    async function loadManifest() {
+      try {
+        const res = await fetch(MANIFEST_URL, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        manifest = await res.json();
+      } catch (err) {
+        manifestFetchFailed = true;
+        showNotice("Couldn't reach the firmware server. Try reloading this page in a minute, or email <a href=\"mailto:afterglolights@gmail.com\" style=\"color:var(--accent);\">afterglolights@gmail.com</a>.");
+      }
+    }
+    loadManifest();
+
+    familyPicker.addEventListener('click', (e) => {
+      const btn = e.target.closest('.fw-family-btn');
+      if (!btn) return;
+      selectedFamily = btn.dataset.family;
+      familyPicker.querySelectorAll('.fw-family-btn').forEach(b => b.classList.toggle('selected', b === btn));
+
+      if (manifestFetchFailed) {
+        flashBtn.textContent = 'Firmware Server Unreachable';
+        return;
+      }
+      if (!manifest || !manifest.images || !manifest.images[selectedFamily]) {
+        flashBtn.disabled = true;
+        flashBtn.textContent = 'No Build Available for This Fixture';
+        return;
+      }
+      versionInfo.style.display = 'flex';
+      versionText.textContent = `v${manifest.version} — ${selectedFamily}`;
+      flashBtn.disabled = !(serialSupported && secureContext);
+      flashBtn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg> Connect &amp; Flash Controller';
+      downloadBtn.disabled = false;
+    });
+
+    // ─── Fetch + verify the selected build ──────────────────────────────────
+    async function fetchAndVerify() {
+      hashError.classList.remove('show');
+      const image = manifest.images[selectedFamily];
+      log(`Downloading ${image.asset}…`);
+      const res = await fetch(image.url);
+      if (!res.ok) throw new Error(`Download failed: HTTP ${res.status}`);
+      const buf = await res.arrayBuffer();
+
+      log('Verifying checksum…');
+      const gotHash = await hex(buf);
+      if (gotHash !== image.sha256.toLowerCase()) {
+        hashError.classList.add('show');
+        throw new Error('Checksum mismatch — refusing to use this file.');
+      }
+      log(`Verified ✓ (${(buf.byteLength / 1024).toFixed(0)} KB)`, 'ok');
+      return { bytes: buf, family: selectedFamily, version: manifest.version, assetName: image.asset };
+    }
+
+    // ─── USB flash ───────────────────────────────────────────────────────────
+    flashBtn.addEventListener('click', async () => {
+      if (isBusy || !selectedFamily || !manifest) return;
+      isBusy = true;
+      flashBtn.disabled = true;
+      hashError.classList.remove('show');
+      flashOk.classList.remove('show');
+      logBox.innerHTML = '';
+      logBox.style.display = 'block';
+
+      let port;
+      try {
+        setProgress('Verifying build…', 2);
+        verifiedImage = await fetchAndVerify();
+
+        setProgress('Connecting…', 15);
+        port = await navigator.serial.requestPort();
+        await port.open({ baudRate: 115200 });
+
+        const transport = new esptooljs.Transport(port);
+        const loader = new esptooljs.ESPLoader({
+          transport,
+          baudrate: 921600,
+          terminal: { clean() {}, writeLine(l) { log(l); }, write(l) { log(l); } },
+        });
+
+        log('Connecting to bootloader…');
+        const chip = await loader.main();
+        log(`Chip: ${chip}`, 'ok');
+
+        const binaryStr = bufToBinaryString(verifiedImage.bytes);
+        const fileArray = OTA_SLOT_OFFSETS.map(address => ({ data: binaryStr, address }));
+
+        setProgress('Writing firmware to both slots…', 40);
+        await loader.write_flash({
+          fileArray,
+          flash_size: 'keep',
+          flash_mode: 'keep',
+          flash_freq: 'keep',
+          compress: true,
+          reportProgress(fileIndex, written, total) {
+            const perFile = 55 / fileArray.length;
+            const pct = 40 + Math.round(fileIndex * perFile + (written / total) * perFile);
+            setProgress(`Writing slot ${fileIndex + 1} of ${fileArray.length}…`, Math.min(pct, 95));
+          },
+          calculateMD5Hash: str => CryptoJS.MD5(CryptoJS.enc.Latin1.parse(str)).toString(),
+        });
+
+        setProgress('Finishing…', 99);
+        await loader.after_flash(true);
+        setProgress('Complete', 100);
+        log('Flash successful ✓', 'ok');
+
+        await transport.disconnect();
+        try { await port.close(); } catch (_) {}
+
+        flashOk.classList.add('show');
+        flashBtn.innerHTML = '✓ Flashed — Reconnect to Flash Another';
+      } catch (err) {
+        log('ERROR: ' + (err.message || err), 'err');
+        setProgress('Failed', 0);
+        if (port) { try { await port.close(); } catch (_) {} }
+      } finally {
+        isBusy = false;
+        flashBtn.disabled = false;
+      }
+    });
+
+    // ─── Wi-Fi: download the same verified build ────────────────────────────
+    downloadBtn.addEventListener('click', async () => {
+      if (isBusy || !selectedFamily || !manifest) return;
+      isBusy = true;
+      downloadBtn.disabled = true;
+      hashError.classList.remove('show');
+      try {
+        const img = await fetchAndVerify();
+        const blob = new Blob([img.bytes], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = img.assetName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+      } catch (err) {
+        log('ERROR: ' + (err.message || err), 'err');
+      } finally {
+        isBusy = false;
+        downloadBtn.disabled = false;
+      }
+    });
+
+    // ─── Over Wi-Fi: open the controller's own update page ──────────────────
     const IPV4_RE = /^(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)(\.(25[0-5]|2[0-4]\d|1\d{2}|[1-9]?\d)){3}$/;
     const fwWifiBtn = document.getElementById('fwWifiBtn');
     const fwIpInput = document.getElementById('fwIpInput');
     const fwIpError = document.getElementById('fwIpError');
-    fwWifiBtn && fwWifiBtn.addEventListener('click', () => {
+    fwWifiBtn.addEventListener('click', () => {
       const ip = (fwIpInput.value || '').trim();
       if (!IPV4_RE.test(ip)) { fwIpError.classList.add('show'); return; }
       fwIpError.classList.remove('show');
       window.open(`http://${ip}/update`, '_blank', 'noopener');
     });
-    fwIpInput && fwIpInput.addEventListener('input', () => fwIpError.classList.remove('show'));
+    fwIpInput.addEventListener('input', () => fwIpError.classList.remove('show'));
   </script>
 
   <script>
