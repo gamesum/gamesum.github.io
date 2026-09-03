@@ -15,6 +15,10 @@ export { aiAsk } from "./aiAsk";
 // whenever a new lead is written to contact_submissions — see ./contactNotify.ts.
 export { onContactSubmissionCreated } from "./contactNotify";
 
+// Serves controller firmware to docs/firmware.html same-origin, because GitHub
+// release assets can't be fetched cross-origin — see ./firmwareProxy.ts.
+export { firmwareManifest, firmwareBin } from "./firmwareProxy";
+
 admin.initializeApp({
   storageBucket: "afterglo-website-fbb89.firebasestorage.app",
 });

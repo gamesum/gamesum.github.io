@@ -1,12 +1,21 @@
 # How firmware.html gets its firmware
 
 `firmware.html` (served at `afterglolighting.org/firmware.html`) does **not**
-host its own firmware binaries. It live-fetches the same manifest the
-AFTERGLO app uses:
+host its own firmware binaries. It reads the same manifest the AFTERGLO app
+uses, by way of our own backend:
 
 ```
-https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest.json
+browser → /api/firmware/{manifest,bin}   (functions/src/firmwareProxy.ts)
+        → https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest.json
+        → the release asset that manifest points at
 ```
+
+**Why the proxy:** GitHub release-asset downloads redirect to a host that
+sends no `Access-Control-Allow-Origin` header, so a browser `fetch()` from
+our page is blocked outright ("Failed to fetch"). Server-to-server requests
+aren't subject to CORS, so the function fetches it and serves it
+same-origin. The function also verifies the asset's sha256 against the
+manifest before serving, and the page re-checks it before writing.
 
 That's a static file (not the GitHub API, to avoid rate limits), listing one
 build per fixture family (`tree` / `roofline` / `arch`) with a download URL
@@ -49,10 +58,16 @@ together with any schema change.
   without needing to read or write the `otadata` partition — see the code
   comment above `OTA_SLOT_OFFSETS` in `firmware.html` for why. It never
   touches the bootloader, partition table, NVS, or otadata.
-- **Update over Wi-Fi** — same fetch-and-verify, but since browsers block
-  an HTTPS page from talking to a plain-HTTP address on your LAN (mixed
-  content), it hands the visitor a verified file to upload themselves at
-  their controller's own `/update` page, rather than pushing it directly.
+There is deliberately no Wi-Fi/manual-upload path: current controllers no
+longer serve their own HTTP update page, and a browser can't push to a
+plain-HTTP LAN address from an HTTPS page anyway (mixed content). USB is
+the whole flow.
+
+## Offering more fixture families
+
+`ALLOWED_FAMILIES` in `firmwareProxy.ts` already permits roofline, arch,
+and tree. The page only offers roofline — add the other `<option>`s to the
+Device Model `<select>` in `firmware.html` when those builds are ready.
 
 ## Known gap: recovering a bricked controller
 
