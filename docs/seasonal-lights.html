@@ -516,12 +516,12 @@
   </div>
   <div id="dealBackdrop"></div>
   <div id="dealBadge">
-    <button type="button" id="dealBadgeBtn" aria-label="Limited August offer">
+    <button type="button" id="dealBadgeBtn" aria-label="Limited September offer">
       <span class="db-icon">
         <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
       </span>
       <span>
-        <div class="db-label">First 5 in August · $600 Off</div>
+        <div class="db-label">First 5 in September · Free Controller</div>
         <div class="db-time" id="dbTime">00d 00h 00m 00s</div>
         <div class="db-cta">Click here for offer</div>
       </span>
@@ -529,9 +529,9 @@
     <div id="dealPanel">
       <button type="button" class="dp-close" id="dealPanelClose" aria-label="Close">✕</button>
       <div class="dp-body">
-        <div class="dp-tag">Limited August Offer</div>
-        <h3>First <strong>5 homeowners</strong> in August get <strong>$600 off</strong></h3>
-        <p>Book your permanent lighting install this August and save $600. Only 5 spots available: first come, first served.</p>
+        <div class="dp-tag">Limited September Offer</div>
+        <h3>First <strong>5 homeowners</strong> in September get a <strong>free controller</strong></h3>
+        <p>Book your permanent lighting install this September and get a free controller — our single most expensive line item — on us. Only 5 spots available: first come, first served.</p>
         <a href="contact.html" class="btn btn-primary" onclick="document.getElementById('dealPanel').classList.remove('open')">Claim Your Spot</a>
       </div>
     </div>
@@ -594,8 +594,8 @@
       if (dTime) {
         function tick() {
           const now = new Date();
-          let target = new Date(now.getFullYear(), 7, 31, 23, 59, 59, 999);
-          if (now.getTime() >= target.getTime()) target = new Date(now.getFullYear() + 1, 7, 31, 23, 59, 59, 999);
+          let target = new Date(now.getFullYear(), 8, 30, 23, 59, 59, 999);
+          if (now.getTime() >= target.getTime()) target = new Date(now.getFullYear() + 1, 8, 30, 23, 59, 59, 999);
           const diff = Math.max(0, target.getTime() - now.getTime());
           const d = Math.floor(diff / 86400000);
           const h = Math.floor((diff / 3600000) % 24);
