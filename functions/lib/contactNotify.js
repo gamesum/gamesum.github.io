@@ -58,6 +58,12 @@ exports.onContactSubmissionCreated = functions
     const message = String(data.message || "").slice(0, 5000);
     const marketingOptIn = data.marketingOptIn === true;
     const source = String(data.source || "contact form").slice(0, 100);
+    // Ad attribution captured from the landing URL (utm_* / fbclid). Flattened
+    // alongside the raw object because Zapier maps top level fields far more
+    // easily than nested ones, and this is what ties a lead back to the ad
+    // that paid for it.
+    const attribution = data.attribution && typeof data.attribution === "object" ? data.attribution : {};
+    const attr = (k) => String(attribution[k] || "").slice(0, 200);
     const zapierUrl = ZAPIER_CONTACT_WEBHOOK_URL.value();
     if (zapierUrl && zapierUrl !== "unset") {
         try {
@@ -69,6 +75,15 @@ exports.onContactSubmissionCreated = functions
                     submissionId, name, email, phone, address,
                     addressStreet, addressCity, addressState, addressZip,
                     interest, message, marketingOptIn,
+                    utmSource: attr("utm_source"),
+                    utmMedium: attr("utm_medium"),
+                    utmCampaign: attr("utm_campaign"),
+                    utmContent: attr("utm_content"),
+                    utmTerm: attr("utm_term"),
+                    fbclid: attr("fbclid"),
+                    landingPath: attr("landingPath"),
+                    referrer: attr("referrer"),
+                    attribution,
                     submittedAt: new Date().toISOString(),
                 }),
             });

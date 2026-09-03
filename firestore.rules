@@ -112,7 +112,8 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasOnly([
                         'name','email','phone','address','interest','message',
                         'addressStreet','addressCity','addressState','addressZip',
-                        'marketingOptIn','source','submittedAt','status','userAgent'
+                        'marketingOptIn','source','submittedAt','status','userAgent',
+                        'attribution'
                       ])
                     && request.resource.data.name is string
                     && request.resource.data.name.size() > 0
@@ -133,7 +134,11 @@ service cloud.firestore {
                     && (!('addressState' in request.resource.data) || (request.resource.data.addressState is string && request.resource.data.addressState.size() < 50))
                     && (!('addressZip' in request.resource.data) || (request.resource.data.addressZip is string && request.resource.data.addressZip.size() < 20))
                     && (!('marketingOptIn' in request.resource.data) || request.resource.data.marketingOptIn is bool)
-                    && (!('source' in request.resource.data) || request.resource.data.source in ['contact form', 'landing page']);
+                    && (!('source' in request.resource.data) || request.resource.data.source in ['contact form', 'landing page', 'controller upgrade page'])
+                    // Ad attribution (utm_* / fbclid) captured from the landing URL.
+                    // Bounded: a map of short strings, so a crafted URL cannot
+                    // write an unbounded blob into the lead document.
+                    && (!('attribution' in request.resource.data) || (request.resource.data.attribution is map && request.resource.data.attribution.size() < 12));
       allow update, delete: if false;
     }
 
