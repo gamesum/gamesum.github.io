@@ -1,0 +1,17 @@
+{
+  "name": "AFTERGLO Controller Firmware",
+  "version": "unreleased",
+  "new_install_prompt_erase": false,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "improv": true,
+      "parts": [
+        { "path": "esp32s3/bootloader.bin", "offset": 0 },
+        { "path": "esp32s3/partitions.bin", "offset": 32768 },
+        { "path": "esp32s3/boot_app0.bin", "offset": 57344 },
+        { "path": "esp32s3/firmware.bin", "offset": 65536 }
+      ]
+    }
+  ]
+}
