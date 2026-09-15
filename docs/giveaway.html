@@ -261,6 +261,30 @@
     .chip input:checked + span { background: #D4A43A; border-color: #D4A43A; color: #000; }
     .chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 
+    #how-to-enter { padding: 8px 0 8px; }
+    .steps { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+    .step { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .step h3 { font-size: 1rem; color: var(--heading); margin: 14px 0 8px; }
+    .step p { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+    .step-num { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 999px; background: #D4A43A; color: #000; font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 0.95rem; flex-shrink: 0; }
+
+    .prize-card { margin-top: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .prize-card h3 { font-size: 1.05rem; color: var(--heading); margin-bottom: 16px; }
+    .prize-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 32px; }
+    .prize-grid .info-row { margin-bottom: 0; }
+
+    .form-intro { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 26px; padding-bottom: 22px; border-bottom: 1px solid var(--border); }
+    .form-intro h2 { font-size: 1.15rem; color: var(--heading); margin-bottom: 4px; }
+    .form-intro p { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+
+    @media (max-width: 900px) {
+      .steps { grid-template-columns: 1fr 1fr; }
+      .prize-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .steps { grid-template-columns: 1fr; }
+    }
+
     .giveaway-rules { font-size: 0.78rem; line-height: 1.7; color: var(--muted); margin-top: 4px; }
   </style>
 </head>
@@ -315,12 +339,60 @@
     </div>
   </section>
 
+  <!-- ─── HOW TO ENTER ──────────────────────────────────── -->
+  <section id="how-to-enter">
+    <div class="container">
+      <div class="section-label fade-in">How To Enter</div>
+      <h2 class="section-title fade-in" style="font-size:clamp(1.6rem,3.2vw,2.2rem);">Four steps, about a minute.</h2>
+
+      <ol class="steps">
+        <li class="step fade-in">
+          <span class="step-num">1</span>
+          <h3>Follow us</h3>
+          <p>Follow <a href="https://www.instagram.com/afterglo_lighting_co/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">@afterglo_lighting_co</a> on Instagram. We announce the winner there.</p>
+        </li>
+        <li class="step fade-in fade-delay-1">
+          <span class="step-num">2</span>
+          <h3>Tag a friend</h3>
+          <p>Leave a comment on the giveaway post tagging one friend. Each comment is another entry.</p>
+        </li>
+        <li class="step fade-in fade-delay-2">
+          <span class="step-num">3</span>
+          <h3>Share to your story</h3>
+          <p>Optional, but a story share tagging us earns you a bonus entry.</p>
+        </li>
+        <li class="step fade-in fade-delay-3">
+          <span class="step-num">4</span>
+          <h3>Fill out the form</h3>
+          <p>Tell us where the lights would go. This is the entry itself, so do not skip it.</p>
+        </li>
+      </ol>
+
+      <div class="prize-card fade-in">
+        <h3>What the winner gets</h3>
+        <div class="prize-grid">
+          <div class="info-row"><span>✦</span><span>Permanent roofline LED lighting, professionally installed</span></div>
+          <div class="info-row"><span>✦</span><span>App control: millions of colors, patterns, and schedules</span></div>
+          <div class="info-row"><span>✦</span><span>Holiday presets, game day colors, everyday warm white</span></div>
+          <div class="info-row"><span>✦</span><span>Licensed &amp; insured install by our own crew</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── GIVEAWAY ──────────────────────────────────────── -->
   <section id="contact">
     <div class="container">
       <div class="contact-split">
 
         <div class="contact-form-card fade-in">
+          <div class="form-intro">
+            <span class="step-num">4</span>
+            <div>
+              <h2>Your entry</h2>
+              <p>Steps 1 to 3 happen on Instagram. This form is what actually enters you.</p>
+            </div>
+          </div>
           <form id="giveawayForm">
             <input type="text" id="gvHoneypot" name="company" tabindex="-1" autocomplete="off" />
             <div class="form-row">
@@ -431,20 +503,6 @@
         </div>
 
         <div class="contact-info fade-in fade-delay-1">
-          <div class="info-card">
-            <h3>How To Enter</h3>
-            <div class="info-row"><span>✦</span><span>Fill out the form, it takes about a minute</span></div>
-            <div class="info-row"><span>✦</span><span>Follow <a href="https://www.instagram.com/afterglo_lighting_co/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">@afterglo_lighting_co</a></span></div>
-            <div class="info-row"><span>✦</span><span>Tag a friend on the giveaway post</span></div>
-            <div class="info-row"><span>✦</span><span>Share to your story for a bonus entry</span></div>
-          </div>
-          <div class="info-card">
-            <h3>What You Win</h3>
-            <div class="info-row"><span>✦</span><span>Permanent roofline LED lighting, professionally installed</span></div>
-            <div class="info-row"><span>✦</span><span>App control: millions of colors, patterns, and schedules</span></div>
-            <div class="info-row"><span>✦</span><span>Holiday presets, game day colors, everyday warm white</span></div>
-            <div class="info-row"><span>✦</span><span>Licensed &amp; insured install by our own crew</span></div>
-          </div>
           <div class="info-card">
             <h3>Questions?</h3>
             <div class="info-row">
