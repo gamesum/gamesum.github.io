@@ -42,6 +42,7 @@
       "package-lock.json"
     ],
     "rewrites": [
+      { "source": "/giveaway", "destination": "/giveaway.html" },
       { "source": "/api/purchases", "function": "purchases" },
       { "source": "/api/sequences", "function": "sequenceList" },
       { "source": "/api/shows.json", "function": "sequenceList" },
