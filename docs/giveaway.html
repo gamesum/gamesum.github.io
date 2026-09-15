@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>(function(){try{var t=localStorage.getItem('afterglo-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Win Free Permanent Lighting | AFTERGLO Lighting Co.</title>
+  <meta name="description" content="Enter to win a free permanent outdoor LED lighting install from AFTERGLO Lighting Co. Open to Utah homeowners. Roofline lighting you control from your phone." />
+  <link rel="icon" type="image/png" href="afterglo-favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #17171B;
+      --bg2:      #1B1B1F;
+      --bg3:      #232328;
+      --accent:   #D4A43A;
+      --accent2:  #d4a843;
+      --text:     #F2F2F4;
+      --muted:    #ADADB6;
+      --border:   #2E2E34;
+      --radius:   12px;
+      --nav-h:    72px;
+      --heading:  #fff;
+    }
+
+    [data-theme="light"] {
+      --bg:       #FAF8F3;
+      --bg2:      #F6F3EA;
+      --bg3:      #FFFFFF;
+      --accent:   #A8791E;
+      --accent2:  #8f6a17;
+      --text:     #201F1C;
+      --muted:    #6B6659;
+      --border:   #E9E2D0;
+      --heading:  #14130F;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; }
+    section { width: 100%; }
+
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .section-label { display: inline-block; font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; color: var(--heading); margin-bottom: 16px; }
+    .section-sub { font-size: 1.1rem; color: var(--muted); max-width: 560px; line-height: 1.75; }
+
+    .fade-in { opacity: 0; transform: translateY(32px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-delay-1 { transition-delay: 0.1s; }
+
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; border: none; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: #D4A43A; color: #000; box-shadow: 0 4px 16px rgba(212,164,58,0.25); }
+    .btn-primary:hover { background: #F0C04A; box-shadow: 0 6px 20px rgba(212,164,58,0.35); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .btn-ghost { background: transparent; color: var(--text); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ─── NAVBAR ─────────────────────────────────────────────── */
+    #navbar { position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 1000; transition: box-shadow 0.3s; background: #0D1117; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --accent: #D4A43A; --accent2: #d4a843; }
+    #navbar.scrolled { box-shadow: 0 1px 0 var(--border); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: var(--nav-h); }
+    .nav-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; }
+    .nav-logo span { color: var(--accent); text-shadow: 0 0 14px rgba(212,164,58,0.55); }
+    .nav-links { display: flex; align-items: center; gap: 24px; list-style: none; }
+    .nav-links li { white-space: nowrap; }
+    .nav-links a { font-size: 0.9rem; font-weight: 500; color: var(--muted); transition: color 0.2s; text-decoration: none; white-space: nowrap; }
+    .nav-links a:hover { color: var(--heading); }
+    .nav-links a.active { color: var(--accent); }
+    .nav-cta { margin-left: 16px; }
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 10px; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+    .mobile-menu { display: none; position: fixed; top: var(--nav-h); left: 0; right: 0; background: #0D1117; padding: 24px; flex-direction: column; gap: 24px; z-index: 999; border-bottom: 1px solid var(--border); }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--border); min-height: 44px; display: flex; align-items: center; }
+
+    /* ─── PAGE HERO ──────────────────────────────────────── */
+    #page-hero { padding-top: var(--nav-h); min-height: 40vh; display: flex; align-items: center; position: relative; overflow: hidden; }
+    .page-hero-bg { position: absolute; inset: 0; background: radial-gradient(ellipse 80% 60% at 30% 100%, rgba(212,164,58,0.14) 0%, transparent 65%), linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%); }
+    #page-hero .container { position: relative; z-index: 1; padding: 64px 24px 48px; }
+    #page-hero .section-sub { max-width: 640px; }
+
+    /* ─── CONTACT ──────────────────────────────────────── */
+    #contact { padding: 32px 0 96px; }
+    .contact-split { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: start; }
+
+    .contact-form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 20px; padding: 40px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+    .form-row-3 { grid-template-columns: 1.6fr 1fr 1fr; }
+    .form-checkbox-field { margin-bottom: 20px; }
+    .checkbox-label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+    .checkbox-label input[type="checkbox"] { width: 17px; height: 17px; margin-top: 2px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+    .form-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+    .form-field label { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
+    .form-field input, .form-field select, .form-field textarea {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
+    .form-field textarea { resize: vertical; min-height: 110px; font-family: 'Inter', sans-serif; }
+    .address-suggestions { position: absolute; top: 100%; left: 0; right: 0; z-index: 20; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; margin-top: 4px; max-height: 220px; overflow-y: auto; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
+    .address-suggestions.show { display: block; }
+    .address-suggestion { padding: 10px 14px; font-size: 0.9rem; color: var(--text); cursor: pointer; }
+    .address-suggestion:hover, .address-suggestion.active { background: var(--bg2); color: var(--accent); }
+    #contactHoneypot, #gvHoneypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+    .form-submit-row { display: flex; align-items: center; gap: 16px; margin-top: 8px; flex-wrap: wrap; }
+    .form-status { font-size: 0.85rem; }
+    .form-status.error { color: #e5533d; }
+    .form-status.ok { color: #4caf50; }
+
+    .contact-success { display: none; text-align: center; padding: 40px 20px; }
+    .contact-success.show { display: block; }
+    .contact-success .check-circle { width: 64px; height: 64px; margin: 0 auto 20px; border-radius: 50%; background: rgba(212,164,58,0.12); border: 1px solid rgba(212,164,58,0.35); display: flex; align-items: center; justify-content: center; color: var(--accent); }
+    .contact-success h3 { font-size: 1.4rem; color: var(--heading); margin-bottom: 10px; }
+    .contact-success p { color: var(--muted); font-size: 0.95rem; }
+
+    .contact-info { display: flex; flex-direction: column; gap: 24px; }
+    .info-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 16px; padding: 28px; }
+    .info-card h3 { font-size: 1.05rem; color: var(--heading); margin-bottom: 14px; }
+    .info-row { display: flex; align-items: flex-start; gap: 12px; font-size: 0.9rem; color: var(--muted); margin-bottom: 12px; }
+    .info-row:last-child { margin-bottom: 0; }
+    .info-row a { color: var(--muted); transition: color 0.2s; }
+    .info-row a:hover { color: var(--accent); }
+    .info-row svg { flex-shrink: 0; margin-top: 2px; color: var(--accent); }
+
+    @media (max-width: 900px) {
+      .hamburger { display: flex; }
+      .nav-links, .nav-cta { display: none; }
+      .contact-split { grid-template-columns: 1fr; }
+      .contact-form-card { padding: 28px; }
+      .form-row { grid-template-columns: 1fr; gap: 0; }
+      .form-row-3 { grid-template-columns: 1fr; }
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────────── */
+    #footer { background: #0e0e11; border-top: 1px solid var(--border); padding: 64px 0 40px; --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --heading: #fff; --bg3: #232328; --accent: #D4A43A; --accent2: #d4a843; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 56px; }
+    .footer-logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 16px; }
+    .footer-logo span { color: var(--accent); text-shadow: 0 0 14px rgba(212,164,58,0.5); }
+    .footer-desc { font-size: 0.875rem; color: var(--muted); line-height: 1.8; margin-bottom: 24px; max-width: 280px; }
+    .social-links { display: flex; gap: 12px; }
+    .social-link { width: 38px; height: 38px; border-radius: 8px; background: var(--bg3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted); transition: all 0.2s; text-decoration: none; }
+    .social-link:hover { border-color: var(--accent); color: var(--accent); background: rgba(212,164,58,0.08); }
+    .footer-col-title { font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text); margin-bottom: 20px; }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-links a { font-size: 0.875rem; color: var(--muted); transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-contact { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .footer-contact li { font-size: 0.875rem; color: var(--muted); display: flex; gap: 8px; align-items: flex-start; }
+    .footer-contact a { color: var(--muted); transition: color 0.2s; }
+    .footer-contact a:hover { color: var(--accent); }
+    .footer-bottom { padding-top: 32px; border-top: 1px solid var(--border); display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: center; }
+    .footer-copy { font-size: 0.8rem; color: var(--muted); }
+    .footer-legal { display: flex; gap: 24px; }
+    .footer-legal a { font-size: 0.8rem; color: var(--muted); transition: color 0.2s; }
+    .footer-legal a:hover { color: var(--accent); }
+
+    @media (max-width: 900px) {
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .footer-grid > div:first-child { grid-column: span 2; }
+    }
+    @media (max-width: 600px) {
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-grid > div:first-child { grid-column: auto; }
+    }
+
+    /* ─── FLOATING BADGES ─────────────────────────────────────────── */
+    #reviewsBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+    #reviewsBackdrop.open { display:block; }
+    #reviewsWidget { position: fixed; left: 20px; bottom: 20px; z-index: 300; --text: #F2F2F4; --muted: #ADADB6; --accent: #D4A43A; --accent2: #d4a843; --heading: #fff; --border: #2E2E34; --bg2: #1B1B1F; --bg3: #232328; }
+    #reviewsBadgeBtn { display: flex; align-items: center; gap: 16px; background: rgb(15,15,15); backdrop-filter: blur(8px); border: 1px solid rgba(212,164,58,0.35); border-radius: 100px; padding: 18px 28px; font-size: 1.1rem; color: var(--text); box-shadow: 0 8px 24px rgba(0,0,0,0.35); cursor: pointer; font-family: 'Inter', sans-serif; }
+    #reviewsBadgeBtn .rb-google { width: 30px; height: 30px; flex-shrink: 0; display: flex; }
+    #reviewsBadgeBtn .rb-info { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.3; }
+    #reviewsBadgeBtn .rb-stars { color: var(--accent); letter-spacing: 1px; font-size: 1.05rem; }
+    #reviewsBadgeBtn .rb-text { color: var(--muted); font-size: 1rem; }
+    @media (max-width: 640px) { #reviewsBadgeBtn .rb-info { display: none; } #reviewsBadgeBtn { padding: 12px; gap: 0; } }
+    #reviewsPanel { display: none; position: fixed; left: 20px; bottom: 92px; z-index: 301; width: min(360px, calc(100vw - 40px)); max-height: 70vh; background: var(--bg2); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; flex-direction: column; }
+    #reviewsPanel.open { display: flex; }
+    .rp-header { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+    .rp-header .rb-google { display: flex; flex-shrink: 0; }
+    .rp-header h3 { font-family: 'Outfit', sans-serif; font-size: 1.05rem; color: var(--heading); }
+    .rp-header p { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .rp-close { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,0.06); color: var(--muted); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rp-close:hover { color: var(--text); }
+    .rp-body { padding: 14px 18px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .rp-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+    .rp-card .stars { color: var(--accent); font-size: 0.8rem; letter-spacing: 2px; margin-bottom: 6px; }
+    .rp-card p { font-size: 0.85rem; color: var(--text); line-height: 1.6; }
+    .rp-author { margin-top: 8px; font-size: 0.75rem; color: var(--muted); }
+    .rp-author strong { color: var(--text); font-weight: 600; }
+    .rp-footer { padding: 14px 18px; border-top: 1px solid var(--border); text-align: center; flex-shrink: 0; }
+    .rp-footer a { font-size: 0.8rem; color: var(--accent); font-weight: 600; }
+    #dealBackdrop { display:none; position:fixed; inset:0; z-index:299; background:rgba(0,0,0,0.45); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px); }
+    #dealBackdrop.open { display:block; }
+    #dealBadge { position: fixed; right: 20px; bottom: 20px; z-index: 300; --text: #F2F2F4; --muted: #ADADB6; --accent: #D4A43A; --accent2: #d4a843; --heading: #fff; --border: #2E2E34; --bg2: #1B1B1F; --bg3: #232328; }
+    #dealBadgeBtn { display: flex; align-items: center; gap: 18px; background: linear-gradient(rgb(15,15,15), rgb(15,15,15)) padding-box, conic-gradient(from var(--deal-angle, 0deg), transparent 0%, #D4A43A 25%, #FFF3C4 50%, #D4A43A 75%, transparent 100%) border-box; backdrop-filter: blur(8px); border: 3px solid transparent; border-radius: 20px; padding: 18px 26px; cursor: pointer; box-shadow: 0 8px 24px rgba(0,0,0,0.4); font-family: 'Inter', sans-serif; color: var(--text); position: relative; animation: dealBorderSpin 3.5s linear infinite; }
+    @property --deal-angle { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    @keyframes dealBorderSpin { to { --deal-angle: 360deg; } }
+    #dealBadgeBtn .db-icon { width: 54px; height: 54px; border-radius: 50%; background: rgba(212,164,58,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    #dealBadgeBtn .db-label { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); }
+    #dealBadgeBtn .db-time { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 700; color: var(--heading); margin-top: 2px; }
+    #dealBadgeBtn .db-cta { font-size: 0.85rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); margin-top: 4px; }
+    @media (max-width: 600px) { #dealBadgeBtn .db-label, #dealBadgeBtn .db-time, #dealBadgeBtn .db-cta { display: none; } #dealBadgeBtn > span:last-child { display: none; } #dealBadgeBtn { padding: 12px; border-radius: 50%; gap: 0; } }
+    #dealPanel { display: none; position: fixed; right: 20px; bottom: 92px; z-index: 301; width: min(340px, calc(100vw - 40px)); background: var(--bg2); border: 1px solid rgba(212,164,58,0.3); border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); overflow: hidden; }
+    #dealPanel.open { display: block; }
+    #dealPanel .dp-close { position: absolute; right: 10px; top: 10px; width: 28px; height: 28px; border-radius: 50%; background: rgba(0,0,0,0.5); color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    #dealPanel .dp-body { padding: 24px; }
+    #dealPanel .dp-tag { font-size: 0.65rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); }
+    #dealPanel h3 { font-family: 'Outfit', sans-serif; font-size: 1.5rem; color: var(--heading); margin-top: 8px; line-height: 1.25; }
+    #dealPanel h3 strong { color: var(--accent); font-weight: 800; }
+    #dealPanel p { color: var(--muted); font-size: 0.85rem; line-height: 1.6; margin-top: 10px; }
+    #dealPanel .btn { width: 100%; margin-top: 16px; }
+
+    /* ─── THEME TOGGLE ───────────────────────────────────── */
+    .theme-toggle { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); cursor: pointer; flex-shrink: 0; transition: color 0.2s, border-color 0.2s; }
+    .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+    .theme-toggle svg { display: block; }
+    .theme-toggle .tt-moon { display: none; }
+    [data-theme="light"] .theme-toggle .tt-sun { display: none; }
+    [data-theme="light"] .theme-toggle .tt-moon { display: block; }
+    .mobile-theme-toggle { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; font-weight: 500; color: var(--text); padding: 14px 0; border-bottom: 1px solid var(--border); min-height: 44px; background: none; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .mobile-theme-toggle svg { flex-shrink: 0; }
+    .mobile-theme-toggle .tt-moon { display: none; }
+    [data-theme="light"] .mobile-theme-toggle .tt-sun { display: none; }
+    [data-theme="light"] .mobile-theme-toggle .tt-moon { display: block; }
+
+    /* ─── GIVEAWAY ──────────────────────────────────────────── */
+    .roofline { display: block; width: 100%; max-width: 520px; margin: 28px 0 0; overflow: visible; }
+    .bulb { opacity: 0.12; }
+    .lit .bulb { animation: bulbOn 0.35s forwards; animation-delay: calc(var(--i) * 45ms); }
+    @keyframes bulbOn { to { opacity: 1; filter: drop-shadow(0 0 6px currentColor); } }
+    @media (prefers-reduced-motion: reduce) {
+      .bulb { opacity: 1; }
+      .lit .bulb { animation: none; }
+    }
+
+    fieldset.chip-set { border: 0; padding: 0; margin: 0 0 18px; }
+    .chip-set legend { display: block; font-size: 0.85rem; font-weight: 600; color: var(--text); margin-bottom: 10px; padding: 0; }
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chip { position: relative; display: inline-block; }
+    .chip input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; margin: 0; }
+    .chip span { display: block; padding: 9px 16px; border: 1.5px solid var(--border); border-radius: 999px; font-size: 0.9rem; font-weight: 500; color: var(--text); background: var(--bg3); transition: border-color 0.2s, background 0.2s, color 0.2s; }
+    .chip:hover span { border-color: var(--accent); }
+    .chip input:checked + span { background: #D4A43A; border-color: #D4A43A; color: #000; }
+    .chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .giveaway-rules { font-size: 0.78rem; line-height: 1.7; color: var(--muted); margin-top: 4px; }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAVBAR ──────────────────────────────────────────── -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+        <ul class="nav-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="permanent-lights.html">Permanent Lights</a></li>
+          <li><a href="seasonal-lights.html">Seasonal Lights</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="gallery.html">Gallery</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button></li>
+        </ul>
+        <a href="contact.html" class="btn btn-primary nav-cta">Get a Quote</a>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <a href="index.html" onclick="closeMenu()">Home</a>
+      <a href="permanent-lights.html" onclick="closeMenu()">Permanent Lights</a>
+      <a href="seasonal-lights.html" onclick="closeMenu()">Seasonal Lights</a>
+      <a href="about.html" onclick="closeMenu()">About</a>
+      <a href="gallery.html" onclick="closeMenu()">Gallery</a>
+      <a href="contact.html" onclick="closeMenu()">Contact</a>
+      <a href="contact.html" class="btn btn-primary" onclick="closeMenu()">Get a Quote</a>
+      <button type="button" class="mobile-theme-toggle" id="mobileThemeToggle"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><span>Toggle Theme</span></button>
+    </div>
+  </nav>
+
+  <!-- ─── PAGE HERO ─────────────────────────────────────── -->
+  <section id="page-hero">
+    <div class="page-hero-bg"></div>
+    <div class="container">
+      <div class="section-label fade-in">Giveaway</div>
+      <h1 class="section-title fade-in fade-delay-1" style="font-size:clamp(2.2rem,5vw,3.5rem);">Win Free Permanent Lighting.</h1>
+      <p class="section-sub fade-in fade-delay-1">One Utah homeowner gets a full permanent roofline install, on us. Holidays, game days, and everyday accent lighting, all controlled from your phone.</p>
+      <svg class="roofline" id="roofline" viewBox="0 0 520 190" aria-hidden="true">
+        <path d="M40 190V110L150 40l110 70 110-70 110 70v80z" fill="rgba(0,0,0,0.35)"/>
+        <rect x="120" y="130" width="40" height="60" fill="rgba(0,0,0,0.5)"/>
+        <rect x="215" y="128" width="50" height="34" rx="3" fill="rgba(212,164,58,0.18)"/>
+        <rect x="360" y="128" width="50" height="34" rx="3" fill="rgba(212,164,58,0.18)"/>
+        <g id="bulbs"></g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ─── GIVEAWAY ──────────────────────────────────────── -->
+  <section id="contact">
+    <div class="container">
+      <div class="contact-split">
+
+        <div class="contact-form-card fade-in">
+          <form id="giveawayForm">
+            <input type="text" id="gvHoneypot" name="company" tabindex="-1" autocomplete="off" />
+            <div class="form-row">
+              <div class="form-field">
+                <label for="cfFirstName">First Name *</label>
+                <input type="text" id="cfFirstName" required maxlength="99" autocomplete="given-name" />
+              </div>
+              <div class="form-field">
+                <label for="cfLastName">Last Name *</label>
+                <input type="text" id="cfLastName" required maxlength="99" autocomplete="family-name" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-field">
+                <label for="cfPhone">Phone *</label>
+                <input type="tel" id="cfPhone" required maxlength="39" autocomplete="tel" />
+              </div>
+              <div class="form-field">
+                <label for="cfEmail">Email *</label>
+                <input type="email" id="cfEmail" required maxlength="319" autocomplete="email" />
+              </div>
+            </div>
+            <div class="form-field">
+              <label for="gvInstagram">Instagram Handle *</label>
+              <input type="text" id="gvInstagram" required maxlength="60" placeholder="@yourhandle" autocomplete="off" />
+            </div>
+            <div class="form-field" style="position: relative;">
+              <label for="cfAddressSearch">Search Your Address</label>
+              <input type="text" id="cfAddressSearch" maxlength="299" autocomplete="off" placeholder="Start typing to autofill the fields below…" />
+              <div id="cfAddressSuggestions" class="address-suggestions"></div>
+              <span style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Optional: pick a suggestion to autofill the fields below, or just type your address in manually.</span>
+            </div>
+            <div class="form-field">
+              <label for="cfStreet">Street Address *</label>
+              <input type="text" id="cfStreet" required maxlength="200" autocomplete="address-line1" />
+            </div>
+            <div class="form-row form-row-3">
+              <div class="form-field">
+                <label for="cfCity">City *</label>
+                <input type="text" id="cfCity" required maxlength="100" autocomplete="address-level2" />
+              </div>
+              <div class="form-field">
+                <label for="cfState">State *</label>
+                <input type="text" id="cfState" required maxlength="50" value="UT" autocomplete="address-level1" />
+              </div>
+              <div class="form-field">
+                <label for="cfZip">ZIP *</label>
+                <input type="text" id="cfZip" required maxlength="20" autocomplete="postal-code" />
+              </div>
+            </div>
+
+            <fieldset class="form-field chip-set">
+              <legend>Do you own this home? *</legend>
+              <div class="chips">
+                <label class="chip"><input type="radio" name="owner" value="yes" required /><span>Yes</span></label>
+                <label class="chip"><input type="radio" name="owner" value="no" /><span>No, I rent</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-field chip-set">
+              <legend>Home style</legend>
+              <div class="chips">
+                <label class="chip"><input type="radio" name="style" value="single" /><span>Single story</span></label>
+                <label class="chip"><input type="radio" name="style" value="two" /><span>Two story</span></label>
+                <label class="chip"><input type="radio" name="style" value="townhome" /><span>Townhome</span></label>
+                <label class="chip"><input type="radio" name="style" value="other" /><span>Other</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-field chip-set">
+              <legend>What would you light up for?</legend>
+              <div class="chips">
+                <label class="chip"><input type="checkbox" name="uses" value="christmas" /><span>Christmas</span></label>
+                <label class="chip"><input type="checkbox" name="uses" value="halloween" /><span>Halloween</span></label>
+                <label class="chip"><input type="checkbox" name="uses" value="sports" /><span>Game days</span></label>
+                <label class="chip"><input type="checkbox" name="uses" value="everyday" /><span>Everyday accent</span></label>
+                <label class="chip"><input type="checkbox" name="uses" value="parties" /><span>Parties</span></label>
+              </div>
+            </fieldset>
+
+            <fieldset class="form-field chip-set">
+              <legend>If you do not win, want a free quote? *</legend>
+              <div class="chips">
+                <label class="chip"><input type="radio" name="quote" value="yes" required /><span>Yes, reach out</span></label>
+                <label class="chip"><input type="radio" name="quote" value="no" /><span>No thanks</span></label>
+              </div>
+            </fieldset>
+
+            <div class="form-field form-checkbox-field">
+              <label class="checkbox-label">
+                <input type="checkbox" id="gvConsent" required />
+                <span>I agree to the giveaway rules and to be contacted by AFTERGLO Lighting Co. by phone, text, or email. *</span>
+              </label>
+            </div>
+            <div class="form-submit-row">
+              <button type="submit" class="btn btn-primary" id="cfSubmitBtn">Enter the Giveaway</button>
+              <span class="form-status" id="cfStatus"></span>
+            </div>
+          </form>
+
+          <div class="contact-success" id="giveawaySuccess">
+            <div class="check-circle">
+              <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+            </div>
+            <h3>You are entered!</h3>
+            <p>Follow <a href="https://www.instagram.com/afterglo_lighting_co/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">@afterglo_lighting_co</a> and tag a friend on the giveaway post for a bonus entry. We announce the winner on Instagram.</p>
+          </div>
+        </div>
+
+        <div class="contact-info fade-in fade-delay-1">
+          <div class="info-card">
+            <h3>How To Enter</h3>
+            <div class="info-row"><span>✦</span><span>Fill out the form, it takes about a minute</span></div>
+            <div class="info-row"><span>✦</span><span>Follow <a href="https://www.instagram.com/afterglo_lighting_co/" target="_blank" rel="noopener noreferrer" style="color:var(--accent);">@afterglo_lighting_co</a></span></div>
+            <div class="info-row"><span>✦</span><span>Tag a friend on the giveaway post</span></div>
+            <div class="info-row"><span>✦</span><span>Share to your story for a bonus entry</span></div>
+          </div>
+          <div class="info-card">
+            <h3>What You Win</h3>
+            <div class="info-row"><span>✦</span><span>Permanent roofline LED lighting, professionally installed</span></div>
+            <div class="info-row"><span>✦</span><span>App control: millions of colors, patterns, and schedules</span></div>
+            <div class="info-row"><span>✦</span><span>Holiday presets, game day colors, everyday warm white</span></div>
+            <div class="info-row"><span>✦</span><span>Licensed &amp; insured install by our own crew</span></div>
+          </div>
+          <div class="info-card">
+            <h3>Questions?</h3>
+            <div class="info-row">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <a href="tel:+13853374144">(385) 337 4144</a>
+            </div>
+            <div class="info-row">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a>
+            </div>
+          </div>
+          <p class="giveaway-rules">No purchase necessary. One entry per household. Open to Utah homeowners age 18 or older; renters need written owner approval. Prize covers a standard single-family roofline install. Final scope is determined by AFTERGLO Lighting Co. after a site assessment, and any work beyond that scope is quoted at our normal rate. Entries close October 31, 2026. Winner is drawn at random, contacted by phone and email, and announced on Instagram. Install is scheduled subject to weather and access. This giveaway is not sponsored, endorsed, or administered by Instagram or Meta.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ───────────────────────────────────────────── -->
+  <footer id="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">AFTER<span>GLO</span></div>
+          <p class="footer-desc">Utah's premier LED lighting company. We design and install permanent RGBW roofline lighting, traditional C9 Christmas string lights, and full scale music synchronized light shows statewide.</p>
+          <div class="social-links">
+            <a href="https://www.facebook.com/profile.php?id=61593685353953" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+            </a>
+            <a href="https://www.instagram.com/afterglo_lighting_co/?utm_source=ig_web_button_share_sheet" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://g.page/r/CYfi5sRylr0vEBM/review" class="social-link" aria-label="Google" target="_blank" rel="noopener noreferrer">
+              <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </a>
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Services</h4>
+          <ul class="footer-links">
+            <li><a href="permanent-lights.html">Permanent Roofline Lighting</a></li>
+            <li><a href="seasonal-lights.html">Seasonal Christmas Lights</a></li>
+            <li><a href="contact.html">Free Consultation</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Service Areas</h4>
+          <ul class="footer-links">
+            <li><a href="contact.html">All of Utah</a></li>
+            <li><a href="contact.html">Salt Lake County</a></li>
+            <li><a href="contact.html">Utah County</a></li>
+            <li><a href="contact.html">Davis &amp; Weber County</a></li>
+            <li><a href="contact.html">South Jordan &amp; Draper</a></li>
+            <li><a href="contact.html">St. George &amp; Park City</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Contact</h4>
+          <ul class="footer-contact">
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              <a href="tel:+13853374144">(385) 337 4144</a>
+            </li>
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M4 4h16c1.1 0 2 .9 2 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a>
+            </li>
+            <li>
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:2px"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              South Jordan, Utah 84095
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2026 Ward Legacy Group LLC. Afterglo is a division of Ward Legacy Group LLC. Licensed &amp; Insured in Utah.</p>
+        <div class="footer-legal">
+          <a href="privacy.html">Privacy Policy</a>
+          <a href="terms.html">Terms of Service</a>
+          <a href="dmca.html">DMCA</a>
+          <a href="landing.html">Landing Page</a>
+          <a href="firmware.html">Firmware Update</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ─── FLOATING BADGES ─────────────────────────────────────── -->
+  <div id="reviewsBackdrop"></div>
+  <div id="reviewsWidget">
+    <button type="button" id="reviewsBadgeBtn" aria-label="Read our Google reviews">
+      <span class="rb-google"><svg width="26" height="26" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
+      <span class="rb-info">
+        <span class="rb-stars">★★★★★</span>
+        <span class="rb-text">Google Reviews</span>
+      </span>
+    </button>
+    <div id="reviewsPanel">
+      <div class="rp-header">
+        <span class="rb-google"><svg width="22" height="22" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg></span>
+        <div>
+          <h3>Google Reviews</h3>
+          <p>5.0 average rating</p>
+        </div>
+        <button type="button" class="rp-close" id="reviewsPanelClose" aria-label="Close">✕</button>
+      </div>
+      <div class="rp-body">
+        <div class="rp-card">
+          <div class="stars">★★★★★</div>
+          <p>"So impressed with this company! Installers were professional and fun! The system installation is clean. I love how easy the interface is to use and the customization that it allows. We had a small hiccup with using it but the support they offered after installation was top notch!"</p>
+          <div class="rp-author"><strong>Donovan L.</strong> · Google Review</div>
+        </div>
+        <div class="rp-card">
+          <div class="stars">★★★★★</div>
+          <p>"I love this local permanent lighting company. The owner is so friendly. Him and his team got the job done so fast and so efficiently. If you are thinking about getting permanent lights give these local guys a shot, it's worth it."</p>
+          <div class="rp-author"><strong>Brianna L.</strong> · Google Review</div>
+        </div>
+        <div class="rp-card">
+          <div class="stars">★★★★★</div>
+          <p>"This company did an amazing job on our lights. The app is so user friendly and the technician was really great to explain how to use it. Very happy customer!"</p>
+          <div class="rp-author"><strong>Melanie W.</strong> · Google Review · Local Guide</div>
+        </div>
+      </div>
+      <div class="rp-footer">
+        <a href="https://g.page/r/CYfi5sRylr0vEBM/review" target="_blank" rel="noopener noreferrer">See all reviews on Google →</a>
+      </div>
+    </div>
+  </div>
+  <div id="dealBackdrop"></div>
+  <div id="dealBadge">
+    <button type="button" id="dealBadgeBtn" aria-label="Limited September offer">
+      <span class="db-icon">
+        <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3.24L4 3a1 1 0 0 0-1 1l.24 5.59a2 2 0 0 0 .59 1.41l9.58 9.58a2 2 0 0 0 2.83 0l4.35-4.35a2 2 0 0 0 0-2.82z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>
+      </span>
+      <span>
+        <div class="db-label">First 5 in September<br>Get a Free Controller</div>
+        <div class="db-time" id="dbTime">00d 00h 00m 00s</div>
+        <div class="db-cta">Click here for offer</div>
+      </span>
+    </button>
+    <div id="dealPanel">
+      <button type="button" class="dp-close" id="dealPanelClose" aria-label="Close">✕</button>
+      <div class="dp-body">
+        <div class="dp-tag">Limited September Offer</div>
+        <h3>First <strong>5 homeowners</strong> in September get a <strong>free controller</strong></h3>
+        <p>Book your permanent lighting install this September and get a free controller — our single most expensive line item — on us. Only 5 spots available. First come, first served.</p>
+        <a href="#contact" class="btn btn-primary" onclick="document.getElementById('dealPanel').classList.remove('open')">Claim Your Spot</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK (compat build) for direct Firestore contact-form writes -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
+
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    let menuOpen = false;
+    hamburger.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      mobileMenu.classList.toggle('open', menuOpen);
+      const spans = hamburger.querySelectorAll('span');
+      if (menuOpen) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+      }
+    });
+    function closeMenu() {
+      menuOpen = false;
+      mobileMenu.classList.remove('open');
+      hamburger.querySelectorAll('span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+    }
+
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    fadeEls.forEach(el => observer.observe(el));
+
+    (function() {
+      const dealBtn = document.getElementById('dealBadgeBtn');
+      const dealPanel = document.getElementById('dealPanel');
+      const dealClose = document.getElementById('dealPanelClose');
+      const dealBackdrop = document.getElementById('dealBackdrop');
+      if (dealBtn && dealPanel) {
+        dealBtn.addEventListener('click', () => { dealPanel.classList.toggle('open'); dealBackdrop && dealBackdrop.classList.toggle('open'); });
+        dealClose && dealClose.addEventListener('click', () => { dealPanel.classList.remove('open'); dealBackdrop && dealBackdrop.classList.remove('open'); });
+        dealBackdrop && dealBackdrop.addEventListener('click', () => { dealPanel.classList.remove('open'); dealBackdrop.classList.remove('open'); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { dealPanel.classList.remove('open'); dealBackdrop && dealBackdrop.classList.remove('open'); } });
+      }
+
+      const reviewsBtn = document.getElementById('reviewsBadgeBtn');
+      const reviewsPanel = document.getElementById('reviewsPanel');
+      const reviewsClose = document.getElementById('reviewsPanelClose');
+      const reviewsBackdrop = document.getElementById('reviewsBackdrop');
+      if (reviewsBtn && reviewsPanel && reviewsBackdrop) {
+        reviewsBackdrop.addEventListener('click', () => { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); });
+        reviewsBtn.addEventListener('click', () => { reviewsPanel.classList.toggle('open'); reviewsBackdrop.classList.toggle('open'); });
+        reviewsClose && reviewsClose.addEventListener('click', () => { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') { reviewsPanel.classList.remove('open'); reviewsBackdrop.classList.remove('open'); } });
+      }
+      const dTime = document.getElementById('dbTime');
+      if (dTime) {
+        function tick() {
+          const now = new Date();
+          let target = new Date(now.getFullYear(), 8, 30, 23, 59, 59, 999);
+          if (now.getTime() >= target.getTime()) target = new Date(now.getFullYear() + 1, 8, 30, 23, 59, 59, 999);
+          const diff = Math.max(0, target.getTime() - now.getTime());
+          const d = Math.floor(diff / 86400000);
+          const h = Math.floor((diff / 3600000) % 24);
+          const m = Math.floor((diff / 60000) % 60);
+          const s = Math.floor((diff / 1000) % 60);
+          dTime.textContent = `${String(d).padStart(2,'0')}d ${String(h).padStart(2,'0')}h ${String(m).padStart(2,'0')}m ${String(s).padStart(2,'0')}s`;
+        }
+        tick();
+        setInterval(tick, 1000);
+      }
+    })();
+  </script>
+  <script>
+    (function() {
+      const root = document.documentElement;
+      function setTheme(t) {
+        root.setAttribute('data-theme', t);
+        try { localStorage.setItem('afterglo-theme', t); } catch (e) {}
+      }
+      function toggleTheme() {
+        const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        setTheme(next);
+      }
+      const tBtn = document.getElementById('themeToggle');
+      const tBtnMobile = document.getElementById('mobileThemeToggle');
+      tBtn && tBtn.addEventListener('click', toggleTheme);
+      tBtnMobile && tBtnMobile.addEventListener('click', toggleTheme);
+    })();
+  </script>
+
+  <!-- Address autocomplete (Photon / komoot.io, no API key required) — optional recommendation only, fills the street/city/state/zip boxes below -->
+  <script>
+    (function() {
+      const input = document.getElementById('cfAddressSearch');
+      const box = document.getElementById('cfAddressSuggestions');
+      const streetEl = document.getElementById('cfStreet');
+      const cityEl = document.getElementById('cfCity');
+      const stateEl = document.getElementById('cfState');
+      const zipEl = document.getElementById('cfZip');
+      if (!input || !box) return;
+
+      let debounceTimer;
+      let controller;
+
+      input.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const q = input.value.trim();
+        if (q.length < 3) { box.classList.remove('show'); box.innerHTML = ''; return; }
+        debounceTimer = setTimeout(() => fetchSuggestions(q), 250);
+      });
+
+      async function fetchSuggestions(q) {
+        if (controller) controller.abort();
+        controller = new AbortController();
+        try {
+          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7608&lon=-111.8910&limit=8`;
+          const res = await fetch(url, { signal: controller.signal });
+          if (!res.ok) return;
+          const data = await res.json();
+          const features = (data.features || []).filter(f => f.properties);
+          renderSuggestions(features);
+        } catch (e) { /* aborted or network error — it's a nice-to-have, fail silently */ }
+      }
+
+      function renderSuggestions(features) {
+        if (!features.length) { box.classList.remove('show'); box.innerHTML = ''; return; }
+        box.innerHTML = features.map((f, i) => {
+          const p = f.properties || {};
+          const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+          const label = [street, p.city || p.county, p.state, p.postcode, p.country].filter(Boolean).join(', ');
+          return `<div class="address-suggestion" data-idx="${i}" data-label="${label.replace(/"/g, '&quot;')}">${label}</div>`;
+        }).join('');
+        box.classList.add('show');
+        box._features = features;
+      }
+
+      box.addEventListener('click', (e) => {
+        const item = e.target.closest('.address-suggestion');
+        if (!item) return;
+        const idx = parseInt(item.getAttribute('data-idx'), 10);
+        const f = (box._features || [])[idx];
+        const p = (f && f.properties) || {};
+        input.value = item.getAttribute('data-label');
+        box.classList.remove('show');
+        box.innerHTML = '';
+        const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
+        if (streetEl && street) streetEl.value = street;
+        if (cityEl && (p.city || p.county)) cityEl.value = p.city || p.county;
+        if (stateEl && p.state) stateEl.value = p.state;
+        if (zipEl && p.postcode) zipEl.value = p.postcode;
+      });
+
+      document.addEventListener('click', (e) => {
+        if (e.target !== input && !box.contains(e.target)) { box.classList.remove('show'); }
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') box.classList.remove('show');
+      });
+    })();
+  </script>
+
+  <!-- Contact form submission -->
+  <script>
+    // Roofline bulbs: draw along the two gables, then light them in sequence.
+    (function() {
+      const g = document.getElementById('bulbs');
+      if (!g) return;
+      const cols = ['#D4A43A', '#F0C04A', '#FFE9A8', '#D4A43A'];
+      const pts = [[40,110],[150,40],[260,110],[370,40],[480,110]];
+      let i = 0, s = '';
+      for (let k = 0; k < pts.length - 1; k++) {
+        const [x1,y1] = pts[k], [x2,y2] = pts[k+1];
+        for (let t = 0; t < 1; t += 1/9) {
+          const x = x1 + (x2-x1)*t, y = y1 + (y2-y1)*t;
+          s += '<circle class="bulb" style="--i:' + i + '" cx="' + x.toFixed(1) + '" cy="' + (y-3).toFixed(1) + '" r="4.5" fill="' + cols[i%4] + '"/>';
+          i++;
+        }
+      }
+      g.innerHTML = s;
+      requestAnimationFrame(() => document.getElementById('roofline').classList.add('lit'));
+    })();
+  </script>
+
+  <script>
+    (function() {
+      const firebaseConfig = {
+        apiKey: "AIzaSyAQ7L46n1Nos6nmNcDCAJu8tY1pFdn-zQY",
+        authDomain: "afterglo-website-fbb89.firebaseapp.com",
+        projectId: "afterglo-website-fbb89",
+        storageBucket: "afterglo-website-fbb89.firebasestorage.app",
+        messagingSenderId: "307927449736",
+        appId: "1:307927449736:web:0a44b789fd7cab37d41f3d",
+      };
+      let app;
+      try {
+        app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(firebaseConfig);
+      } catch (e) {
+        app = firebase.apps[0] || null;
+      }
+      const db = app ? firebase.firestore() : null;
+
+      const form = document.getElementById('giveawayForm');
+      const statusEl = document.getElementById('cfStatus');
+      const submitBtn = document.getElementById('cfSubmitBtn');
+      const successEl = document.getElementById('giveawaySuccess');
+
+      function checked(name) {
+        const el = form.querySelector('input[name="' + name + '"]:checked');
+        return el ? el.value : '';
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        statusEl.textContent = '';
+        statusEl.className = 'form-status';
+
+        // Honeypot: if filled, silently drop (bot)
+        if (document.getElementById('gvHoneypot').value) {
+          successEl.classList.add('show');
+          form.style.display = 'none';
+          return;
+        }
+
+        const firstName = document.getElementById('cfFirstName').value.trim();
+        const lastName = document.getElementById('cfLastName').value.trim();
+        const name = (firstName + ' ' + lastName).trim();
+        const email = document.getElementById('cfEmail').value.trim();
+        const phoneRaw = document.getElementById('cfPhone').value.trim();
+        const phoneDigits = phoneRaw.replace(/\D/g, '').slice(-10);
+        const instagram = document.getElementById('gvInstagram').value.trim().replace(/^@/, '');
+        const addressStreet = document.getElementById('cfStreet').value.trim();
+        const addressCity = document.getElementById('cfCity').value.trim();
+        const addressState = document.getElementById('cfState').value.trim();
+        const addressZip = document.getElementById('cfZip').value.trim();
+        const address = [addressStreet, addressCity, [addressState, addressZip].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+        const owner = checked('owner');
+        const homeStyle = checked('style');
+        const uses = Array.from(form.querySelectorAll('input[name="uses"]:checked')).map(el => el.value);
+        const wantsQuote = checked('quote') === 'yes';
+        const consent = document.getElementById('gvConsent').checked;
+
+        if (!firstName || !lastName || !email || !phoneRaw || !instagram || !addressStreet || !addressCity || !addressState || !addressZip || !owner || !checked('quote')) {
+          statusEl.textContent = 'Please fill out all required fields.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
+          statusEl.textContent = 'Please enter a valid email address.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (phoneDigits.length !== 10) {
+          statusEl.textContent = 'Please enter a 10 digit phone number.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!consent) {
+          statusEl.textContent = 'Please agree to the giveaway rules to enter.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!db) {
+          statusEl.textContent = 'Something went wrong. Please call or email us directly.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Entering…';
+
+        try {
+          // Phone number is the document id, so the same number cannot enter twice.
+          await db.collection('giveaway_entries').doc(phoneDigits).set({
+            name, email,
+            phone: phoneDigits,
+            instagram: instagram.slice(0, 60),
+            address,
+            addressStreet: addressStreet.slice(0, 200),
+            addressCity: addressCity.slice(0, 100),
+            addressState: addressState.slice(0, 50),
+            addressZip: addressZip.slice(0, 20),
+            owner, homeStyle, uses, wantsQuote, consent,
+            source: 'instagram giveaway',
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'new',
+            userAgent: navigator.userAgent.slice(0, 300),
+          });
+          form.style.display = 'none';
+          successEl.classList.add('show');
+          successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          statusEl.textContent = (err && err.code === 'permission-denied')
+            ? 'That phone number is already entered. One entry per household.'
+            : 'Something went wrong sending your entry. Please call or email us directly.';
+          statusEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Enter the Giveaway';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

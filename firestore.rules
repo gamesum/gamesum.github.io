@@ -142,6 +142,55 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Instagram giveaway entries (docs/giveaway.html).
+    //
+    // The document id IS the entrant's 10-digit phone number, which is what
+    // enforces one entry per household: a second submission from the same
+    // number is an update, and update is denied, so the page reports the
+    // duplicate instead of silently overwriting the first entry.
+    match /giveaway_entries/{phone} {
+      allow read:   if isAdmin();
+      allow create: if phone.matches('^[0-9]{10}$')
+                    && request.resource.data.keys().hasOnly([
+                        'name','email','phone','instagram','address',
+                        'addressStreet','addressCity','addressState','addressZip',
+                        'owner','homeStyle','uses','wantsQuote','consent',
+                        'source','submittedAt','status','userAgent'
+                      ])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() < 200
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() < 320
+                    && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+                    && request.resource.data.phone == phone
+                    && request.resource.data.instagram is string
+                    && request.resource.data.instagram.size() > 0
+                    && request.resource.data.instagram.size() < 61
+                    && request.resource.data.address is string
+                    && request.resource.data.address.size() < 300
+                    && request.resource.data.addressStreet is string
+                    && request.resource.data.addressStreet.size() < 201
+                    && request.resource.data.addressCity is string
+                    && request.resource.data.addressCity.size() < 101
+                    && request.resource.data.addressState is string
+                    && request.resource.data.addressState.size() < 51
+                    && request.resource.data.addressZip is string
+                    && request.resource.data.addressZip.size() < 21
+                    && request.resource.data.owner in ['yes', 'no']
+                    && request.resource.data.homeStyle in ['', 'single', 'two', 'townhome', 'other']
+                    && request.resource.data.uses is list
+                    && request.resource.data.uses.size() < 6
+                    && request.resource.data.wantsQuote is bool
+                    // Consent is not optional: an entry that does not carry it
+                    // is rejected at the database, not just in the form.
+                    && request.resource.data.consent == true
+                    && request.resource.data.source == 'instagram giveaway'
+                    && request.resource.data.status == 'new'
+                    && (!('userAgent' in request.resource.data) || (request.resource.data.userAgent is string && request.resource.data.userAgent.size() < 301));
+      allow update, delete: if false;
+    }
+
     // GDPR/CCPA data requests: requester reads own, admin reads all.
     match /data_requests/{requestId} {
       allow read:  if isAdmin()
