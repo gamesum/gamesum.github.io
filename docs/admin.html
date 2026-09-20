@@ -376,6 +376,7 @@
       <button class="tab-chip" data-tab="disputes">Disputes</button>
       <button class="tab-chip" data-tab="dmca">DMCA</button>
       <button class="tab-chip" data-tab="data-requests">Data Requests</button>
+      <button class="tab-chip" data-tab="giveaway">Giveaway</button>
       <button class="tab-chip" data-tab="feedback">Feedback</button>
       <button class="tab-chip" data-tab="audit">Audit Log</button>
     </div>
@@ -661,6 +662,50 @@
     </section>
 
     <!-- FEEDBACK -->
+    <!-- GIVEAWAY -->
+    <section class="section" id="section-giveaway">
+      <div class="stats-grid" style="margin-bottom:18px;">
+        <div class="stat-card"><div class="label">Total entries</div><div class="value" id="gvTotal">.</div></div>
+        <div class="stat-card"><div class="label">Homeowners (eligible)</div><div class="value gold" id="gvOwners">.</div></div>
+        <div class="stat-card"><div class="label">Want a quote</div><div class="value gold" id="gvQuotes">.</div></div>
+        <div class="stat-card"><div class="label">Last 24 hours</div><div class="value" id="gvToday">.</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Giveaway entries</div>
+          <div class="panel-tools">
+            <div class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="gvSearch" placeholder="Search name, handle, phone, city" autocomplete="off" />
+            </div>
+            <button class="btn btn-sm" id="gvDraw">Draw a winner</button>
+            <button class="btn btn-sm" id="gvExportCsv">Export CSV</button>
+            <button class="btn btn-sm btn-icon" id="refreshGiveaway" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="gvWinner" style="display:none; margin:0 16px 14px; padding:14px 16px; border:1px solid var(--accent); border-radius:10px; background:rgba(212,164,58,0.08);"></div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Entered</th><th>Name</th><th>Instagram</th><th>Phone</th>
+                <th>Email</th><th>Address</th><th>Owner</th><th>Quote</th><th>Uses</th>
+              </tr>
+            </thead>
+            <tbody id="giveawayBody">
+              <tr><td colspan="9" class="empty-row">Loading entries.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- FEEDBACK -->
     <section class="section" id="section-feedback">
       <div class="panel">
         <div class="panel-head">
@@ -922,7 +967,7 @@
 
   /* ─── Load everything on dashboard init ────────────────────────── */
   async function initDashboard() {
-    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadFeedback(), loadAudit()]);
+    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadGiveaway(), loadFeedback(), loadAudit()]);
     renderStats();
     // Deep-link: admin.html#feedback opens the Feedback tab directly.
     if ((window.location.hash || '').toLowerCase() === '#feedback') {
@@ -1699,6 +1744,122 @@
               :                    'pill-pending';
     return '<span class="pill ' + cls + '">' + esc(s) + '</span>';
   }
+
+  /* ─── Giveaway entries ─────────────────────────────────────────── */
+  // Entries are written by docs/giveaway.html. The document id IS the
+  // entrant's 10-digit phone number, which is what enforces one per
+  // household; see the giveaway_entries block in firestore.rules.
+  let giveawayCache = [];
+
+  async function loadGiveaway() {
+    const body = document.getElementById('giveawayBody');
+    if (!body) return;
+    body.innerHTML = '<tr><td colspan="9" class="empty-row">Loading entries.</td></tr>';
+    try {
+      const snap = await fbFirestore.collection('giveaway_entries').orderBy('submittedAt', 'desc').limit(2000).get();
+      giveawayCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      renderGiveaway();
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = '<tr><td colspan="9" class="empty-row">Failed to load entries. ' + esc(err.message || '') + '</td></tr>';
+    }
+  }
+
+  function gvPhone(p) {
+    const d = String(p || '').replace(/\D/g, '');
+    return d.length === 10 ? '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6) : (p || '.');
+  }
+
+  function gvFiltered() {
+    const q = (document.getElementById('gvSearch').value || '').trim().toLowerCase();
+    if (!q) return giveawayCache;
+    return giveawayCache.filter(e =>
+      [e.name, e.instagram, e.phone, e.email, e.addressCity, e.addressStreet, e.addressZip]
+        .join(' ').toLowerCase().indexOf(q) !== -1);
+  }
+
+  function renderGiveaway() {
+    const body = document.getElementById('giveawayBody');
+    if (!body) return;
+
+    const dayAgo = Date.now() / 1000 - 86400;
+    const secs = e => (e.submittedAt && e.submittedAt.seconds) ? e.submittedAt.seconds : 0;
+    document.getElementById('gvTotal').textContent  = giveawayCache.length.toLocaleString();
+    document.getElementById('gvOwners').textContent = giveawayCache.filter(e => e.owner === 'yes').length.toLocaleString();
+    document.getElementById('gvQuotes').textContent = giveawayCache.filter(e => e.wantsQuote).length.toLocaleString();
+    document.getElementById('gvToday').textContent  = giveawayCache.filter(e => secs(e) > dayAgo).length.toLocaleString();
+
+    const rows = gvFiltered();
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="9" class="empty-row">'
+        + (giveawayCache.length ? 'No entries match that search.' : 'No entries yet.') + '</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(e => {
+      const handle = esc(String(e.instagram || '').replace(/^@/, ''));
+      const ownPill = e.owner === 'yes'
+        ? '<span class="pill pill-admin">Owns</span>'
+        : '<span class="pill">Rents</span>';
+      const quotePill = e.wantsQuote
+        ? '<span class="pill pill-admin">Yes</span>'
+        : '<span class="pill">No</span>';
+      return '<tr>'
+        + '<td>' + esc(fmtDate(e.submittedAt)) + '</td>'
+        + '<td>' + esc(e.name) + '</td>'
+        + '<td>' + (handle ? '<a href="https://instagram.com/' + handle + '" target="_blank" rel="noopener noreferrer">@' + handle + '</a>' : '.') + '</td>'
+        + '<td><a href="tel:+1' + esc(e.phone) + '">' + esc(gvPhone(e.phone)) + '</a></td>'
+        + '<td><a href="mailto:' + esc(e.email) + '">' + esc(e.email) + '</a></td>'
+        + '<td><div style="max-width:260px; white-space:normal;">' + esc(e.addressStreet) + '<br><span class="cell-sub">' + esc(e.addressCity) + ', ' + esc(e.addressState) + ' ' + esc(e.addressZip) + '</span></div></td>'
+        + '<td>' + ownPill + '</td>'
+        + '<td>' + quotePill + '</td>'
+        + '<td>' + (esc((e.uses || []).join(', ')) || '.') + '</td>'
+        + '</tr>';
+    }).join('');
+  }
+
+  // Draw from homeowners only: renters are not eligible per the published rules.
+  function gvDrawWinner() {
+    const pool = giveawayCache.filter(e => e.owner === 'yes');
+    const box = document.getElementById('gvWinner');
+    if (!pool.length) { toast('No eligible homeowner entries to draw from.', 'error'); return; }
+    const w = pool[Math.floor(Math.random() * pool.length)];
+    box.style.display = 'block';
+    box.innerHTML = '<strong style="color:var(--accent);">Winner drawn from ' + pool.length + ' eligible homeowners</strong><br>'
+      + esc(w.name) + ' &middot; @' + esc(String(w.instagram || '').replace(/^@/, '')) + ' &middot; ' + esc(gvPhone(w.phone)) + '<br>'
+      + esc(w.addressStreet) + ', ' + esc(w.addressCity) + ', ' + esc(w.addressState) + ' ' + esc(w.addressZip)
+      + '<br><span class="cell-sub">Nothing is saved. Draw again to reroll.</span>';
+    box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function exportGiveawayCsv() {
+    const header = ['submittedAt','name','instagram','phone','email','street','city','state','zip','owner','homeStyle','wantsQuote','uses'];
+    const lines = [header.join(',')];
+    gvFiltered().forEach(e => {
+      const d = (e.submittedAt && typeof e.submittedAt.toDate === 'function')
+        ? e.submittedAt.toDate().toISOString()
+        : (e.submittedAt && e.submittedAt.seconds ? new Date(e.submittedAt.seconds * 1000).toISOString() : '');
+      const row = [d, e.name||'', '@' + String(e.instagram||'').replace(/^@/,''), e.phone||'', e.email||'',
+                   e.addressStreet||'', e.addressCity||'', e.addressState||'', e.addressZip||'',
+                   e.owner === 'yes' ? 'Owns' : 'Rents', e.homeStyle||'',
+                   e.wantsQuote ? 'Yes' : 'No', (e.uses||[]).join('; ')];
+      lines.push(row.map(v => {
+        const t = String(v).replace(/"/g,'""');
+        return /[",\n]/.test(t) ? '"'+t+'"' : t;
+      }).join(','));
+    });
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'afterglo-giveaway-' + new Date().toISOString().slice(0,10) + '.csv';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    toast('Giveaway CSV exported.', 'success');
+  }
+
+  document.getElementById('gvSearch').addEventListener('input', renderGiveaway);
+  document.getElementById('gvDraw').addEventListener('click', gvDrawWinner);
+  document.getElementById('gvExportCsv').addEventListener('click', exportGiveawayCsv);
+  document.getElementById('refreshGiveaway').addEventListener('click', loadGiveaway);
 
   async function loadFeedback() {
     const body = document.getElementById('feedbackBody');

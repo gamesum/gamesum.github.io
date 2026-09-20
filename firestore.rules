@@ -173,8 +173,8 @@ service cloud.firestore {
                     && request.resource.data.addressStreet.size() < 201
                     && request.resource.data.addressCity is string
                     && request.resource.data.addressCity.size() < 101
-                    && request.resource.data.addressState is string
-                    && request.resource.data.addressState.size() < 51
+                    // Utah only: the prize is an install by our own crew.
+                    && request.resource.data.addressState == 'UT'
                     && request.resource.data.addressZip is string
                     && request.resource.data.addressZip.size() < 21
                     && request.resource.data.owner in ['yes', 'no']
