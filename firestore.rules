@@ -112,15 +112,19 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasOnly([
                         'name','email','phone','address','interest','message',
                         'addressStreet','addressCity','addressState','addressZip',
-                        'marketingOptIn','source','submittedAt','status','userAgent',
-                        'attribution'
+                        'marketingOptIn','preferredContact','source','submittedAt',
+                        'status','userAgent','attribution'
                       ])
                     && request.resource.data.name is string
                     && request.resource.data.name.size() > 0
                     && request.resource.data.name.size() < 200
                     && request.resource.data.email is string
                     && request.resource.data.email.size() < 320
-                    && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+                    // The Model Home landing form (docs/model-home.html) collects a
+                    // phone number and no email, so an empty string is allowed here;
+                    // anything non-empty must still look like a real address.
+                    && (request.resource.data.email.size() == 0
+                        || request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'))
                     && request.resource.data.phone is string
                     && request.resource.data.phone.size() < 40
                     && request.resource.data.address is string
@@ -134,7 +138,8 @@ service cloud.firestore {
                     && (!('addressState' in request.resource.data) || (request.resource.data.addressState is string && request.resource.data.addressState.size() < 50))
                     && (!('addressZip' in request.resource.data) || (request.resource.data.addressZip is string && request.resource.data.addressZip.size() < 20))
                     && (!('marketingOptIn' in request.resource.data) || request.resource.data.marketingOptIn is bool)
-                    && (!('source' in request.resource.data) || request.resource.data.source in ['contact form', 'landing page', 'controller upgrade page'])
+                    && (!('source' in request.resource.data) || request.resource.data.source in ['contact form', 'landing page', 'controller upgrade page', 'model home'])
+                    && (!('preferredContact' in request.resource.data) || request.resource.data.preferredContact in ['text', 'call', 'either'])
                     // Ad attribution (utm_* / fbclid) captured from the landing URL.
                     // Bounded: a map of short strings, so a crafted URL cannot
                     // write an unbounded blob into the lead document.

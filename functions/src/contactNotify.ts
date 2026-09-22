@@ -23,6 +23,9 @@ export const onContactSubmissionCreated = functions
     const interest = String(data.interest || "").slice(0, 100);
     const message = String(data.message || "").slice(0, 5000);
     const marketingOptIn = data.marketingOptIn === true;
+    // Set by the Model Home landing page, which asks how the lead wants to be
+    // reached instead of collecting an email address.
+    const preferredContact = String(data.preferredContact || "").slice(0, 20);
     const source = String(data.source || "contact form").slice(0, 100);
 
     // Ad attribution captured from the landing URL (utm_* / fbclid). Flattened
@@ -43,7 +46,7 @@ export const onContactSubmissionCreated = functions
             source,
             submissionId, name, email, phone, address,
             addressStreet, addressCity, addressState, addressZip,
-            interest, message, marketingOptIn,
+            interest, message, marketingOptIn, preferredContact,
             utmSource: attr("utm_source"),
             utmMedium: attr("utm_medium"),
             utmCampaign: attr("utm_campaign"),

@@ -33,6 +33,7 @@
       "_private/**",
       "_secrets/**",
       "*.md",
+      "**/*.md",
       "*.rules",
       "*.indexes.json",
       "*service-account*.json",

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>(function(){try{var t=localStorage.getItem('afterglo-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Page Not Found | AFTERGLO Lighting Co.</title>
+  <meta name="description" content="That page does not exist. Find permanent and seasonal lighting, the gallery, or get a free quote from AFTERGLO Lighting Co." />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" type="image/png" href="afterglo-favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #17171B;
+      --bg2:     #1B1B1F;
+      --bg3:     #232328;
+      --accent:  #D4A43A;
+      --accent2: #d4a843;
+      --text:    #F2F2F4;
+      --muted:   #ADADB6;
+      --border:  #2E2E34;
+      --heading: #fff;
+    }
+    [data-theme="light"] {
+      --bg:      #FAF8F3;
+      --bg2:     #F6F3EA;
+      --bg3:     #FFFFFF;
+      --accent:  #A8791E;
+      --accent2: #8f6a17;
+      --text:    #201F1C;
+      --muted:   #6B6659;
+      --border:  #E9E2D0;
+      --heading: #14130F;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text);
+      line-height: 1.6; min-height: 100vh; min-height: 100dvh;
+      display: flex; flex-direction: column; overflow-x: hidden;
+    }
+    h1, h2, h3 { font-family: 'Outfit', sans-serif; line-height: 1.12; color: var(--heading); }
+    a { text-decoration: none; color: inherit; }
+    .container { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 20px; }
+
+    header { padding: 22px 0; border-bottom: 1px solid var(--border); }
+    .logo { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.32rem; letter-spacing: 0.06em; }
+    .logo span { color: var(--accent); }
+
+    main { flex: 1; display: flex; align-items: center; padding: 64px 0; position: relative; }
+    .glow {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(760px 340px at 50% 0%, rgba(212,164,58,0.13), transparent 66%);
+    }
+    .inner { position: relative; text-align: center; width: 100%; }
+
+    /* The dead pixel in a roofline: one lamp out in an otherwise even run. */
+    .strand { display: flex; justify-content: center; align-items: center; gap: 13px; margin-bottom: 30px; }
+    .lamp { width: 13px; height: 13px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 14px 3px rgba(212,164,58,0.55); }
+    .lamp.out { background: var(--bg3); border: 1px solid var(--border); box-shadow: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .lamp.out { animation: flicker 3.4s ease-in-out infinite; }
+      @keyframes flicker {
+        0%, 44%, 52%, 100% { background: var(--bg3); box-shadow: none; }
+        48%                { background: var(--accent); box-shadow: 0 0 10px 2px rgba(212,164,58,0.4); }
+      }
+    }
+
+    .code { font-family: 'Outfit', sans-serif; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    h1 { font-size: clamp(1.9rem, 5vw, 3rem); font-weight: 800; margin-bottom: 14px; }
+    .sub { color: var(--muted); font-size: 1.05rem; max-width: 470px; margin: 0 auto 32px; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; margin-bottom: 44px; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 28px; border-radius: 8px; font-size: 0.97rem; font-weight: 600; cursor: pointer; border: none; transition: transform 0.2s, box-shadow 0.2s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #14130F; box-shadow: 0 6px 22px rgba(212,164,58,0.28); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+    .links-label { font-size: 0.74rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    .links { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; max-width: 760px; margin: 0 auto; }
+    @media (max-width: 680px) { .links { grid-template-columns: repeat(2, 1fr); } }
+    .link-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+      padding: 15px 17px; text-align: left; transition: border-color 0.2s, transform 0.2s;
+    }
+    .link-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .link-card strong { display: block; font-family: 'Outfit', sans-serif; font-size: 0.97rem; font-weight: 700; color: var(--heading); margin-bottom: 2px; }
+    .link-card span { font-size: 0.84rem; color: var(--muted); }
+
+    footer { padding: 26px 0; border-top: 1px solid var(--border); }
+    .foot { display: flex; flex-wrap: wrap; gap: 10px 20px; justify-content: space-between; align-items: center; font-size: 0.84rem; color: var(--muted); }
+    .foot a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container">
+      <a href="/" class="logo">AFTER<span>GLO</span></a>
+    </div>
+  </header>
+
+  <main>
+    <div class="glow"></div>
+    <div class="container inner">
+      <div class="strand" aria-hidden="true">
+        <i class="lamp"></i><i class="lamp"></i><i class="lamp"></i>
+        <i class="lamp out"></i>
+        <i class="lamp"></i><i class="lamp"></i><i class="lamp"></i>
+      </div>
+
+      <div class="code">Error 404</div>
+      <h1>This one's burned out.</h1>
+      <p class="sub">The page you were after does not exist, or it moved. Everything else is still lit.</p>
+
+      <div class="actions">
+        <a href="/" class="btn btn-primary">Back to the homepage</a>
+        <a href="/contact.html" class="btn btn-ghost">Get a free quote</a>
+      </div>
+
+      <div class="links-label">Popular pages</div>
+      <div class="links">
+        <a href="/permanent-lights.html" class="link-card">
+          <strong>Permanent Lights</strong>
+          <span>Year round roofline lighting</span>
+        </a>
+        <a href="/seasonal-lights.html" class="link-card">
+          <strong>Seasonal Lights</strong>
+          <span>Christmas installs and shows</span>
+        </a>
+        <a href="/gallery.html" class="link-card">
+          <strong>Gallery</strong>
+          <span>Real installs, real homes</span>
+        </a>
+        <a href="/about.html" class="link-card">
+          <strong>About</strong>
+          <span>Who we are</span>
+        </a>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="foot">
+        <span>© 2026 Ward Legacy Group LLC. Licensed &amp; Insured in Utah.</span>
+        <span><a href="tel:+13853374144">(385) 337 4144</a> · <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a></span>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

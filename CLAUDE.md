@@ -18,6 +18,11 @@
 >
 > This has been gotten wrong repeatedly. `git pull` before reading — a stale
 > working copy is the usual cause.
+>
+> There is a second copy of this warning in **`docs/CLAUDE.md`**, because the
+> usual failure is a session that opens `docs/` without ever reading this file,
+> sees the leftover `docs/CNAME` sitting next to the pages, and concludes
+> "GitHub Pages". Deleting either copy re-opens that hole.
 
 ## What this is
 Marketing + product website for Afterglo permanent holiday lighting business.

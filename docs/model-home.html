@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script>(function(){try{var t=localStorage.getItem('afterglo-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+  <meta charset="UTF-8" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Christmas Lights for People Who Hate Christmas Lights | AFTERGLO</title>
+  <meta name="description" content="Permanent outdoor lighting in the Salt Lake area, starting at $1,500 installed. Discreet by day, warm architectural light at night, full color when you want it. Ask about the AFTERGLO Model Home deal." />
+  <link rel="icon" type="image/png" href="afterglo-favicon.png" />
+
+  <!-- Ad attribution: same capture the other lead pages use, so a Marketplace
+       click that carries utm_* / fbclid is tied back to the ad in Zapier. -->
+  <script>
+    (function () {
+      try {
+        var KEY = 'afterglo-attribution';
+        var qs = new URLSearchParams(window.location.search);
+        var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+        var found = {};
+        var any = false;
+        fields.forEach(function (f) {
+          var v = qs.get(f);
+          if (v) { found[f] = v.slice(0, 200); any = true; }
+        });
+        if (any) {
+          found.landingPath = window.location.pathname;
+          found.referrer = (document.referrer || '').slice(0, 300);
+          sessionStorage.setItem(KEY, JSON.stringify(found));
+        }
+      } catch (e) { /* private mode, storage disabled: never block the form */ }
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #17171B;
+      --bg2:      #1B1B1F;
+      --bg3:      #232328;
+      --accent:   #D4A43A;
+      --accent2:  #d4a843;
+      --text:     #F2F2F4;
+      --muted:    #ADADB6;
+      --border:   #2E2E34;
+      --radius:   12px;
+      --nav-h:    68px;
+      --heading:  #fff;
+    }
+
+    [data-theme="light"] {
+      --bg:       #FAF8F3;
+      --bg2:      #F6F3EA;
+      --bg3:      #FFFFFF;
+      --accent:   #A8791E;
+      --accent2:  #8f6a17;
+      --text:     #201F1C;
+      --muted:    #6B6659;
+      --border:   #E9E2D0;
+      --heading:  #14130F;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.12; color: var(--heading); }
+    a { text-decoration: none; color: inherit; }
+    img { display: block; width: 100%; height: auto; }
+    section { width: 100%; }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+    .section-label { display: inline-block; font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .section-title { font-size: clamp(1.8rem, 4vw, 2.7rem); font-weight: 800; margin-bottom: 14px; }
+    .section-sub { font-size: 1.05rem; color: var(--muted); max-width: 620px; line-height: 1.75; }
+
+    .fade-in { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .fade-in.visible { opacity: 1; transform: translateY(0); }
+    .fade-delay-1 { transition-delay: 0.08s; }
+    .fade-delay-2 { transition-delay: 0.16s; }
+    .fade-delay-3 { transition-delay: 0.24s; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .fade-in { opacity: 1; transform: none; transition: none; }
+    }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 28px; border-radius: 8px; font-family: 'Inter', sans-serif; font-size: 0.97rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s, background 0.2s; border: none; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #14130F; box-shadow: 0 6px 22px rgba(212,164,58,0.28); }
+    .btn-primary:hover { box-shadow: 0 10px 30px rgba(212,164,58,0.38); }
+    .btn-ghost { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-lg { padding: 17px 34px; font-size: 1.03rem; }
+
+    /* ─── NAV: deliberately minimal. This is a landing page, so the only two
+       exits are a phone call and the form. ─────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--nav-h); z-index: 100;
+      background: rgba(23,23,27,0.82); backdrop-filter: blur(14px);
+      border-bottom: 1px solid transparent; transition: border-color 0.3s, background 0.3s;
+    }
+    [data-theme="light"] nav { background: rgba(250,248,243,0.86); }
+    nav.scrolled { border-bottom-color: var(--border); }
+    .nav-inner { height: var(--nav-h); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .nav-logo { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.32rem; letter-spacing: 0.06em; color: var(--text); }
+    .nav-logo span { color: var(--accent); }
+    .nav-right { display: flex; align-items: center; gap: 10px; }
+    .nav-phone { display: inline-flex; align-items: center; gap: 7px; font-size: 0.93rem; font-weight: 500; color: var(--muted); padding: 9px 12px; border-radius: 8px; }
+    .nav-phone:hover { color: var(--accent); }
+    .nav-cta { padding: 11px 20px; font-size: 0.9rem; }
+    @media (max-width: 560px) {
+      .nav-phone span { display: none; }
+      .nav-cta { padding: 11px 15px; font-size: 0.85rem; }
+    }
+
+    /* ─── HERO ───────────────────────────────────────────────────────── */
+    #hero { position: relative; padding: calc(var(--nav-h) + 56px) 0 64px; overflow: hidden; }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: radial-gradient(1100px 520px at 76% 8%, rgba(212,164,58,0.14), transparent 62%);
+      pointer-events: none;
+    }
+    .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+    .hero-hook {
+      font-size: clamp(2.1rem, 5.4vw, 3.55rem); font-weight: 900; letter-spacing: -0.015em;
+      line-height: 1.04; margin-bottom: 22px;
+    }
+    .hero-hook em { font-style: normal; color: var(--accent); }
+    .price-line {
+      display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px;
+      font-family: 'Outfit', sans-serif; font-size: clamp(1.15rem, 2.4vw, 1.45rem);
+      font-weight: 700; color: var(--heading); margin-bottom: 14px;
+    }
+    .price-line strong { color: var(--accent); font-weight: 800; }
+    .price-line .price-note { font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 400; color: var(--muted); }
+    .cred-line {
+      display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px;
+      font-size: 0.93rem; color: var(--muted); margin-bottom: 30px;
+    }
+    .cred-line span { display: inline-flex; align-items: center; gap: 7px; }
+    .cred-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+    .hero-photo { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 26px 70px rgba(0,0,0,0.42); }
+    .hero-photo img { aspect-ratio: 4 / 5; object-fit: cover; }
+    @media (max-width: 900px) {
+      #hero { padding: calc(var(--nav-h) + 34px) 0 48px; }
+      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+      /* On a phone the photo sits under the CTA, so keep it short enough that
+         the offer section still hints below the fold. */
+      .hero-photo img { aspect-ratio: 4 / 3; }
+      .hero-actions .btn { flex: 1 1 100%; }
+    }
+
+    /* ─── MODEL HOME OFFER ───────────────────────────────────────────── */
+    #offer { padding: 68px 0; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .offer-card {
+      background: var(--bg3); border: 1px solid var(--border); border-radius: 16px;
+      padding: 40px; position: relative; overflow: hidden;
+    }
+    .offer-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+    }
+    .offer-card h2 { font-size: clamp(1.6rem, 3.4vw, 2.2rem); font-weight: 800; margin-bottom: 14px; }
+    .offer-card > p { color: var(--muted); max-width: 640px; line-height: 1.75; margin-bottom: 10px; }
+    .offer-pick { margin-top: 26px; }
+    .offer-pick-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .pick-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: stretch; }
+    .pick {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 22px;
+      display: flex; gap: 14px; align-items: flex-start;
+    }
+    .pick svg { color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+    .pick h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 5px; }
+    .pick p { font-size: 0.9rem; color: var(--muted); line-height: 1.6; }
+    .pick-or {
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.85rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+    }
+    .offer-foot { margin-top: 24px; font-size: 0.92rem; color: var(--muted); line-height: 1.7; }
+    @media (max-width: 800px) {
+      .offer-card { padding: 28px 22px; }
+      .pick-grid { grid-template-columns: 1fr; gap: 12px; }
+      .pick-or { padding: 2px 0; }
+    }
+
+    /* ─── PHOTO BAND ─────────────────────────────────────────────────── */
+    #showcase { padding: 68px 0; }
+    .shot-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 34px; }
+    .shot { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+    .shot img { aspect-ratio: 4 / 5; object-fit: cover; transition: transform 0.6s ease; }
+    .shot:hover img { transform: scale(1.05); }
+    .shot figcaption {
+      position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 16px 13px;
+      font-size: 0.85rem; font-weight: 500; color: #fff;
+      background: linear-gradient(to top, rgba(0,0,0,0.78), transparent);
+    }
+    @media (max-width: 760px) { .shot-grid { grid-template-columns: repeat(2, 1fr); } }
+
+    /* ─── DAY / NIGHT ────────────────────────────────────────────────── */
+    #daynight { padding: 68px 0; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .dn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 34px; }
+    .dn { border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--bg3); }
+    .dn img { aspect-ratio: 16 / 10; object-fit: cover; }
+    .dn-body { padding: 20px 22px; }
+    .dn-body h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .dn-body p { font-size: 0.93rem; color: var(--muted); line-height: 1.65; }
+    @media (max-width: 760px) { .dn-grid { grid-template-columns: 1fr; } }
+
+    /* ─── SPEC LIST ──────────────────────────────────────────────────── */
+    .spec-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px 30px; margin-top: 30px; max-width: 880px; }
+    .spec { display: flex; gap: 12px; align-items: flex-start; font-size: 0.98rem; line-height: 1.6; }
+    .spec svg { color: var(--accent); flex-shrink: 0; margin-top: 4px; }
+    @media (max-width: 700px) { .spec-list { grid-template-columns: 1fr; } }
+
+    /* ─── DEMO ───────────────────────────────────────────────────────── */
+    #demo { padding: 72px 0; }
+    .demo-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; }
+    .demo-photo { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 20px 56px rgba(0,0,0,0.36); }
+    .demo-photo img { aspect-ratio: 4 / 3; object-fit: cover; }
+    .demo-points { margin-top: 26px; display: flex; flex-direction: column; gap: 13px; }
+    @media (max-width: 900px) { .demo-grid { grid-template-columns: 1fr; gap: 32px; } }
+
+    /* ─── TRUST ──────────────────────────────────────────────────────── */
+    #trust { padding: 68px 0; background: var(--bg2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+    .trust-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+    .trust-card { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 24px 22px; }
+    .trust-icon {
+      width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+      background: rgba(212,164,58,0.12); border: 1px solid rgba(212,164,58,0.3); color: var(--accent); margin-bottom: 14px;
+    }
+    .trust-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+    .trust-card p { font-size: 0.89rem; color: var(--muted); line-height: 1.6; }
+    .reviews-strip { margin-top: 30px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .review { background: var(--bg3); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
+    .review .stars { color: var(--accent); letter-spacing: 0.1em; font-size: 0.92rem; margin-bottom: 10px; }
+    .review p { font-size: 0.91rem; color: var(--muted); line-height: 1.68; margin-bottom: 12px; }
+    .review .who { font-size: 0.85rem; color: var(--text); font-weight: 500; }
+    .review .who span { color: var(--muted); font-weight: 400; }
+    @media (max-width: 900px) { .trust-grid { grid-template-columns: repeat(2, 1fr); } .reviews-strip { grid-template-columns: 1fr; } }
+    @media (max-width: 520px) { .trust-grid { grid-template-columns: 1fr; } }
+
+    /* ─── FORM ───────────────────────────────────────────────────────── */
+    #quote { padding: 76px 0; }
+    .quote-split { display: grid; grid-template-columns: 1fr 1.05fr; gap: 48px; align-items: start; }
+    .quote-copy h2 { font-size: clamp(1.8rem, 3.8vw, 2.5rem); font-weight: 800; margin-bottom: 14px; }
+    .quote-copy p { color: var(--muted); line-height: 1.75; margin-bottom: 22px; }
+    .quote-assure { display: flex; flex-direction: column; gap: 12px; }
+    .form-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; padding: 32px; }
+    .form-field { margin-bottom: 17px; }
+    .form-field label { display: block; font-size: 0.86rem; font-weight: 500; margin-bottom: 7px; color: var(--text); }
+    .form-field input, .form-field select {
+      width: 100%; padding: 13px 15px; background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 1rem;
+      transition: border-color 0.2s; -webkit-appearance: none; appearance: none;
+    }
+    .form-field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none' stroke='%239A9AA2' stroke-width='2'%3E%3Cpath d='M1 1l5 5 5-5'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px center; padding-right: 38px; }
+    .form-field input:focus, .form-field select:focus { outline: none; border-color: var(--accent); }
+    .form-field input::placeholder { color: var(--muted); opacity: 0.75; }
+    /* Honeypot: off screen rather than display:none, which some bots detect. */
+    #mhHoneypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+    .form-submit { width: 100%; margin-top: 6px; }
+    .form-status { margin-top: 13px; font-size: 0.9rem; min-height: 1.2em; }
+    .form-status.error { color: #F05A4A; }
+    .form-fine { margin-top: 14px; font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+    @media (max-width: 900px) {
+      .quote-split { grid-template-columns: 1fr; gap: 30px; }
+      .form-card { padding: 24px 20px; }
+    }
+
+    /* ─── FINAL CTA ──────────────────────────────────────────────────── */
+    #final { padding: 74px 0; background: var(--bg2); border-top: 1px solid var(--border); text-align: center; }
+    #final h2 { font-size: clamp(1.7rem, 4vw, 2.6rem); font-weight: 800; margin-bottom: 16px; }
+    #final p { color: var(--muted); max-width: 540px; margin: 0 auto 28px; line-height: 1.75; }
+    .final-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+    /* ─── FOOTER ─────────────────────────────────────────────────────── */
+    footer { padding: 44px 0 34px; background: var(--bg); border-top: 1px solid var(--border); }
+    .foot-inner { display: flex; flex-wrap: wrap; gap: 18px; justify-content: space-between; align-items: center; }
+    .foot-logo { font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 1.15rem; letter-spacing: 0.06em; }
+    .foot-logo span { color: var(--accent); }
+    .foot-links { display: flex; flex-wrap: wrap; gap: 18px; font-size: 0.87rem; color: var(--muted); }
+    .foot-links a:hover { color: var(--accent); }
+    .foot-copy { width: 100%; font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+
+    /* Sticky mobile CTA: on a phone the form is a long scroll away, so the
+       primary action stays reachable the whole way down. */
+    .sticky-cta { display: none; }
+    @media (max-width: 900px) {
+      .sticky-cta {
+        display: block; position: fixed; left: 0; right: 0; bottom: 0; z-index: 90;
+        padding: 10px 16px calc(10px + env(safe-area-inset-bottom));
+        background: rgba(23,23,27,0.94); backdrop-filter: blur(12px); border-top: 1px solid var(--border);
+      }
+      [data-theme="light"] .sticky-cta { background: rgba(250,248,243,0.95); }
+      .sticky-cta .btn { width: 100%; }
+      /* Hidden until the hero CTA has scrolled away, so the fold does not
+         show the same button twice. */
+      .sticky-cta { transform: translateY(110%); transition: transform 0.25s ease; }
+      .sticky-cta.show { transform: translateY(0); }
+      body { padding-bottom: 78px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── NAV ─────────────────────────────────────────────────────────── -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+        <a href="index.html" class="nav-logo">AFTER<span>GLO</span></a>
+        <div class="nav-right">
+          <a href="tel:+13853374144" class="nav-phone">
+            <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+            <span>(385) 337 4144</span>
+          </a>
+          <a href="#quote" class="btn btn-primary nav-cta">Get My Quote</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── HERO ────────────────────────────────────────────────────────── -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="container">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <h1 class="hero-hook fade-in">Christmas lights for people who <em>hate</em> Christmas lights.</h1>
+
+          <div class="price-line fade-in fade-delay-1">
+            <span>Permanent lighting packages starting at <strong>$1,500</strong> installed.</span>
+          </div>
+
+          <div class="cred-line fade-in fade-delay-1">
+            <span><i class="cred-dot"></i>Local</span>
+            <span><i class="cred-dot"></i>Family owned</span>
+            <span><i class="cred-dot"></i>Engineer designed</span>
+          </div>
+
+          <div class="hero-actions fade-in fade-delay-2">
+            <a href="#quote" class="btn btn-primary btn-lg">Get My Model Home Quote</a>
+            <a href="#offer" class="btn btn-ghost btn-lg">See the Model Home deal</a>
+          </div>
+        </div>
+
+        <figure class="hero-photo fade-in fade-delay-1">
+          <img src="Resources/permanent/perm-accent-warmwhite.jpg"
+               alt="A home at night with its roofline and eaves lit in clean warm white permanent LED lighting, with no visible cords or clips."
+               width="1365" height="2048" fetchpriority="high" decoding="async" />
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── MODEL HOME OFFER ────────────────────────────────────────────── -->
+  <section id="offer">
+    <div class="container">
+      <div class="offer-card fade-in">
+        <div class="section-label">The Offer</div>
+        <h2>Become an AFTERGLO Model Home</h2>
+        <p>We are looking for more local homes to feature in our portfolio. Mention the Marketplace ad when you request your quote and we will give you Model Home pricing.</p>
+        <p>Every home in the Salt Lake area qualifies to ask. Bring it up on the quote and we will tell you exactly what it means for your house.</p>
+
+        <div class="offer-pick">
+          <div class="offer-pick-label">Depending on the installation, you may also be able to choose</div>
+          <div class="pick-grid">
+            <div class="pick">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h4M6 14h8"/></svg>
+              <div>
+                <h3>A free AFTERGLO controller</h3>
+                <p>The brain of the system, and our single most expensive line item. On us.</p>
+              </div>
+            </div>
+            <div class="pick-or">or</div>
+            <div class="pick">
+              <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12"/><path d="M7 21v-8h10v8"/><path d="M7 17h10"/></svg>
+              <div>
+                <h3>Custom garage door lighting</h3>
+                <p>Your garage doors outlined and mapped in, at no extra charge.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="offer-foot">Which one fits depends on how your home is laid out, so we will walk through it together at the quote. Ask either way. The worst case is you learn what your house would cost.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── PHOTO BAND ──────────────────────────────────────────────────── -->
+  <section id="showcase">
+    <div class="container">
+      <div class="section-label fade-in">The Work</div>
+      <h2 class="section-title fade-in">One system. Every season you actually care about.</h2>
+      <p class="section-sub fade-in">Warm white most of the year. Full color when there is a reason. No boxes in the garage, no ladder in December.</p>
+
+      <div class="shot-grid">
+        <figure class="shot fade-in">
+          <img src="Resources/permanent/perm-christmas-redwhite.jpg" alt="Roofline lit in alternating red and white for Christmas." loading="lazy" decoding="async" />
+          <figcaption>Christmas</figcaption>
+        </figure>
+        <figure class="shot fade-in fade-delay-1">
+          <img src="Resources/permanent/perm-halloween-purpleorange.jpg" alt="Roofline lit in purple and orange for Halloween." loading="lazy" decoding="async" />
+          <figcaption>Halloween</figcaption>
+        </figure>
+        <figure class="shot fade-in fade-delay-2">
+          <img src="Resources/permanent/perm-gameday-redblue.jpg" alt="Roofline lit in team colors on a game day." loading="lazy" decoding="async" />
+          <figcaption>Game days</figcaption>
+        </figure>
+        <figure class="shot fade-in fade-delay-3">
+          <img src="Resources/permanent/perm-slider-warmwhite.jpg" alt="Roofline lit in soft warm white as everyday architectural accent lighting." loading="lazy" decoding="async" />
+          <figcaption>Every other night</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DAY / NIGHT ─────────────────────────────────────────────────── -->
+  <section id="daynight">
+    <div class="container">
+      <div class="section-label fade-in">Why People Who Hate Christmas Lights Like These</div>
+      <h2 class="section-title fade-in">Discreet in the daylight. Architectural at night.</h2>
+      <p class="section-sub fade-in">The track is color matched and tucked into your fascia line. Drive up at noon and you will have to look for it.</p>
+
+      <div class="dn-grid">
+        <article class="dn fade-in">
+          <img src="Resources/House%20Images/dn-day-fascia.jpg" alt="Close view of a home's fascia in daylight showing the discreet color matched lighting track." loading="lazy" decoding="async" />
+          <div class="dn-body">
+            <h3>Daytime</h3>
+            <p>No cords, no clips, no sagging strand. The channel follows the fascia line and reads as trim.</p>
+          </div>
+        </article>
+        <article class="dn fade-in fade-delay-1">
+          <img src="Resources/House%20Images/dn-night-rgbw.jpg" alt="The same home at night with its roofline lit in clean even light." loading="lazy" decoding="async" />
+          <div class="dn-body">
+            <h3>After dark</h3>
+            <p>Even, intentional light on the architecture. Warm white by default, full color whenever you want it.</p>
+          </div>
+        </article>
+      </div>
+
+      <div class="spec-list">
+        <div class="spec fade-in">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Custom designed and cut for your roofline, not a one size kit.</span>
+        </div>
+        <div class="spec fade-in">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Warm architectural white for everyday, dimmable to taste.</span>
+        </div>
+        <div class="spec fade-in fade-delay-1">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Christmas, Halloween, game days, parties and the Fourth when you want color.</span>
+        </div>
+        <div class="spec fade-in fade-delay-1">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Controlled from your phone. Set a schedule once and forget it.</span>
+        </div>
+        <div class="spec fade-in fade-delay-2">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>Permanent and seasonal options both available.</span>
+        </div>
+        <div class="spec fade-in fade-delay-2">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+          <span>5 year fixture warranty, plus lifetime installation support.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── DEMO ────────────────────────────────────────────────────────── -->
+  <section id="demo">
+    <div class="container">
+      <div class="demo-grid">
+        <figure class="demo-photo fade-in">
+          <img src="Resources/House%20Images/hero-redwhiteblue.jpg" alt="A working AFTERGLO lighting system running a full color pattern across a home's roofline at night." loading="lazy" decoding="async" />
+        </figure>
+        <div class="fade-in fade-delay-1">
+          <div class="section-label">The Demo</div>
+          <h2 class="section-title">See it before you buy it.</h2>
+          <p class="section-sub">We bring a fully working AFTERGLO lighting system to your quote. Not a brochure, not a phone screen. The actual hardware, running, in your driveway.</p>
+          <div class="demo-points">
+            <div class="spec">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>See the fixtures up close, lit, and judge the brightness yourself.</span>
+            </div>
+            <div class="spec">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Hold the controller. Run the colors and patterns for yourself.</span>
+            </div>
+            <div class="spec">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Try the app the way you would actually use it on a Tuesday.</span>
+            </div>
+            <div class="spec">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Walk your roofline with us and see where the light would land.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TRUST ───────────────────────────────────────────────────────── -->
+  <section id="trust">
+    <div class="container">
+      <div class="section-label fade-in">Why AFTERGLO</div>
+      <h2 class="section-title fade-in" style="margin-bottom:34px;">A local shop that builds its own lights.</h2>
+
+      <div class="trust-grid">
+        <div class="trust-card fade-in">
+          <div class="trust-icon"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg></div>
+          <h3>Local, family owned</h3>
+          <p>Salt Lake area. Not a franchise, not a reseller. You get the people who installed it.</p>
+        </div>
+        <div class="trust-card fade-in fade-delay-1">
+          <div class="trust-icon"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L4.2 7.7l5.4-.8z"/></svg></div>
+          <h3>Engineer designed</h3>
+          <p>The fixtures, the controller and the app are ours. When something needs fixing, we fix it.</p>
+        </div>
+        <div class="trust-card fade-in fade-delay-2">
+          <div class="trust-icon"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <h3>5 year fixture warranty</h3>
+          <p>Five years on the fixtures, and lifetime installation support after that.</p>
+        </div>
+        <div class="trust-card fade-in fade-delay-3">
+          <div class="trust-icon"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.7 6.3a5 5 0 00-7.1 7.1l-4.3 4.3a2 2 0 102.8 2.8l4.3-4.3a5 5 0 007.1-7.1l-2.6 2.6-2.8-2.8z"/></svg></div>
+          <h3>Professionally installed</h3>
+          <p>Licensed and insured in Utah. Our own licensed crew mounts every fixture.</p>
+        </div>
+      </div>
+
+      <div class="reviews-strip">
+        <div class="review fade-in">
+          <div class="stars">★★★★★</div>
+          <p>"So impressed with this company! Installers were professional and fun! The system installation is clean. I love how easy the interface is to use and the customization that it allows."</p>
+          <div class="who">Donovan L. <span>· Google Review</span></div>
+        </div>
+        <div class="review fade-in fade-delay-1">
+          <div class="stars">★★★★★</div>
+          <p>"I love this local permanent lighting company. Him and his team got the job done so fast and so efficiently. If you are thinking about getting permanent lights give these local guys a shot, it's worth it."</p>
+          <div class="who">Brianna L. <span>· Google Review</span></div>
+        </div>
+        <div class="review fade-in fade-delay-2">
+          <div class="stars">★★★★★</div>
+          <p>"This company did an amazing job on our lights. The app is so user friendly and the technician was really great to explain how to use it. Very happy customer!"</p>
+          <div class="who">Melanie W. <span>· Google Review</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── QUOTE FORM ──────────────────────────────────────────────────── -->
+  <section id="quote">
+    <div class="container">
+      <div class="quote-split">
+        <div class="quote-copy fade-in">
+          <div class="section-label">Model Home Quote</div>
+          <h2>Get my Model Home quote</h2>
+          <p>Four questions. We will reach out, set a time, and bring the demo system with us so you can see exactly what you would be buying.</p>
+          <div class="quote-assure">
+            <div class="spec">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Free quote, and the demo comes with it.</span>
+            </div>
+            <div class="spec">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>A real price for your actual roofline, not a range.</span>
+            </div>
+            <div class="spec">
+              <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+              <span>Model Home pricing applied when you mention the ad.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-card fade-in fade-delay-1">
+          <form id="modelHomeForm" novalidate>
+            <input type="text" id="mhHoneypot" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+            <div class="form-field">
+              <label for="mhName">Name *</label>
+              <input type="text" id="mhName" required maxlength="99" autocomplete="name" placeholder="First and last" />
+            </div>
+
+            <div class="form-field">
+              <label for="mhPhone">Phone *</label>
+              <input type="tel" id="mhPhone" required maxlength="39" autocomplete="tel" inputmode="tel" placeholder="(385) 555 0100" />
+            </div>
+
+            <div class="form-field">
+              <label for="mhCity">City *</label>
+              <input type="text" id="mhCity" required maxlength="100" autocomplete="address-level2" placeholder="South Jordan" />
+            </div>
+
+            <div class="form-field">
+              <label for="mhContactPref">Preferred contact method *</label>
+              <select id="mhContactPref" required>
+                <option value="text">Text</option>
+                <option value="call">Phone call</option>
+                <option value="either">Either is fine</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg form-submit" id="mhSubmitBtn">Get My Model Home Quote</button>
+            <p class="form-status" id="mhStatus" role="status" aria-live="polite"></p>
+            <p class="form-fine">We use your number to schedule the quote and nothing else. No list, no spam.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FINAL CTA ───────────────────────────────────────────────────── -->
+  <section id="final">
+    <div class="container">
+      <h2 class="fade-in">Never hang a strand again.</h2>
+      <p class="fade-in fade-delay-1">Permanent lighting from $1,500 installed, in the Salt Lake area. Ask about the Model Home deal when we come out.</p>
+      <div class="final-actions fade-in fade-delay-2">
+        <a href="#quote" class="btn btn-primary btn-lg">Get My Model Home Quote</a>
+        <a href="tel:+13853374144" class="btn btn-ghost btn-lg">Call (385) 337 4144</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ──────────────────────────────────────────────────────── -->
+  <footer>
+    <div class="container">
+      <div class="foot-inner">
+        <a href="index.html" class="foot-logo">AFTER<span>GLO</span></a>
+        <div class="foot-links">
+          <a href="index.html">Home</a>
+          <a href="permanent-lights.html">Permanent Lights</a>
+          <a href="gallery.html">Gallery</a>
+          <a href="contact.html">Contact</a>
+          <a href="privacy.html">Privacy</a>
+        </div>
+        <p class="foot-copy">© 2026 Ward Legacy Group LLC. Afterglo is a division of Ward Legacy Group LLC. Licensed &amp; Insured in Utah. Serving the Salt Lake area.</p>
+      </div>
+    </div>
+  </footer>
+
+  <div class="sticky-cta">
+    <a href="#quote" class="btn btn-primary">Get My Model Home Quote</a>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script>
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 20); }, { passive: true });
+
+    const stickyCta = document.querySelector('.sticky-cta');
+    const heroActions = document.querySelector('.hero-actions');
+    if (stickyCta && heroActions && 'IntersectionObserver' in window) {
+      new IntersectionObserver(([entry]) => {
+        stickyCta.classList.toggle('show', !entry.isIntersecting && entry.boundingClientRect.top < 0);
+      }, { threshold: 0 }).observe(heroActions);
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    (function () {
+      const firebaseConfig = {
+        apiKey: "AIzaSyAQ7L46n1Nos6nmNcDCAJu8tY1pFdn-zQY",
+        authDomain: "afterglo-website-fbb89.firebaseapp.com",
+        projectId: "afterglo-website-fbb89",
+        storageBucket: "afterglo-website-fbb89.firebasestorage.app",
+        messagingSenderId: "307927449736",
+        appId: "1:307927449736:web:0a44b789fd7cab37d41f3d",
+      };
+      // If the Firebase CDN is blocked the submit handler must still bind, so
+      // a click gets the "call us" fallback instead of a dead button.
+      let db = null;
+      try {
+        if (typeof firebase !== 'undefined') {
+          const app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp(firebaseConfig);
+          if (app) db = firebase.firestore();
+        }
+      } catch (e) {
+        db = null;
+      }
+
+      const form = document.getElementById('modelHomeForm');
+      const statusEl = document.getElementById('mhStatus');
+      const submitBtn = document.getElementById('mhSubmitBtn');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        statusEl.textContent = '';
+        statusEl.className = 'form-status';
+
+        // Honeypot: a real person never fills a field they cannot see.
+        if (document.getElementById('mhHoneypot').value) return;
+
+        const name = document.getElementById('mhName').value.trim();
+        const phone = document.getElementById('mhPhone').value.trim();
+        const city = document.getElementById('mhCity').value.trim();
+        const preferredContact = document.getElementById('mhContactPref').value;
+
+        if (!name || !phone || !city) {
+          statusEl.textContent = 'Please fill out name, phone and city.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (phone.replace(/\D/g, '').length < 10) {
+          statusEl.textContent = 'Please enter a 10 digit phone number.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (!db) {
+          statusEl.textContent = 'Something went wrong. Please call or text us at (385) 337 4144.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        try {
+          // Same collection as the other lead forms, so the existing Zapier
+          // notification (functions/src/contactNotify.ts) picks it up. The
+          // source value is what separates Marketplace leads in reporting.
+          await db.collection('contact_submissions').add({
+            name,
+            email: '',
+            phone: phone.slice(0, 39),
+            address: city.slice(0, 100),
+            addressCity: city.slice(0, 100),
+            interest: 'Permanent Lighting',
+            message: 'Model Home quote request from the Facebook Marketplace landing page.',
+            preferredContact,
+            source: 'model home',
+            submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            status: 'new',
+            userAgent: navigator.userAgent.slice(0, 300),
+            attribution: (function () {
+              try { return JSON.parse(sessionStorage.getItem('afterglo-attribution') || '{}'); }
+              catch (e) { return {}; }
+            })(),
+          });
+          window.location.href = 'contact-thank-you.html';
+        } catch (err) {
+          statusEl.textContent = 'Something went wrong sending your request. Please call or text us at (385) 337 4144.';
+          statusEl.className = 'form-status error';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Get My Model Home Quote';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
