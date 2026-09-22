@@ -16,6 +16,11 @@
 > - The website is **not** in `Desktop/VSCODE/afterglo` (that's the Flutter app +
 >   firmware) and **not** in `wled-ridgeline` (legacy ESP32 firmware).
 >
+> The local checkout on Shane's Windows machine is
+> **`C:\Users\18018\Desktop\RIDGELINE\Afterglo`** — that is where `firebase
+> deploy` gets run from. Note it is *not* named after the repo, which is why it
+> is written down here.
+>
 > This has been gotten wrong repeatedly. `git pull` before reading — a stale
 > working copy is the usual cause.
 >
