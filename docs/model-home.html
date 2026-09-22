@@ -122,7 +122,8 @@
       background: radial-gradient(1100px 520px at 76% 8%, rgba(212,164,58,0.14), transparent 62%);
       pointer-events: none;
     }
-    .hero-grid { position: relative; display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: center; }
+    .hero-grid { position: relative; display: grid; grid-template-columns: 1fr; gap: 40px; align-items: start; }
+    .hero-copy { max-width: 760px; }
     .hero-hook {
       font-size: clamp(2.1rem, 5.4vw, 3.55rem); font-weight: 900; letter-spacing: -0.015em;
       line-height: 1.04; margin-bottom: 22px;
@@ -143,13 +144,10 @@
     .cred-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; }
     .hero-photo { border-radius: 16px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 26px 70px rgba(0,0,0,0.42); }
-    .hero-photo img { aspect-ratio: 4 / 5; object-fit: cover; }
+    .hero-photo img { object-fit: cover; }
     @media (max-width: 900px) {
       #hero { padding: calc(var(--nav-h) + 34px) 0 48px; }
-      .hero-grid { grid-template-columns: 1fr; gap: 32px; }
-      /* On a phone the photo sits under the CTA, so keep it short enough that
-         the offer section still hints below the fold. */
-      .hero-photo img { aspect-ratio: 4 / 3; }
+      .hero-grid { gap: 32px; }
       .hero-actions .btn { flex: 1 1 100%; }
     }
 
@@ -348,9 +346,9 @@
         </div>
 
         <figure class="hero-photo fade-in fade-delay-1">
-          <img src="Resources/permanent/perm-accent-warmwhite.jpg"
-               alt="A home at night with its roofline and eaves lit in clean warm white permanent LED lighting, with no visible cords or clips."
-               width="1365" height="2048" fetchpriority="high" decoding="async" />
+          <img src="Resources/permanent/hero-model-home.jpg"
+               alt="A home at night with its roofline, gables, eaves and garage door outlined in red, white and blue permanent LED lighting."
+               width="1860" height="904" fetchpriority="high" decoding="async" />
         </figure>
       </div>
     </div>
