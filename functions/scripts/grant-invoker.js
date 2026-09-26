@@ -18,6 +18,7 @@ const REGION = "us-central1";
 
 const PUBLIC_FUNCTIONS = [
   "createCheckout",
+  "emailSignup",
   "recordPurchase",
   "stripeWebhook",
   "purchases",

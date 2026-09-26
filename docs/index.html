@@ -2642,13 +2642,14 @@
       document.getElementById('emailGateModal').style.display = 'none';
     }
 
-    function postToZapierWebhook(payload) {
+    // Saves the signup and emails the AFTERGLO inbox (functions/src/contactNotify.ts).
+    function postSignup(payload) {
       try {
-        fetch('https://hooks.zapier.com/hooks/catch/28657755/4tncke8/', {
+        fetch('/api/signup', {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(Object.assign({ source: 'landing page', submittedAt: new Date().toISOString() }, payload)),
+          body: JSON.stringify(payload),
+          keepalive: true,
         });
       } catch (e) { /* fire-and-forget, ignore failures */ }
     }
@@ -2682,7 +2683,7 @@
       document.body.removeChild(form);
 
       sessionStorage.setItem('ag_email_captured', '1');
-      postToZapierWebhook({ email: email, action: _emailGateAction });
+      postSignup({ email: email, action: _emailGateAction });
       closeEmailGate();
       doGateAction(_emailGateAction);
     }
@@ -2724,7 +2725,7 @@
       document.body.removeChild(form);
 
       sessionStorage.setItem('ag_email_captured', '1');
-      postToZapierWebhook({ email: email });
+      postSignup({ email: email });
       document.getElementById('ctaEmailForm').style.display = 'none';
       document.getElementById('ctaEmailThanks').style.display = 'block';
     }

@@ -11,9 +11,12 @@ export { aiPreset } from "./aiPreset";
 // AI product-knowledge assistant — see ./aiAsk.js.
 export { aiAsk } from "./aiAsk";
 
-// Emails afterglolights@gmail.com (and optionally posts to a Zapier webhook)
-// whenever a new lead is written to contact_submissions — see ./contactNotify.ts.
-export { onContactSubmissionCreated } from "./contactNotify";
+// Emails afterglolights@gmail.com whenever a website lead arrives: quote forms
+// (contact_submissions), homepage email signups (/api/signup -> email_signups),
+// and giveaway entries that want a quote — see ./contactNotify.ts.
+export {
+  onContactSubmissionCreated, emailSignup, onEmailSignupCreated, onGiveawayEntryCreated,
+} from "./contactNotify";
 
 // Serves controller firmware to docs/firmware.html same-origin, because GitHub
 // release assets can't be fetched cross-origin — see ./firmwareProxy.ts.
