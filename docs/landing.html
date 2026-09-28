@@ -434,14 +434,10 @@
             </select>
           </div>
           <div class="form-field" style="position: relative;">
-            <label for="lpAddressSearch">Search Your Address</label>
-            <input type="text" id="lpAddressSearch" maxlength="299" autocomplete="off" placeholder="Start typing to auto fill the fields below…" />
-            <div id="lpAddressSuggestions" class="address-suggestions"></div>
-            <span style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Optional: pick a suggestion to auto fill the fields below, or just type your address in manually.</span>
-          </div>
-          <div class="form-field">
             <label for="lpStreet">Street Address *</label>
-            <input type="text" id="lpStreet" required maxlength="200" autocomplete="address-line1" />
+            <input type="text" id="lpStreet" required maxlength="200" autocomplete="off" placeholder="Start typing and pick your address…" />
+            <div id="lpAddressSuggestions" class="address-suggestions"></div>
+            <span style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Pick a suggestion to fill in city, state and ZIP, or just type it all in manually.</span>
           </div>
           <div class="form-row form-row-3">
             <div class="form-field">
@@ -532,7 +528,7 @@
   <!-- Address autocomplete (Photon / komoot.io, no API key required) — optional recommendation only, fills the street/city/state/zip boxes below -->
   <script>
     (function() {
-      const input = document.getElementById('lpAddressSearch');
+      const input = document.getElementById('lpStreet');
       const box = document.getElementById('lpAddressSuggestions');
       const streetEl = document.getElementById('lpStreet');
       const cityEl = document.getElementById('lpCity');
@@ -581,11 +577,10 @@
         const idx = parseInt(item.getAttribute('data-idx'), 10);
         const f = (box._features || [])[idx];
         const p = (f && f.properties) || {};
-        input.value = item.getAttribute('data-label');
         box.classList.remove('show');
         box.innerHTML = '';
         const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
-        if (streetEl && street) streetEl.value = street;
+        if (streetEl) streetEl.value = street || item.getAttribute('data-label');
         if (cityEl && (p.city || p.county)) cityEl.value = p.city || p.county;
         if (stateEl && p.state) stateEl.value = p.state;
         if (zipEl && p.postcode) zipEl.value = p.postcode;
