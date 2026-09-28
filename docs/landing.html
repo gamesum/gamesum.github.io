@@ -686,15 +686,15 @@
           +   '</ul>'
           +   '<div class="promo-box">'
           +     '<span class="promo-code">' + PROMO_CODE + '</span>'
-          +     '<p>$' + PROMO_AMOUNT + ' off your install. Request your free quote below and the '
-          +     'code is attached automatically, nothing to remember.</p>'
+          +     '<p>Mention this ad when we come out and we take $' + PROMO_AMOUNT + ' off '
+          +     'your install. Write it down or screenshot this.</p>'
           +   '</div>'
           +   '<a href="#quote" class="btn btn-primary btn-lg">Get My Exact Price</a>'
           + '</div>';
           zipResult.classList.add('show');
 
-          banner.innerHTML = '<b>' + PROMO_CODE + '</b> applied, $' + PROMO_AMOUNT
-            + ' off your install. It rides along with this request.';
+          banner.innerHTML = 'Mention <b>' + PROMO_CODE + '</b> at your quote to take $' + PROMO_AMOUNT
+            + ' off your install.';
           banner.classList.add('show');
 
           const zipField = document.getElementById('lpZip');
@@ -752,7 +752,7 @@
             name, email, phone, address, interest,
             // Prefixed into the message too, so the discount is visible in
             // whatever view we read leads in, not just the promoCode field.
-            message: (promoEarned ? ('[' + promoEarned + ' - $' + PROMO_AMOUNT + ' off] ' + message) : message).slice(0, 4999),
+            message: (promoEarned ? ('[saw ' + promoEarned + ' offer] ' + message) : message).slice(0, 4999),
             promoCode: promoEarned,
             addressStreet: addressStreet.slice(0, 200),
             addressCity: addressCity.slice(0, 100),
