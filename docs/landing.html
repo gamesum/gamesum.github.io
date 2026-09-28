@@ -277,6 +277,12 @@
       border-radius: 10px; background: rgba(212,164,58,.06); font-size: .93rem; }
     .promo-banner.show { display: block; }
     .promo-banner b { color: var(--accent); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; }
+
+    #zipcheck { padding: 64px 0; border-top: 1px solid var(--border); }
+    .zip-head { text-align: center; max-width: 620px; margin: 0 auto 32px; }
+    .zip-head .section-sub { margin: 0 auto; }
+    #zipcheck .zip-gate { margin: 0 auto; }
+    #zipcheck .zip-result { margin: 24px auto 0; }
   </style>
 </head>
 <body>
@@ -305,17 +311,8 @@
         <div class="hero-copy fade-in">
           <div class="section-label">Utah Permanent Lighting</div>
           <h1>Get a Free Quote</h1>
-          <p class="section-sub">Enter your ZIP to confirm we install in your area, see what a permanent RGBW roofline install starts at, and unlock a discount you can use on your free quote.</p>
-          <div class="zip-gate" id="zipGate">
-            <form class="zip-row" id="zipForm" novalidate>
-              <input type="text" id="zipInput" inputmode="numeric" autocomplete="postal-code"
-                     maxlength="5" placeholder="Enter your ZIP" aria-label="Your ZIP code" />
-              <button type="submit" class="btn btn-primary btn-lg">Check My Area</button>
-            </form>
-            <div class="zip-note" id="zipNote">Takes one second. No phone number required to see pricing.</div>
-          </div>
-
-          <div class="zip-result" id="zipResult" aria-live="polite"></div>
+          <p class="section-sub">Free on site consultation, no obligation. Tell us about your home and we'll follow up fast: permanent RGBW roofline lighting, traditional Christmas string lights, or a full music synchronized light show.</p>
+          <a href="#quote" class="btn btn-primary btn-lg">Get My Free Quote</a>
           <div class="hero-stats">
             <div class="hero-stat"><strong>3,500+</strong><span>Lights Placed</span></div>
             <div class="hero-stat"><strong>5★</strong><span>Average Rating</span></div>
@@ -330,6 +327,27 @@
   </section>
 
   <!-- ─── WHY TRUST US ───────────────────────────────────────── -->
+  <!-- --- ZIP CHECK --------------------------------------------- -->
+  <section id="zipcheck">
+    <div class="container">
+      <div class="zip-head fade-in">
+        <div class="section-label">Check Your Area</div>
+        <h2 class="section-title" style="font-size:clamp(1.7rem,3.4vw,2.3rem);">See If We Install on Your Street</h2>
+        <p class="section-sub">Enter your ZIP to confirm we cover your area, see what a permanent roofline install starts at, and unlock a discount on your install.</p>
+      </div>
+      <div class="zip-gate" id="zipGate">
+        <form class="zip-row" id="zipForm" novalidate>
+          <input type="text" id="zipInput" inputmode="numeric" autocomplete="postal-code"
+                 maxlength="5" placeholder="Enter your ZIP" aria-label="Your ZIP code" />
+          <button type="submit" class="btn btn-primary btn-lg">Check My Area</button>
+        </form>
+        <div class="zip-note" id="zipNote">Takes one second. No phone number required to see pricing.</div>
+      </div>
+
+      <div class="zip-result" id="zipResult" aria-live="polite"></div>
+    </div>
+  </section>
+
   <section id="trust">
     <div class="container">
       <div class="trust-head fade-in">
