@@ -204,10 +204,6 @@
     }
     .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: var(--accent); }
     .form-field textarea { resize: vertical; min-height: 90px; font-family: 'Inter', sans-serif; }
-    .address-suggestions { position: absolute; top: 100%; left: 0; right: 0; z-index: 20; background: var(--bg3); border: 1px solid var(--border); border-radius: 8px; margin-top: 4px; max-height: 220px; overflow-y: auto; display: none; box-shadow: 0 8px 24px rgba(0,0,0,0.25); }
-    .address-suggestions.show { display: block; }
-    .address-suggestion { padding: 10px 14px; font-size: 0.9rem; color: var(--text); cursor: pointer; }
-    .address-suggestion:hover, .address-suggestion.active { background: var(--bg2); color: var(--accent); }
     #lpHoneypot { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
     .form-submit-row { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 8px; }
     .form-status { font-size: 0.85rem; }
@@ -433,11 +429,9 @@
               <option value="Not Sure">Not Sure Yet</option>
             </select>
           </div>
-          <div class="form-field" style="position: relative;">
+          <div class="form-field">
             <label for="lpStreet">Street Address *</label>
-            <input type="text" id="lpStreet" required maxlength="200" autocomplete="off" placeholder="Start typing and pick your address…" />
-            <div id="lpAddressSuggestions" class="address-suggestions"></div>
-            <span style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Pick a suggestion to fill in city, state and ZIP, or just type it all in manually.</span>
+            <input type="text" id="lpStreet" required maxlength="200" autocomplete="address-line1" placeholder="11615 S 1300 W" />
           </div>
           <div class="form-row form-row-3">
             <div class="form-field">
@@ -525,75 +519,6 @@
     })();
   </script>
 
-  <!-- Address autocomplete (Photon / komoot.io, no API key required) — optional recommendation only, fills the street/city/state/zip boxes below -->
-  <script>
-    (function() {
-      const input = document.getElementById('lpStreet');
-      const box = document.getElementById('lpAddressSuggestions');
-      const streetEl = document.getElementById('lpStreet');
-      const cityEl = document.getElementById('lpCity');
-      const stateEl = document.getElementById('lpState');
-      const zipEl = document.getElementById('lpZip');
-      if (!input || !box) return;
-
-      let debounceTimer;
-      let controller;
-
-      input.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        const q = input.value.trim();
-        if (q.length < 3) { box.classList.remove('show'); box.innerHTML = ''; return; }
-        debounceTimer = setTimeout(() => fetchSuggestions(q), 250);
-      });
-
-      async function fetchSuggestions(q) {
-        if (controller) controller.abort();
-        controller = new AbortController();
-        try {
-          const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&lat=40.7608&lon=-111.8910&limit=8`;
-          const res = await fetch(url, { signal: controller.signal });
-          if (!res.ok) return;
-          const data = await res.json();
-          const features = (data.features || []).filter(f => f.properties);
-          renderSuggestions(features);
-        } catch (e) { /* aborted or network error — it's a nice-to-have, fail silently */ }
-      }
-
-      function renderSuggestions(features) {
-        if (!features.length) { box.classList.remove('show'); box.innerHTML = ''; return; }
-        box.innerHTML = features.map((f, i) => {
-          const p = f.properties || {};
-          const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
-          const label = [street, p.city || p.county, p.state, p.postcode, p.country].filter(Boolean).join(', ');
-          return `<div class="address-suggestion" data-idx="${i}" data-label="${label.replace(/"/g, '&quot;')}">${label}</div>`;
-        }).join('');
-        box.classList.add('show');
-        box._features = features;
-      }
-
-      box.addEventListener('click', (e) => {
-        const item = e.target.closest('.address-suggestion');
-        if (!item) return;
-        const idx = parseInt(item.getAttribute('data-idx'), 10);
-        const f = (box._features || [])[idx];
-        const p = (f && f.properties) || {};
-        box.classList.remove('show');
-        box.innerHTML = '';
-        const street = [p.housenumber, p.street || p.name].filter(Boolean).join(' ');
-        if (streetEl) streetEl.value = street || item.getAttribute('data-label');
-        if (cityEl && (p.city || p.county)) cityEl.value = p.city || p.county;
-        if (stateEl && p.state) stateEl.value = p.state;
-        if (zipEl && p.postcode) zipEl.value = p.postcode;
-      });
-
-      document.addEventListener('click', (e) => {
-        if (e.target !== input && !box.contains(e.target)) { box.classList.remove('show'); }
-      });
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') box.classList.remove('show');
-      });
-    })();
-  </script>
 
   <!-- Landing page quote form submission -->
   <script>
