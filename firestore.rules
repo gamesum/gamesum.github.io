@@ -113,7 +113,7 @@ service cloud.firestore {
                         'name','email','phone','address','interest','message',
                         'addressStreet','addressCity','addressState','addressZip',
                         'marketingOptIn','preferredContact','source','submittedAt',
-                        'status','userAgent','attribution'
+                        'status','userAgent','attribution','promoCode'
                       ])
                     && request.resource.data.name is string
                     && request.resource.data.name.size() > 0
@@ -143,7 +143,9 @@ service cloud.firestore {
                     // Ad attribution (utm_* / fbclid) captured from the landing URL.
                     // Bounded: a map of short strings, so a crafted URL cannot
                     // write an unbounded blob into the lead document.
-                    && (!('attribution' in request.resource.data) || (request.resource.data.attribution is map && request.resource.data.attribution.size() < 12));
+                    && (!('attribution' in request.resource.data) || (request.resource.data.attribution is map && request.resource.data.attribution.size() < 12))
+                    // Ad discount code earned at the landing-page ZIP step.
+                    && (!('promoCode' in request.resource.data) || (request.resource.data.promoCode is string && request.resource.data.promoCode.size() < 40));
       allow update, delete: if false;
     }
 

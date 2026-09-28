@@ -244,6 +244,39 @@
     .footer-contact-inline a { color: var(--muted); transition: color 0.2s; }
     .footer-contact-inline a:hover { color: var(--accent); }
     .footer-copy { font-size: 0.78rem; color: var(--muted); width: 100%; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border); text-align: center; }
+
+    /* --- ZIP gate (paid-ad entry point) ----------------------- */
+    .zip-gate { margin: 26px 0 4px; max-width: 480px; }
+    .zip-row { display: flex; gap: 10px; flex-wrap: wrap; }
+    .zip-row input {
+      flex: 1 1 150px; min-width: 0; padding: 15px 16px; font: inherit; font-size: 1.05rem;
+      letter-spacing: .06em; color: var(--text); background: rgba(255,255,255,.04);
+      border: 1px solid var(--border); border-radius: 10px;
+    }
+    .zip-row input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+    .zip-note { margin-top: 10px; font-size: .86rem; color: var(--muted); }
+    .zip-result { display: none; margin: 22px 0 4px; max-width: 520px; }
+    .zip-result.show { display: block; animation: zipIn .32s ease both; }
+    @keyframes zipIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    .zip-ok { border: 1px solid var(--accent); border-radius: 14px; padding: 20px 22px; background: rgba(212,164,58,.07); }
+    .zip-ok .zip-yes { display: flex; align-items: center; gap: 9px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
+    .zip-price { font-size: clamp(1.5rem, 3.6vw, 2rem); font-weight: 800; color: var(--heading); line-height: 1.2; }
+    .zip-price small { display: block; margin-top: 4px; font-size: .8rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .zip-drivers { margin: 16px 0 0; padding: 0; list-style: none; font-size: .93rem; color: var(--muted); }
+    .zip-drivers li { position: relative; padding-left: 18px; margin-bottom: 6px; }
+    .zip-drivers li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+    .promo-box { margin-top: 18px; padding: 15px 16px; border: 1px dashed var(--accent); border-radius: 10px; }
+    .promo-code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 1.25rem; font-weight: 700; letter-spacing: .14em; color: var(--accent); }
+    .promo-box p { margin: 6px 0 0; font-size: .86rem; color: var(--muted); }
+    .zip-ok .btn { margin-top: 18px; }
+    .zip-out { border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+    .zip-out strong { color: var(--heading); }
+    .zip-out p { margin: 8px 0 0; font-size: .93rem; color: var(--muted); }
+    /* Banner echoed above the form so the offer is still visible at submit time. */
+    .promo-banner { display: none; margin-bottom: 20px; padding: 13px 16px; border: 1px dashed var(--accent);
+      border-radius: 10px; background: rgba(212,164,58,.06); font-size: .93rem; }
+    .promo-banner.show { display: block; }
+    .promo-banner b { color: var(--accent); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; }
   </style>
 </head>
 <body>
@@ -271,9 +304,18 @@
       <div class="hero-grid">
         <div class="hero-copy fade-in">
           <div class="section-label">Free Quote</div>
-          <h1>Utah's Highest Rated Permanent &amp; Christmas Lighting</h1>
-          <p class="section-sub">Tell us a little about your home and we'll follow up fast with a free quote: permanent RGBW roofline lighting, traditional Christmas string lights, or a full music synchronized light show.</p>
-          <a href="#quote" class="btn btn-primary btn-lg">Get My Free Quote</a>
+          <h1>Here's What Permanent Roofline Lighting Costs</h1>
+          <p class="section-sub">Enter your ZIP to confirm we install in your area, see what a permanent RGBW roofline install starts at, and unlock a discount you can use on your free quote.</p>
+          <div class="zip-gate" id="zipGate">
+            <form class="zip-row" id="zipForm" novalidate>
+              <input type="text" id="zipInput" inputmode="numeric" autocomplete="postal-code"
+                     maxlength="5" placeholder="Enter your ZIP" aria-label="Your ZIP code" />
+              <button type="submit" class="btn btn-primary btn-lg">Check My Area</button>
+            </form>
+            <div class="zip-note" id="zipNote">Takes one second. No phone number required to see pricing.</div>
+          </div>
+
+          <div class="zip-result" id="zipResult" aria-live="polite"></div>
           <div class="hero-stats">
             <div class="hero-stat"><strong>3,500+</strong><span>Lights Placed</span></div>
             <div class="hero-stat"><strong>5★</strong><span>Average Rating</span></div>
@@ -341,6 +383,7 @@
       </div>
 
       <div class="quote-card fade-in fade-delay-1">
+        <div class="promo-banner" id="promoBanner"></div>
         <form id="quoteForm">
           <input type="text" id="lpHoneypot" name="company" tabindex="-1" autocomplete="off" />
           <div class="form-row">
@@ -563,6 +606,84 @@
       const submitBtn = document.getElementById('lpSubmitBtn');
       const successEl = document.getElementById('quoteSuccess');
 
+
+      /* --- ZIP gate ------------------------------------------------
+         The paid creative promises a price for a ZIP, so the ZIP has to
+         pay that off: service-area check, the same "starting at" figure
+         published on index.html and about.html, and an offer that gives
+         the step a reason to exist. The real number still comes from the
+         quote. Change these two constants to change the offer. */
+      const PROMO_AMOUNT = 150;
+      const PROMO_CODE   = 'AG150';
+      let   promoEarned  = '';
+
+      (function () {
+        const zipForm   = document.getElementById('zipForm');
+        const zipInput  = document.getElementById('zipInput');
+        const zipResult = document.getElementById('zipResult');
+        const zipNote   = document.getElementById('zipNote');
+        const banner    = document.getElementById('promoBanner');
+        if (!zipForm) return;
+
+        zipInput.addEventListener('input', () => {
+          zipInput.value = zipInput.value.replace(/\D/g, '').slice(0, 5);
+        });
+
+        zipForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          const zip = zipInput.value.trim();
+
+          if (!/^\d{5}$/.test(zip)) {
+            zipNote.textContent = 'Please enter a 5 digit ZIP code.';
+            zipNote.style.color = '#e5484d';
+            return;
+          }
+          zipNote.style.display = 'none';
+
+          // Utah ZIPs are 84xxx. We install statewide and nowhere else.
+          if (!/^84\d{3}$/.test(zip)) {
+            promoEarned = '';
+            zipResult.innerHTML =
+              '<div class="zip-out"><strong>We only install in Utah right now.</strong>'
+              + '<p>Thanks for checking. If you own a Utah property, put that ZIP in instead. '
+              + 'Otherwise we are not able to quote this one yet.</p></div>';
+            zipResult.classList.add('show');
+            banner.classList.remove('show');
+            return;
+          }
+
+          promoEarned = PROMO_CODE;
+          zipResult.innerHTML =
+            '<div class="zip-ok">'
+          +   '<div class="zip-yes">'
+          +     '<svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.6" '
+          +     'stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>'
+          +     'Good news, we install in ' + zip + '.'
+          +   '</div>'
+          +   '<div class="zip-price">Starting at $1,500 <small>Installed</small></div>'
+          +   '<ul class="zip-drivers">'
+          +     '<li>What moves your number: total roofline length</li>'
+          +     '<li>How many peaks, dormers and stories we work around</li>'
+          +     '<li>Full RGBW color versus warm white only</li>'
+          +   '</ul>'
+          +   '<div class="promo-box">'
+          +     '<span class="promo-code">' + PROMO_CODE + '</span>'
+          +     '<p>$' + PROMO_AMOUNT + ' off your install. Request your free quote below and the '
+          +     'code is attached automatically, nothing to remember.</p>'
+          +   '</div>'
+          +   '<a href="#quote" class="btn btn-primary btn-lg">Get My Exact Price</a>'
+          + '</div>';
+          zipResult.classList.add('show');
+
+          banner.innerHTML = '<b>' + PROMO_CODE + '</b> applied, $' + PROMO_AMOUNT
+            + ' off your install. It rides along with this request.';
+          banner.classList.add('show');
+
+          const zipField = document.getElementById('lpZip');
+          if (zipField && !zipField.value) zipField.value = zip;
+        });
+      })();
+
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         statusEl.textContent = '';
@@ -610,7 +731,11 @@
 
         try {
           await db.collection('contact_submissions').add({
-            name, email, phone, address, interest, message,
+            name, email, phone, address, interest,
+            // Prefixed into the message too, so the discount is visible in
+            // whatever view we read leads in, not just the promoCode field.
+            message: (promoEarned ? ('[' + promoEarned + ' - $' + PROMO_AMOUNT + ' off] ' + message) : message).slice(0, 4999),
+            promoCode: promoEarned,
             addressStreet: addressStreet.slice(0, 200),
             addressCity: addressCity.slice(0, 100),
             addressState: addressState.slice(0, 50),
