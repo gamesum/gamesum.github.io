@@ -280,6 +280,10 @@ img,svg{max-width:100%}
 .fig .phones{position:absolute;inset:0;display:flex;justify-content:center;align-items:flex-end;gap:14px;padding:24px 24px 0}
 .fig .phones img{width:30%;max-width:150px;height:auto;border-radius:14px 14px 0 0;border:1px solid var(--rule);border-bottom:0}
 
+.screens.small{grid-template-columns:repeat(4,minmax(0,230px));justify-content:center}
+.feature{margin:28px 0 0;max-width:640px}
+.feature img{display:block;width:100%;height:auto;border:1px solid var(--rule)}
+
 /* ---------- Photo grids ---------- */
 .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:28px}
 .photos figure{margin:0}
