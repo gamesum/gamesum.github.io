@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ward Industries</title>
+<meta name="description" content="Hardware, software, and builds by Shane Ward.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='none' stroke='%23D24E0A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="sheet" aria-hidden="true"></div>
+
+<div class="page">
+  <header class="masthead">
+    <a class="mark" href="./">Ward Industries</a>
+    <nav aria-label="Site"><a href="#parts">Projects</a><a href="#about">About</a></nav>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1>Ward<br>Industries</h1>
+      <p class="lede">Hardware, software, and builds by Shane Ward. Everything on this sheet is a real thing: installed on houses, running on a phone, or sitting on the bench with a soldering iron next to it.</p>
+    </div>
+    <dl class="titleblock">
+      <div class="wide"><dt>Title</dt><dd>Complete works, index sheet</dd></div>
+      <div><dt>Drawn by</dt><dd>S. Ward</dd></div>
+      <div><dt>Shop</dt><dd>South Jordan, Utah</dd></div>
+      <div><dt>Items</dt><dd>9</dd></div>
+      <div><dt>Revision</dt><dd>A, Sept 2026</dd></div>
+    </dl>
+  </section>
+
+  <section class="sec" id="parts">
+    <div class="sec-head">
+      <h2>Parts list</h2>
+      <p>Open an item for its drawings, specs, and how it got built.</p>
+    </div>
+    <table class="plist">
+      <thead><tr><th>Item</th><th>Name</th><th>What it is</th><th>Built with</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1</span></td>
+          <td class="c-name"><a class="name" href="afterglo/">AFTERGLO Lighting</a></td>
+          <td class="desc">Permanent roofline lighting company, running on its own controller board, app, and firmware.</td>
+          <td class="built">ESP32-S3, KiCad 9, Flutter, Firebase</td>
+          <td><span class="status live">In service</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">2</span></td>
+          <td class="c-name"><a class="name" href="beacon/">Project Beacon</a></td>
+          <td class="desc">D&amp;D combat tracker. The dungeon master runs turns from a phone, and glowing, buzzing pucks on the table show each player's health and turn.</td>
+          <td class="built">ESP32-S3, BLE, ESP-NOW, Flutter, printed enclosures</td>
+          <td><span class="status">On the bench</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">3</span></td>
+          <td class="c-name"><a class="name" href="pestx-coach/">PestX Coach</a></td>
+          <td class="desc">Door-to-door sales coach. Reps record a pitch, and it gets scored against the company's own training.</td>
+          <td class="built">Flutter, Firebase, Anthropic API</td>
+          <td><span class="status">In development</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">4</span></td>
+          <td class="c-name"><a class="name" href="paddleboard/">Electric paddleboard thruster</a></td>
+          <td class="desc">Twin-motor thruster for a stand-up paddleboard, steered by a sealed wireless thumb throttle.</td>
+          <td class="built">D5065 motors, marine ESCs, ESP-NOW, PETG pods</td>
+          <td><span class="status">Version 3 in design</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">5</span></td>
+          <td class="c-name"><a class="name" href="k1500-dash/">K1500 digital dash</a></td>
+          <td class="desc">Custom digital gauge cluster for a 1998 Suburban, with swappable gauge layouts for day and night.</td>
+          <td class="built">ESP32-P4, ESP32-C6, custom interface board</td>
+          <td><span class="status">On the bench</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">6</span></td>
+          <td class="c-name"><a class="name" href="trucks/">Truck restorations</a></td>
+          <td class="desc">A 1998 K1500 Suburban and a 1985 GMC Sierra, brought back by hand, down to a hand-sewn diamond-stitch bench seat.</td>
+          <td class="built">350 and 305 V8s, automotive vinyl, foam</td>
+          <td><span class="status">In progress</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">7</span></td>
+          <td class="c-name"><a class="name" href="rocket-forge/">Rocket Forge 3D</a></td>
+          <td class="desc">The print shop behind the enclosures, pods, and parts for everything above.</td>
+          <td class="built">Bambu Lab H2D, carbon-fiber nylon, PETG</td>
+          <td><span class="status live">In service</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">8</span></td>
+          <td class="c-name"><a class="name" href="spirit/">Spirit foam blaster</a></td>
+          <td class="desc">A flywheel foam blaster with its own control board and firmware, in a printed body.</td>
+          <td class="built">Custom Arduino Nano board, 4S LiPo, dual 30A ESCs</td>
+          <td><span class="status">Stalled</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">9</span></td>
+          <td class="c-name"><a class="name" href="tome/">Tome</a></td>
+          <td class="desc">Hands-free voice journal. You talk, it keeps the entry and syncs it to the cloud.</td>
+          <td class="built">Flutter, Firebase</td>
+          <td><span class="status">Stalled</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec" id="about">
+    <div class="sec-head"><h2>About the shop</h2></div>
+    <div class="two">
+      <div class="prose">
+        <p>Ward Industries is where Shane Ward keeps the things he builds. Most of it starts as a problem at work: a lighting controller that kept failing, a sales team that needed a better map, a truck that needed a dashboard.</p>
+        <p>The work runs from circuit boards drawn in KiCad to apps running on phones, with the enclosures printed in-house.</p>
+      </div>
+      <dl class="spec">
+        <dt>Hardware</dt><dd>ESP32 family, Arduino, KiCad 9, custom PCBs</dd>
+        <dt>Software</dt><dd>Flutter, Firebase, ESP-IDF, WLED, Raspberry Pi / FPP</dd>
+        <dt>Fabrication</dt><dd>3D printing, Onshape, soldering, upholstery</dd>
+        <dt>Based in</dt><dd>South Jordan, Utah</dd>
+      </dl>
+    </div>
+  </section>
+
+  <footer class="colophon">
+    <span>Ward Industries, South Jordan, Utah</span>
+    <span>Drawn and built by Shane Ward</span>
+  </footer>
+</div>
+<script src="assets/site.js"></script>
+</body>
+</html>

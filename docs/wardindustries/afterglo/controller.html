@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AFTERGLO controller | Ward Industries</title>
+<meta name="description" content="The ESP32-S3 board behind every AFTERGLO install, taken apart.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='none' stroke='%23D24E0A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="sheet" aria-hidden="true"></div>
+
+<div class="page">
+  <header class="masthead">
+    <a class="mark" href="../">Ward Industries</a>
+    <nav aria-label="Site"><a href="../#parts">Projects</a><a href="../#about">About</a></nav>
+  </header>
+  <p class="crumbs"><a href="../">Index</a> / <a href="./">AFTERGLO</a> / Item 1.1</p>
+
+  <section class="hero sub">
+    <div>
+      <h1>AFTERGLO<br>controller</h1>
+      <p class="lede">The board behind every AFTERGLO install. Wired Ethernet first, four RGBW outputs, and a small screen that tells the installer what's going on without opening a laptop.</p>
+    </div>
+    <dl class="titleblock">
+      <div class="wide"><dt>Part</dt><dd>Main controller, standard tier</dd></div>
+      <div><dt>Chip</dt><dd>ESP32-S3</dd></div>
+      <div><dt>Input</dt><dd>24 V DC</dd></div>
+      <div><dt>Drawn in</dt><dd>KiCad 9</dd></div>
+      <div><dt>Status</dt><dd>Prototype</dd></div>
+    </dl>
+  </section>
+
+  <!-- Exploded view. Layer order in the DOM = bottom to top so later layers paint over earlier ones. -->
+  <section class="explode" data-explode aria-label="Exploded view of the controller">
+    <div class="stage">
+      <div class="viewport">
+        <div class="rig-wrap">
+          <div class="rig">
+
+            <!-- 4: Base -->
+            <div class="layer" data-part="3" style="--z0:0;--z1:-110">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Enclosure base">
+                <rect class="pl" x="10" y="10" width="420" height="280" rx="16"/>
+                <rect class="ln" x="22" y="22" width="396" height="256" rx="9"/>
+                <g class="ln">
+                  <circle cx="30" cy="30" r="11"/><circle cx="30" cy="30" r="4"/>
+                  <circle cx="410" cy="30" r="11"/><circle cx="410" cy="30" r="4"/>
+                  <circle cx="30" cy="270" r="11"/><circle cx="30" cy="270" r="4"/>
+                  <circle cx="410" cy="270" r="11"/><circle cx="410" cy="270" r="4"/>
+                </g>
+                <g class="ln">
+                  <path d="M64 290v-14h26v14"/><path d="M160 290v-14h26v14"/><path d="M222 290v-14h26v14"/><path d="M284 290v-14h26v14"/><path d="M346 290v-14h26v14"/>
+                  <path d="M430 55h-14v60h14"/>
+                </g>
+                <g class="hd"><line x1="60" y1="150" x2="380" y2="150"/><line x1="220" y1="40" x2="220" y2="260"/></g>
+                <circle class="bn" cx="392" cy="198" r="14"/><text class="bt" x="392" y="198">4</text>
+              </svg>
+            </div>
+
+            <!-- 3: Main board -->
+            <div class="layer" data-part="2" style="--z0:10;--z1:60">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Main circuit board">
+                <rect class="pl" x="16" y="16" width="408" height="268" rx="6"/>
+                <g class="ln">
+                  <circle cx="30" cy="30" r="5"/><circle cx="410" cy="30" r="5"/><circle cx="30" cy="270" r="5"/><circle cx="410" cy="270" r="5"/>
+                </g>
+                <!-- traces -->
+                <g class="ln" style="opacity:.55">
+                  <path d="M205 170v30h-12v10"/><path d="M215 170v22h8v48"/><path d="M230 170v14h40v56"/><path d="M245 170v6h86v64"/>
+                  <path d="M260 100h32"/><path d="M334 92h24"/><path d="M260 140h32v12"/><path d="M322 152h36"/>
+                  <path d="M92 230h60"/><path d="M76 170v-20"/><path d="M40 90h110"/>
+                </g>
+                <!-- ESP32-S3 module -->
+                <rect class="pl" x="150" y="40" width="110" height="130" rx="2"/>
+                <path class="ln" d="M150 66h110M160 56h14v-8h14v8h14v-8h14v8h14v-8h14v8h6"/>
+                <rect class="ln" x="162" y="76" width="86" height="84"/>
+                <text class="tx" x="171" y="122">ESP32-S3</text>
+                <!-- Ethernet PHY + jack -->
+                <rect class="pl" x="292" y="78" width="42" height="42"/>
+                <text class="tx" x="295" y="102" style="font-size:7.5px">LAN8720A</text>
+                <rect class="pl" x="358" y="34" width="66" height="78"/>
+                <rect class="ln" x="370" y="48" width="42" height="34"/><path class="ln" d="M383 82v8h16v-8"/>
+                <text class="tx" x="368" y="104">Ethernet</text>
+                <!-- RS485 -->
+                <rect class="pl" x="292" y="140" width="30" height="22"/>
+                <text class="tx" x="293" y="173" style="font-size:7.5px">SP3485</text>
+                <rect class="pl" x="358" y="130" width="66" height="44"/>
+                <g class="ln"><circle cx="375" cy="152" r="7"/><circle cx="391" cy="152" r="7"/><circle cx="407" cy="152" r="7"/></g>
+                <text class="tx" x="368" y="186">RS485</text>
+                <!-- Level shifter + watchdog -->
+                <rect class="pl" x="176" y="196" width="40" height="20"/>
+                <text class="tx" x="176" y="228" style="font-size:7.5px">74AHCT125</text>
+                <rect class="pl" x="116" y="198" width="16" height="16"/>
+                <text class="tx" x="104" y="228" style="font-size:7.5px">Watchdog</text>
+                <!-- Power: USB-C, buck, 24V in -->
+                <rect class="pl" x="4" y="72" width="26" height="36" rx="5"/>
+                <text class="tx" x="36" y="84">USB-C</text>
+                <rect class="pl" x="54" y="118" width="44" height="44"/><circle class="ln" cx="76" cy="140" r="14"/>
+                <text class="tx" x="58" y="176">Buck</text>
+                <rect class="pl" x="30" y="206" width="62" height="56"/>
+                <g class="ln"><circle cx="48" cy="234" r="8"/><circle cx="74" cy="234" r="8"/></g>
+                <text class="tx" x="36" y="276">24 V in</text>
+                <!-- Outputs -->
+                <g>
+                  <rect class="pl" x="150" y="240" width="54" height="40"/>
+                  <rect class="pl" x="212" y="240" width="54" height="40"/>
+                  <rect class="pl" x="274" y="240" width="54" height="40"/>
+                  <rect class="pl" x="336" y="240" width="54" height="40"/>
+                </g>
+                <g class="ln">
+                  <circle cx="163" cy="260" r="6"/><circle cx="177" cy="260" r="6"/><circle cx="191" cy="260" r="6"/>
+                  <circle cx="225" cy="260" r="6"/><circle cx="239" cy="260" r="6"/><circle cx="253" cy="260" r="6"/>
+                  <circle cx="287" cy="260" r="6"/><circle cx="301" cy="260" r="6"/><circle cx="315" cy="260" r="6"/>
+                  <circle cx="349" cy="260" r="6"/><circle cx="363" cy="260" r="6"/><circle cx="377" cy="260" r="6"/>
+                </g>
+                <text class="tx" x="262" y="233">Outputs 1 to 4</text>
+                <!-- OLED header -->
+                <g class="fl"><rect x="302" y="192" width="5" height="5"/><rect x="312" y="192" width="5" height="5"/><rect x="322" y="192" width="5" height="5"/><rect x="332" y="192" width="5" height="5"/></g>
+                <circle class="bn" cx="112" cy="46" r="14"/><text class="bt" x="112" y="46">3</text>
+              </svg>
+            </div>
+
+            <!-- 2: Status screen -->
+            <div class="layer" data-part="1" style="--z0:22;--z1:200">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Status screen">
+                <rect class="pl" x="284" y="178" width="100" height="58" rx="3"/>
+                <g class="fl"><rect x="302" y="182" width="5" height="5"/><rect x="312" y="182" width="5" height="5"/><rect x="322" y="182" width="5" height="5"/><rect x="332" y="182" width="5" height="5"/></g>
+                <rect class="ln" x="292" y="192" width="84" height="38"/>
+                <text class="tx" x="298" y="206">Online, Ethernet</text>
+                <text class="tx" x="298" y="221">192.168.1.40</text>
+                <circle class="bn" cx="404" cy="186" r="14"/><text class="bt" x="404" y="186">2</text>
+              </svg>
+            </div>
+
+            <!-- 1: Lid -->
+            <div class="layer" data-part="0" style="--z0:34;--z1:330">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Enclosure lid">
+                <rect class="pl" x="10" y="10" width="420" height="280" rx="16"/>
+                <rect class="hd" x="20" y="20" width="400" height="260" rx="10"/>
+                <rect class="ln" x="290" y="190" width="88" height="42" rx="2"/>
+                <g class="ln">
+                  <rect x="46" y="44" width="80" height="6" rx="3"/><rect x="46" y="60" width="80" height="6" rx="3"/>
+                  <rect x="46" y="76" width="80" height="6" rx="3"/><rect x="46" y="92" width="80" height="6" rx="3"/>
+                  <rect x="46" y="108" width="80" height="6" rx="3"/>
+                </g>
+                <g class="ln"><circle cx="30" cy="30" r="4"/><circle cx="410" cy="30" r="4"/><circle cx="30" cy="270" r="4"/><circle cx="410" cy="270" r="4"/></g>
+                <text class="tx" x="46" y="252" style="font-size:15px;font-stretch:125%;font-weight:800">AFTERGLO</text>
+                <circle class="bn" cx="392" cy="56" r="14"/><text class="bt" x="392" y="56">1</text>
+              </svg>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Exploded view</h2>
+        <p class="hint">Scroll to take it apart. Tap a part to jump to it.</p>
+        <ol class="parts">
+          <li><button type="button"><span class="balloon">1</span><span><strong>Lid</strong><span class="d">Printed enclosure top with a window cut for the status screen and vents over the power stage.</span></span></button></li>
+          <li><button type="button"><span class="balloon">2</span><span><strong>Status screen</strong><span class="d">SSD1306 OLED. Shows network state and IP address so an installer can find the controller on site.</span></span></button></li>
+          <li><button type="button"><span class="balloon">3</span><span><strong>Main board</strong><span class="d">ESP32-S3 with a LAN8720A Ethernet PHY, SP3485 RS485, 74AHCT125 level shifting for clean LED data, and a TPL5010 hardware watchdog.</span></span></button></li>
+          <li><button type="button"><span class="balloon">4</span><span><strong>Base</strong><span class="d">Mounting bosses and cable entries for 24 V power, Ethernet, and four LED runs.</span></span></button></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Specifications</h2></div>
+    <dl class="spec" style="margin-top:8px">
+      <dt>Power in</dt><dd>24 V DC with reverse polarity protection, MP2315 buck and AMS1117 regulator</dd>
+      <dt>Network</dt><dd>Wired Ethernet (LAN8720A) first, Wi-Fi as backup</dd>
+      <dt>LED outputs</dt><dd>4 channels, RGBW, 5 V logic through 74AHCT125 level shifters</dd>
+      <dt>Data</dt><dd>RS485 via SP3485</dd>
+      <dt>Display</dt><dd>SSD1306 OLED status screen</dd>
+      <dt>Flashing</dt><dd>USB-C through CP2102N</dd>
+      <dt>Reliability</dt><dd>TPL5010 hardware watchdog</dd>
+      <dt>Firmware</dt><dd>Custom WLED fork, remote updates disabled by design</dd>
+      <dt>Design files</dt><dd>KiCad 9, four-sheet hierarchical schematic</dd>
+    </dl>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Why build a controller</h2></div>
+    <div class="prose" style="padding-top:24px">
+      <p>A lot of AFTERGLO's work is replacing controllers that failed on someone else's install. Off-the-shelf boards lean on Wi-Fi, lose their place on a flaky network, and give the installer nothing to look at when something goes wrong.</p>
+      <p>This board puts a cable first, shows its status on the front, and has a hardware watchdog that restarts it if the firmware hangs. A pro tier with onboard SD storage for longer shows is planned.</p>
+    </div>
+  </section>
+
+  <nav class="pager" aria-label="Pages">
+    <a class="up" href="./"><small>Up to</small><strong>AFTERGLO Lighting</strong></a>
+    <a class="next" href="app.html"><small>Item 1.2</small><strong>AFTERGLO app</strong></a>
+  </nav>
+  <footer class="colophon">
+    <span>Ward Industries, South Jordan, Utah</span>
+    <span>Drawn and built by Shane Ward</span>
+  </footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

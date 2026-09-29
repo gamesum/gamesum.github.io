@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Show system | Ward Industries</title>
+<meta name="description" content="Scheduled light shows, show audio to car radios, and a portable show format.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='none' stroke='%23D24E0A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="sheet" aria-hidden="true"></div>
+
+<div class="page">
+  <header class="masthead">
+    <a class="mark" href="../">Ward Industries</a>
+    <nav aria-label="Site"><a href="../#parts">Projects</a><a href="../#about">About</a></nav>
+  </header>
+  <p class="crumbs"><a href="../">Index</a> / <a href="./">AFTERGLO</a> / Item 1.7</p>
+
+  <section class="hero sub">
+    <div>
+      <h1>Show<br>system</h1>
+      <p class="todo lede"><span>To be written</span>Show system: what it does for a customer (two sentences).</p>
+    </div>
+    <dl class="titleblock">
+      <div class="wide"><dt>Part</dt><dd>Show player, FM audio, show format</dd></div><div><dt>Player</dt><dd>Raspberry Pi 4, FPP</dd></div><div><dt>Status</dt><dd>Working prototype</dd></div>
+    </dl>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head"><h2>Show player</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Does</dt><dd>Plays scheduled xLights sequences with no PC attached</dd><dt>Control</dt><dd>Phone or tablet dashboard</dd><dt>Sync</dt><dd>Keeps multiple controllers in sync</dd><dt>Built on</dt><dd>Raspberry Pi 4 running Falcon Player (FPP)</dd><dt>Output</dt><dd>DDP and E1.31 over Ethernet, driving Genius controllers and WLED</dd><dt>Status</dt><dd>Working prototype. Parts of it ran on real installs.</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>FM transmitter</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Does</dt><dd>Broadcasts show audio to car radios nearby</dd><dt>Hardware</dt><dd>Raspberry Pi 4, USB DAC, 500 mW FM transmitter, 24 V to 5 V step-down, wire dipole antenna</dd><dt>Range</dt><dd>Heard in a car at tens of feet. Hiss and noise still being cleaned up.</dd><dt>Compliance</dt><dd>FCC Part 15.239 researched, with a tiered compliance roadmap</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Universal show format (.aglo)</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Does</dt><dd>A portable show file that adapts to whatever props a customer has</dd><dt>How</dt><dd>Controllers describe themselves over DDP, so a show written for one house can play on another</dd><dt>Status</dt><dd>In design</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>How it got built</h2></div>
+    <p class="todo"><span>To be written</span>How the show system came together, and a show it ran on a real house.</p><div class="shots"><figure class="shot"><span>Show player box</span></figure><figure class="shot"><span>FM transmitter build</span></figure><figure class="shot"><span>A show running on a house</span></figure></div>
+  </section>
+
+  <nav class="pager" aria-label="Pages">
+    <a href="direct-mail.html"><small>Item 1.6</small><strong>Direct mail engine</strong></a>
+    <a class="up" href="./"><small>Up to</small><strong>AFTERGLO Lighting</strong></a>
+  </nav>
+  <footer class="colophon">
+    <span>Ward Industries, South Jordan, Utah</span>
+    <span>Drawn and built by Shane Ward</span>
+  </footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

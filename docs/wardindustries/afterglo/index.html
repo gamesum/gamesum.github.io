@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AFTERGLO Lighting | Ward Industries</title>
+<meta name="description" content="Permanent roofline lighting, with its own controller, app, and firmware.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='none' stroke='%23D24E0A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="sheet" aria-hidden="true"></div>
+
+<div class="page">
+  <header class="masthead">
+    <a class="mark" href="../">Ward Industries</a>
+    <nav aria-label="Site"><a href="../#parts">Projects</a><a href="../#about">About</a></nav>
+  </header>
+  <p class="crumbs"><a href="../">Index</a> / Item 1</p>
+
+  <section class="hero sub">
+    <div>
+      <h1>AFTERGLO<br>Lighting</h1>
+      <p class="lede">Permanent roofline lighting for homes in the Salt Lake Valley. It started as a rebranded open-source app and grew into its own controller board, firmware, and software, plus the tools the sales team uses to sell it.</p>
+    </div>
+    <dl class="titleblock">
+      <div class="wide"><dt>Company</dt><dd>Ward Legacy Group LLC, doing business as AFTERGLO Lighting Co.</dd></div>
+      <div><dt>Service area</dt><dd>Salt Lake Valley</dd></div>
+      <div><dt>Sub-assemblies</dt><dd>7</dd></div>
+      <div class="wide"><dt>Website</dt><dd><a href="https://afterglolighting.org">afterglolighting.org</a></dd></div>
+    </dl>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Installed system</h2>
+      <p>What goes on the house. The pieces below are what Shane built to run it and sell it.</p>
+    </div>
+    <dl class="spec">
+      <dt>Lights</dt><dd>12V and 24V RGB and RGBWW puck LEDs in powder-coated aluminum track</dd>
+      <dt>Control</dt><dd>Genius PRO 32-port controllers and long-range receivers</dd>
+      <dt>Power</dt><dd>Mean Well power supplies, solid-state relays, and power injection</dd>
+      <dt>Signal</dt><dd>Cat6 runs from the controller to each receiver</dd>
+    </dl>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Sub-assemblies</h2>
+      <p>Each piece of the AFTERGLO system, from the board on the wall to the map in the sales rep's pocket.</p>
+    </div>
+    <table class="plist">
+      <thead><tr><th>Item</th><th>Name</th><th>What it is</th><th>Built with</th><th>Status</th></tr></thead>
+      <tbody>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1.1</span></td>
+          <td class="c-name"><a class="name" href="controller.html">Controller</a></td>
+          <td class="desc">The board that runs each install. Wired Ethernet first, four RGBW outputs, RS485, and a status screen.</td>
+          <td class="built">ESP32-S3, LAN8720A, KiCad 9</td>
+          <td><span class="status">Prototype</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1.2</span></td>
+          <td class="c-name"><a class="name" href="app.html">AFTERGLO app</a></td>
+          <td class="desc">One app for iPhone and Android: presets, a pattern builder, schedules, and presets written by AI from a description.</td>
+          <td class="built">Flutter, Firebase, AI presets</td>
+          <td><span class="status">In development</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1.3</span></td>
+          <td class="c-name"><a class="name" href="firmware.html">Firmware and web installer</a></td>
+          <td class="desc">A custom fork of WLED with remote updates locked down, installed from the browser in a click or two.</td>
+          <td class="built">WLED, ESP Web Tools, Web Serial</td>
+          <td><span class="status live">In service</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1.4</span></td>
+          <td class="c-name"><a class="name" href="visualizer.html">House visualizer</a></td>
+          <td class="desc">Upload a photo of your house, place lights along the roofline, and see it lit before you buy.</td>
+          <td class="built">HTML canvas, JavaScript</td>
+          <td><span class="status live">Built</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1.5</span></td>
+          <td class="c-name"><a class="name" href="porchlight.html">Porchlight</a></td>
+          <td class="desc">Door-knocking map for the sales team. Pin every house by how the knock went, and turn a yes into an appointment.</td>
+          <td class="built">Google Maps API, Firebase, Flutter</td>
+          <td><span class="status live">Web version working</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1.6</span></td>
+          <td class="c-name"><a class="name" href="direct-mail.html">Direct mail engine</a></td>
+          <td class="desc">Draw a box on a map, and every eligible house in it gets a postcard showing lights on their own home.</td>
+          <td class="built">Street-level imagery, AI rendering, print-and-mail API</td>
+          <td><span class="status">In design</span></td>
+        </tr>
+        <tr class="linked">
+          <td class="c-item"><span class="balloon">1.7</span></td>
+          <td class="c-name"><a class="name" href="shows.html">Show system</a></td>
+          <td class="desc">Plays scheduled light shows with no PC attached, keeps several controllers in sync, and sends the music to car radios parked out front.</td>
+          <td class="built">Raspberry Pi 4, Falcon Player, DDP and E1.31, FM transmitter</td>
+          <td><span class="status">Working prototype</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="sec">
+    <div class="sec-head">
+      <h2>Revision history</h2>
+      <p>Same idea, three names.</p>
+    </div>
+    <ol class="revs">
+      <li>
+        <span class="tri" aria-label="Revision A">A</span>
+        <div><h3>Ridgeline Lighting</h3></div>
+        <p>Forked the open-source WLED Android app and rebuilt its look from the ground up, with a new name, icon, and mountain-dusk color scheme. Gave it its own package name and signed a release build for the Play Store.</p>
+      </li>
+      <li>
+        <span class="tri" aria-label="Revision B">B</span>
+        <div><h3>Mesa Lighting</h3></div>
+        <p>First website and the house visualizer, a lead magnet that lets homeowners try lights on a photo of their own house.</p>
+      </li>
+      <li>
+        <span class="tri" aria-label="Revision C">C</span>
+        <div><h3>AFTERGLO Lighting Co.</h3></div>
+        <p>Custom controller board, a single Flutter app replacing two native ones, a browser-based firmware installer, and the sales tools: Porchlight and the direct mail engine.</p>
+      </li>
+    </ol>
+  </section>
+
+  <nav class="pager" aria-label="Pages">
+    <a href="../"><small>Back to</small><strong>Index</strong></a>
+    <a class="next" href="controller.html"><small>Item 1.1</small><strong>Controller</strong></a>
+  </nav>
+  <footer class="colophon">
+    <span>Ward Industries, South Jordan, Utah</span>
+    <span>Drawn and built by Shane Ward</span>
+  </footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

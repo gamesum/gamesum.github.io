@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>K1500 digital dash | Ward Industries</title>
+<meta name="description" content="Custom digital gauge cluster for a 1998 K1500 Suburban.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='none' stroke='%23D24E0A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="sheet" aria-hidden="true"></div>
+
+<div class="page">
+  <header class="masthead">
+    <a class="mark" href="../">Ward Industries</a>
+    <nav aria-label="Site"><a href="../#parts">Projects</a><a href="../#about">About</a></nav>
+  </header>
+  <p class="crumbs"><a href="../">Index</a> / Item 5</p>
+
+  <section class="hero sub">
+    <div>
+      <h1>K1500<br>digital dash</h1>
+      <p class="todo lede"><span>To be written</span>Dash: what it is and why you built it (two sentences).</p>
+    </div>
+    <dl class="titleblock">
+      <div class="wide"><dt>Part</dt><dd>Digital gauge cluster, 1998 K1500 Suburban</dd></div><div><dt>Main</dt><dd>ESP32-P4</dd></div><div><dt>Wireless</dt><dd>ESP32-C6</dd></div><div><dt>Display</dt><dd>1024 × 600 IPS</dd></div><div><dt>Status</dt><dd>On the bench</dd></div>
+    </dl>
+  </section>
+
+  <section class="explode" data-explode aria-label="Exploded view of the dash">
+    <div class="stage">
+      <div class="viewport">
+        <div class="rig-wrap">
+          <div class="rig">
+            <div class="layer" data-part="2" style="--z0:0;--z1:-90">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Interface board">
+                <rect class="pl" x="80" y="84" width="280" height="132" rx="4"/>
+                <g class="hd"><line x1="100" y1="150" x2="340" y2="150"/></g>
+                <text class="tx" x="180" y="138">Interface board</text>
+                <circle class="bn" cx="370" cy="96" r="14"/><text class="bt" x="370" y="96">3</text>
+              </svg>
+            </div>
+            <div class="layer" data-part="1" style="--z0:12;--z1:90">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Main board">
+                <rect class="pl" x="60" y="70" width="320" height="160" rx="4"/>
+                <rect class="pl" x="100" y="100" width="110" height="90" rx="2"/>
+                <text class="tx" x="126" y="150">ESP32-P4</text>
+                <rect class="pl" x="250" y="110" width="80" height="60" rx="2"/>
+                <text class="tx" x="264" y="144">ESP32-C6</text>
+                <g class="ln"><circle cx="72" cy="82" r="5"/><circle cx="368" cy="82" r="5"/><circle cx="72" cy="218" r="5"/><circle cx="368" cy="218" r="5"/></g>
+                <circle class="bn" cx="390" cy="80" r="14"/><text class="bt" x="390" y="80">2</text>
+              </svg>
+            </div>
+            <div class="layer" data-part="0" style="--z0:24;--z1:250">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Display">
+                <rect class="pl" x="20" y="40" width="400" height="220" rx="8"/>
+                <rect class="ln" x="36" y="50" width="368" height="200"/>
+                <text class="tx" x="190" y="154">1024 × 600 IPS</text>
+                <circle class="bn" cx="410" cy="36" r="14"/><text class="bt" x="410" y="36">1</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Exploded view</h2>
+        <p class="hint">Scroll to take it apart. Tap a part to jump to it.</p>
+        <ol class="parts">
+          <li><button type="button"><span class="balloon">1</span><span><strong>Display</strong><span class="d">1024 × 600 IPS panel. LVGL 9, RGB565.</span></span></button></li>
+          <li><button type="button"><span class="balloon">2</span><span><strong>Main board</strong><span class="d">ESP32-P4 runs the dash. ESP32-C6 handles OTA updates and the config and calibration web page.</span></span></button></li>
+          <li><button type="button"><span class="balloon">3</span><span><strong>Interface board</strong><span class="d">Custom board between the truck and the controller.</span></span></button></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Specifications</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Vehicle</dt><dd>1998 K1500 Suburban</dd><dt>Main controller</dt><dd>ESP32-P4</dd><dt>Wireless</dt><dd>ESP32-C6, for OTA updates and a config and calibration web page</dd><dt>Interface</dt><dd>Custom interface board</dd><dt>Display</dt><dd>1024 × 600 IPS, LVGL 9, RGB565</dd><dt>Controls</dt><dd>Physical buttons</dd><dt>UI</dt><dd>Shane's own design, with day and night variants</dd><dt>Firmware</dt><dd>Split into a data layer and a UI layer, so gauge layouts can be swapped from a compiled-in registry</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Status</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Simulator</dt><dd>Working. The interface was prototyped as HTML/CSS/JS simulators first.</dd><dt>Hardware</dt><dd>Architecture defined</dd><dt>First milestone</dt><dd>Running on the bench with simulated data</dd><dt>In the truck</dt><dd>Not yet</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>How it got built</h2></div>
+    <p class="todo"><span>To be written</span>Why a custom dash for the Suburban, and how the gauge layouts were designed.</p><div class="shots"><figure class="shot"><span>Day layout screenshot</span></figure><figure class="shot"><span>Night layout screenshot</span></figure><figure class="shot"><span>Bench setup</span></figure></div>
+  </section>
+
+  <nav class="pager" aria-label="Pages">
+    <a href="../paddleboard/"><small>Item 4</small><strong>Electric paddleboard thruster</strong></a>
+    <a class="up" href="../"><small>Up to</small><strong>Index</strong></a>
+    <a class="next" href="../trucks/"><small>Item 6</small><strong>Truck restorations</strong></a>
+  </nav>
+  <footer class="colophon">
+    <span>Ward Industries, South Jordan, Utah</span>
+    <span>Drawn and built by Shane Ward</span>
+  </footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>

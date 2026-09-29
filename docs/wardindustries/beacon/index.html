@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Project Beacon | Ward Industries</title>
+<meta name="description" content="D&amp;D combat tracker: a phone app and a table of lit, buzzing pucks.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='none' stroke='%23D24E0A' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/site.css">
+</head>
+<body>
+<div class="sheet" aria-hidden="true"></div>
+
+<div class="page">
+  <header class="masthead">
+    <a class="mark" href="../">Ward Industries</a>
+    <nav aria-label="Site"><a href="../#parts">Projects</a><a href="../#about">About</a></nav>
+  </header>
+  <p class="crumbs"><a href="../">Index</a> / Item 2</p>
+
+  <section class="hero sub">
+    <div>
+      <h1>Project<br>Beacon</h1>
+      <p class="todo lede"><span>To be written</span>Beacon: what it is and why you built it (two sentences).</p>
+    </div>
+    <dl class="titleblock">
+      <div class="wide"><dt>Part</dt><dd>D&amp;D combat tracker</dd></div><div><dt>Chip</dt><dd>ESP32-S3</dd></div><div><dt>Firmware</dt><dd>ESP-IDF v5.4.2</dd></div><div class="wide"><dt>Status</dt><dd>Dev kits, hand-built</dd></div>
+    </dl>
+  </section>
+
+  <section class="explode" data-explode aria-label="Exploded view of the Premium Screen Puck">
+    <div class="stage">
+      <div class="viewport">
+        <div class="rig-wrap">
+          <div class="rig">
+            <div class="layer" data-part="5" style="--z0:0;--z1:-150">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Base">
+                <circle class="pl" cx="220" cy="150" r="134"/>
+                <circle class="ln" cx="220" cy="150" r="122"/>
+                <g class="hd"><line x1="80" y1="150" x2="360" y2="150"/><line x1="220" y1="20" x2="220" y2="280"/></g>
+                <circle class="bn" cx="344" cy="232" r="14"/><text class="bt" x="344" y="232">6</text>
+              </svg>
+            </div>
+            <div class="layer" data-part="4" style="--z0:8;--z1:-40">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Battery">
+                <rect class="pl" x="140" y="104" width="160" height="92" rx="10"/>
+                <path class="ln" d="M300 132h18M300 150h18"/>
+                <text class="tx" x="182" y="154">1800 mAh LiPo</text>
+                <circle class="bn" cx="154" cy="88" r="14"/><text class="bt" x="154" y="88">5</text>
+              </svg>
+            </div>
+            <div class="layer" data-part="3" style="--z0:14;--z1:60">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Board">
+                <circle class="pl" cx="220" cy="150" r="100"/>
+                <rect class="pl" x="184" y="108" width="72" height="56" rx="2"/>
+                <text class="tx" x="193" y="140">ESP32-S3</text>
+                <rect class="pl" x="150" y="176" width="22" height="22"/>
+                <text class="tx" x="140" y="212">IMU</text>
+                <circle class="pl" cx="274" cy="190" r="16"/><circle class="ln" cx="274" cy="190" r="6"/>
+                <text class="tx" x="258" y="222">Motor</text>
+                <circle class="bn" cx="320" cy="88" r="14"/><text class="bt" x="320" y="88">4</text>
+              </svg>
+            </div>
+            <div class="layer" data-part="2" style="--z0:22;--z1:150">
+              <svg viewBox="0 0 440 300" role="img" aria-label="LED ring">
+                <circle class="pl" cx="220" cy="150" r="128"/>
+                <circle class="pl" cx="220" cy="150" r="104"/>
+                <g class="fl"><rect x="332.5" y="146.5" width="7" height="7" transform="rotate(0.0 336.0 150.0)"/><rect x="330.3" y="168.7" width="7" height="7" transform="rotate(11.2 333.8 172.2)"/><rect x="323.7" y="190.0" width="7" height="7" transform="rotate(22.5 327.2 193.5)"/><rect x="313.0" y="209.7" width="7" height="7" transform="rotate(33.8 316.5 213.2)"/><rect x="298.5" y="226.9" width="7" height="7" transform="rotate(45.0 302.0 230.4)"/><rect x="280.9" y="241.0" width="7" height="7" transform="rotate(56.2 284.4 244.5)"/><rect x="260.9" y="251.5" width="7" height="7" transform="rotate(67.5 264.4 255.0)"/><rect x="239.1" y="258.0" width="7" height="7" transform="rotate(78.8 242.6 261.5)"/><rect x="216.5" y="260.2" width="7" height="7" transform="rotate(90.0 220.0 263.7)"/><rect x="193.9" y="258.0" width="7" height="7" transform="rotate(101.2 197.4 261.5)"/><rect x="172.1" y="251.5" width="7" height="7" transform="rotate(112.5 175.6 255.0)"/><rect x="152.1" y="241.0" width="7" height="7" transform="rotate(123.7 155.6 244.5)"/><rect x="134.5" y="226.9" width="7" height="7" transform="rotate(135.0 138.0 230.4)"/><rect x="120.0" y="209.7" width="7" height="7" transform="rotate(146.2 123.5 213.2)"/><rect x="109.3" y="190.0" width="7" height="7" transform="rotate(157.5 112.8 193.5)"/><rect x="102.7" y="168.7" width="7" height="7" transform="rotate(168.8 106.2 172.2)"/><rect x="100.5" y="146.5" width="7" height="7" transform="rotate(180.0 104.0 150.0)"/><rect x="102.7" y="124.3" width="7" height="7" transform="rotate(191.2 106.2 127.8)"/><rect x="109.3" y="103.0" width="7" height="7" transform="rotate(202.5 112.8 106.5)"/><rect x="120.0" y="83.3" width="7" height="7" transform="rotate(213.8 123.5 86.8)"/><rect x="134.5" y="66.1" width="7" height="7" transform="rotate(225.0 138.0 69.6)"/><rect x="152.1" y="52.0" width="7" height="7" transform="rotate(236.2 155.6 55.5)"/><rect x="172.1" y="41.5" width="7" height="7" transform="rotate(247.5 175.6 45.0)"/><rect x="193.9" y="35.0" width="7" height="7" transform="rotate(258.8 197.4 38.5)"/><rect x="216.5" y="32.8" width="7" height="7" transform="rotate(270.0 220.0 36.3)"/><rect x="239.1" y="35.0" width="7" height="7" transform="rotate(281.2 242.6 38.5)"/><rect x="260.9" y="41.5" width="7" height="7" transform="rotate(292.5 264.4 45.0)"/><rect x="280.9" y="52.0" width="7" height="7" transform="rotate(303.8 284.4 55.5)"/><rect x="298.5" y="66.1" width="7" height="7" transform="rotate(315.0 302.0 69.6)"/><rect x="313.0" y="83.3" width="7" height="7" transform="rotate(326.2 316.5 86.8)"/><rect x="323.7" y="103.0" width="7" height="7" transform="rotate(337.5 327.2 106.5)"/><rect x="330.3" y="124.3" width="7" height="7" transform="rotate(348.8 333.8 127.8)"/></g>
+                <circle class="bn" cx="356" cy="150" r="14"/><text class="bt" x="356" y="150">3</text>
+              </svg>
+            </div>
+            <div class="layer" data-part="1" style="--z0:28;--z1:250">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Round display">
+                <circle class="pl" cx="220" cy="150" r="94"/>
+                <circle class="ln" cx="220" cy="150" r="84"/>
+                <text class="tx" x="196" y="154">480 × 480</text>
+                <circle class="bn" cx="316" cy="74" r="14"/><text class="bt" x="316" y="74">2</text>
+              </svg>
+            </div>
+            <div class="layer" data-part="0" style="--z0:34;--z1:360">
+              <svg viewBox="0 0 440 300" role="img" aria-label="Lid">
+                <circle class="pl" cx="220" cy="150" r="134"/>
+                <circle class="ln" cx="220" cy="150" r="124"/>
+                <circle class="hd" cx="220" cy="150" r="96"/>
+                <circle class="bn" cx="354" cy="52" r="14"/><text class="bt" x="354" y="52">1</text>
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Exploded view</h2>
+        <p class="hint">Scroll to take it apart. Tap a part to jump to it.</p>
+        <ol class="parts">
+          <li><button type="button"><span class="balloon">1</span><span><strong>Lid</strong><span class="d">Printed top shell with a window over the round display and a light band for the LED ring.</span></span></button></li>
+          <li><button type="button"><span class="balloon">2</span><span><strong>Round display</strong><span class="d">2.1-inch round 480 × 480 touch display on the Waveshare ESP32-S3-Touch-LCD-2.1.</span></span></button></li>
+          <li><button type="button"><span class="balloon">3</span><span><strong>LED ring</strong><span class="d">32 WS2812 LEDs. Shows health and turn state around the edge of the puck.</span></span></button></li>
+          <li><button type="button"><span class="balloon">4</span><span><strong>Board</strong><span class="d">ESP32-S3 with a QMI8658 IMU, plus the vibration motor for haptics.</span></span></button></li>
+          <li><button type="button"><span class="balloon">5</span><span><strong>Battery</strong><span class="d">1800 mAh LiPo.</span></span></button></li>
+          <li><button type="button"><span class="balloon">6</span><span><strong>Base</strong><span class="d">Printed bottom shell. Printed by Rocket Forge.</span></span></button></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Puck variants</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>DM Puck</dt><dd>The hub. Talks to the phone over BLE and holds turn order.</dd><dt>Premium Screen Puck</dt><dd>Waveshare ESP32-S3-Touch-LCD-2.1, 2.1-inch round 480 × 480 touch display, QMI8658 IMU, 32-LED WS2812 ring, vibration motor, 1800 mAh LiPo</dd><dt>Budget Screen Puck</dt><dd>1.28-inch round GC9A01 touch display, with the same ring, motor, and battery</dd><dt>Counter Puck</dt><dd>4-digit counter and two buttons, for longer battery life</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Specifications</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>App</dt><dd>Flutter, iOS and Android. The DM runs encounters from it.</dd><dt>Phone to hub</dt><dd>BLE to the DM Puck</dd><dt>Puck to puck</dt><dd>ESP-NOW</dd><dt>Feedback</dt><dd>LEDs, screens, haptics, and sound</dd><dt>Firmware</dt><dd>ESP-IDF v5.4.2</dd><dt>Flashing</dt><dd>Python/Tkinter desktop flasher, and a single-file Web Serial browser flasher</dd><dt>Enclosures</dt><dd>Printed by <a href="../rocket-forge/">Rocket Forge</a></dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Revision history</h2></div>
+    <ol class="revs">
+      <li>
+        <span class="tri" aria-label="Revision A">A</span>
+        <div><h3>Status puck concept</h3></div>
+        <p>A coaster-sized desk device with a small display, a tower-style upper housing, and a lit 360° light band.</p>
+      </li>
+      <li>
+        <span class="tri" aria-label="Revision B">B</span>
+        <div><h3>Screen Puck and Mini Screen Puck</h3></div>
+        <p>Full bills of materials and written build plans.</p>
+      </li>
+      <li>
+        <span class="tri" aria-label="Revision C">C</span>
+        <div><h3>Project Beacon</h3></div>
+        <p>Four puck variants and the phone app.</p>
+      </li>
+    </ol>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>How it got built</h2></div>
+    <p class="todo"><span>To be written</span>How Beacon started, and what a game night with it looks like.</p><div class="shots"><figure class="shot"><span>Pucks on a game table, lit</span></figure><figure class="shot"><span>Premium Screen Puck close-up</span></figure><figure class="shot"><span>DM app screen</span></figure><figure class="shot"><span>Inside a puck, bench build</span></figure></div>
+  </section>
+
+  <nav class="pager" aria-label="Pages">
+    <a href="../afterglo/"><small>Item 1</small><strong>AFTERGLO Lighting</strong></a>
+    <a class="up" href="../"><small>Up to</small><strong>Index</strong></a>
+    <a class="next" href="../pestx-coach/"><small>Item 3</small><strong>PestX Coach</strong></a>
+  </nav>
+  <footer class="colophon">
+    <span>Ward Industries, South Jordan, Utah</span>
+    <span>Drawn and built by Shane Ward</span>
+  </footer>
+</div>
+<script src="../assets/site.js"></script>
+</body>
+</html>
