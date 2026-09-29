@@ -280,6 +280,15 @@ img,svg{max-width:100%}
 .fig .phones{position:absolute;inset:0;display:flex;justify-content:center;align-items:flex-end;gap:14px;padding:24px 24px 0}
 .fig .phones img{width:30%;max-width:150px;height:auto;border-radius:14px 14px 0 0;border:1px solid var(--rule);border-bottom:0}
 
+/* ---------- Photo grids ---------- */
+.photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:28px}
+.photos figure{margin:0}
+.photos img{display:block;width:100%;aspect-ratio:4/3;object-fit:cover;background:var(--paper-2)}
+.photos figcaption{margin-top:8px;font-size:.9rem;color:var(--steel)}
+.photos.installs{grid-template-columns:repeat(4,minmax(0,1fr))}
+.photos.installs figure:first-child{grid-column:span 2;grid-row:span 2}
+.photos.installs figure:first-child img{aspect-ratio:auto;height:calc(100% - 30px)}
+
 /* ---------- Project tiles (home parts list) ---------- */
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
 .tile{position:relative;display:flex;flex-direction:column;background:var(--paper-2)}
@@ -310,6 +319,7 @@ img,svg{max-width:100%}
 @media (max-width:860px){
   .hero.home{grid-template-columns:1fr}
   .tiles{grid-template-columns:1fr}
+  .photos.installs{grid-template-columns:repeat(2,minmax(0,1fr))}
   .screens{grid-template-columns:repeat(2,minmax(0,1fr));padding:16px;gap:14px}
   .tile.wide{grid-column:auto}
   .tile .fig{height:auto;aspect-ratio:4/3}
