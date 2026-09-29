@@ -14,6 +14,16 @@
     mk('z-top', nums); mk('z-bottom', nums); mk('z-left', lets); mk('z-right', lets);
   }
 
+  // Static drawings in tiles and heroes: scale each rig to its panel
+  var figs = Array.prototype.slice.call(document.querySelectorAll('.fig .rig-wrap'));
+  function fitFigs() {
+    figs.forEach(function (w) {
+      var f = w.parentNode;
+      w.style.setProperty('--fit', Math.min(f.clientWidth / 640, f.clientHeight / 520).toFixed(3));
+    });
+  }
+  if (figs.length) { fitFigs(); window.addEventListener('resize', fitFigs); }
+
   // Exploded view: scroll separates the layers, then walks through each part
   var ex = document.querySelector('[data-explode]');
   if (!ex) return;
