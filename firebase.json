@@ -43,7 +43,7 @@
       "package-lock.json"
     ],
     "redirects": [
-      { "source": "/wardindustries", "destination": "/wardindustries/", "type": 301 }
+      { "regex": "^/wardindustries$", "destination": "/wardindustries/", "type": 301 }
     ],
     "rewrites": [
       { "source": "/giveaway", "destination": "/giveaway.html" },
