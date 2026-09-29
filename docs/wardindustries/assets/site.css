@@ -71,7 +71,7 @@ img,svg{max-width:100%}
 
 .page{
   position:relative;
-  max-width:1240px; margin:0 auto;
+  max-width:1680px; margin:0 auto;
   padding:calc(var(--edge) + var(--band) + 24px) calc(var(--edge) + var(--band) + 36px) calc(var(--edge) + var(--band) + 48px);
 }
 
@@ -86,15 +86,16 @@ img,svg{max-width:100%}
 
 /* ---------- Hero ---------- */
 .hero{
-  display:grid; grid-template-columns:minmax(0,1fr) minmax(250px,330px);
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(250px,360px);
   gap:48px; align-items:end;
   padding:96px 0 48px; border-bottom:1.5px solid var(--ink);
 }
+.hero > div:first-child{container-type:inline-size;min-width:0}
 .hero h1{
   margin:0; font-stretch:125%; font-weight:850;
-  font-size:clamp(3.1rem,10vw,9.2rem); line-height:.84; letter-spacing:-.025em;
+  font-size:min(12rem,14.2cqi); line-height:.84; letter-spacing:-.025em;
 }
-.hero.sub h1{font-size:clamp(2.6rem,7.4vw,6.4rem);line-height:.88}
+.hero.sub h1{font-size:min(8rem,11cqi);line-height:.88}
 .lede{max-width:46ch;font-size:1.16rem;line-height:1.5;margin:28px 0 0}
 
 /* Title block */
