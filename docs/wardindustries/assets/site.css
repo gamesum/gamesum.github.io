@@ -282,6 +282,8 @@ img,svg{max-width:100%}
 
 .screens.small{grid-template-columns:repeat(4,minmax(0,230px));justify-content:center}
 .feature{margin:28px 0 0;max-width:640px}
+.feature.full{max-width:none}
+.feature figcaption{margin-top:8px;font-size:.9rem;color:var(--steel)}
 .feature img{display:block;width:100%;height:auto;border:1px solid var(--rule)}
 
 .shotpair{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;margin-top:28px;padding:28px;background:var(--paper-2)}
