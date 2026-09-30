@@ -293,10 +293,16 @@ img,svg{max-width:100%}
 .shotpair figcaption,.brand figcaption{margin-top:10px;font-size:.9rem;color:var(--steel)}
 .photos.sprites img{object-fit:contain;padding:16px;image-rendering:pixelated}
 .spec code{font-family:ui-monospace,Consolas,monospace;font-size:.88em;background:var(--paper-2);padding:1px 5px}
+.fig.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .fig .solo{position:absolute;inset:0;display:flex;justify-content:center;align-items:flex-end;padding:24px 24px 0}
 .fig .solo img{height:100%;width:auto;max-width:90%;object-fit:cover;object-position:top;border:1px solid var(--rule);border-bottom:0}
 .fig .sprite{position:absolute;inset:0;display:grid;place-items:center;padding:28px}
 .fig .sprite img{max-width:70%;max-height:80%;image-rendering:pixelated}
+
+.video{margin:28px 0 0;max-width:960px}
+.video video{display:block;width:auto;max-width:100%;height:auto;max-height:78vh;background:#000}
+.video figcaption{margin-top:8px;font-size:.9rem;color:var(--steel)}
+.photos.concept img{aspect-ratio:auto;object-fit:contain}
 
 /* ---------- Photo grids ---------- */
 .photos{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:28px}
