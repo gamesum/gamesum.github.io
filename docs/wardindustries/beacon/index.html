@@ -27,7 +27,7 @@
       <p class="todo lede"><span>To be written</span>Beacon: what it is and why you built it (two sentences).</p>
     </div>
     <dl class="titleblock">
-      <div class="wide"><dt>Part</dt><dd>D&amp;D combat tracker</dd></div><div><dt>Chip</dt><dd>ESP32-S3</dd></div><div><dt>Firmware</dt><dd>ESP-IDF v5.4.2</dd></div><div class="wide"><dt>Status</dt><dd>Dev kits, hand-built</dd></div>
+      <div class="wide"><dt>Part</dt><dd>D&amp;D combat tracker</dd></div><div><dt>Chip</dt><dd>ESP32-S3</dd></div><div><dt>Firmware</dt><dd>ESP-IDF v5.4.2</dd></div><div class="wide"><dt>Status</dt><dd>Dev kit, running on real hardware</dd></div>
     </dl>
   </section>
 
@@ -107,11 +107,19 @@
   </section>
   <section class="sec">
     <div class="sec-head"><h2>Puck variants</h2></div>
-    <dl class="spec" style="margin-top:8px"><dt>DM Puck</dt><dd>The hub. Talks to the phone over BLE and holds turn order.</dd><dt>Premium Screen Puck</dt><dd>Waveshare ESP32-S3-Touch-LCD-2.1, 2.1-inch round 480 × 480 touch display, QMI8658 IMU, 32-LED WS2812 ring, vibration motor, 1800 mAh LiPo</dd><dt>Budget Screen Puck</dt><dd>1.28-inch round GC9A01 touch display, with the same ring, motor, and battery</dd><dt>Counter Puck</dt><dd>4-digit counter and two buttons, for longer battery life</dd></dl>
+    <dl class="spec" style="margin-top:8px"><dt>DM Puck</dt><dd>The hub. Talks to the DM's phone over BLE, relays to player pucks over ESP-NOW, and holds turn order.</dd><dt>Premium Screen Puck</dt><dd>Waveshare ESP32-S3-Touch-LCD-2.1, 2.1-inch round 480 × 480 touch display, QMI8658 IMU, 32-LED WS2812 ring, vibration motor, 1800 mAh LiPo</dd><dt>Budget Screen Puck</dt><dd>1.28-inch round GC9A01 touch display, with the same ring, motor, and battery</dd><dt>Counter Puck</dt><dd>ESP32-C3 Super Mini, TM1637 4-digit display, two buttons, SK9822 LED ring, piezo beeper, 2000 mAh LiPo with TP4056 charging. About $16.65 a unit.</dd><dt>Battery life</dt><dd>20+ hours on the Counter Puck, 4 to 5 hours active on the screen pucks</dd></dl>
   </section>
   <section class="sec">
-    <div class="sec-head"><h2>Specifications</h2></div>
-    <dl class="spec" style="margin-top:8px"><dt>App</dt><dd>Flutter, iOS and Android. The DM runs encounters from it.</dd><dt>Phone to hub</dt><dd>BLE to the DM Puck</dd><dt>Puck to puck</dt><dd>ESP-NOW</dd><dt>Feedback</dt><dd>LEDs, screens, haptics, and sound</dd><dt>Firmware</dt><dd>ESP-IDF v5.4.2</dd><dt>Flashing</dt><dd>Python/Tkinter desktop flasher, and a single-file Web Serial browser flasher</dd><dt>Enclosures</dt><dd>Printed by <a href="../rocket-forge/">Rocket Forge</a></dd></dl>
+    <div class="sec-head"><h2>On the table</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Health</dt><dd>Ring color runs green to red as HP drops, a slow red heartbeat at 0, dark when dead</dd><dt>Turns</dt><dd>Solid blue and a buzz on your turn, flashing white when you're next</dd><dt>Hits</dt><dd>Red flash for damage, white flash for healing</dd><dt>Pairing</dt><dd>Each puck gets a fixed fantasy name, like Ember Warden, instead of a hex ID</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>App</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Platform</dt><dd>Flutter, iOS and Android</dd><dt>Encounters</dt><dd>Player groups, a monster library, and an encounter builder that sorts initiative</dd><dt>Combat</dt><dd>Round history, held-turn reorder, death saves, direct HP set, overheal and negative HP</dd><dt>Solo mode</dt><dd>A health tracker that works without an encounter</dd><dt>Design</dt><dd>Dark Dungeon theme: glass cards, gold gradients, Cinzel and Spectral type, pulsing turn rings</dd><dt>Tests</dt><dd>53+ automated tests. Runs on a Pixel 9 Pro.</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Firmware</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Rule</dt><dd>No game logic on the puck. The app owns the game; the puck only runs hardware.</dd><dt>Wire format</dt><dd>Plain text commands such as <code>CMD=TURN_START color=#4A86FF vibrate=1</code>, behind a 15-byte header</dd><dt>Why</dt><dd>The app's debug log shows the exact bytes on the wire, so the simulator and the real puck speak one language</dd><dt>Compatibility</dt><dd>Unknown commands are logged and ignored, so an older puck with a newer app degrades instead of breaking</dd><dt>Bring-up</dt><dd>Boots on the Waveshare 2.1 board with a hand-written ST7701 display driver. A real BLE link to the app is confirmed; overlapping writes that dropped the connection now go through a queue.</dd><dt>Flashing</dt><dd>Python/Tkinter desktop flasher, and a single-file Web Serial browser flasher</dd><dt>Enclosures</dt><dd>Printed by <a href="../rocket-forge/">Rocket Forge</a></dd></dl>
   </section>
   <section class="sec">
     <div class="sec-head"><h2>Revision history</h2></div>

@@ -37,7 +37,11 @@
   </section>
   <section class="sec">
     <div class="sec-head"><h2>Specifications</h2></div>
-    <dl class="spec" style="margin-top:8px"><dt>Screens</dt><dd>Home, presets, pattern builder, timers and schedules, settings</dd><dt>AI presets</dt><dd>Generates presets from a description</dd><dt>Sharing</dt><dd>Effects shared through Firebase</dd><dt>Discovery</dt><dd>Finds every controller on the home Wi-Fi the first time it opens</dd><dt>Schedules</dt><dd>On and off times by day of the week, or follow sunset and sunrise. Holidays get their own schedule.</dd><dt>Permissions</dt><dd>Five network permissions and nothing else. The device list stays on the phone.</dd><dt>Released</dt><dd>App Store, September 2026</dd><dt>Get it</dt><dd><a href="https://apps.apple.com/us/app/afterglo-lighting/id6760042676">App Store</a>, <a href="https://play.google.com/store/apps/details?id=com.ridgelinelighting.wled">Google Play</a> (listed as AFTERGLO Light Controller)</dd><dt>Replaces</dt><dd>Two native WebView wrappers, one Swift and one Kotlin</dd></dl>
+    <dl class="spec" style="margin-top:8px"><dt>Screens</dt><dd>Home, presets, pattern builder, timers and schedules, settings</dd><dt>Presets</dt><dd>30 curated presets in six folders: Everyday, Christmas, Halloween, Holidays, Occasions, Ambient</dd><dt>AI presets</dt><dd>Written by Claude from a description, through a Cloud Function</dd><dt>Sharing</dt><dd>Effects shared through Firebase</dd><dt>Discovery</dt><dd>Finds every controller on the home Wi-Fi by mDNS and a UDP beacon, or add one by IP</dd><dt>Schedules</dt><dd>On and off times by day of the week, or follow sunset and sunrise. Holidays get their own schedule.</dd><dt>Permissions</dt><dd>Five network permissions and nothing else. The device list stays on the phone.</dd><dt>Released</dt><dd>App Store, September 2026</dd><dt>Get it</dt><dd><a href="https://apps.apple.com/us/app/afterglo-lighting/id6760042676">App Store</a>, <a href="https://play.google.com/store/apps/details?id=com.ridgelinelighting.wled">Google Play</a> (listed as AFTERGLO Light Controller)</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Architecture</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Effects</dt><dd>Run on the controller. The app uploads a description, never streams frames, so the lights keep going with the phone gone.</dd><dt>Older controllers</dt><dd>A compatibility adapter drives controllers already installed on the old firmware</dd><dt>State</dt><dd>Riverpod 3 and go_router, with the real and simulated device layers swapped by one override</dd><dt>Show control</dt><dd>AFTERGLO Connect: local DDP pixel streaming for xLights and Falcon Player</dd><dt>Tests</dt><dd>21 app tests passing</dd><dt>Replaces</dt><dd>Two native WebView wrappers, one Swift and one Kotlin</dd></dl>
   </section>
   <section class="sec">
     <div class="sec-head"><h2>Revision history</h2></div>
@@ -55,7 +59,7 @@
       <li>
         <span class="tri" aria-label="Revision C">C</span>
         <div><h3>Flutter rebuild</h3></div>
-        <p>One codebase for both phones.</p>
+        <p>One codebase for both phones, and new controller firmware alongside it.</p>
       </li>
     </ol><div class="screens"><figure class="screen"><img src="img/old-1.jpg" width="600" height="1298" loading="lazy" alt="Controllers"><figcaption>Controllers</figcaption></figure><figure class="screen"><img src="img/old-2.jpg" width="600" height="1298" loading="lazy" alt="Presets"><figcaption>Presets</figcaption></figure><figure class="screen"><img src="img/old-3.jpg" width="600" height="1298" loading="lazy" alt="Pattern builder"><figcaption>Pattern builder</figcaption></figure><figure class="screen"><img src="img/old-4.jpg" width="600" height="1298" loading="lazy" alt="Timer and schedule"><figcaption>Timer and schedule</figcaption></figure></div><p class="source">The earlier app, February 2026. Screenshots from the Google Play listing.</p>
   </section>

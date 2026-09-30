@@ -104,11 +104,15 @@
   </section>
   <section class="sec">
     <div class="sec-head"><h2>Specifications</h2></div>
-    <dl class="spec" style="margin-top:8px"><dt>Board</dt><dd>Inflatable SUP</dd><dt>Motors</dt><dd>Two D5065 400KV outrunners in oil-filled PETG pods with double-lip shaft seals</dd><dt>ESCs</dt><dd>Two Flycolor 150A waterproof marine ESCs, water-cooled by a 24 V diaphragm pump</dd><dt>Battery</dt><dd>6S LiPo packs wired in parallel</dd><dt>Radio</dt><dd>ESP32-WROOM-32 on both ends, linked by ESP-NOW</dd><dt>Design</dt><dd>Onshape</dd></dl>
+    <dl class="spec" style="margin-top:8px"><dt>Board</dt><dd>Inflatable SUP</dd><dt>Motors</dt><dd>Two D5065 400KV outrunners in oil-filled PETG pods with double-lip shaft seals</dd><dt>ESCs</dt><dd>Two Flycolor 150A waterproof marine ESCs, water-cooled by a 24 V diaphragm pump</dd><dt>Battery</dt><dd>6S LiPo packs wired in parallel</dd><dt>Radio</dt><dd>ESP32-WROOM-32 on both ends, linked by ESP-NOW. No router, no pairing screen.</dd><dt>Design</dt><dd>Onshape</dd></dl>
   </section>
   <section class="sec">
     <div class="sec-head"><h2>Handheld transmitter</h2></div>
     <dl class="spec" style="margin-top:8px"><dt>Throttle</dt><dd>Hall-effect thumb throttle</dd><dt>Screen</dt><dd>SSD1306 OLED</dd><dt>Power</dt><dd>18650 cell with TP4056 charging</dd><dt>Charging port</dt><dd>IP67 USB-C bulkhead, power only</dd><dt>Housing</dt><dd>Sealed</dd></dl>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Firmware</h2></div>
+    <dl class="spec" style="margin-top:8px"><dt>Builds</dt><dd>TX in the handheld remote, RX in the deck box driving the ESCs by servo PWM</dd><dt>Protocol</dt><dd>CRC-checked packets. Host tests reject all 80 single-bit corruptions and map throttle exactly to 1000, 1500, and 2000 µs.</dd><dt>Failsafe</dt><dd>The receiver cuts throttle when valid packets stop, and the remote shows it</dd><dt>Bench bring-up</dt><dd>August 2026. Four bugs found and fixed on hardware: a display check that couldn't see a missing screen, a display fault that froze the remote at boot, a link readout that stayed healthy during failsafe, and a remote that couldn't wake from sleep.</dd><dt>Sleep</dt><dd>The ULP wake was dropped for a 2-second timer poll: a few mA more, but no chance of a dead throttle</dd><dt>Next</dt><dd>Driving motors on the bench, then water</dd></dl>
   </section>
   <section class="sec">
     <div class="sec-head"><h2>Revision history</h2></div>

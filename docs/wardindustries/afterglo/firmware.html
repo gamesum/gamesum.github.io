@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Firmware and web installer | Ward Industries</title>
-<meta name="description" content="Custom WLED fork, installed from the browser.">
+<meta name="description" content="AFTERGLO controller firmware, installed from the browser.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6.5' fill='none' stroke='%23D24E0A' stroke-width='2'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -24,20 +24,40 @@
   <section class="hero sub">
     <div>
       <h1>Firmware and<br>web installer</h1>
-      <p class="todo lede"><span>To be written</span>Firmware: why fork WLED, in two sentences.</p>
+      <p class="todo lede"><span>To be written</span>Firmware: why fork WLED, and why replace it, in two sentences.</p>
     </div>
     <dl class="titleblock">
-      <div class="wide"><dt>Part</dt><dd>Controller firmware and installer</dd></div><div><dt>Base</dt><dd>WLED fork</dd></div><div><dt>Status</dt><dd>In service</dd></div>
+      <div class="wide"><dt>Part</dt><dd>Controller firmware and installer</dd></div><div class="wide"><dt>Base</dt><dd>WLED fork, then new firmware</dd></div><div class="wide"><dt>Status</dt><dd>In service</dd></div>
     </dl>
   </section>
 
   <section class="sec">
     <div class="sec-head"><h2>Specifications</h2></div>
-    <dl class="spec" style="margin-top:8px"><dt>Firmware</dt><dd>Custom WLED fork, OTA disabled by design</dd><dt>Installer</dt><dd>ESP Web Tools v10 and the Web Serial API</dd><dt>Install</dt><dd>Flash from Chrome or Edge over a USB-C cable. No software to install, no drivers.</dd><dt>Live installer</dt><dd><a href="https://afterglolighting.org/firmware.html">afterglolighting.org/firmware</a></dd></dl>
+    <dl class="spec" style="margin-top:8px"><dt>Installer</dt><dd>ESP Web Tools v10 and the Web Serial API</dd><dt>Install</dt><dd>Flash from Chrome or Edge over a USB-C cable. No software to install, no drivers.</dd><dt>Updates</dt><dd>The WLED fork has OTA disabled by design. The new firmware takes updates offered through the app, from a hosted manifest.</dd><dt>Live installer</dt><dd><a href="https://afterglolighting.org/firmware.html">afterglolighting.org/firmware</a></dd></dl><div class="photos"><figure><img src="img/installer.jpg" loading="lazy" alt="The installer on afterglolighting.org"><figcaption>The installer on afterglolighting.org</figcaption></figure></div>
+  </section>
+  <section class="sec">
+    <div class="sec-head"><h2>Revision history</h2></div>
+    <ol class="revs">
+      <li>
+        <span class="tri" aria-label="Revision A">A</span>
+        <div><h3>WLED fork</h3></div>
+        <p>Rebranded WLED with OTA disabled. The scheduler was rewritten after a customer's lights wouldn't turn off: now simple on and off edges with a catch-up window, and the clock keeps itself synced over NTP without the app open.</p>
+      </li>
+      <li>
+        <span class="tri" aria-label="Revision B">B</span>
+        <div><h3>Arch controller</h3></div>
+        <p>Separate firmware for light arches on a WT32-ETH01: three zones with segments, 60+ presets, sunrise and sunset timers, and DDP for xLights and Falcon Player.</p>
+      </li>
+      <li>
+        <span class="tri" aria-label="Revision C">C</span>
+        <div><h3>New firmware</h3></div>
+        <p>Written alongside the Flutter app. A versioned /api/v1, effects that run on the controller, the same 30 presets as the app, and 11 hardware-free tests.</p>
+      </li>
+    </ol>
   </section>
   <section class="sec">
     <div class="sec-head"><h2>How it got built</h2></div>
-    <p class="todo"><span>To be written</span>Why OTA is off, and what the installer replaced.</p><div class="photos"><figure><img src="img/installer.jpg" loading="lazy" alt="The installer on afterglolighting.org"><figcaption>The installer on afterglolighting.org</figcaption></figure></div>
+    <p class="todo"><span>To be written</span>Why OTA was off at first, and what the installer replaced.</p>
   </section>
 
   <nav class="pager" aria-label="Pages">
