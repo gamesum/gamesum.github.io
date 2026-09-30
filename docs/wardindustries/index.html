@@ -156,121 +156,7 @@
     </div>
     <div class="tiles">
       <article class="tile wide lead">
-        <div class="fig" aria-hidden="true"><div class="rig-wrap"><div class="rig" style="--e:0.2">
-
-            <!-- 4: Base -->
-            <div class="layer" data-part="3" style="--z0:0;--z1:-110">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="10" y="10" width="420" height="280" rx="16"/>
-                <rect class="ln" x="22" y="22" width="396" height="256" rx="9"/>
-                <g class="ln">
-                  <circle cx="30" cy="30" r="11"/><circle cx="30" cy="30" r="4"/>
-                  <circle cx="410" cy="30" r="11"/><circle cx="410" cy="30" r="4"/>
-                  <circle cx="30" cy="270" r="11"/><circle cx="30" cy="270" r="4"/>
-                  <circle cx="410" cy="270" r="11"/><circle cx="410" cy="270" r="4"/>
-                </g>
-                <g class="ln">
-                  <path d="M64 290v-14h26v14"/><path d="M160 290v-14h26v14"/><path d="M222 290v-14h26v14"/><path d="M284 290v-14h26v14"/><path d="M346 290v-14h26v14"/>
-                  <path d="M430 55h-14v60h14"/>
-                </g>
-                <g class="hd"><line x1="60" y1="150" x2="380" y2="150"/><line x1="220" y1="40" x2="220" y2="260"/></g>
-                <circle class="bn" cx="392" cy="198" r="14"/><text class="bt" x="392" y="198">4</text>
-              </svg>
-            </div>
-
-            <!-- 3: Main board -->
-            <div class="layer" data-part="2" style="--z0:10;--z1:60">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="16" y="16" width="408" height="268" rx="6"/>
-                <g class="ln">
-                  <circle cx="30" cy="30" r="5"/><circle cx="410" cy="30" r="5"/><circle cx="30" cy="270" r="5"/><circle cx="410" cy="270" r="5"/>
-                </g>
-                <!-- traces -->
-                <g class="ln" style="opacity:.55">
-                  <path d="M205 170v30h-12v10"/><path d="M215 170v22h8v48"/><path d="M230 170v14h40v56"/><path d="M245 170v6h86v64"/>
-                  <path d="M260 100h32"/><path d="M334 92h24"/><path d="M260 140h32v12"/><path d="M322 152h36"/>
-                  <path d="M92 230h60"/><path d="M76 170v-20"/><path d="M40 90h110"/>
-                </g>
-                <!-- ESP32-S3 module -->
-                <rect class="pl" x="150" y="40" width="110" height="130" rx="2"/>
-                <path class="ln" d="M150 66h110M160 56h14v-8h14v8h14v-8h14v8h14v-8h14v8h6"/>
-                <rect class="ln" x="162" y="76" width="86" height="84"/>
-                <text class="tx" x="171" y="122">ESP32-S3</text>
-                <!-- Ethernet PHY + jack -->
-                <rect class="pl" x="292" y="78" width="42" height="42"/>
-                <text class="tx" x="295" y="102" style="font-size:7.5px">LAN8720A</text>
-                <rect class="pl" x="358" y="34" width="66" height="78"/>
-                <rect class="ln" x="370" y="48" width="42" height="34"/><path class="ln" d="M383 82v8h16v-8"/>
-                <text class="tx" x="368" y="104">Ethernet</text>
-                <!-- RS485 -->
-                <rect class="pl" x="292" y="140" width="30" height="22"/>
-                <text class="tx" x="293" y="173" style="font-size:7.5px">SP3485</text>
-                <rect class="pl" x="358" y="130" width="66" height="44"/>
-                <g class="ln"><circle cx="375" cy="152" r="7"/><circle cx="391" cy="152" r="7"/><circle cx="407" cy="152" r="7"/></g>
-                <text class="tx" x="368" y="186">RS485</text>
-                <!-- Level shifter + watchdog -->
-                <rect class="pl" x="176" y="196" width="40" height="20"/>
-                <text class="tx" x="176" y="228" style="font-size:7.5px">74AHCT125</text>
-                <rect class="pl" x="116" y="198" width="16" height="16"/>
-                <text class="tx" x="104" y="228" style="font-size:7.5px">Watchdog</text>
-                <!-- Power: USB-C, buck, 24V in -->
-                <rect class="pl" x="4" y="72" width="26" height="36" rx="5"/>
-                <text class="tx" x="36" y="84">USB-C</text>
-                <rect class="pl" x="54" y="118" width="44" height="44"/><circle class="ln" cx="76" cy="140" r="14"/>
-                <text class="tx" x="58" y="176">Buck</text>
-                <rect class="pl" x="30" y="206" width="62" height="56"/>
-                <g class="ln"><circle cx="48" cy="234" r="8"/><circle cx="74" cy="234" r="8"/></g>
-                <text class="tx" x="36" y="276">24 V in</text>
-                <!-- Outputs -->
-                <g>
-                  <rect class="pl" x="150" y="240" width="54" height="40"/>
-                  <rect class="pl" x="212" y="240" width="54" height="40"/>
-                  <rect class="pl" x="274" y="240" width="54" height="40"/>
-                  <rect class="pl" x="336" y="240" width="54" height="40"/>
-                </g>
-                <g class="ln">
-                  <circle cx="163" cy="260" r="6"/><circle cx="177" cy="260" r="6"/><circle cx="191" cy="260" r="6"/>
-                  <circle cx="225" cy="260" r="6"/><circle cx="239" cy="260" r="6"/><circle cx="253" cy="260" r="6"/>
-                  <circle cx="287" cy="260" r="6"/><circle cx="301" cy="260" r="6"/><circle cx="315" cy="260" r="6"/>
-                  <circle cx="349" cy="260" r="6"/><circle cx="363" cy="260" r="6"/><circle cx="377" cy="260" r="6"/>
-                </g>
-                <text class="tx" x="262" y="233">Outputs 1 to 4</text>
-                <!-- OLED header -->
-                <g class="fl"><rect x="302" y="192" width="5" height="5"/><rect x="312" y="192" width="5" height="5"/><rect x="322" y="192" width="5" height="5"/><rect x="332" y="192" width="5" height="5"/></g>
-                <circle class="bn" cx="112" cy="46" r="14"/><text class="bt" x="112" y="46">3</text>
-              </svg>
-            </div>
-
-            <!-- 2: Status screen -->
-            <div class="layer" data-part="1" style="--z0:22;--z1:200">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="284" y="178" width="100" height="58" rx="3"/>
-                <g class="fl"><rect x="302" y="182" width="5" height="5"/><rect x="312" y="182" width="5" height="5"/><rect x="322" y="182" width="5" height="5"/><rect x="332" y="182" width="5" height="5"/></g>
-                <rect class="ln" x="292" y="192" width="84" height="38"/>
-                <text class="tx" x="298" y="206">Online, Ethernet</text>
-                <text class="tx" x="298" y="221">192.168.1.40</text>
-                <circle class="bn" cx="404" cy="186" r="14"/><text class="bt" x="404" y="186">2</text>
-              </svg>
-            </div>
-
-            <!-- 1: Lid -->
-            <div class="layer" data-part="0" style="--z0:34;--z1:330">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="10" y="10" width="420" height="280" rx="16"/>
-                <rect class="hd" x="20" y="20" width="400" height="260" rx="10"/>
-                <rect class="ln" x="290" y="190" width="88" height="42" rx="2"/>
-                <g class="ln">
-                  <rect x="46" y="44" width="80" height="6" rx="3"/><rect x="46" y="60" width="80" height="6" rx="3"/>
-                  <rect x="46" y="76" width="80" height="6" rx="3"/><rect x="46" y="92" width="80" height="6" rx="3"/>
-                  <rect x="46" y="108" width="80" height="6" rx="3"/>
-                </g>
-                <g class="ln"><circle cx="30" cy="30" r="4"/><circle cx="410" cy="30" r="4"/><circle cx="30" cy="270" r="4"/><circle cx="410" cy="270" r="4"/></g>
-                <text class="tx" x="46" y="252" style="font-size:15px;font-stretch:125%;font-weight:800">AFTERGLO</text>
-                <circle class="bn" cx="392" cy="56" r="14"/><text class="bt" x="392" y="56">1</text>
-              </svg>
-            </div>
-
-          </div></div></div>
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/afterglo.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">1</span>
           <a class="name" href="afterglo/">AFTERGLO Lighting</a>
@@ -279,60 +165,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig" aria-hidden="true"><div class="rig-wrap"><div class="rig" style="--e:0.42">
-            <div class="layer" data-part="5" style="--z0:0;--z1:-150">
-              <svg viewBox="0 0 440 300">
-                <circle class="pl" cx="220" cy="150" r="134"/>
-                <circle class="ln" cx="220" cy="150" r="122"/>
-                <g class="hd"><line x1="80" y1="150" x2="360" y2="150"/><line x1="220" y1="20" x2="220" y2="280"/></g>
-                <circle class="bn" cx="344" cy="232" r="14"/><text class="bt" x="344" y="232">6</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="4" style="--z0:8;--z1:-40">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="140" y="104" width="160" height="92" rx="10"/>
-                <path class="ln" d="M300 132h18M300 150h18"/>
-                <text class="tx" x="182" y="154">1800 mAh LiPo</text>
-                <circle class="bn" cx="154" cy="88" r="14"/><text class="bt" x="154" y="88">5</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="3" style="--z0:14;--z1:60">
-              <svg viewBox="0 0 440 300">
-                <circle class="pl" cx="220" cy="150" r="100"/>
-                <rect class="pl" x="184" y="108" width="72" height="56" rx="2"/>
-                <text class="tx" x="193" y="140">ESP32-S3</text>
-                <rect class="pl" x="150" y="176" width="22" height="22"/>
-                <text class="tx" x="140" y="212">IMU</text>
-                <circle class="pl" cx="274" cy="190" r="16"/><circle class="ln" cx="274" cy="190" r="6"/>
-                <text class="tx" x="258" y="222">Motor</text>
-                <circle class="bn" cx="320" cy="88" r="14"/><text class="bt" x="320" y="88">4</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="2" style="--z0:22;--z1:150">
-              <svg viewBox="0 0 440 300">
-                <circle class="pl" cx="220" cy="150" r="128"/>
-                <circle class="pl" cx="220" cy="150" r="104"/>
-                <g class="fl"><rect x="332.5" y="146.5" width="7" height="7" transform="rotate(0.0 336.0 150.0)"/><rect x="330.3" y="168.7" width="7" height="7" transform="rotate(11.2 333.8 172.2)"/><rect x="323.7" y="190.0" width="7" height="7" transform="rotate(22.5 327.2 193.5)"/><rect x="313.0" y="209.7" width="7" height="7" transform="rotate(33.8 316.5 213.2)"/><rect x="298.5" y="226.9" width="7" height="7" transform="rotate(45.0 302.0 230.4)"/><rect x="280.9" y="241.0" width="7" height="7" transform="rotate(56.2 284.4 244.5)"/><rect x="260.9" y="251.5" width="7" height="7" transform="rotate(67.5 264.4 255.0)"/><rect x="239.1" y="258.0" width="7" height="7" transform="rotate(78.8 242.6 261.5)"/><rect x="216.5" y="260.2" width="7" height="7" transform="rotate(90.0 220.0 263.7)"/><rect x="193.9" y="258.0" width="7" height="7" transform="rotate(101.2 197.4 261.5)"/><rect x="172.1" y="251.5" width="7" height="7" transform="rotate(112.5 175.6 255.0)"/><rect x="152.1" y="241.0" width="7" height="7" transform="rotate(123.7 155.6 244.5)"/><rect x="134.5" y="226.9" width="7" height="7" transform="rotate(135.0 138.0 230.4)"/><rect x="120.0" y="209.7" width="7" height="7" transform="rotate(146.2 123.5 213.2)"/><rect x="109.3" y="190.0" width="7" height="7" transform="rotate(157.5 112.8 193.5)"/><rect x="102.7" y="168.7" width="7" height="7" transform="rotate(168.8 106.2 172.2)"/><rect x="100.5" y="146.5" width="7" height="7" transform="rotate(180.0 104.0 150.0)"/><rect x="102.7" y="124.3" width="7" height="7" transform="rotate(191.2 106.2 127.8)"/><rect x="109.3" y="103.0" width="7" height="7" transform="rotate(202.5 112.8 106.5)"/><rect x="120.0" y="83.3" width="7" height="7" transform="rotate(213.8 123.5 86.8)"/><rect x="134.5" y="66.1" width="7" height="7" transform="rotate(225.0 138.0 69.6)"/><rect x="152.1" y="52.0" width="7" height="7" transform="rotate(236.2 155.6 55.5)"/><rect x="172.1" y="41.5" width="7" height="7" transform="rotate(247.5 175.6 45.0)"/><rect x="193.9" y="35.0" width="7" height="7" transform="rotate(258.8 197.4 38.5)"/><rect x="216.5" y="32.8" width="7" height="7" transform="rotate(270.0 220.0 36.3)"/><rect x="239.1" y="35.0" width="7" height="7" transform="rotate(281.2 242.6 38.5)"/><rect x="260.9" y="41.5" width="7" height="7" transform="rotate(292.5 264.4 45.0)"/><rect x="280.9" y="52.0" width="7" height="7" transform="rotate(303.8 284.4 55.5)"/><rect x="298.5" y="66.1" width="7" height="7" transform="rotate(315.0 302.0 69.6)"/><rect x="313.0" y="83.3" width="7" height="7" transform="rotate(326.2 316.5 86.8)"/><rect x="323.7" y="103.0" width="7" height="7" transform="rotate(337.5 327.2 106.5)"/><rect x="330.3" y="124.3" width="7" height="7" transform="rotate(348.8 333.8 127.8)"/></g>
-                <circle class="bn" cx="356" cy="150" r="14"/><text class="bt" x="356" y="150">3</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="1" style="--z0:28;--z1:250">
-              <svg viewBox="0 0 440 300">
-                <circle class="pl" cx="220" cy="150" r="94"/>
-                <circle class="ln" cx="220" cy="150" r="84"/>
-                <text class="tx" x="196" y="154">480 × 480</text>
-                <circle class="bn" cx="316" cy="74" r="14"/><text class="bt" x="316" y="74">2</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="0" style="--z0:34;--z1:360">
-              <svg viewBox="0 0 440 300">
-                <circle class="pl" cx="220" cy="150" r="134"/>
-                <circle class="ln" cx="220" cy="150" r="124"/>
-                <circle class="hd" cx="220" cy="150" r="96"/>
-                <circle class="bn" cx="354" cy="52" r="14"/><text class="bt" x="354" y="52">1</text>
-              </svg>
-            </div>
-          </div></div></div>
+        <div class="fig empty" aria-hidden="true"><span>Photo to come</span></div>
         <div class="cap">
           <span class="balloon">2</span>
           <a class="name" href="beacon/">Project Beacon</a>
@@ -341,7 +174,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig" aria-hidden="true"><div class="phones"><img src="pestx-coach/img/screen-1.jpg" alt="" loading="lazy"><img src="pestx-coach/img/screen-3.jpg" alt="" loading="lazy"><img src="pestx-coach/img/screen-4.jpg" alt="" loading="lazy"></div></div>
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/pestx-coach.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">3</span>
           <a class="name" href="pestx-coach/">PestX Coach</a>
@@ -349,58 +182,8 @@
           <p class="desc">Door-to-door sales coach. Reps record a pitch, and it gets scored against the company's own training.</p>
         </div>
       </article>
-      <article class="tile wide">
-        <div class="fig" aria-hidden="true"><div class="rig-wrap"><div class="rig" style="--e:0.3">
-            <div class="layer" data-part="5" style="--z0:0;--z1:-130">
-              <svg viewBox="0 0 440 300">
-                <path class="pl" d="M360 96 L424 138 v24 L360 204z"/>
-                <line class="hd" x1="340" y1="150" x2="430" y2="150"/>
-                <circle class="bn" cx="410" cy="96" r="14"/><text class="bt" x="410" y="96">6</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="4" style="--z0:8;--z1:-30">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="110" y="84" width="250" height="132" rx="54"/>
-                <path class="hd" d="M126 118h218"/>
-                <text class="tx" x="196" y="200">PETG, oil-filled</text>
-                <circle class="bn" cx="360" cy="70" r="14"/><text class="bt" x="360" y="70">5</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="3" style="--z0:16;--z1:70">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="120" y="120" width="22" height="60" rx="3"/>
-                <g class="ln"><path d="M124 132l7 6 7-6"/><path d="M124 168l7-6 7 6"/></g>
-                <text class="tx" x="104" y="196">Double-lip seal</text>
-                <circle class="bn" cx="160" cy="104" r="14"/><text class="bt" x="160" y="104">4</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="2" style="--z0:24;--z1:160">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="150" y="96" width="120" height="108" rx="6"/>
-                <g class="ln"><line x1="170" y1="96" x2="170" y2="204"/><line x1="250" y1="96" x2="250" y2="204"/></g>
-                <rect class="pl" x="84" y="144" width="66" height="12"/>
-                <text class="tx" x="176" y="154">D5065 400KV</text>
-                <circle class="bn" cx="296" cy="88" r="14"/><text class="bt" x="296" y="88">3</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="1" style="--z0:32;--z1:260">
-              <svg viewBox="0 0 440 300">
-                <path class="pl" d="M30 52 q40 -16 90 0 v18 q-45 -8 -90 0z"/>
-                <path class="pl" d="M30 248 q40 16 90 0 v-18 q-45 8 -90 0z"/>
-                <g class="hd"><line x1="30" y1="70" x2="30" y2="230"/><line x1="120" y1="70" x2="120" y2="230"/></g>
-                <circle class="bn" cx="150" cy="50" r="14"/><text class="bt" x="150" y="50">2</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="0" style="--z0:40;--z1:360">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="54" y="134" width="22" height="32" rx="4"/>
-                <ellipse class="pl" cx="66" cy="104" rx="10" ry="34"/>
-                <ellipse class="pl" cx="66" cy="196" rx="10" ry="34"/>
-                <line class="hd" x1="20" y1="150" x2="420" y2="150"/>
-                <circle class="bn" cx="106" cy="70" r="14"/><text class="bt" x="106" y="70">1</text>
-              </svg>
-            </div>
-          </div></div></div>
+      <article class="tile">
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/paddleboard.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">4</span>
           <a class="name" href="paddleboard/">Electric paddleboard thruster</a>
@@ -409,35 +192,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig" aria-hidden="true"><div class="rig-wrap"><div class="rig" style="--e:0.55">
-            <div class="layer" data-part="2" style="--z0:0;--z1:-90">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="80" y="84" width="280" height="132" rx="4"/>
-                <g class="hd"><line x1="100" y1="150" x2="340" y2="150"/></g>
-                <text class="tx" x="180" y="138">Interface board</text>
-                <circle class="bn" cx="370" cy="96" r="14"/><text class="bt" x="370" y="96">3</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="1" style="--z0:12;--z1:90">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="60" y="70" width="320" height="160" rx="4"/>
-                <rect class="pl" x="100" y="100" width="110" height="90" rx="2"/>
-                <text class="tx" x="126" y="150">ESP32-P4</text>
-                <rect class="pl" x="250" y="110" width="80" height="60" rx="2"/>
-                <text class="tx" x="264" y="144">ESP32-C6</text>
-                <g class="ln"><circle cx="72" cy="82" r="5"/><circle cx="368" cy="82" r="5"/><circle cx="72" cy="218" r="5"/><circle cx="368" cy="218" r="5"/></g>
-                <circle class="bn" cx="390" cy="80" r="14"/><text class="bt" x="390" y="80">2</text>
-              </svg>
-            </div>
-            <div class="layer" data-part="0" style="--z0:24;--z1:250">
-              <svg viewBox="0 0 440 300">
-                <rect class="pl" x="20" y="40" width="400" height="220" rx="8"/>
-                <rect class="ln" x="36" y="50" width="368" height="200"/>
-                <text class="tx" x="190" y="154">1024 × 600 IPS</text>
-                <circle class="bn" cx="410" cy="36" r="14"/><text class="bt" x="410" y="36">1</text>
-              </svg>
-            </div>
-          </div></div></div>
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/k1500-dash.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">5</span>
           <a class="name" href="k1500-dash/">K1500 digital dash</a>
@@ -446,7 +201,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig" aria-hidden="true"><div class="shot"><span>Photos to come</span></div></div>
+        <div class="fig empty" aria-hidden="true"><span>Photo to come</span></div>
         <div class="cap">
           <span class="balloon">6</span>
           <a class="name" href="trucks/">Truck restorations</a>
@@ -455,7 +210,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig photo" aria-hidden="true"><img src="rocket-forge/img/keychain-5.jpg" alt="" loading="lazy"></div>
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/rocket-forge.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">7</span>
           <a class="name" href="rocket-forge/">Rocket Forge 3D</a>
@@ -464,7 +219,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig photo" aria-hidden="true"><img src="spirit/img/built-1.jpg" alt="" loading="lazy"></div>
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/spirit.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">8</span>
           <a class="name" href="spirit/">Spirit foam blaster</a>
@@ -473,7 +228,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig" aria-hidden="true"><div class="phones"><img src="tome/img/screen-1.jpg" alt="" loading="lazy"><img src="tome/img/screen-3.jpg" alt="" loading="lazy"><img src="tome/img/screen-4.jpg" alt="" loading="lazy"></div></div>
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/tome.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">9</span>
           <a class="name" href="tome/">Tome</a>
@@ -482,7 +237,7 @@
         </div>
       </article>
       <article class="tile">
-        <div class="fig" aria-hidden="true"><div class="sprite"><img src="last-directive/img/machine.png" alt="" loading="lazy"></div></div>
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/last-directive.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">10</span>
           <a class="name" href="last-directive/">The Last Directive</a>
@@ -490,8 +245,8 @@
           <p class="desc">A dig-down mining game in the spirit of the 2004 Flash game Motherload, running in the browser.</p>
         </div>
       </article>
-      <article class="tile full">
-        <div class="fig photo" aria-hidden="true"><img src="thimble/img/studio.jpg" alt="" loading="lazy"></div>
+      <article class="tile">
+        <div class="fig photo" aria-hidden="true"><img src="assets/thumbs/thimble.jpg" alt="" loading="lazy"></div>
         <div class="cap">
           <span class="balloon">11</span>
           <a class="name" href="thimble/">Thimble</a>
