@@ -317,6 +317,8 @@ img,svg{max-width:100%}
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:28px}
 .tile{position:relative;display:flex;flex-direction:column;background:var(--paper-2)}
 .tile.wide{grid-column:span 2}
+.tile.full{grid-column:1 / -1}
+.tile.full .fig{height:clamp(200px,16vw,280px)}
 .tile .fig{aspect-ratio:auto;height:clamp(240px,22vw,400px);flex:none}
 .tile .cap{flex:1;align-content:start}
 .tile .cap{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:4px 12px;padding:16px 18px 18px;border-top:1px solid var(--rule);background:var(--paper)}
@@ -345,7 +347,7 @@ img,svg{max-width:100%}
   .tiles{grid-template-columns:1fr}
   .photos.installs{grid-template-columns:repeat(2,minmax(0,1fr))}
   .screens{grid-template-columns:repeat(2,minmax(0,1fr));padding:16px;gap:14px}
-  .tile.wide{grid-column:auto}
+  .tile.wide,.tile.full{grid-column:auto}
   .tile .fig{height:auto;aspect-ratio:4/3}
   .band{padding:56px 22px;margin-left:-22px;margin-right:-22px}
 }
