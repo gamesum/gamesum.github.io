@@ -427,7 +427,8 @@
     try {
       await submitLead(data);
       if (typeof fbq === 'function') fbq('track', 'Lead');
-      form.style.display = 'none';
+      // Not form.style: the radio group named "style" shadows it on a <form>.
+      form.hidden = true;
       done.style.display = 'block';
       done.focus();
     } catch (err) {
