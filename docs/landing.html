@@ -393,7 +393,7 @@
       <div class="quote-head fade-in">
         <div class="section-label">Get Started</div>
         <h2 class="section-title" style="font-size:clamp(1.7rem,3.4vw,2.3rem);">Get Your Free Quote</h2>
-        <p class="section-sub">Takes under 2 minutes. We'll follow up fast with pricing and next steps.</p>
+        <p class="section-sub">Takes 30 seconds. We'll follow up fast with pricing and next steps.</p>
       </div>
 
       <div class="quote-card fade-in fade-delay-1">
@@ -413,12 +413,6 @@
           <div class="form-field">
             <label for="lpAddress">Home Address *</label>
             <input type="text" id="lpAddress" required maxlength="250" autocomplete="street-address" placeholder="123 Main St, South Jordan" />
-          </div>
-          <div class="form-field form-checkbox-field">
-            <label class="checkbox-label">
-              <input type="checkbox" id="lpMarketingOptIn" />
-              <span>Keep me updated on seasonal deals and promotions by email</span>
-            </label>
           </div>
           <div class="form-submit-row">
             <button type="submit" class="btn btn-primary btn-lg btn-block" id="lpSubmitBtn">Get My Free Quote</button>
@@ -603,7 +597,6 @@
         const name = document.getElementById('lpFirstName').value.trim();
         const phone = document.getElementById('lpPhone').value.trim();
         const address = document.getElementById('lpAddress').value.trim();
-        const marketingOptIn = document.getElementById('lpMarketingOptIn').checked;
         const phoneDigits = phone.replace(/\D/g, '');
 
         if (!name || !phone || !address) {
@@ -648,7 +641,6 @@
             // view we read leads in, not just the promoCode field.
             message: promoEarned ? ('[saw ' + promoEarned + ' offer]') : '',
             promoCode: promoEarned,
-            marketingOptIn,
             source: 'landing page',
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
