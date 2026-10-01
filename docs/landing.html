@@ -667,8 +667,15 @@
         submitBtn.disabled = true;
         submitBtn.textContent = 'Sending…';
 
+        // Offline, Firestore queues the write and waits instead of failing, which
+        // would leave the button on "Sending…" forever. Treat 15s as a failure.
+        // (The queued write can still land later, so a retry may duplicate a lead.)
+        let timer;
         try {
-          await db.collection('contact_submissions').add({
+          const timeout = new Promise((_, reject) => {
+            timer = setTimeout(() => reject(new Error('Lead write timed out')), 15000);
+          });
+          const write = db.collection('contact_submissions').add({
             name, email, phone, address, interest,
             // Prefixed into the message too, so the discount is visible in
             // whatever view we read leads in, not just the promoCode field.
@@ -688,8 +695,11 @@
               catch (e) { return {}; }
             })(),
           });
+          await Promise.race([write, timeout]);
+          clearTimeout(timer);
           window.location.href = 'contact-thank-you.html';
         } catch (err) {
+          clearTimeout(timer);
           statusEl.textContent = 'Something went wrong sending your request. Please call or email us directly.';
           statusEl.className = 'form-status error';
           submitBtn.disabled = false;

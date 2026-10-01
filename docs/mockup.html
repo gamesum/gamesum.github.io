@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>(function(){try{var t=localStorage.getItem('afterglo-theme')||'dark';document.documentElement.setAttribute('data-theme',t);}catch(e){document.documentElement.setAttribute('data-theme','dark');}})();</script>
+<meta charset="UTF-8">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>See Your House Lit Up, Free | AFTERGLO Lighting Co.</title>
+<meta name="description" content="Send us your address and we'll text you a free picture of your house with permanent lights. No obligation.">
+<meta name="robots" content="noindex, follow">
+<link rel="icon" type="image/png" href="afterglo-favicon.png">
+<link rel="canonical" href="https://afterglolighting.org/mockup.html">
+<meta property="og:title" content="See your house with permanent lights, free">
+<meta property="og:description" content="Send us your address. We'll text you a picture of your house lit up. No obligation.">
+<meta property="og:image" content="https://afterglolighting.org/Resources/House%20Images/dn-night-rgbw.jpg">
+
+<!-- Meta Pixel. Same ID and base code as landing.html. PageView fires here;
+     Lead fires in the submit handler below, only after the Firestore write
+     succeeds. (landing.html fires its Lead on contact-thank-you.html, which
+     it redirects to after the same successful write: one Lead per lead on
+     both sides of the A/B test.) -->
+<script>
+  window.AFTERGLO_META_PIXEL_ID = '1452623813370700';
+  (function () {
+    var id = window.AFTERGLO_META_PIXEL_ID;
+    if (!id) {
+      console.warn('[AFTERGLO] Meta Pixel not configured — no ad tracking.');
+      return;
+    }
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', id);
+    fbq('track', 'PageView');
+  })();
+</script>
+
+<!-- Campaign attribution (utm_* / fbclid), same capture as landing.html. -->
+<script>
+  (function () {
+    try {
+      var KEY = 'afterglo-attribution';
+      var qs = new URLSearchParams(window.location.search);
+      var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+      var found = {};
+      var any = false;
+      fields.forEach(function (f) {
+        var v = qs.get(f);
+        if (v) { found[f] = v.slice(0, 200); any = true; }
+      });
+      if (any) {
+        found.landingPath = window.location.pathname;
+        found.referrer = (document.referrer || '').slice(0, 300);
+        sessionStorage.setItem(KEY, JSON.stringify(found));
+      }
+    } catch (e) { /* private mode, storage disabled: never block the form */ }
+  })();
+</script>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  /* Tokens copied from landing.html so both sides of the test look the same. */
+  :root {
+    --bg:       #17171B;
+    --bg2:      #1B1B1F;
+    --bg3:      #232328;
+    --accent:   #D4A43A;
+    --text:     #F2F2F4;
+    --muted:    #ADADB6;
+    --border:   #2E2E34;
+    --heading:  #fff;
+    --error:    #e5533d;
+    --nav-h:    72px;
+  }
+  [data-theme="light"] {
+    --bg:       #FAF8F3;
+    --bg2:      #F6F3EA;
+    --bg3:      #FFFFFF;
+    --accent:   #A8791E;
+    --text:     #201F1C;
+    --muted:    #6B6659;
+    --border:   #E9E2D0;
+    --heading:  #14130F;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 400 17px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    overflow-x: hidden;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  h1, h2 { font-family: 'Outfit', sans-serif; color: var(--heading); }
+  img { max-width: 100%; display: block; }
+  a { color: var(--accent); }
+
+  /* Header: same treatment as landing.html (#topbar), always dark. */
+  #topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    padding-top: env(safe-area-inset-top, 0px);
+    background: #0D1117;
+    --text: #F2F2F4; --muted: #ADADB6; --border: #2E2E34; --accent: #D4A43A;
+  }
+  .bar {
+    display: flex; justify-content: space-between; align-items: center;
+    height: var(--nav-h); padding: 0 24px; max-width: 1200px; margin: 0 auto;
+  }
+  .logo { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.06em; text-transform: uppercase; text-decoration: none; }
+  .logo span { color: var(--accent); text-shadow: 0 0 14px rgba(212,164,58,0.55); }
+  .bar-right { display: flex; align-items: center; gap: 20px; }
+  .call { display: flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; color: var(--text); font-size: 0.95rem; }
+  .call svg { color: var(--accent); }
+  .theme-toggle { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; padding: 0; border-radius: 50%; background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--muted); cursor: pointer; flex-shrink: 0; transition: color 0.2s, border-color 0.2s; }
+  .theme-toggle:hover { color: var(--accent); border-color: var(--accent); }
+  .theme-toggle svg { display: block; }
+  .theme-toggle .tt-moon { display: none; }
+  [data-theme="light"] .theme-toggle .tt-sun { display: none; }
+  [data-theme="light"] .theme-toggle .tt-moon { display: block; }
+  @media (max-width: 420px) { .bar { padding: 0 16px; } .bar-right { gap: 12px; } .logo { font-size: 1.3rem; } }
+
+  /* Hero: the photo is the pitch */
+  .hero { position: relative; max-width: 1100px; margin: 0 auto; padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px)); }
+  .hero img { width: 100%; height: 46vh; min-height: 260px; max-height: 520px; object-fit: cover; }
+  .hero::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, transparent 45%, var(--bg) 100%);
+    pointer-events: none;
+  }
+
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 20px; }
+  .intro { position: relative; z-index: 1; margin-top: -70px; }
+  h1 {
+    font-weight: 800; font-size: clamp(34px, 8vw, 54px); line-height: 1.05;
+    margin: 0 0 14px; letter-spacing: -.01em;
+  }
+  .lede { font-size: 19px; color: var(--muted); margin: 0 0 8px; max-width: 34em; }
+  .price { font-size: 15px; color: var(--muted); margin: 0 0 28px; }
+  .price strong { color: var(--heading); font-weight: 600; }
+
+  /* Form: card, labels and inputs follow landing.html's quote form */
+  form, .done {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 28px 22px 24px;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  label, .legend { font-size: 0.85rem; font-weight: 600; color: var(--muted); }
+  .opt { font-weight: 400; }
+  input, select {
+    width: 100%; font-family: 'Inter', sans-serif; font-size: 1rem; color: var(--text);
+    background: var(--bg3); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; min-height: 50px; outline: none; transition: border-color 0.2s;
+  }
+  input::placeholder { color: var(--muted); opacity: .7; }
+  input:focus, select:focus { border-color: var(--accent); }
+  button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .err { color: var(--error); font-size: 14px; display: none; }
+  .field.invalid .err { display: block; }
+  .field.invalid input { border-color: var(--error); }
+
+  fieldset.field { border: 0; padding: 0; margin: 0 0 16px; min-width: 0; }
+  .legend { padding: 0; margin-bottom: 6px; }
+  .styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .styles input { position: absolute; opacity: 0; width: 1px; height: 1px; min-height: 0; }
+  .styles label {
+    margin: 0; text-align: center; font-weight: 500; font-size: 14px; color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px; padding: 12px 6px; cursor: pointer;
+    background: var(--bg3); transition: border-color 0.2s;
+  }
+  .styles input:checked + label { border-color: var(--accent); color: var(--accent); background: rgba(212,164,58,0.08); }
+  .styles input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Button: landing.html .btn.btn-primary.btn-lg.btn-block */
+  button[type="submit"] {
+    width: 100%; margin-top: 6px; min-height: 56px; border: 0; border-radius: 8px;
+    background: #D4A43A; color: #000; box-shadow: 0 4px 16px rgba(212,164,58,0.25);
+    font-family: 'Inter', sans-serif; font-size: 1.05rem; font-weight: 600; cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  }
+  button[type="submit"]:hover { background: #F0C04A; box-shadow: 0 6px 20px rgba(212,164,58,0.35); transform: translateY(-2px); }
+  button[type="submit"]:disabled { opacity: .6; cursor: wait; transform: none; }
+  .fine { font-size: 13px; color: var(--muted); margin: 12px 0 0; }
+  .formerr { color: var(--error); font-size: 15px; margin: 12px 0 0; display: none; }
+
+  .done { display: none; text-align: center; padding: 34px 20px; }
+  .done h2 { font-weight: 800; font-size: 28px; line-height: 1.1; margin: 0 0 10px; }
+  .done p { color: var(--muted); margin: 0; }
+
+  /* How it works: a real sequence, so it gets numbers */
+  .how { margin: 48px auto 0; }
+  .how h2 { font-weight: 800; font-size: 24px; line-height: 1.2; margin: 0 0 18px; }
+  .how ol { list-style: none; padding: 0; margin: 0; counter-reset: s; }
+  .how li { counter-increment: s; display: grid; grid-template-columns: 40px 1fr; gap: 12px; margin-bottom: 18px; }
+  .how li::before {
+    content: counter(s); font: 800 20px/40px 'Outfit', sans-serif; text-align: center;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(212,164,58,0.12); color: var(--accent);
+  }
+  .how p { margin: 8px 0 0; color: var(--muted); }
+  .how b { color: var(--heading); font-weight: 600; }
+
+  .trust { margin: 36px auto 0; padding-top: 28px; border-top: 1px solid var(--border); }
+  .trust p { margin: 0 0 12px; color: var(--muted); }
+  .trust b { color: var(--heading); font-weight: 600; }
+
+  /* Footer: landing.html #footer, always dark */
+  footer {
+    margin-top: 48px; background: #0e0e11; border-top: 1px solid #2E2E34;
+    font-size: 13px; color: #ADADB6;
+  }
+  footer .inner { max-width: 640px; margin: 0 auto; padding: 32px 20px 40px; }
+  footer a { color: #ADADB6; }
+  footer a:hover { color: #D4A43A; }
+
+  @media (min-width: 900px) {
+    .hero img { height: 520px; }
+    .intro { margin-top: -110px; }
+  }
+</style>
+</head>
+<body>
+
+<header id="topbar">
+  <div class="bar">
+    <a class="logo" href="https://afterglolighting.org/">AFTER<span>GLO</span></a>
+    <div class="bar-right">
+      <a class="call" href="tel:+13853374144">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11a19.79 19.79 0 01-3.07-8.67A2 2 0 012 .18h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        <span>(385) 337-4144</span>
+      </a>
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle light and dark theme"><svg class="tt-sun" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg><svg class="tt-moon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <img src="Resources/House%20Images/dn-night-rgbw.jpg"
+       alt="A Utah home at night with AFTERGLO permanent lights along the roofline"
+       fetchpriority="high">
+</div>
+
+<main class="wrap">
+  <section class="intro">
+    <h1>See your house with permanent lights. Free.</h1>
+    <p class="lede">Send us your address and we'll text you a picture of your own house lit up. No obligation, no sales visit unless you ask for one.</p>
+    <p class="price">Installs start at <strong>$1,500</strong>, priced by the foot.</p>
+
+    <form id="mockupForm" novalidate>
+      <div class="field">
+        <label for="firstName">First name</label>
+        <input id="firstName" name="firstName" autocomplete="given-name" maxlength="99" required>
+        <div class="err">Enter your first name.</div>
+      </div>
+
+      <div class="field">
+        <label for="phone">Mobile number <span class="opt">(we text the picture here)</span></label>
+        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="39" placeholder="(801) 555-0123" required>
+        <div class="err">Enter a 10-digit phone number.</div>
+      </div>
+
+      <div class="field">
+        <label for="address">Home address</label>
+        <input id="address" name="address" autocomplete="street-address" maxlength="250" placeholder="123 Main St, South Jordan" required>
+        <div class="err">Enter your street address so we can find your house.</div>
+      </div>
+
+      <fieldset class="field">
+        <legend class="legend">Show it in <span class="opt">(optional)</span></legend>
+        <div class="styles">
+          <input type="radio" id="s1" name="style" value="Warm white" checked><label for="s1">Warm white</label>
+          <input type="radio" id="s2" name="style" value="Holiday colors"><label for="s2">Holiday colors</label>
+          <input type="radio" id="s3" name="style" value="Surprise me"><label for="s3">Surprise me</label>
+        </div>
+      </fieldset>
+
+      <button type="submit" id="submitBtn">Send my free picture</button>
+      <p class="formerr" id="formErr">That didn't go through. Try again, or call (385) 337-4144.</p>
+      <p class="fine">By submitting, you agree AFTERGLO can call or text you about your picture and quote. No spam. See our <a href="privacy.html">Privacy Policy</a>.</p>
+    </form>
+
+    <div class="done" id="done" role="status" tabindex="-1">
+      <h2>You're in.</h2>
+      <p>We'll text your picture to the number you gave us, usually within a day. Questions before then? Call (385) 337-4144.</p>
+    </div>
+  </section>
+
+  <section class="how">
+    <h2>How it works</h2>
+    <ol>
+      <li><p><b>You send your address.</b> Takes 30 seconds. We find your house from the street.</p></li>
+      <li><p><b>We build your picture.</b> Your actual house, your actual roofline, lit up at night.</p></li>
+      <li><p><b>We text it to you.</b> Keep it, share it, or ask us for a quote. Your call.</p></li>
+    </ol>
+  </section>
+
+  <section class="trust">
+    <p><b>Local Utah team.</b> Two engineers who build our own controllers and software, and show up to every install ourselves.</p>
+    <p><b>5-year warranty.</b> Every install is covered.</p>
+    <p><b>Real white, not fake white.</b> Our lights have a dedicated warm white diode, so warm white actually looks warm.</p>
+    <p><b>Licensed and insured in Utah.</b></p>
+  </section>
+</main>
+
+<footer>
+  <div class="inner">
+    © 2026 Ward Legacy Group LLC. AFTERGLO is a division of Ward Legacy Group LLC. South Jordan, Utah.
+    <a href="privacy.html">Privacy Policy</a>
+  </div>
+</footer>
+
+<!-- Firebase SDK (compat build), same as landing.html -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+  (function () {
+    const root = document.documentElement;
+    const tBtn = document.getElementById('themeToggle');
+    tBtn && tBtn.addEventListener('click', () => {
+      const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      root.setAttribute('data-theme', next);
+      try { localStorage.setItem('afterglo-theme', next); } catch (e) {}
+    });
+  })();
+</script>
+
+<script>
+  const db = (function () {
+    try {
+      const app = firebase.apps.length ? firebase.apps[0] : firebase.initializeApp({
+        apiKey: "AIzaSyAQ7L46n1Nos6nmNcDCAJu8tY1pFdn-zQY",
+        authDomain: "afterglo-website-fbb89.firebaseapp.com",
+        projectId: "afterglo-website-fbb89",
+        storageBucket: "afterglo-website-fbb89.firebasestorage.app",
+        messagingSenderId: "307927449736",
+        appId: "1:307927449736:web:0a44b789fd7cab37d41f3d",
+      });
+      return app.firestore();
+    } catch (e) {
+      console.error(e);
+      return null;
+    }
+  })();
+
+  /* Writes to the same contact_submissions collection as landing.html, so the
+     lead lands in the same inbox email (functions/src/contactNotify.ts).
+     firestore.rules only accepts that collection's existing field names, so
+     firstName goes in `name`, and the style choice goes in `message`.
+     source 'mockup-offer' is what separates these from 'landing page' leads.
+     Resolves on a successful write, rejects otherwise. */
+  async function submitLead(data) {
+    if (!db) throw new Error('Firestore unavailable');
+    let attribution = {};
+    try { attribution = JSON.parse(sessionStorage.getItem('afterglo-attribution') || '{}'); } catch (e) {}
+    // Offline, Firestore queues the write and waits instead of failing, which
+    // would leave the button on "Sending..." forever. Treat 15s as a failure.
+    // (The queued write can still land later, so a retry may duplicate a lead.)
+    let timer;
+    const timeout = new Promise((_, reject) => {
+      timer = setTimeout(() => reject(new Error('Lead write timed out')), 15000);
+    });
+    const write = db.collection('contact_submissions').add({
+      name: data.firstName.slice(0, 199),
+      email: '',
+      phone: data.phone.slice(0, 39),
+      address: data.address.slice(0, 299),
+      interest: 'Free house picture',
+      message: 'Free picture offer: text the picture of their house to this number. Show it in: '
+        + (data.style || 'no preference') + '.',
+      source: data.source,
+      submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      status: 'new',
+      userAgent: navigator.userAgent.slice(0, 300),
+      attribution,
+    });
+    try {
+      await Promise.race([write, timeout]);
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  const form = document.getElementById('mockupForm');
+  const btn = document.getElementById('submitBtn');
+  const formErr = document.getElementById('formErr');
+  const done = document.getElementById('done');
+
+  function digits(s) { return (s || '').replace(/\D/g, ''); }
+
+  function validate() {
+    let ok = true;
+    const checks = {
+      firstName: v => v.trim().length > 0,
+      phone: v => { const d = digits(v); return d.length === 10 || (d.length === 11 && d[0] === '1'); },
+      address: v => v.trim().length >= 5
+    };
+    for (const [id, test] of Object.entries(checks)) {
+      const input = document.getElementById(id);
+      const good = test(input.value);
+      input.closest('.field').classList.toggle('invalid', !good);
+      if (!good && ok) { input.focus(); ok = false; }
+    }
+    return ok;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    formErr.style.display = 'none';
+    if (!validate()) return;
+
+    const data = {
+      firstName: form.firstName.value.trim(),
+      phone: digits(form.phone.value),
+      address: form.address.value.trim(),
+      style: (form.querySelector('input[name="style"]:checked') || {}).value || '',
+      source: 'mockup-offer',
+      submittedAt: new Date().toISOString()
+    };
+
+    btn.disabled = true;
+    btn.textContent = 'Sending...';
+    try {
+      await submitLead(data);
+      if (typeof fbq === 'function') fbq('track', 'Lead');
+      form.style.display = 'none';
+      done.style.display = 'block';
+      done.focus();
+    } catch (err) {
+      console.error(err);
+      formErr.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Send my free picture';
+    }
+  });
+</script>
+</body>
+</html>

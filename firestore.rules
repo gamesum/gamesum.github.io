@@ -138,7 +138,7 @@ service cloud.firestore {
                     && (!('addressState' in request.resource.data) || (request.resource.data.addressState is string && request.resource.data.addressState.size() < 50))
                     && (!('addressZip' in request.resource.data) || (request.resource.data.addressZip is string && request.resource.data.addressZip.size() < 20))
                     && (!('marketingOptIn' in request.resource.data) || request.resource.data.marketingOptIn is bool)
-                    && (!('source' in request.resource.data) || request.resource.data.source in ['contact form', 'landing page', 'controller upgrade page', 'model home'])
+                    && (!('source' in request.resource.data) || request.resource.data.source in ['contact form', 'landing page', 'controller upgrade page', 'model home', 'mockup-offer'])
                     && (!('preferredContact' in request.resource.data) || request.resource.data.preferredContact in ['text', 'call', 'either'])
                     // Ad attribution (utm_* / fbclid) captured from the landing URL.
                     // Bounded: a map of short strings, so a crafted URL cannot

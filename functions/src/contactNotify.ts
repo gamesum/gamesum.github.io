@@ -63,7 +63,7 @@ const tel = (p: string) => (p.replace(/\D/g, "").length >= 10 ? `tel:${p.replace
 const maps = (a: string) => (a ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a)}` : undefined);
 const mailto = (e: string) => (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e) ? `mailto:${e}` : undefined);
 
-/** Quote requests: landing page, contact page, Model Home page. */
+/** Quote requests: landing page, contact page, Model Home page, mockup offer page. */
 export const onContactSubmissionCreated = functions
   .runWith({ secrets: ["GMAIL_APP_PASSWORD"] })
   .firestore.document("contact_submissions/{submissionId}")
