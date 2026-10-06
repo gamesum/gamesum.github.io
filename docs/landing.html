@@ -258,6 +258,7 @@
     .zip-ok .zip-yes { display: flex; align-items: center; gap: 9px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
     .zip-price { font-size: clamp(1.5rem, 3.6vw, 2rem); font-weight: 800; color: var(--heading); line-height: 1.2; }
     .zip-price small { display: block; margin-top: 4px; font-size: .8rem; font-weight: 500; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .zip-price-alt { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); font-size: clamp(1.15rem, 2.6vw, 1.4rem); }
     .zip-drivers { margin: 16px 0 0; padding: 0; list-style: none; font-size: .93rem; color: var(--muted); }
     .zip-drivers li { position: relative; padding-left: 18px; margin-bottom: 6px; }
     .zip-drivers li::before { content: ""; position: absolute; left: 2px; top: .55em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
@@ -555,7 +556,8 @@
           +     'stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>'
           +     'Good news, we install in ' + zip + '.'
           +   '</div>'
-          +   '<div class="zip-price">Starting at $1,500 <small>Installed</small></div>'
+          +   '<div class="zip-price">Starting at $1,500 <small>Installed &middot; Permanent lighting</small></div>'
+          +   '<div class="zip-price zip-price-alt">Starting at $500 <small>Installed &middot; Seasonal Christmas lights</small></div>'
           +   '<ul class="zip-drivers">'
           +     '<li>What moves your number: total roofline length</li>'
           +     '<li>How many peaks, dormers and stories we work around</li>'
