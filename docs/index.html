@@ -2611,7 +2611,7 @@
       <div style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:900;color:#fff;margin-bottom:6px;">AFTER<span style="color:#D4A43A;">GLO</span></div>
       <div id="emailGateAsk">
       <p style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:6px;">Get $100 off your install</p>
-      <p style="font-size:0.95rem;color:#94a3b8;margin-bottom:28px;line-height:1.6;">Enter your email and we'll give you a $100 off code before you reach us.</p>
+      <p style="font-size:0.95rem;color:#94a3b8;margin-bottom:28px;line-height:1.6;">Enter your email and we'll give you a code for $100 off your install.</p>
       <form id="emailGateForm" onsubmit="submitEmailGate(event)" style="display:flex;flex-direction:column;gap:12px;">
         <input id="gateEmailInput" type="email" placeholder="Your email address *" required
           style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px 16px;color:#e2e8f0;font-size:0.95rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;"
@@ -2629,7 +2629,7 @@
         <p style="font-size:0.95rem;color:#94a3b8;">You're in. Your code:</p>
         <p style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.8rem;font-weight:700;letter-spacing:0.14em;color:#D4A43A;margin:8px 0;">AG100</p>
         <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:22px;line-height:1.5;">Mention it at your quote for $100 off your install. Can't be combined with other offers.</p>
-        <button type="button" id="emailGateContinue" onclick="closeEmailGate();doGateAction(_emailGateAction);"
+        <button type="button" id="emailGateContinue" onclick="closeEmailGate();doGateAction(_emailGateAction === 'offer' ? 'quote' : _emailGateAction);"
           style="width:100%;background:#D4A43A;color:#000;border:none;border-radius:10px;padding:14px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;">Call Us Now →</button>
       </div>
     </div>
@@ -2647,7 +2647,10 @@
       }
       const btn = document.getElementById('emailGateSubmitBtn');
       const skip = document.getElementById('emailGateSkip');
-      if (action === 'call') {
+      if (action === 'offer') {
+        btn.textContent = 'Get My $100 Off →';
+        skip.textContent = 'No thanks';
+      } else if (action === 'call') {
         btn.textContent = 'Get My $100 Off →';
         skip.textContent = 'No thanks, just call';
       } else {
@@ -2656,6 +2659,36 @@
       }
       document.getElementById('emailGateModal').style.display = 'flex';
     }
+
+    (function autoOffer() {
+      const KEY = 'ag_offer_seen';
+      try {
+        if (localStorage.getItem(KEY) || sessionStorage.getItem('ag_email_captured')) return;
+      } catch (e) { return; }
+      let done = false;
+      function show() {
+        if (done) return;
+        done = true;
+        try { localStorage.setItem(KEY, String(Date.now())); } catch (e) {}
+        window.removeEventListener('scroll', onScroll);
+        document.removeEventListener('mouseout', onLeave);
+        const modal = document.getElementById('emailGateModal');
+        if (modal && modal.style.display !== 'flex') openEmailGate('offer');
+      }
+      function onScroll() {
+        const h = document.documentElement.scrollHeight - window.innerHeight;
+        if (h > 0 && window.scrollY / h > 0.45) show();
+      }
+      function onLeave(e) { if (!e.relatedTarget && e.clientY <= 0) show(); }
+      setTimeout(show, 15000);
+      window.addEventListener('scroll', onScroll, { passive: true });
+      document.addEventListener('mouseout', onLeave);
+    })();
+
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeEmailGate(); });
+    document.getElementById('emailGateModal').addEventListener('click', (e) => {
+      if (e.target.id === 'emailGateModal') closeEmailGate();
+    });
 
     function closeEmailGate() {
       document.getElementById('emailGateModal').style.display = 'none';
@@ -2706,12 +2739,15 @@
       document.getElementById('emailGateAsk').style.display = 'none';
       document.getElementById('emailGateCode').style.display = 'block';
       document.getElementById('emailGateContinue').textContent =
-        _emailGateAction === 'email' ? 'Email Us Now →' : 'Call Us Now →';
+        _emailGateAction === 'email' ? 'Email Us Now →'
+        : _emailGateAction === 'offer' ? 'Get My Free Quote →' : 'Call Us Now →';
     }
 
     function doGateAction(action) {
       if (action === 'call') {
         window.location.href = 'tel:+13853374144';
+      } else if (action === 'quote') {
+        window.location.href = 'contact.html';
       } else if (action === 'email') {
         window.location.href = 'mailto:afterglolights@gmail.com';
       }
