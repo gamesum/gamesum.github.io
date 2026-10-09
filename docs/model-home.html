@@ -11,6 +11,21 @@
 
   <!-- Ad attribution: same capture the other lead pages use, so a Marketplace
        click that carries utm_* / fbclid is tied back to the ad in Zapier. -->
+  <!-- Meta browser ids (_fbp, set by the Pixel; _fbc, set from an ad click),
+       added to the lead's attribution when the form is sent. Porchlight passes
+       them to Meta's Conversions API so a sale can be matched to the ad. -->
+  <script>
+    window.withMetaCookies = function (a) {
+      a = a || {};
+      try {
+        document.cookie.split('; ').forEach(function (c) {
+          var i = c.indexOf('='), k = c.slice(0, i);
+          if (k === '_fbp' || k === '_fbc') a[k.slice(1)] = decodeURIComponent(c.slice(i + 1)).slice(0, 200);
+        });
+      } catch (e) { /* never block the form */ }
+      return a;
+    };
+  </script>
   <script>
     (function () {
       try {
@@ -740,7 +755,7 @@
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),
             attribution: (function () {
-              try { return JSON.parse(sessionStorage.getItem('afterglo-attribution') || '{}'); }
+              try { return withMetaCookies(JSON.parse(sessionStorage.getItem('afterglo-attribution') || '{}')); }
               catch (e) { return {}; }
             })(),
           });

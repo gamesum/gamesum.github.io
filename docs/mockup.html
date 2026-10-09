@@ -38,6 +38,21 @@
 </script>
 
 <!-- Campaign attribution (utm_* / fbclid), same capture as landing.html. -->
+  <!-- Meta browser ids (_fbp, set by the Pixel; _fbc, set from an ad click),
+       added to the lead's attribution when the form is sent. Porchlight passes
+       them to Meta's Conversions API so a sale can be matched to the ad. -->
+  <script>
+    window.withMetaCookies = function (a) {
+      a = a || {};
+      try {
+        document.cookie.split('; ').forEach(function (c) {
+          var i = c.indexOf('='), k = c.slice(0, i);
+          if (k === '_fbp' || k === '_fbc') a[k.slice(1)] = decodeURIComponent(c.slice(i + 1)).slice(0, 200);
+        });
+      } catch (e) { /* never block the form */ }
+      return a;
+    };
+  </script>
 <script>
   (function () {
     try {
@@ -356,7 +371,7 @@
   async function submitLead(data) {
     if (!db) throw new Error('Firestore unavailable');
     let attribution = {};
-    try { attribution = JSON.parse(sessionStorage.getItem('afterglo-attribution') || '{}'); } catch (e) {}
+    try { attribution = withMetaCookies(JSON.parse(sessionStorage.getItem('afterglo-attribution') || '{}')); } catch (e) {}
     // Offline, Firestore queues the write and waits instead of failing, which
     // would leave the button on "Sending..." forever. Treat 15s as a failure.
     // (The queued write can still land later, so a retry may duplicate a lead.)

@@ -93,6 +93,12 @@ export async function sendToPorchlight(id: string, d: Record<string, unknown>, k
       message: str(d.message, 5000),
       utmSource: str(a.utm_source, 60),
       utmCampaign: str(a.utm_campaign, 80),
+      // Ad click ids for Meta's Conversions API, so a later sale matches the ad.
+      fbclid: str(a.fbclid, 200),
+      fbp: str(a.fbp, 200),
+      fbc: str(a.fbc, 200),
+      userAgent: str(d.userAgent, 400),
+      submittedAt: (d.submittedAt as { toMillis?: () => number } | undefined)?.toMillis?.() || Date.now(),
     }),
     signal: AbortSignal.timeout(15000),
   });
