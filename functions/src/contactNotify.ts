@@ -187,28 +187,65 @@ export const onContactSubmissionCreated = functions
  * see the hosting rewrite) and this stores the signup. Keyed by address, so
  * the same email submitted twice only emails the inbox once.
  */
-export const emailSignup = functions.https.onRequest(async (req, res) => {
-  if (req.method !== "POST") {
-    res.status(405).json({ error: "POST only" });
+const PORCHLIGHT_SUBSCRIBE = "https://us-central1-porchlight-f1d62.cloudfunctions.net/webSubscribe";
+
+/**
+ * Puts one signup on Porchlight's mailing list (not its pipeline), which
+ * emails them the offer code. Same key as sendToPorchlight. A repeat signup
+ * is sent too, so someone who unsubscribed and signs up again is back on.
+ */
+async function sendSubscriberToPorchlight(email: string, source: string, code: string) {
+  const key = PORCHLIGHT_LEAD_KEY.value();
+  if (!key || key === "unset") {
+    functions.logger.warn("PORCHLIGHT_LEAD_KEY not set; signup not sent to Porchlight");
     return;
   }
-  const body = typeof req.body === "object" && req.body ? req.body : {};
-  const email = str(body.email, 320).toLowerCase();
-  if (!/^[^@\s/]+@[^@\s/]+\.[^@\s/]+$/.test(email)) {
-    res.status(400).json({ error: "Enter a valid email." });
-    return;
-  }
-  const action = ["call", "email"].includes(str(body.action, 10)) ? str(body.action, 10) : "";
-  try {
-    await getFirestore().collection("email_signups").doc(email).create({
-      email, action, source: "homepage", submittedAt: FieldValue.serverTimestamp(),
-    });
-  } catch (err: unknown) {
-    // Already signed up: fine, nothing new to tell anyone.
-    if ((err as { code?: number }).code !== 6) functions.logger.error("emailSignup store failed", err);
-  }
-  res.json({ ok: true });
-});
+  const r = await fetch(PORCHLIGHT_SUBSCRIBE, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-lead-key": key },
+    body: JSON.stringify({ email, source, code }),
+    signal: AbortSignal.timeout(15000),
+  });
+  if (!r.ok) throw new Error(`Porchlight webSubscribe ${r.status}: ${(await r.text()).slice(0, 200)}`);
+}
+
+/**
+ * POST /api/signup {email, action?, source?, code?} from the homepage offer
+ * pop-up, the homepage signup and the visualizer download. Stored here (keyed
+ * by address, so the inbox hears about each address once) and put on
+ * Porchlight's mailing list.
+ */
+export const emailSignup = functions
+  .runWith({ secrets: ["PORCHLIGHT_LEAD_KEY"] })
+  .https.onRequest(async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "POST only" });
+      return;
+    }
+    const body = typeof req.body === "object" && req.body ? req.body : {};
+    const email = str(body.email, 320).toLowerCase();
+    if (!/^[^@\s/]+@[^@\s/]+\.[^@\s/]+$/.test(email)) {
+      res.status(400).json({ error: "Enter a valid email." });
+      return;
+    }
+    const action = ["call", "email"].includes(str(body.action, 10)) ? str(body.action, 10) : "";
+    const source = ["homepage", "visualizer"].includes(str(body.source, 20)) ? str(body.source, 20) : "homepage";
+    const code = /^[A-Z0-9]{2,12}$/.test(str(body.code, 12).toUpperCase()) ? str(body.code, 12).toUpperCase() : "";
+    try {
+      await getFirestore().collection("email_signups").doc(email).create({
+        email, action, source, code, submittedAt: FieldValue.serverTimestamp(),
+      });
+    } catch (err: unknown) {
+      // Already signed up: fine, the inbox already heard about them.
+      if ((err as { code?: number }).code !== 6) functions.logger.error("emailSignup store failed", err);
+    }
+    try {
+      await sendSubscriberToPorchlight(email, source, code);
+    } catch (err) {
+      functions.logger.error("Porchlight signup failed", err);
+    }
+    res.json({ ok: true });
+  });
 
 /** Homepage "be the first to hear" email signups. */
 export const onEmailSignupCreated = functions

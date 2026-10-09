@@ -2634,7 +2634,6 @@
       </div>
     </div>
   </div>
-  <iframe name="mc_homepage_iframe" style="display:none;" title="mc"></iframe>
 
   <script>
     let _emailGateAction = 'call';
@@ -2694,7 +2693,8 @@
       document.getElementById('emailGateModal').style.display = 'none';
     }
 
-    // Saves the signup and emails the AFTERGLO inbox (functions/src/contactNotify.ts).
+    // Saves the signup, emails the AFTERGLO inbox, and puts them on Porchlight's
+    // mailing list, which emails them the code (functions/src/contactNotify.ts).
     function postSignup(payload) {
       try {
         fetch('/api/signup', {
@@ -2711,31 +2711,8 @@
       const email = document.getElementById('gateEmailInput').value.trim();
       if (!email) return;
 
-      const form = document.createElement('form');
-      form.action = 'https://afterglolighting.us16.list-manage.com/subscribe/post?u=67579948a42d6aaff8a733456&id=60e6851304&f_id=00f4c2e1f0';
-      form.method = 'POST';
-      form.target = 'mc_homepage_iframe';
-      form.style.display = 'none';
-
-      const emailInput = document.createElement('input');
-      emailInput.type = 'email';
-      emailInput.name = 'EMAIL';
-      emailInput.value = email;
-      form.appendChild(emailInput);
-
-      const trap = document.createElement('input');
-      trap.type = 'text';
-      trap.name = 'b_67579948a42d6aaff8a733456_60e6851304';
-      trap.tabIndex = -1;
-      trap.value = '';
-      form.appendChild(trap);
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
-
       sessionStorage.setItem('ag_email_captured', '1');
-      postSignup({ email: email, action: _emailGateAction });
+      postSignup({ email: email, action: _emailGateAction === 'offer' ? '' : _emailGateAction, source: 'homepage', code: 'AG100' });
       document.getElementById('emailGateAsk').style.display = 'none';
       document.getElementById('emailGateCode').style.display = 'block';
       document.getElementById('emailGateContinue').textContent =
@@ -2758,31 +2735,9 @@
       const email = document.getElementById('ctaEmailInput').value.trim();
       if (!email) return;
 
-      const form = document.createElement('form');
-      form.action = 'https://afterglolighting.us16.list-manage.com/subscribe/post?u=67579948a42d6aaff8a733456&id=60e6851304&f_id=00f4c2e1f0';
-      form.method = 'POST';
-      form.target = 'mc_homepage_iframe';
-      form.style.display = 'none';
-
-      const emailInput = document.createElement('input');
-      emailInput.type = 'email';
-      emailInput.name = 'EMAIL';
-      emailInput.value = email;
-      form.appendChild(emailInput);
-
-      const trap = document.createElement('input');
-      trap.type = 'text';
-      trap.name = 'b_67579948a42d6aaff8a733456_60e6851304';
-      trap.tabIndex = -1;
-      trap.value = '';
-      form.appendChild(trap);
-
-      document.body.appendChild(form);
-      form.submit();
-      document.body.removeChild(form);
 
       sessionStorage.setItem('ag_email_captured', '1');
-      postSignup({ email: email });
+      postSignup({ email: email, source: 'homepage', code: 'AG100' });
       document.getElementById('ctaEmailForm').style.display = 'none';
       document.getElementById('ctaEmailThanks').style.display = 'block';
     }
