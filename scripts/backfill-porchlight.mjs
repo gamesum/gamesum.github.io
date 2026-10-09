@@ -18,7 +18,7 @@ const days = Number(process.argv[2]) || 30;
 const sh = (cmd) => execSync(cmd, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'inherit'], shell: true }).trim();
 
 const token = sh('gcloud auth print-access-token --account wardlegacygroup@gmail.com');
-const key = sh(`firebase functions:secrets:access PORCHLIGHT_LEAD_KEY --project ${PROJECT}`);
+const key = sh(`firebase functions:secrets:access PORCHLIGHT_LEAD_KEY --project ${PROJECT} --account wardlegacygroup@gmail.com`);
 if (!key) throw new Error('PORCHLIGHT_LEAD_KEY is empty. Set it first.');
 
 /** Firestore REST value -> plain JS. */
