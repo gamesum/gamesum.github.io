@@ -1945,17 +1945,22 @@
 
         <!-- Email signup -->
         <div style="margin-top:36px;padding-top:32px;border-top:1px solid var(--border);">
-          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;letter-spacing:0.02em;">We'll let you know when new light show packs drop and when install slots open up. We book fast.</p>
+          <p style="font-family:'Outfit',sans-serif;font-size:1.35rem;font-weight:800;color:var(--heading, #fff);margin-bottom:6px;">Get $100 off your install</p>
+          <p style="font-size:0.85rem;color:var(--muted);margin-bottom:14px;letter-spacing:0.02em;">Enter your email and we'll give you a $100 off code, plus a heads up when install slots open. We book fast.</p>
           <form id="ctaEmailForm" onsubmit="submitCtaEmail(event)" style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
             <input id="ctaEmailInput" type="email" placeholder="Your email address" required
               style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;color:var(--text);font-size:0.9rem;font-family:'Inter',sans-serif;outline:none;flex:1;min-width:min(220px, 100%);transition:border-color 0.2s;"
               onfocus="this.style.borderColor='rgba(212,164,58,0.8)'" onblur="this.style.borderColor='var(--border)'">
             <button type="submit" style="background:rgba(212,164,58,0.15);color:var(--accent);border:1px solid rgba(212,164,58,0.3);border-radius:8px;padding:12px 22px;font-family:'Outfit',sans-serif;font-weight:700;font-size:0.85rem;cursor:pointer;white-space:nowrap;transition:all 0.2s;">
-              Keep Me Posted
+              Get My $100 Off
             </button>
           </form>
-          <p id="ctaEmailThanks" style="display:none;font-size:0.85rem;color:var(--accent);margin-top:10px;">You're in! We'll be in touch.</p>
-          <p style="font-size:0.7rem;color:var(--muted);margin-top:10px;">By submitting your email you agree to receive marketing communications from AFTERGLO. We will never sell your information. Unsubscribe at any time.</p>
+          <div id="ctaEmailThanks" style="display:none;margin-top:12px;padding:14px 16px;border:1px dashed var(--accent);border-radius:10px;">
+            <p style="font-size:0.85rem;color:var(--muted);">You're in. Your code:</p>
+            <p style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.4rem;font-weight:700;letter-spacing:0.14em;color:var(--accent);margin:4px 0;">AG100</p>
+            <p style="font-size:0.8rem;color:var(--muted);">Mention it at your quote for $100 off your install. Screenshot this or write it down.</p>
+          </div>
+          <p style="font-size:0.7rem;color:var(--muted);margin-top:10px;">$100 off one install. Can't be combined with other offers. By submitting your email you agree to receive marketing emails from AFTERGLO. We will never sell your information. Unsubscribe at any time.</p>
         </div>
       </div>
     </div>
@@ -2604,18 +2609,29 @@
     <div style="background:#111;border:1px solid #2a2a2a;border-radius:20px;padding:40px 36px;max-width:440px;width:100%;position:relative;box-shadow:0 40px 120px rgba(0,0,0,0.8),0 0 0 1px rgba(212,164,58,0.15);">
       <button onclick="closeEmailGate()" style="position:absolute;top:14px;right:16px;background:none;border:none;color:#94a3b8;font-size:1.2rem;cursor:pointer;">✕</button>
       <div style="font-family:'Outfit',sans-serif;font-size:1.6rem;font-weight:900;color:#fff;margin-bottom:6px;">AFTER<span style="color:#D4A43A;">GLO</span></div>
-      <p style="font-size:0.95rem;color:#94a3b8;margin-bottom:28px;line-height:1.6;">Enter your email below to be the first to hear about new products, light show packages, and seasonal releases from AFTERGLO.</p>
+      <div id="emailGateAsk">
+      <p style="font-family:'Outfit',sans-serif;font-size:1.25rem;font-weight:800;color:#fff;margin-bottom:6px;">Get $100 off your install</p>
+      <p style="font-size:0.95rem;color:#94a3b8;margin-bottom:28px;line-height:1.6;">Enter your email and we'll give you a $100 off code before you reach us.</p>
       <form id="emailGateForm" onsubmit="submitEmailGate(event)" style="display:flex;flex-direction:column;gap:12px;">
         <input id="gateEmailInput" type="email" placeholder="Your email address *" required
           style="background:#1a1a1a;border:1px solid #2a2a2a;border-radius:10px;padding:14px 16px;color:#e2e8f0;font-size:0.95rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;"
           onfocus="this.style.borderColor='rgba(212,164,58,0.5)'" onblur="this.style.borderColor='#2a2a2a'">
         <button type="submit" id="emailGateSubmitBtn"
           style="background:#D4A43A;color:#000;border:none;border-radius:10px;padding:14px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;letter-spacing:0.04em;transition:background 0.2s;box-shadow:0 4px 24px rgba(212,164,58,0.35);">
-          Connect Me →
+          Get My $100 Off →
         </button>
       </form>
-      <p style="font-size:0.7rem;color:#64748b;margin-top:14px;text-align:center;">By submitting you agree to receive marketing communications from AFTERGLO. Unsubscribe at any time.</p>
+      <p style="font-size:0.7rem;color:#64748b;margin-top:14px;text-align:center;">$100 off one install. Can't be combined with other offers. By submitting you agree to receive marketing emails from AFTERGLO. Unsubscribe at any time.</p>
       <p style="text-align:center;margin-top:10px;"><a id="emailGateSkip" onclick="closeEmailGate();doGateAction(_emailGateAction);" style="font-size:0.8rem;color:#94a3b8;cursor:pointer;text-decoration:underline;">No thanks, just call</a></p>
+      </div>
+      <!-- Shown after signup so the code is seen before the call or email opens. -->
+      <div id="emailGateCode" style="display:none;text-align:center;">
+        <p style="font-size:0.95rem;color:#94a3b8;">You're in. Your code:</p>
+        <p style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:1.8rem;font-weight:700;letter-spacing:0.14em;color:#D4A43A;margin:8px 0;">AG100</p>
+        <p style="font-size:0.85rem;color:#94a3b8;margin-bottom:22px;line-height:1.5;">Mention it at your quote for $100 off your install. Can't be combined with other offers.</p>
+        <button type="button" id="emailGateContinue" onclick="closeEmailGate();doGateAction(_emailGateAction);"
+          style="width:100%;background:#D4A43A;color:#000;border:none;border-radius:10px;padding:14px;font-family:'Outfit',sans-serif;font-weight:800;font-size:0.95rem;cursor:pointer;">Call Us Now →</button>
+      </div>
     </div>
   </div>
   <iframe name="mc_homepage_iframe" style="display:none;" title="mc"></iframe>
@@ -2632,10 +2648,10 @@
       const btn = document.getElementById('emailGateSubmitBtn');
       const skip = document.getElementById('emailGateSkip');
       if (action === 'call') {
-        btn.textContent = 'Sign Me Up →';
+        btn.textContent = 'Get My $100 Off →';
         skip.textContent = 'No thanks, just call';
       } else {
-        btn.textContent = 'Sign Me Up →';
+        btn.textContent = 'Get My $100 Off →';
         skip.textContent = 'No thanks, just email';
       }
       document.getElementById('emailGateModal').style.display = 'flex';
@@ -2687,8 +2703,10 @@
 
       sessionStorage.setItem('ag_email_captured', '1');
       postSignup({ email: email, action: _emailGateAction });
-      closeEmailGate();
-      doGateAction(_emailGateAction);
+      document.getElementById('emailGateAsk').style.display = 'none';
+      document.getElementById('emailGateCode').style.display = 'block';
+      document.getElementById('emailGateContinue').textContent =
+        _emailGateAction === 'email' ? 'Email Us Now →' : 'Call Us Now →';
     }
 
     function doGateAction(action) {
