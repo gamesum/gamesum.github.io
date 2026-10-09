@@ -19,6 +19,7 @@
      succeeds. (landing.html fires its Lead on contact-thank-you.html, which
      it redirects to after the same successful write: one Lead per lead on
      both sides of the A/B test.) -->
+<script src="js/google-ads.js"></script>
 <script>
   window.AFTERGLO_META_PIXEL_ID = '1452623813370700';
   (function () {
@@ -58,7 +59,7 @@
     try {
       var KEY = 'afterglo-attribution';
       var qs = new URLSearchParams(window.location.search);
-      var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+      var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','gclid','gbraid','wbraid'];
       var found = {};
       var any = false;
       fields.forEach(function (f) {
@@ -296,7 +297,7 @@
 
       <button type="submit" id="submitBtn">Send my free picture</button>
       <p class="formerr" id="formErr">That didn't go through. Try again, or call (385) 337-4144.</p>
-      <p class="fine">By submitting, you agree AFTERGLO can call or text you about your picture and quote. No spam. See our <a href="privacy.html">Privacy Policy</a>.</p>
+      <p class="fine" id="smsConsent">By submitting, you agree AFTERGLO may call or text you at this number about your picture and quote, including automated texts. Msg &amp; data rates may apply. Reply STOP to opt out. Consent is not required to buy. See our <a href="privacy.html">Privacy Policy</a>.</p>
     </form>
 
     <div class="done" id="done" role="status" tabindex="-1">
@@ -392,9 +393,10 @@
       status: 'new',
       userAgent: navigator.userAgent.slice(0, 300),
       attribution,
+      consentText: ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590),
     });
     try {
-      await Promise.race([write, timeout]);
+      return await Promise.race([write, timeout]);
     } finally {
       clearTimeout(timer);
     }
@@ -440,8 +442,9 @@
     btn.disabled = true;
     btn.textContent = 'Sending...';
     try {
-      await submitLead(data);
+      const ref = await submitLead(data);
       if (typeof fbq === 'function') fbq('track', 'Lead');
+      window.afterGloGoogleLead && window.afterGloGoogleLead(ref && ref.id);
       // Not form.style: the radio group named "style" shadows it on a <form>.
       form.hidden = true;
       done.style.display = 'block';

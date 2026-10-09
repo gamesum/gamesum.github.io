@@ -26,6 +26,8 @@
   <meta name="twitter:description" content="Free quote from AFTERGLO Lighting: permanent LED roofline lighting and Christmas light shows." />
   <meta name="twitter:image" content="https://afterglolighting.org/Resources/House%20Images/dn-night-rgbw.jpg" />
 
+  <script src="js/google-ads.js"></script>
+
   <!-- Meta Pixel.
        PUT YOUR PIXEL ID BELOW. Events Manager > Data Sources > your pixel;
        it is a ~15 digit number. Until it is set this block does NOTHING and
@@ -78,7 +80,7 @@
       try {
         var KEY = 'afterglo-attribution';
         var qs = new URLSearchParams(window.location.search);
-        var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+        var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','gclid','gbraid','wbraid'];
         var found = {};
         var any = false;
         fields.forEach(function (f) {
@@ -355,7 +357,7 @@
           <div class="form-submit-row">
             <button type="submit" class="btn btn-primary btn-block" id="lpSubmitBtn">Get My Free Quote</button>
             <span class="form-status" id="lpStatus" role="alert"></span>
-            <p class="form-fineprint">No obligation. We use your details only to prepare your quote. <a href="privacy.html">Privacy Policy</a></p>
+            <p class="form-fineprint" id="smsConsent">By submitting, you agree AFTERGLO may call or text you at this number about your quote, including automated texts. Msg &amp; data rates may apply. Reply STOP to opt out. Consent is not required to buy. <a href="privacy.html">Privacy Policy</a></p>
           </div>
         </form>
 
@@ -446,7 +448,7 @@
       <div class="footer-contact-inline">
         <a href="tel:+13853374144">(385) 337 4144</a>
         <a href="mailto:afterglolights@gmail.com">afterglolights@gmail.com</a>
-        <span>South Jordan, Utah, serving all of Utah</span>
+        <a href="service-areas.html">South Jordan, Utah, serving all of Utah: see service areas</a>
         <a href="privacy.html">Privacy Policy</a>
       </div>
       <p class="footer-copy">© 2026 Ward Legacy Group LLC. Afterglo is a division of Ward Legacy Group LLC. Licensed &amp; Insured in Utah.</p>
@@ -664,6 +666,7 @@
             // view we read leads in, not just the promoCode field.
             message: promoEarned ? ('[saw ' + promoEarned + ' offer]') : '',
             promoCode: promoEarned,
+            consentText: ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590),
             source: 'landing page',
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
@@ -673,9 +676,9 @@
               catch (e) { return {}; }
             })(),
           });
-          await Promise.race([write, timeout]);
+          const ref = await Promise.race([write, timeout]);
           clearTimeout(timer);
-          window.location.href = 'contact-thank-you.html';
+          window.location.href = 'contact-thank-you.html?lead=' + encodeURIComponent(ref.id);
         } catch (err) {
           clearTimeout(timer);
           statusEl.textContent = 'Something went wrong sending your request. Please call or email us directly.';

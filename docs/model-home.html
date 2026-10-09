@@ -9,6 +9,8 @@
   <meta name="description" content="Permanent outdoor lighting in the Salt Lake area, starting at $1,500 installed. Discreet by day, warm architectural light at night, full color when you want it. Ask about the AFTERGLO Model Home deal." />
   <link rel="icon" type="image/png" href="afterglo-favicon.png" />
 
+  <script src="js/google-ads.js"></script>
+
   <!-- Ad attribution: same capture the other lead pages use, so a Marketplace
        click that carries utm_* / fbclid is tied back to the ad in Zapier. -->
   <!-- Meta browser ids (_fbp, set by the Pixel; _fbc, set from an ad click),
@@ -31,7 +33,7 @@
       try {
         var KEY = 'afterglo-attribution';
         var qs = new URLSearchParams(window.location.search);
-        var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+        var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','gclid','gbraid','wbraid'];
         var found = {};
         var any = false;
         fields.forEach(function (f) {
@@ -621,7 +623,7 @@
 
             <button type="submit" class="btn btn-primary btn-lg form-submit" id="mhSubmitBtn">Get My Model Home Quote</button>
             <p class="form-status" id="mhStatus" role="status" aria-live="polite"></p>
-            <p class="form-fine">We use your number to schedule the quote and nothing else. No list, no spam.</p>
+            <p class="form-fine" id="smsConsent">By submitting, you agree AFTERGLO may call or text you at this number about your quote, including automated texts. Msg &amp; data rates may apply. Reply STOP to opt out. Consent is not required to buy. <a href="privacy.html">Privacy Policy</a></p>
           </form>
         </div>
       </div>
@@ -741,7 +743,7 @@
           // Same collection as the other lead forms, so the existing Zapier
           // notification (functions/src/contactNotify.ts) picks it up. The
           // source value is what separates Marketplace leads in reporting.
-          await db.collection('contact_submissions').add({
+          const ref = await db.collection('contact_submissions').add({
             name,
             email: '',
             phone: phone.slice(0, 39),
@@ -751,6 +753,7 @@
             message: 'Model Home quote request from the Facebook Marketplace landing page.',
             preferredContact,
             source: 'model home',
+            consentText: ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590),
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),
@@ -759,7 +762,7 @@
               catch (e) { return {}; }
             })(),
           });
-          window.location.href = 'contact-thank-you.html';
+          window.location.href = 'contact-thank-you.html?lead=' + encodeURIComponent(ref.id);
         } catch (err) {
           statusEl.textContent = 'Something went wrong sending your request. Please call or text us at (385) 337 4144.';
           statusEl.className = 'form-status error';

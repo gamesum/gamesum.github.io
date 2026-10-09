@@ -29,6 +29,13 @@
     })();
   </script>
 
+  <!-- Google Ads Lead conversion. The form pages pass the lead's id as
+       ?lead=, which dedupes a reload of this page. -->
+  <script src="js/google-ads.js"></script>
+  <script>
+    window.afterGloGoogleLead(new URLSearchParams(location.search).get('lead'));
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />

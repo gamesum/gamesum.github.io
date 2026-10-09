@@ -77,7 +77,7 @@
       try {
         var KEY = 'afterglo-attribution';
         var qs = new URLSearchParams(window.location.search);
-        var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid'];
+        var fields = ['utm_source','utm_medium','utm_campaign','utm_content','utm_term','fbclid','gclid','gbraid','wbraid'];
         var found = {};
         var any = false;
         fields.forEach(function (f) {
@@ -256,6 +256,7 @@
     .footer-contact-inline a:hover { color: var(--accent); }
     .footer-copy { font-size: 0.78rem; color: var(--muted); width: 100%; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border); text-align: center; }
   </style>
+  <script src="js/google-ads.js"></script>
 </head>
 <body>
 
@@ -418,7 +419,7 @@
             <button type="submit" class="btn btn-primary btn-lg btn-block" id="lpSubmitBtn">Get My Free Compatibility Check</button>
             <span class="form-status" id="lpStatus"></span>
             <p class="form-fineprint">Licensed &amp; insured in Utah · Same day response, most days · No obligation</p>
-            <p class="form-fineprint">We use your details only to prepare your quote. See our <a href="privacy.html">Privacy Policy</a>.</p>
+            <p class="form-fineprint" id="smsConsent">By submitting, you agree AFTERGLO may call or text you at this number about your quote, including automated texts. Msg &amp; data rates may apply. Reply STOP to opt out. Consent is not required to buy. See our <a href="privacy.html">Privacy Policy</a>.</p>
           </div>
         </form>
 
@@ -547,7 +548,7 @@
         submitBtn.textContent = 'Sending…';
 
         try {
-          await db.collection('contact_submissions').add({
+          const ref = await db.collection('contact_submissions').add({
             name, email, phone, address, interest, message,
             addressStreet: addressStreet.slice(0, 200),
             addressCity: addressCity.slice(0, 100),
@@ -555,6 +556,7 @@
             addressZip: addressZip.slice(0, 20),
             marketingOptIn,
             source: 'controller upgrade page',
+            consentText: ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590),
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),
@@ -563,7 +565,7 @@
               catch (e) { return {}; }
             })(),
           });
-          window.location.href = 'contact-thank-you.html';
+          window.location.href = 'contact-thank-you.html?lead=' + encodeURIComponent(ref.id);
         } catch (err) {
           statusEl.textContent = 'Something went wrong sending your request. Please call or email us directly.';
           statusEl.className = 'form-status error';

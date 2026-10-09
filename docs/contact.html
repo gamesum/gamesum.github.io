@@ -238,6 +238,7 @@
     [data-theme="light"] .mobile-theme-toggle .tt-sun { display: none; }
     [data-theme="light"] .mobile-theme-toggle .tt-moon { display: block; }
   </style>
+  <script src="js/google-ads.js"></script>
 </head>
 <body>
 
@@ -352,6 +353,7 @@
               <button type="submit" class="btn btn-primary" id="cfSubmitBtn">Send My Request</button>
               <span class="form-status" id="cfStatus"></span>
             </div>
+            <p id="smsConsent" style="margin-top:12px;font-size:0.78rem;color:var(--muted);line-height:1.5;">By submitting, you agree AFTERGLO may call or text you at this number about your quote, including automated texts. Msg &amp; data rates may apply. Reply STOP to opt out. Consent is not required to buy. <a href="privacy.html" style="text-decoration:underline;">Privacy Policy</a></p>
           </form>
 
           <div class="contact-success" id="contactSuccess">
@@ -421,12 +423,13 @@
         <div>
           <h4 class="footer-col-title">Service Areas</h4>
           <ul class="footer-links">
-            <li><a href="contact.html">All of Utah</a></li>
-            <li><a href="contact.html">Salt Lake County</a></li>
-            <li><a href="contact.html">Utah County</a></li>
-            <li><a href="contact.html">Davis &amp; Weber County</a></li>
-            <li><a href="contact.html">South Jordan &amp; Draper</a></li>
-            <li><a href="contact.html">St. George &amp; Park City</a></li>
+            <li><a href="service-areas.html">All of Utah</a></li>
+            <li><a href="service-areas.html#salt-lake">Salt Lake County</a></li>
+            <li><a href="service-areas.html#utah">Utah County</a></li>
+            <li><a href="service-areas.html#davis">Davis &amp; Weber County</a></li>
+            <li><a href="service-areas.html#salt-lake">South Jordan &amp; Draper</a></li>
+            <li><a href="service-areas.html#washington">St. George &amp; Park City</a></li>
+            <li><a href="service-areas.html">See all 70+ cities &rarr;</a></li>
           </ul>
         </div>
         <div>
@@ -686,7 +689,7 @@
         submitBtn.textContent = 'Sending…';
 
         try {
-          await db.collection('contact_submissions').add({
+          const ref = await db.collection('contact_submissions').add({
             name, email, phone, address, interest, message,
             addressStreet: addressStreet.slice(0, 200),
             addressCity: addressCity.slice(0, 100),
@@ -694,11 +697,12 @@
             addressZip: addressZip.slice(0, 20),
             marketingOptIn,
             source: 'contact form',
+            consentText: ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590),
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),
           });
-          window.location.href = 'contact-thank-you.html';
+          window.location.href = 'contact-thank-you.html?lead=' + encodeURIComponent(ref.id);
         } catch (err) {
           statusEl.textContent = 'Something went wrong sending your request. Please call or email us directly.';
           statusEl.className = 'form-status error';

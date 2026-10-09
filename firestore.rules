@@ -113,7 +113,7 @@ service cloud.firestore {
                         'name','email','phone','address','interest','message',
                         'addressStreet','addressCity','addressState','addressZip',
                         'marketingOptIn','preferredContact','source','submittedAt',
-                        'status','userAgent','attribution','promoCode'
+                        'status','userAgent','attribution','promoCode','consentText'
                       ])
                     && request.resource.data.name is string
                     && request.resource.data.name.size() > 0
@@ -140,10 +140,14 @@ service cloud.firestore {
                     && (!('marketingOptIn' in request.resource.data) || request.resource.data.marketingOptIn is bool)
                     && (!('source' in request.resource.data) || request.resource.data.source in ['contact form', 'landing page', 'controller upgrade page', 'model home', 'mockup-offer'])
                     && (!('preferredContact' in request.resource.data) || request.resource.data.preferredContact in ['text', 'call', 'either'])
-                    // Ad attribution (utm_* / fbclid) captured from the landing URL.
-                    // Bounded: a map of short strings, so a crafted URL cannot
-                    // write an unbounded blob into the lead document.
-                    && (!('attribution' in request.resource.data) || (request.resource.data.attribution is map && request.resource.data.attribution.size() < 12))
+                    // Ad attribution (utm_* / fbclid / gclid / gbraid / wbraid) captured
+                    // from the landing URL, plus landingPath, referrer, fbp, fbc: 13 keys
+                    // at most. Bounded, so a crafted URL cannot write an unbounded blob
+                    // into the lead document.
+                    && (!('attribution' in request.resource.data) || (request.resource.data.attribution is map && request.resource.data.attribution.size() < 16))
+                    // The text-message consent wording shown beside the submit button,
+                    // stored with the lead as the record of what they agreed to.
+                    && (!('consentText' in request.resource.data) || (request.resource.data.consentText is string && request.resource.data.consentText.size() < 600))
                     // Ad discount code earned at the landing-page ZIP step.
                     && (!('promoCode' in request.resource.data) || (request.resource.data.promoCode is string && request.resource.data.promoCode.size() < 40));
       allow update, delete: if false;
