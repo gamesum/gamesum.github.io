@@ -34,6 +34,7 @@ var __importStar = (this && this.__importStar) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.onGiveawayEntryCreated = exports.onEmailSignupCreated = exports.emailSignup = exports.onContactSubmissionCreated = void 0;
+exports.sendToPorchlight = sendToPorchlight;
 const firestore_1 = require("firebase-admin/firestore");
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -45,6 +46,11 @@ const nodemailer = __importStar(require("nodemailer"));
 // 2-Step Verification -> App passwords), stored as a secret:
 //   firebase functions:secrets:set GMAIL_APP_PASSWORD
 const GMAIL_APP_PASSWORD = (0, params_1.defineSecret)("GMAIL_APP_PASSWORD");
+// Each quote request also becomes a customer in Porchlight (the CRM, project
+// porchlight-f1d62). The key is Porchlight's private/webLeads.key:
+//   firebase functions:secrets:set PORCHLIGHT_LEAD_KEY
+const PORCHLIGHT_LEAD_KEY = (0, params_1.defineSecret)("PORCHLIGHT_LEAD_KEY");
+const PORCHLIGHT_WEB_LEAD = "https://us-central1-porchlight-f1d62.cloudfunctions.net/webLead";
 const INBOX = "afterglolights@gmail.com";
 const TZ = "America/Denver";
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
@@ -86,9 +92,40 @@ async function sendLeadEmail(opts) {
 const tel = (p) => (p.replace(/\D/g, "").length >= 10 ? `tel:${p.replace(/[^\d+]/g, "")}` : undefined);
 const maps = (a) => (a ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(a)}` : undefined);
 const mailto = (e) => (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e) ? `mailto:${e}` : undefined);
-/** Quote requests: landing page, contact page, Model Home page. */
+/**
+ * Sends one contact submission to Porchlight, which files it as a customer
+ * tagged Website (id w<submission id>, so a re-send never duplicates).
+ * Exported for the backfill script.
+ */
+async function sendToPorchlight(id, d, key) {
+    const a = d.attribution && typeof d.attribution === "object" ? d.attribution : {};
+    const r = await fetch(PORCHLIGHT_WEB_LEAD, {
+        method: "POST",
+        headers: { "content-type": "application/json", "x-lead-key": key },
+        body: JSON.stringify({
+            id,
+            name: str(d.name, 200),
+            email: str(d.email, 320),
+            phone: str(d.phone, 40),
+            street: str(d.addressStreet, 200) || str(d.address, 300),
+            city: str(d.addressCity, 100),
+            state: str(d.addressState, 50),
+            zip: str(d.addressZip, 20),
+            source: str(d.source, 100) || "contact form",
+            interest: str(d.interest, 100),
+            message: str(d.message, 5000),
+            utmSource: str(a.utm_source, 60),
+            utmCampaign: str(a.utm_campaign, 80),
+        }),
+        signal: AbortSignal.timeout(15000),
+    });
+    if (!r.ok)
+        throw new Error(`Porchlight webLead ${r.status}: ${(await r.text()).slice(0, 200)}`);
+    return r.json();
+}
+/** Quote requests: landing page, contact page, Model Home page, mockup offer page. */
 exports.onContactSubmissionCreated = functions
-    .runWith({ secrets: ["GMAIL_APP_PASSWORD"] })
+    .runWith({ secrets: ["GMAIL_APP_PASSWORD", "PORCHLIGHT_LEAD_KEY"] })
     .firestore.document("contact_submissions/{submissionId}")
     .onCreate(async (snap, context) => {
     const d = snap.data() || {};
@@ -105,6 +142,19 @@ exports.onContactSubmissionCreated = functions
     // the ad that paid for it.
     const a = d.attribution && typeof d.attribution === "object" ? d.attribution : {};
     const at = (k) => str(a[k], 200);
+    // Into Porchlight, alongside the email. A failure here never blocks the email.
+    const crm = (async () => {
+        const key = PORCHLIGHT_LEAD_KEY.value();
+        if (!key || key === "unset")
+            return functions.logger.warn("PORCHLIGHT_LEAD_KEY not set; lead not sent to Porchlight");
+        try {
+            const r = await sendToPorchlight(context.params.submissionId, d, key);
+            functions.logger.info(`lead ${context.params.submissionId} sent to Porchlight`, r);
+        }
+        catch (err) {
+            functions.logger.error("Porchlight lead failed", err);
+        }
+    })();
     try {
         await sendLeadEmail({
             subject: `New lead: ${name || "someone"}${city ? ` (${city})` : ""} - ${source}`,
@@ -133,6 +183,7 @@ exports.onContactSubmissionCreated = functions
     catch (err) {
         functions.logger.error("lead email failed", err);
     }
+    await crm;
     return null;
 });
 /**
