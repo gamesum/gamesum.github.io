@@ -120,6 +120,14 @@ async function sendToPorchlight(id, d, key) {
             fbclid: str(a.fbclid, 200),
             fbp: str(a.fbp, 200),
             fbc: str(a.fbc, 200),
+            // Google Ads click ids, for uploading a later sale as an offline conversion.
+            gclid: str(a.gclid, 200),
+            gbraid: str(a.gbraid, 200),
+            wbraid: str(a.wbraid, 200),
+            // The text-message consent shown beside the submit button. Porchlight's
+            // automated texts go only to leads with smsConsent.
+            smsConsent: !!str(d.consentText, 600),
+            consentText: str(d.consentText, 600),
             userAgent: str(d.userAgent, 400),
             submittedAt: d.submittedAt?.toMillis?.() || Date.now(),
         }),
@@ -179,6 +187,8 @@ exports.onContactSubmissionCreated = functions
                 ["Ad source", [at("utm_source"), at("utm_medium")].filter(Boolean).join(" / ")],
                 ["Campaign", [at("utm_campaign"), at("utm_content"), at("utm_term")].filter(Boolean).join(" / ")],
                 ["Facebook click", at("fbclid") ? "Yes" : ""],
+                ["Google click", at("gclid") || at("gbraid") || at("wbraid") ? "Yes" : ""],
+                ["Agreed to texts", str(d.consentText, 600) ? "Yes" : ""],
                 ["Landing page", at("landingPath")],
                 ["Referrer", at("referrer")],
                 ["Lead id", context.params.submissionId],
