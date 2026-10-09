@@ -255,6 +255,16 @@
     .footer-contact-inline a { color: var(--muted); transition: color 0.2s; }
     .footer-contact-inline a:hover { color: var(--accent); }
     .footer-copy { font-size: 0.78rem; color: var(--muted); width: 100%; padding-top: 20px; margin-top: 20px; border-top: 1px solid var(--border); text-align: center; }
+  
+    /* SMS consent: two optional, unchecked boxes, customer care and marketing
+       kept separate (Twilio toll-free verification). Wording must stay in
+       step with terms.html#sms, privacy.html and sms-consent.html. */
+    .sms-opts { display: flex; flex-direction: column; gap: 10px; margin: 2px 0 16px; text-align: left; }
+    .sms-opt { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; font-size: 0.8rem; line-height: 1.45; color: var(--muted, #5F5A4E); }
+    .sms-opt input { flex: 0 0 auto; width: 20px; height: 20px; margin: 1px 0 0; accent-color: #D4A43A; cursor: pointer; }
+    .sms-opt strong { color: var(--heading, inherit); font-weight: 600; }
+    .sms-fine { margin: 0; font-size: 0.76rem; color: var(--muted, #5F5A4E); }
+    .sms-fine a { text-decoration: underline; }
   </style>
   <script src="js/google-ads.js"></script>
 </head>
@@ -415,11 +425,15 @@
               <span>Keep me updated on seasonal deals and promotions by email</span>
             </label>
           </div>
+          <div class="sms-opts">
+            <label class="sms-opt"><input type="checkbox" id="smsServiceOptIn" /><span id="smsConsent"><strong>Text me about my quote and appointments.</strong> I agree to automated customer care texts from AFTERGLO Lighting about my quote, appointments, installation and service.</span></label>
+            <label class="sms-opt"><input type="checkbox" id="smsMarketingOptIn" /><span id="smsMarketingConsent"><strong>Text me seasonal offers.</strong> I agree to automated marketing texts from AFTERGLO Lighting about promotions and discounts.</span></label>
+            <p class="sms-fine">Optional, and not required to get a quote or buy. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to opt out. <a href="terms.html#sms">SMS Terms</a> · <a href="privacy.html">Privacy Policy</a></p>
+          </div>
           <div class="form-submit-row">
             <button type="submit" class="btn btn-primary btn-lg btn-block" id="lpSubmitBtn">Get My Free Compatibility Check</button>
             <span class="form-status" id="lpStatus"></span>
             <p class="form-fineprint">Licensed &amp; insured in Utah · Same day response, most days · No obligation</p>
-            <p class="form-fineprint" id="smsConsent">By submitting, you agree AFTERGLO Lighting may call or text you at this number about your quote, including automated texts. Up to 4 msgs per request. Msg &amp; data rates may apply. Reply HELP for help, STOP to opt out. Consent is not required to buy. See our <a href="privacy.html">Privacy Policy</a>.</p>
           </div>
         </form>
 
@@ -556,7 +570,9 @@
             addressZip: addressZip.slice(0, 20),
             marketingOptIn,
             source: 'controller upgrade page',
-            consentText: ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590),
+            // Each consent is stored only if its box was checked; empty means no texts.
+            consentText: (document.getElementById('smsServiceOptIn') || {}).checked ? ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590) : '',
+            smsMarketingConsentText: (document.getElementById('smsMarketingOptIn') || {}).checked ? ((document.getElementById('smsMarketingConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590) : '',
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),

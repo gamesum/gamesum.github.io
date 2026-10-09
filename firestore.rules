@@ -113,7 +113,8 @@ service cloud.firestore {
                         'name','email','phone','address','interest','message',
                         'addressStreet','addressCity','addressState','addressZip',
                         'marketingOptIn','preferredContact','source','submittedAt',
-                        'status','userAgent','attribution','promoCode','consentText'
+                        'status','userAgent','attribution','promoCode','consentText',
+                        'smsMarketingConsentText'
                       ])
                     && request.resource.data.name is string
                     && request.resource.data.name.size() > 0
@@ -145,9 +146,11 @@ service cloud.firestore {
                     // at most. Bounded, so a crafted URL cannot write an unbounded blob
                     // into the lead document.
                     && (!('attribution' in request.resource.data) || (request.resource.data.attribution is map && request.resource.data.attribution.size() < 16))
-                    // The text-message consent wording shown beside the submit button,
-                    // stored with the lead as the record of what they agreed to.
+                    // The text-message consent wording beside each optional checkbox,
+                    // stored only when the box was checked, as the record of what they
+                    // agreed to: customer care texts and, separately, marketing texts.
                     && (!('consentText' in request.resource.data) || (request.resource.data.consentText is string && request.resource.data.consentText.size() < 600))
+                    && (!('smsMarketingConsentText' in request.resource.data) || (request.resource.data.smsMarketingConsentText is string && request.resource.data.smsMarketingConsentText.size() < 600))
                     // Ad discount code earned at the landing-page ZIP step.
                     && (!('promoCode' in request.resource.data) || (request.resource.data.promoCode is string && request.resource.data.promoCode.size() < 40));
       allow update, delete: if false;

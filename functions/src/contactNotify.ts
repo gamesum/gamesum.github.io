@@ -101,8 +101,9 @@ export async function sendToPorchlight(id: string, d: Record<string, unknown>, k
       gclid: str(a.gclid, 200),
       gbraid: str(a.gbraid, 200),
       wbraid: str(a.wbraid, 200),
-      // The text-message consent shown beside the submit button. Porchlight's
-      // automated texts go only to leads with smsConsent.
+      // Customer care text consent, present only if the lead checked that box.
+      // Porchlight's automated texts go only to leads with smsConsent. Marketing
+      // text consent is a separate box and is not sent here.
       smsConsent: !!str(d.consentText, 600),
       consentText: str(d.consentText, 600),
       userAgent: str(d.userAgent, 400),
@@ -165,7 +166,8 @@ export const onContactSubmissionCreated = functions
           ["Campaign", [at("utm_campaign"), at("utm_content"), at("utm_term")].filter(Boolean).join(" / ")],
           ["Facebook click", at("fbclid") ? "Yes" : ""],
           ["Google click", at("gclid") || at("gbraid") || at("wbraid") ? "Yes" : ""],
-          ["Agreed to texts", str(d.consentText, 600) ? "Yes" : ""],
+          ["Agreed to texts", str(d.consentText, 600) ? "Yes" : "No"],
+          ["Agreed to marketing texts", str(d.smsMarketingConsentText, 600) ? "Yes" : "No"],
           ["Landing page", at("landingPath")],
           ["Referrer", at("referrer")],
           ["Lead id", context.params.submissionId],
