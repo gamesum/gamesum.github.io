@@ -361,6 +361,10 @@
             <input type="tel" id="lpPhone" name="tel" required maxlength="39" autocomplete="tel" inputmode="tel" enterkeyhint="next" placeholder="(801) 555 0123" />
           </div>
           <div class="form-field">
+            <label for="lpEmail">Email <span style="font-weight:500;color:var(--muted);">(optional, for your quote)</span></label>
+            <input type="email" id="lpEmail" name="email" maxlength="160" autocomplete="email" inputmode="email" enterkeyhint="next" autocapitalize="off" spellcheck="false" placeholder="you@example.com" />
+          </div>
+          <div class="form-field">
             <label for="lpAddress">Home address</label>
             <input type="text" id="lpAddress" name="street-address" required maxlength="250" autocomplete="street-address" autocapitalize="words" enterkeyhint="send" placeholder="123 Main St, South Jordan" />
           </div>
@@ -635,6 +639,7 @@
         // firestore.rules requires email/interest/message to be strings.
         const name = document.getElementById('lpFirstName').value.trim();
         const phone = document.getElementById('lpPhone').value.trim();
+        const email = document.getElementById('lpEmail').value.trim();
         const address = document.getElementById('lpAddress').value.trim();
         const phoneDigits = phone.replace(/\D/g, '');
 
@@ -645,6 +650,11 @@
         }
         if (!(phoneDigits.length === 10 || (phoneDigits.length === 11 && phoneDigits[0] === '1'))) {
           statusEl.textContent = 'Please enter a 10 digit phone number.';
+          statusEl.className = 'form-status error';
+          return;
+        }
+        if (email && !/^[^@s]+@[^@s]+.[^@s]+$/.test(email)) {
+          statusEl.textContent = 'Please check your email address, or leave it blank.';
           statusEl.className = 'form-status error';
           return;
         }
@@ -672,7 +682,7 @@
           });
           const write = db.collection('contact_submissions').add({
             name: name.slice(0, 199),
-            email: '',
+            email: email.slice(0, 160),
             phone,
             address: address.slice(0, 299),
             interest: '',
