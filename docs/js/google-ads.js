@@ -9,8 +9,8 @@
    part after is LEAD_LABEL. Until ID is set this file does NOTHING and says so
    in the console, so a placeholder can never look like working tracking. */
 (function () {
-  var ID = '';          // <-- e.g. 'AW-123456789'
-  var LEAD_LABEL = '';  // <-- e.g. 'AbC-D_efG-h12_34-567'
+  var ID = 'AW-18504076184';
+  var LEAD_LABEL = 'bn3XCLK7qZcdEJiXt_dE';  // "Website Lead" conversion action
 
   window.afterGloGoogleLead = function () {};
   if (!ID) {
