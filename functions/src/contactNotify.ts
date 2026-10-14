@@ -18,6 +18,8 @@ const PORCHLIGHT_LEAD_KEY = defineSecret("PORCHLIGHT_LEAD_KEY");
 const PORCHLIGHT_WEB_LEAD = "https://us-central1-porchlight-f1d62.cloudfunctions.net/webLead";
 
 const INBOX = "afterglolights@gmail.com";
+// Also gets every lead (quote requests and giveaway quotes), not signups.
+const LEAD_CC = ["greenebookworm@gmail.com"];
 const TZ = "America/Denver";
 
 type Row = [label: string, value: string, href?: string];
@@ -33,7 +35,7 @@ const when = () =>
   }).format(new Date());
 
 /** Sends one lead email. Reply-To is the lead, so hitting Reply answers them. */
-async function sendLeadEmail(opts: { subject: string; heading: string; rows: Row[]; replyTo?: string }) {
+async function sendLeadEmail(opts: { subject: string; heading: string; rows: Row[]; replyTo?: string; cc?: string[] }) {
   const pass = GMAIL_APP_PASSWORD.value();
   if (!pass || pass === "unset") {
     functions.logger.warn("GMAIL_APP_PASSWORD not configured; lead email skipped", { subject: opts.subject });
@@ -58,6 +60,7 @@ async function sendLeadEmail(opts: { subject: string; heading: string; rows: Row
   await mail.sendMail({
     from: `"AFTERGLO Website" <${INBOX}>`,
     to: INBOX,
+    cc: opts.cc?.length ? opts.cc : undefined,
     replyTo: opts.replyTo || undefined,
     subject: opts.subject,
     text,
@@ -152,6 +155,7 @@ export const onContactSubmissionCreated = functions
         subject: `New lead: ${name || "someone"}${city ? ` (${city})` : ""} - ${source}`,
         heading: `New quote request from ${name || "the website"}`,
         replyTo: mailto(email) ? email : undefined,
+        cc: LEAD_CC,
         rows: [
           ["Name", name],
           ["Phone", phone, tel(phone)],
@@ -289,6 +293,7 @@ export const onGiveawayEntryCreated = functions
         subject: `Giveaway entry wants a quote: ${name}`,
         heading: `${name || "A giveaway entrant"} entered the giveaway and wants a quote`,
         replyTo: mailto(email) ? email : undefined,
+        cc: LEAD_CC,
         rows: [
           ["Name", name],
           ["Phone", phone, tel(phone)],

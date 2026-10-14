@@ -317,7 +317,7 @@
               </div>
               <div class="form-field">
                 <label for="cfEmail">Email *</label>
-                <input type="email" id="cfEmail" required maxlength="319" autocomplete="email" />
+                <input type="text" id="cfEmail" required maxlength="319" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" />
               </div>
             </div>
             <div class="form-field">
@@ -328,8 +328,6 @@
                 <option value="Both">Both</option>
                 <option value="Not Sure">Not Sure Yet</option>
               </select>
-            </div>
-              <span style="font-size: 0.78rem; color: var(--muted); margin-top: 2px;">Optional: pick a suggestion to autofill the fields below, or just type your address in manually.</span>
             </div>
             <div class="form-field">
               <label for="cfStreet">Street Address *</label>
@@ -688,11 +686,10 @@
           statusEl.className = 'form-status error';
           return;
         }
-        if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
-          statusEl.textContent = 'Please enter a valid email address.';
-          statusEl.className = 'form-status error';
-          return;
-        }
+        // Never turn a lead away over a typo'd email. firestore.rules rejects a
+        // malformed email field, so one that doesn't look right rides along in
+        // the message instead, exactly as typed.
+        const emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email);
         if (!db) {
           statusEl.textContent = 'Something went wrong. Please call or email us directly.';
           statusEl.className = 'form-status error';
@@ -704,7 +701,9 @@
 
         try {
           const ref = await db.collection('contact_submissions').add({
-            name, email, phone, address, interest, message,
+            name, phone, address, interest,
+            email: emailOk ? email : '',
+            message: (emailOk ? message : ['Email as typed: ' + email.slice(0, 160), message].filter(Boolean).join('\n')).slice(0, 4999),
             addressStreet: addressStreet.slice(0, 200),
             addressCity: addressCity.slice(0, 100),
             addressState: addressState.slice(0, 50),

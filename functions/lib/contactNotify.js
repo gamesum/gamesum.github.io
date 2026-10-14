@@ -52,6 +52,8 @@ const GMAIL_APP_PASSWORD = (0, params_1.defineSecret)("GMAIL_APP_PASSWORD");
 const PORCHLIGHT_LEAD_KEY = (0, params_1.defineSecret)("PORCHLIGHT_LEAD_KEY");
 const PORCHLIGHT_WEB_LEAD = "https://us-central1-porchlight-f1d62.cloudfunctions.net/webLead";
 const INBOX = "afterglolights@gmail.com";
+// Also gets every lead (quote requests and giveaway quotes), not signups.
+const LEAD_CC = ["greenebookworm@gmail.com"];
 const TZ = "America/Denver";
 const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const str = (v, max) => String(v ?? "").trim().slice(0, max);
@@ -83,6 +85,7 @@ async function sendLeadEmail(opts) {
     await mail.sendMail({
         from: `"AFTERGLO Website" <${INBOX}>`,
         to: INBOX,
+        cc: opts.cc?.length ? opts.cc : undefined,
         replyTo: opts.replyTo || undefined,
         subject: opts.subject,
         text,
@@ -175,6 +178,7 @@ exports.onContactSubmissionCreated = functions
             subject: `New lead: ${name || "someone"}${city ? ` (${city})` : ""} - ${source}`,
             heading: `New quote request from ${name || "the website"}`,
             replyTo: mailto(email) ? email : undefined,
+            cc: LEAD_CC,
             rows: [
                 ["Name", name],
                 ["Phone", phone, tel(phone)],
@@ -314,6 +318,7 @@ exports.onGiveawayEntryCreated = functions
             subject: `Giveaway entry wants a quote: ${name}`,
             heading: `${name || "A giveaway entrant"} entered the giveaway and wants a quote`,
             replyTo: mailto(email) ? email : undefined,
+            cc: LEAD_CC,
             rows: [
                 ["Name", name],
                 ["Phone", phone, tel(phone)],
