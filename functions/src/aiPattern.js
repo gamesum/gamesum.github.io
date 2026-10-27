@@ -168,7 +168,7 @@ async function callClaude(prompt, ledCount, apiKey, model) {
       body: JSON.stringify({
         model,
         max_tokens: 700,
-        temperature: 0.6,
+        // No temperature: Claude 5.x models reject it as deprecated (400).
         system: SYSTEM_PROMPT + `\nThe strip has ${ledCount} LEDs.`,
         messages: [{
           role: "user",
