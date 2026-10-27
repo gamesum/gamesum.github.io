@@ -11,6 +11,10 @@ export { aiPreset } from "./aiPreset";
 // AI product-knowledge assistant — see ./aiAsk.js.
 export { aiAsk } from "./aiAsk";
 
+// The app's "Describe your lights" generator (Claude Haiku, server-held key,
+// per-install / per-IP / global limits) — see ./aiPattern.js.
+export { aiPattern } from "./aiPattern";
+
 // Emails afterglolights@gmail.com whenever a website lead arrives: quote forms
 // (contact_submissions), homepage email signups (/api/signup -> email_signups),
 // and giveaway entries that want a quote — see ./contactNotify.ts.
