@@ -432,7 +432,7 @@
     <div class="container">
       <div class="legal-hero-label">Legal</div>
       <h1>Privacy Policy</h1>
-      <p class="legal-hero-meta">Last updated: October 18, 2026 &nbsp;·&nbsp; Effective: June 24, 2026</p>
+      <p class="legal-hero-meta">Last updated: October 27, 2026 &nbsp;·&nbsp; Effective: June 24, 2026</p>
     </div>
   </div>
 
@@ -497,9 +497,10 @@
           <p><strong>Information accessed by the AFTERGLO Android app:</strong></p>
           <ul>
             <li><strong>Network permissions:</strong> the app declares <code>INTERNET</code>, <code>ACCESS_NETWORK_STATE</code>, <code>ACCESS_WIFI_STATE</code>, <code>CHANGE_NETWORK_STATE</code>, and <code>CHANGE_WIFI_MULTICAST_STATE</code>. These are used to communicate with your AFTERGLO controllers on your local WiFi network and with our backend services.</li>
-            <li><strong>Location permission:</strong> the app declares <code>ACCESS_FINE_LOCATION</code> on Android and asks for location while in use on iOS. Both platforms classify the name of the WiFi network your phone is joined to as location data, so this permission is what lets the app show you which network you are on and confirm it matches your controllers. <strong>Your location is never collected, stored, or transmitted.</strong> It is read on your phone and used on your phone. The app does not request camera, microphone, contacts, or storage permissions.</li>
+            <li><strong>Location permission:</strong> the app declares <code>ACCESS_FINE_LOCATION</code> on Android and asks for location while in use on iOS. Both platforms classify the name of the WiFi network your phone is joined to as location data, so this permission is what lets the app show you which network you are on and confirm it matches your controllers. If you set up sunset or sunrise timers, the app can also use your approximate location (rounded to about a kilometre), or a ZIP code you type, so your controller knows when the sun sets at your home. That rounded location is sent only to your own controller on your WiFi, never to us. A typed ZIP code is looked up through the public Zippopotam.us service to find its coordinates. <strong>We never collect or store your location.</strong> The app does not request camera, microphone, contacts, or storage permissions.</li>
             <li><strong>Local device discovery:</strong> the app uses standard mDNS and UDP broadcast on your local network to find AFTERGLO controllers. This discovery happens entirely on your local WiFi; controller addresses are not transmitted to us.</li>
-            <li><strong>Locally stored device list:</strong> the list of controllers you have added (their friendly names, IP addresses, and basic settings) is stored on your device only and is not uploaded to our servers.</li>
+            <li><strong>Locally stored device list:</strong> the list of controllers you have added (their IP addresses and basic settings) is stored on your device only and is not uploaded to our servers, except for the run-hours record described next.</li>
+            <li><strong>Controller run hours:</strong> each AFTERGLO controller keeps a running total of how long it has been powered and how long its lights have been on. The app shows this total to you. It also sends it to us, at most every few hours, together with the controller's hardware (MAC) address, its firmware version and the name you gave it. We use this to support warranty and service. It does not include your location, your IP address, or your account.</li>
             <li><strong>Account and marketplace activity:</strong> when you sign in to the app, the same Firebase backed account, purchase, and download data described above applies.</li>
             <li><strong>Community preset sharing (optional):</strong> if you choose to share a
             lighting pattern, we upload that pattern: its name, the author name shown on it, and
@@ -514,8 +515,9 @@
             uploader and the reporter. Reports cannot be read back by any app user.</li>
             <li><strong>AI pattern generation (optional):</strong> if you use the AI feature, the
             description you type is sent to our service to be turned into a lighting pattern.
-            Nothing else is sent with it: not your location, not your controllers, not your
-            account. We do not use your descriptions to build advertising profiles.</li>
+            It is processed by Anthropic's Claude model. Only a random identifier created by the app is sent
+            with it, and a one-way hash of your IP address is kept for an hour or a day, to enforce usage limits. Your location, your controllers and your
+            account are not sent. We do not use your descriptions to build advertising profiles.</li>
           </ul>
           <p><strong>Community content moderation.</strong> Patterns shared by users are not
           reviewed before they appear. Every shared pattern can be reported, and its uploader

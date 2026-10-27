@@ -14,6 +14,9 @@ export { aiAsk } from "./aiAsk";
 // The app's "Describe your lights" generator (Claude Haiku, server-held key,
 // per-install / per-IP / global limits) — see ./aiPattern.js.
 export { aiPattern } from "./aiPattern";
+// Controller run-hours odometer reports from the app (only ever raises the
+// stored totals; growth bounded by wall-clock time) — see ./reportHours.js.
+export { reportHours } from "./reportHours";
 
 // Emails afterglolights@gmail.com whenever a website lead arrives: quote forms
 // (contact_submissions), homepage email signups (/api/signup -> email_signups),
