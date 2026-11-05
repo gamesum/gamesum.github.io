@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>Controller support | AFTERGLO</title>
+  <link rel="icon" href="/afterglo-favicon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Barlow+Condensed:wght@700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!--
+    What the QR code on every controller sticker opens: /c/{serial}
+    (firebase.json rewrites /c/** here). The serial is looked up through
+    Porchlight's publicController function, which returns the controller only
+    (model, install date, warranty, status), never the customer.
+  -->
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg:#0F0F11; --card:#17171B; --line:#2E2E34; --gold:#D4A43A; --gold2:#F0C04A; --text:#F2F2F4; --muted:#9A9AA2; --ok:#3FBF7F; --warn:#E5A23A; }
+    body { font-family:'Inter', sans-serif; background:var(--bg); color:var(--text); line-height:1.55; min-height:100vh; }
+    main { max-width:520px; margin:0 auto; padding:28px 18px 48px; }
+    .brand { display:flex; align-items:baseline; gap:10px; margin-bottom:26px; }
+    .word { font-family:'Outfit', sans-serif; font-weight:900; font-size:1.7rem; letter-spacing:.14em; }
+    .word span { color:var(--gold); }
+    .co { font-size:.7rem; font-weight:600; letter-spacing:.25em; color:var(--muted); }
+    h1 { font-family:'Barlow Condensed', sans-serif; font-weight:800; font-size:2rem; letter-spacing:.02em; line-height:1.1; }
+    .sub { color:var(--muted); margin-top:4px; }
+    .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:16px 18px; margin:20px 0; }
+    .row { display:flex; justify-content:space-between; gap:12px; padding:6px 0; border-bottom:1px solid var(--line); font-size:.95rem; }
+    .row:last-child { border-bottom:0; }
+    .row .k { color:var(--muted); }
+    .row .v { font-weight:600; text-align:right; }
+    .warranty { margin-top:12px; padding:10px 12px; border-radius:10px; font-weight:600; font-size:.95rem; }
+    .warranty.ok { background:rgba(63,191,127,.12); color:var(--ok); }
+    .warranty.part { background:rgba(229,162,58,.12); color:var(--warn); }
+    .warranty.out { background:rgba(154,154,162,.12); color:var(--muted); }
+    .note { color:var(--muted); font-size:.92rem; }
+    .btns { display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+    .btn { display:flex; align-items:center; gap:14px; padding:18px 18px; border-radius:14px; font-weight:700; font-size:1.08rem; text-decoration:none; border:1px solid var(--line); background:var(--card); color:var(--text); }
+    .btn small { display:block; font-weight:500; font-size:.85rem; color:var(--muted); margin-top:2px; }
+    .btn.primary { background:var(--gold); color:#141414; border-color:var(--gold); }
+    .btn.primary small { color:#3A2C0A; }
+    .btn svg { flex:none; }
+    .btn:focus-visible { outline:3px solid var(--gold2); outline-offset:2px; }
+    .phone { margin-top:22px; text-align:center; color:var(--muted); font-size:.95rem; }
+    .phone a { color:var(--gold2); font-weight:700; text-decoration:none; }
+    footer { margin-top:34px; text-align:center; color:var(--muted); font-size:.78rem; }
+    footer a { color:var(--muted); }
+    [hidden] { display:none !important; }
+  </style>
+</head>
+<body>
+<main>
+  <div class="brand"><div class="word">AFTER<span>GLO</span></div><div class="co">LIGHTING CO.</div></div>
+
+  <h1 id="title">Controller support</h1>
+  <p class="sub" id="sub">Loading your controller…</p>
+
+  <div class="card" id="info" hidden>
+    <div class="row"><span class="k">Serial number</span><span class="v" id="serial"></span></div>
+    <div class="row"><span class="k">Model</span><span class="v" id="model"></span></div>
+    <div class="row"><span class="k">Installed</span><span class="v" id="installed"></span></div>
+    <div class="warranty" id="warranty"></div>
+  </div>
+
+  <div class="card" id="missing" hidden>
+    <p><strong>We couldn't find that controller.</strong></p>
+    <p class="note">Check the serial number on the label, or just text or email us below and we'll sort it out.</p>
+  </div>
+
+  <div class="btns">
+    <a class="btn primary" id="manual" href="/manual/AFTERGLO_Owners_Manual.pdf" target="_blank" rel="noopener">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Owner's manual<small>Setup, everyday use, troubleshooting, warranty (PDF)</small></span>
+    </a>
+    <a class="btn" id="text" href="sms:+13853374144">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      <span>Text support<small id="textSub">Opens a text to (385) 337-4144</small></span>
+    </a>
+    <a class="btn" id="email" href="mailto:afterglolights@gmail.com">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      <span>Email support<small id="emailSub">Opens an email to afterglolights@gmail.com</small></span>
+    </a>
+  </div>
+
+  <p class="phone">Or call <a href="tel:+13853374144">(385) 337-4144</a></p>
+
+  <footer>AFTERGLO Lighting Co. · Ward Legacy Group LLC · South Jordan, UT · <a href="/">afterglolighting.org</a></footer>
+</main>
+<script>
+(() => {
+  // Where the serial is looked up (Porchlight). Only controller facts come back.
+  const LOOKUP = 'https://us-central1-porchlight-f1d62.cloudfunctions.net/publicController';
+  const MANUAL_URL = '/manual/AFTERGLO_Owners_Manual.pdf'; // empty string hides the button
+  const PHONE = '+13853374144', EMAIL = 'afterglolights@gmail.com';
+
+  const $ = (id) => document.getElementById(id);
+  const seg = location.pathname.split('/').filter(Boolean);
+  const raw = decodeURIComponent((seg[0] === 'c' ? seg[1] : '') || new URLSearchParams(location.search).get('s') || '');
+  const serial = raw.trim().toUpperCase();
+  if (!MANUAL_URL) $('manual').hidden = true; else $('manual').href = MANUAL_URL;
+
+  // "2026-11-05" -> "11/05/2026" and "11/2031".
+  const ymd = (k) => { const p = String(k || '').split('-'); return p.length === 3 ? p : null; };
+  const day = (k) => { const p = ymd(k); return p ? `${p[1]}/${p[2]}/${p[0]}` : ''; };
+  const month = (k) => { const p = ymd(k); return p ? `${p[1]}/${p[0]}` : ''; };
+
+  /** Text and email links with the controller filled in, so we know which one it is. */
+  function contact(c) {
+    const lines = c ? [`Controller: ${c.serial}`, `Model: ${c.model}`, `Installed: ${day(c.installDate)}`] : (serial ? [`Controller: ${serial}`] : []);
+    const smsBody = c ? `Service request — controller ${c.serial} (${c.model}): ` : (serial ? `Service request — controller ${serial}: ` : 'Service request: ');
+    $('text').href = `sms:${PHONE}?&body=${encodeURIComponent(smsBody)}`;
+    const subject = c ? `Service request — ${c.serial}` : (serial ? `Service request — ${serial}` : 'Service request');
+    const body = [...lines, '', "What's going on: ", ''].join('\n');
+    $('email').href = `mailto:${EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    if (c || serial) {
+      $('textSub').textContent = `Your serial number is already in the message`;
+      $('emailSub').textContent = `Your serial${c ? ', model and install date are' : ' is'} already filled in`;
+    }
+  }
+
+  function missing() {
+    $('title').textContent = 'Controller support';
+    $('sub').textContent = serial ? `Serial ${serial}` : 'Scan the QR code on your controller label, or contact us below.';
+    $('missing').hidden = !serial;
+    contact(null);
+  }
+
+  function show(c) {
+    $('title').textContent = `Controller ${c.serial}`;
+    $('sub').textContent = c.scanned && c.scanned !== c.serial
+      ? `Controller ${c.scanned} was replaced under warranty by ${c.serial}. Here is your current controller.`
+      : 'Thanks for choosing AFTERGLO. Help is one tap away.';
+    $('serial').textContent = c.serial;
+    $('model').textContent = c.model;
+    $('installed').textContent = day(c.installDate);
+    const today = c.today || new Date().toISOString().slice(0, 10);
+    const w = $('warranty');
+    if (c.warrantyLaborEnd && today <= c.warrantyLaborEnd) {
+      w.className = 'warranty ok';
+      w.textContent = `Parts covered through ${month(c.warrantyPartsEnd)} · Labor through ${month(c.warrantyLaborEnd)}`;
+    } else if (c.warrantyPartsEnd && today <= c.warrantyPartsEnd) {
+      w.className = 'warranty part';
+      w.textContent = `Parts covered through ${month(c.warrantyPartsEnd)} · Labor coverage ended ${month(c.warrantyLaborEnd)}, so a service call fee applies`;
+    } else {
+      w.className = 'warranty out';
+      w.textContent = 'Out of warranty. A service call fee applies.';
+    }
+    $('info').hidden = false;
+    contact(c);
+  }
+
+  contact(null);
+  if (!/^AG-\d{4}-\d{4,}$/.test(serial)) return missing();
+  fetch(`${LOOKUP}?s=${encodeURIComponent(serial)}`)
+    .then((r) => (r.ok ? r.json() : { found: false }))
+    .then((j) => (j.found ? show(j) : missing()))
+    .catch(missing);
+})();
+</script>
+</body>
+</html>

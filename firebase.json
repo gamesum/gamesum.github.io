@@ -53,7 +53,8 @@
       { "source": "/api/shows.json", "function": "sequenceList" },
       { "source": "/api/me",        "function": "apiMe" },
       { "source": "/api/firmware/manifest", "function": "firmwareManifest" },
-      { "source": "/api/firmware/bin",      "function": "firmwareBin" }
+      { "source": "/api/firmware/bin",      "function": "firmwareBin" },
+      { "source": "/c/**", "destination": "/controller.html" }
     ],
     "headers": [
       {
