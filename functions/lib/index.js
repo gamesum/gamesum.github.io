@@ -36,8 +36,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.addToLibrary = exports.onUserDocChanged = exports.apiMe = exports.mintAppToken = exports.deleteOwnReview = exports.submitReview = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.firmwareBin = exports.firmwareManifest = exports.onGiveawayEntryCreated = exports.onEmailSignupCreated = exports.emailSignup = exports.onContactSubmissionCreated = exports.reportHours = exports.aiPattern = exports.aiAsk = exports.aiPreset = void 0;
-exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = void 0;
+exports.userRequestDataDeletion = exports.exportMyData = exports.userRequestDataExport = exports.userAcceptCreatorAgreement = exports.adminDmcaAction = exports.submitDmcaNotice = exports.adminListCreatorsPayoutStatus = exports.checkConnectStatus = exports.createConnectOnboardingLink = exports.createConnectAccount = exports.adminRefundPurchase = exports.adminClaimBootstrap = exports.adminListUsers = exports.adminDeleteUpload = exports.adminSetUploadStatus = exports.adminDisableUser = exports.adminSetUserRole = exports.ensureSuperAdminOnCreate = exports.ensureSuperAdminClaim = exports.confirmUpload = exports.userDeleteUpload = exports.addToLibrary = exports.onUserDocChanged = exports.apiMe = exports.mintAppToken = exports.deleteOwnReview = exports.submitReview = exports.getDownloadUrl = exports.stripeWebhook = exports.createCheckout = exports.sequenceList = exports.getListings = exports.uploadSequence = exports.recordPurchase = exports.purchases = exports.firmwareBin = exports.firmwareManifest = exports.onGiveawayEntryCreated = exports.onEmailSignupCreated = exports.emailSignup = exports.onContactSubmissionCreated = exports.supportSetBlocked = exports.supportResetEnrollment = exports.supportSession = exports.supportQueueCommand = exports.deviceCheckin = exports.reportHours = exports.aiPattern = exports.aiAsk = exports.aiPreset = void 0;
+exports.adminSetCreatorVerification = exports.requestCreatorVerification = exports.adminPurgeSeedData = exports.adminReplyFeedback = exports.adminDeleteFeedback = exports.submitFeedback = exports.processPendingDeletions = exports.adminRequestUserDeletion = exports.userCancelDeletion = void 0;
 const admin = __importStar(require("firebase-admin"));
 const functions = __importStar(require("firebase-functions"));
 const params_1 = require("firebase-functions/params");
@@ -58,6 +58,14 @@ Object.defineProperty(exports, "aiPattern", { enumerable: true, get: function ()
 // stored totals; growth bounded by wall-clock time) — see ./reportHours.js.
 var reportHours_1 = require("./reportHours");
 Object.defineProperty(exports, "reportHours", { enumerable: true, get: function () { return reportHours_1.reportHours; } });
+// Remote support: controllers (fw 1.4.0+) check in over TLS with a per-device
+// secret; admins queue allowlisted lighting commands — see ./deviceSupport.js.
+var deviceSupport_1 = require("./deviceSupport");
+Object.defineProperty(exports, "deviceCheckin", { enumerable: true, get: function () { return deviceSupport_1.deviceCheckin; } });
+Object.defineProperty(exports, "supportQueueCommand", { enumerable: true, get: function () { return deviceSupport_1.supportQueueCommand; } });
+Object.defineProperty(exports, "supportSession", { enumerable: true, get: function () { return deviceSupport_1.supportSession; } });
+Object.defineProperty(exports, "supportResetEnrollment", { enumerable: true, get: function () { return deviceSupport_1.supportResetEnrollment; } });
+Object.defineProperty(exports, "supportSetBlocked", { enumerable: true, get: function () { return deviceSupport_1.supportSetBlocked; } });
 // Emails afterglolights@gmail.com whenever a website lead arrives: quote forms
 // (contact_submissions), homepage email signups (/api/signup -> email_signups),
 // and giveaway entries that want a quote — see ./contactNotify.ts.

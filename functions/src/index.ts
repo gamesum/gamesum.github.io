@@ -17,6 +17,11 @@ export { aiPattern } from "./aiPattern";
 // Controller run-hours odometer reports from the app (only ever raises the
 // stored totals; growth bounded by wall-clock time) — see ./reportHours.js.
 export { reportHours } from "./reportHours";
+// Remote support: controllers (fw 1.4.0+) check in over TLS with a per-device
+// secret; admins queue allowlisted lighting commands — see ./deviceSupport.js.
+export {
+  deviceCheckin, supportQueueCommand, supportSession, supportResetEnrollment, supportSetBlocked,
+} from "./deviceSupport";
 
 // Emails afterglolights@gmail.com whenever a website lead arrives: quote forms
 // (contact_submissions), homepage email signups (/api/signup -> email_signups),

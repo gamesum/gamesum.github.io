@@ -378,6 +378,7 @@
       <button class="tab-chip" data-tab="data-requests">Data Requests</button>
       <button class="tab-chip" data-tab="giveaway">Giveaway</button>
       <button class="tab-chip" data-tab="feedback">Feedback</button>
+      <button class="tab-chip" data-tab="controllers">Controllers</button>
       <button class="tab-chip" data-tab="audit">Audit Log</button>
     </div>
 
@@ -737,6 +738,34 @@
       </div>
     </section>
 
+    <!-- CONTROLLERS (remote support) -->
+    <section class="section" id="section-controllers">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">Controllers <span class="cell-sub" style="font-weight:400;">remote support, firmware 1.4.0+</span></div>
+          <div class="panel-tools">
+            <div class="search">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <input type="text" id="ctlSearch" placeholder="Search name, MAC, firmware" autocomplete="off" />
+            </div>
+            <button class="btn btn-sm btn-icon" id="refreshControllers" title="Refresh" aria-label="Refresh">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th>Controller</th><th>Status</th><th>Last seen</th><th>Firmware</th><th>Faults</th><th>WiFi</th><th></th></tr>
+            </thead>
+            <tbody id="ctlBody">
+              <tr><td colspan="7" class="empty-row">Loading controllers.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- AUDIT LOG -->
     <section class="section" id="section-audit">
       <div class="panel">
@@ -825,6 +854,76 @@
     <button class="btn btn-sm btn-danger" id="fbDelete" style="margin-left:auto;">Delete</button>
   </div>
 </aside>
+
+<!-- ─── CONTROLLER DRAWER (remote support) ─────────────────────────── -->
+<div id="ctlDrawerBackdrop" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:3000;"></div>
+<aside id="ctlDrawer" style="display:none; position:fixed; top:0; right:0; bottom:0; width:min(640px, 100%); background:var(--surface2); border-left:1px solid var(--border); z-index:3001; overflow-y:auto; padding:26px 26px 40px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+    <h2 id="ctlTitle" style="font-family:'Outfit',sans-serif; font-size:1.2rem; font-weight:800;">Controller</h2>
+    <button class="btn btn-sm" id="ctlDrawerClose">Close</button>
+  </div>
+  <div id="ctlMeta" style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;"></div>
+  <div id="ctlNotice" style="display:none; border:1px solid var(--border2); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:0.85rem;"></div>
+
+  <div id="ctlSummary" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:8px; margin-bottom:18px;"></div>
+
+  <div class="ctl-label">Support session</div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+    <button class="btn btn-sm btn-primary" data-ctl-session="30">Start 30 min</button>
+    <button class="btn btn-sm" data-ctl-session="120">Start 2 h</button>
+    <button class="btn btn-sm" data-ctl-session="0">End session</button>
+  </div>
+  <div class="cell-sub" style="margin-bottom:18px;">While a session is open the controller checks in every 15 s instead of every 10 min. Queuing a command opens a 30 min session on its own.</div>
+
+  <div class="ctl-label">Quick fixes</div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;">
+    <button class="btn btn-sm" data-ctl-quick="warmLeds">Strip has WARM white LEDs (3000K)</button>
+    <button class="btn btn-sm" data-ctl-quick="brightLeds">Strip has BRIGHT white LEDs (6000K)</button>
+    <button class="btn btn-sm" data-ctl-quick="on">Lights on</button>
+    <button class="btn btn-sm" data-ctl-quick="off">Lights off</button>
+    <button class="btn btn-sm" data-ctl-quick="readLeds">Read LED setup</button>
+    <button class="btn btn-sm" data-ctl-quick="readSchedules">Read timers</button>
+    <button class="btn btn-sm btn-danger" data-ctl-quick="restart">Restart controller</button>
+  </div>
+
+  <details style="margin-bottom:18px;">
+    <summary style="cursor:pointer; color:var(--gold); font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;">Custom command</summary>
+    <div style="display:flex; gap:8px; margin:10px 0;">
+      <select id="ctlMethod" class="ctl-input" style="width:110px;">
+        <option>GET</option><option>PUT</option><option>PATCH</option><option>POST</option><option>DELETE</option>
+      </select>
+      <input id="ctlPath" class="ctl-input" style="flex:1;" placeholder="/api/v1/leds" autocomplete="off" />
+    </div>
+    <textarea id="ctlBodyIn" class="ctl-input" rows="4" style="width:100%; font-family:ui-monospace,Menlo,monospace; font-size:0.8rem;" placeholder='{"whiteKelvin":6000}'></textarea>
+    <div style="display:flex; gap:8px; align-items:center; margin-top:8px;">
+      <button class="btn btn-sm btn-primary" id="ctlSend">Queue command</button>
+      <span class="cell-sub">Only lighting settings are allowed. The controller itself refuses anything touching WiFi, firmware or the network.</span>
+    </div>
+  </details>
+
+  <div class="ctl-label">Commands</div>
+  <div id="ctlCommands" style="margin-bottom:18px;"><div class="cell-sub">No commands yet.</div></div>
+
+  <details style="margin-bottom:18px;">
+    <summary style="cursor:pointer; color:var(--gold); font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;">Latest readings (raw)</summary>
+    <pre id="ctlRaw" style="margin-top:10px; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:12px 14px; max-height:360px; overflow:auto; font-family:ui-monospace,Menlo,monospace; font-size:0.75rem; color:var(--muted); white-space:pre-wrap;"></pre>
+  </details>
+
+  <div class="ctl-label">Enrollment</div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+    <button class="btn btn-sm" id="ctlResetEnroll">Reset enrollment</button>
+    <button class="btn btn-sm btn-danger" id="ctlBlock">Block controller</button>
+  </div>
+  <div class="cell-sub">Reset after a controller is factory-reset or replaced: its next check-in enrolls afresh. Block refuses every check-in from this MAC.</div>
+</aside>
+<style>
+  .ctl-label { font-size:0.74rem; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+  .ctl-input { background:var(--surface); border:1px solid var(--border); color:var(--text); padding:8px 10px; border-radius:8px; font-size:0.85rem; }
+  .ctl-card { background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 12px; }
+  .ctl-card b { display:block; font-size:0.7rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--muted); font-weight:600; }
+  .ctl-cmd { border:1px solid var(--border); border-radius:10px; padding:8px 12px; margin-bottom:6px; font-size:0.82rem; }
+  .ctl-cmd pre { margin-top:6px; white-space:pre-wrap; word-break:break-all; font-family:ui-monospace,Menlo,monospace; font-size:0.72rem; color:var(--muted); max-height:160px; overflow:auto; }
+</style>
 
 <div class="toast-stack" id="toastStack"></div>
 
@@ -967,7 +1066,7 @@
 
   /* ─── Load everything on dashboard init ────────────────────────── */
   async function initDashboard() {
-    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadGiveaway(), loadFeedback(), loadAudit()]);
+    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadGiveaway(), loadFeedback(), loadAudit(), loadControllers()]);
     renderStats();
     // Deep-link: admin.html#feedback opens the Feedback tab directly.
     if ((window.location.hash || '').toLowerCase() === '#feedback') {
@@ -2090,6 +2189,228 @@
       toast('Purge failed: ' + (err.message || 'error'), 'error');
     }
   };
+
+  /* ─── Controllers (remote support) ─────────────────────────────── */
+  // Reads supportDevices directly (admin-read rules); every change goes
+  // through the support* callables, which check the command allowlist and
+  // write the audit log. Everything a controller reports is device-supplied
+  // text, so it is always escaped or set with textContent.
+  let ctlCache = [];
+  let ctlOpenId = null;
+  let ctlUnsubs = [];
+  const CTL_ONLINE_MS = 15 * 60 * 1000;
+
+  function ctlParse(s) { try { return s ? JSON.parse(s) : null; } catch (_) { return null; } }
+  function ctlMillis(t) { return t && typeof t.toMillis === 'function' ? t.toMillis() : 0; }
+  function ctlAgo(t) {
+    const ms = ctlMillis(t);
+    if (!ms) return 'never';
+    const s = Math.max(0, Math.round((Date.now() - ms) / 1000));
+    if (s < 90) return s + ' s ago';
+    if (s < 5400) return Math.round(s / 60) + ' min ago';
+    if (s < 172800) return Math.round(s / 3600) + ' h ago';
+    return Math.round(s / 86400) + ' days ago';
+  }
+  function ctlStatus(d) {
+    if (d.blocked) return '<span class="pill pill-rejected">blocked</span>';
+    if (!d.secretHash) return '<span class="pill pill-pending">not enrolled</span>';
+    if (d.optedOut) return '<span class="pill pill-pending">customer turned off</span>';
+    if (Date.now() - ctlMillis(d.lastSeen) < CTL_ONLINE_MS) return '<span class="pill pill-approved">online</span>';
+    return '<span class="pill pill-unverified">not checking in</span>';
+  }
+
+  async function loadControllers() {
+    const body = document.getElementById('ctlBody');
+    if (!body) return;
+    try {
+      const snap = await fbFirestore.collection('supportDevices').orderBy('lastSeen', 'desc').limit(500).get();
+      ctlCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
+      renderControllers();
+    } catch (err) {
+      console.error(err);
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">Failed to load controllers. ' + esc(err.message || '') + '</td></tr>';
+    }
+  }
+
+  function renderControllers() {
+    const body = document.getElementById('ctlBody');
+    const q = (document.getElementById('ctlSearch').value || '').toLowerCase().trim();
+    const rows = ctlCache.filter(d => !q || [d.name, d.mac, d.fw, d._id].join(' ').toLowerCase().includes(q));
+    if (!rows.length) {
+      body.innerHTML = '<tr><td colspan="7" class="empty-row">' + (ctlCache.length ? 'No controllers match.' : 'No controller has checked in yet. Controllers appear here once they run firmware 1.4.0.') + '</td></tr>';
+      return;
+    }
+    body.innerHTML = rows.map(d => {
+      const dev = ctlParse(d.snapshot && d.snapshot.device) || {};
+      const diag = ctlParse(d.snapshot && d.snapshot.diag) || {};
+      const faults = Array.isArray(dev.faults) && dev.faults.length ? dev.faults.map(esc).join(' ') : '<span class="cell-sub">none</span>';
+      const rssi = typeof diag.rssi === 'number' ? diag.rssi + ' dBm' : '.';
+      return '<tr style="cursor:pointer;" data-ctl-open="' + esc(d._id) + '">'
+        + '<td><div>' + esc(d.name || 'Unnamed') + '</div><div class="cell-sub">' + esc(d.mac || d._id) + '</div></td>'
+        + '<td>' + ctlStatus(d) + '</td>'
+        + '<td>' + esc(ctlAgo(d.lastSeen)) + '</td>'
+        + '<td>' + esc(d.fw || '.') + '</td>'
+        + '<td>' + faults + '</td>'
+        + '<td>' + esc(rssi) + '</td>'
+        + '<td><button class="btn btn-sm" data-ctl-open="' + esc(d._id) + '">Open</button></td>'
+        + '</tr>';
+    }).join('');
+  }
+  document.getElementById('ctlSearch').addEventListener('input', renderControllers);
+  document.getElementById('refreshControllers').addEventListener('click', loadControllers);
+  document.getElementById('ctlBody').addEventListener('click', (e) => {
+    const el = e.target.closest('[data-ctl-open]');
+    if (el) ctlOpen(el.getAttribute('data-ctl-open'));
+  });
+
+  function ctlCard(label, value) {
+    return '<div class="ctl-card"><b>' + esc(label) + '</b>' + esc(value == null || value === '' ? '.' : value) + '</div>';
+  }
+
+  function ctlRenderDevice(d) {
+    const snap = d.snapshot || {};
+    const dev = ctlParse(snap.device) || {};
+    const st = ctlParse(snap.state) || {};
+    const leds = ctlParse(snap.leds) || {};
+    const diag = ctlParse(snap.diag) || {};
+    const sched = ctlParse(snap.schedule) || {};
+    document.getElementById('ctlTitle').textContent = d.name || 'Controller';
+    document.getElementById('ctlMeta').innerHTML = esc(d.mac || d._id) + ' &middot; ' + ctlStatus(d)
+      + ' &middot; last seen ' + esc(ctlAgo(d.lastSeen))
+      + (ctlMillis(d.supportUntil) > Date.now() ? ' &middot; <span class="pill pill-creator">session open</span>' : '');
+    const notice = document.getElementById('ctlNotice');
+    const notes = [];
+    if (d.optedOut) notes.push('The customer has switched remote support off in the app. Nothing can be sent until they switch it back on.');
+    if (d.blocked) notes.push('This controller is blocked: its check-ins are refused.');
+    if ((d.authFailures || 0) > 0) notes.push(esc(d.authFailures) + ' check-in(s) with the wrong secret, last ' + esc(ctlAgo(d.lastAuthFailureAt)) + '. Expected after a factory reset; otherwise someone may be impersonating this MAC.');
+    notice.style.display = notes.length ? '' : 'none';
+    notice.innerHTML = notes.join('<br>');
+    const zones = Array.isArray(dev.zones) ? dev.zones.join(' / ') : '.';
+    const hrs = (s) => typeof s === 'number' ? Math.round(s / 3600).toLocaleString() + ' h' : '.';
+    document.getElementById('ctlSummary').innerHTML = [
+      ctlCard('Power', st.power === true ? 'on, ' + (st.brightness != null ? st.brightness + '%' : '') : st.power === false ? 'off' : '.'),
+      ctlCard('Playing', [st.activeKind, st.activeId].filter(Boolean).join(': ')),
+      ctlCard('Strip', [leds.ledType, leds.colorOrder].filter(Boolean).join(' ')),
+      ctlCard('White LED', leds.whiteKelvin ? leds.whiteKelvin + 'K, ' + (leds.whiteMode || '') : '.'),
+      ctlCard('LEDs per zone', zones),
+      ctlCard('Faults', Array.isArray(dev.faults) && dev.faults.length ? dev.faults.join(' ') : 'none'),
+      ctlCard('WiFi signal', typeof diag.rssi === 'number' ? diag.rssi + ' dBm' : '.'),
+      ctlCard('Clock', diag.clockSynced ? 'set (' + (diag.timezone || '') + ')' : 'NOT set'),
+      ctlCard('Up for', typeof diag.uptimeS === 'number' ? Math.round(diag.uptimeS / 3600) + ' h' : '.'),
+      ctlCard('Free memory', typeof diag.heapFree === 'number' ? Math.round(diag.heapFree / 1024) + ' KB (min ' + Math.round((diag.heapMin || 0) / 1024) + ')' : '.'),
+      ctlCard('Lit / powered', hrs(dev.litSeconds) + ' / ' + hrs(dev.poweredSeconds)),
+      ctlCard('Timers', sched.next ? 'next: ' + JSON.stringify(sched.next).slice(0, 60) : (sched.paused ? 'paused' : '.')),
+    ].join('');
+    const raw = {};
+    for (const k of ['device', 'state', 'leds', 'segments', 'schedule', 'diag']) raw[k] = ctlParse(snap[k]);
+    document.getElementById('ctlRaw').textContent = JSON.stringify(raw, null, 2);
+    document.getElementById('ctlBlock').textContent = d.blocked ? 'Unblock controller' : 'Block controller';
+  }
+
+  function ctlRenderCommands(docs) {
+    const wrap = document.getElementById('ctlCommands');
+    if (!docs.length) { wrap.innerHTML = '<div class="cell-sub">No commands yet.</div>'; return; }
+    const pill = (s) => {
+      const cls = s === 'done' ? 'pill-approved' : (s === 'failed' || s === 'expired' || s === 'no-reply' || s === 'cancelled') ? 'pill-rejected' : 'pill-pending';
+      return '<span class="pill ' + cls + '">' + esc(s) + '</span>';
+    };
+    wrap.innerHTML = docs.map(c => {
+      let result = '';
+      if (c.result) {
+        let b = c.result.body || '';
+        try { b = JSON.stringify(JSON.parse(b), null, 2); } catch (_) {}
+        result = '<pre>' + esc('HTTP ' + c.result.status + '\n' + b) + '</pre>';
+      }
+      return '<div class="ctl-cmd"><div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">'
+        + pill(c.status) + '<code>' + esc(c.method + ' ' + c.path) + '</code>'
+        + '<span class="cell-sub" style="margin-left:auto;">' + esc(c.createdByEmail || '') + ' &middot; ' + esc(ctlAgo(c.createdAt)) + '</span></div>'
+        + (c.note ? '<div class="cell-sub">' + esc(c.note) + '</div>' : '')
+        + (c.body ? '<pre>' + esc(c.body) + '</pre>' : '')
+        + result + '</div>';
+    }).join('');
+  }
+
+  function ctlOpen(id) {
+    ctlClose();
+    ctlOpenId = id;
+    const ref = fbFirestore.collection('supportDevices').doc(id);
+    ctlUnsubs.push(ref.onSnapshot(s => { if (s.exists) ctlRenderDevice(Object.assign({ _id: s.id }, s.data())); },
+      err => toast('Live updates stopped: ' + (err.message || 'error'), 'error')));
+    ctlUnsubs.push(ref.collection('commands').orderBy('createdAt', 'desc').limit(30).onSnapshot(
+      s => ctlRenderCommands(s.docs.map(d => d.data())),
+      err => toast('Command list stopped: ' + (err.message || 'error'), 'error')));
+    document.getElementById('ctlDrawerBackdrop').style.display = '';
+    document.getElementById('ctlDrawer').style.display = '';
+  }
+  function ctlClose() {
+    ctlUnsubs.forEach(u => { try { u(); } catch (_) {} });
+    ctlUnsubs = [];
+    ctlOpenId = null;
+    document.getElementById('ctlDrawerBackdrop').style.display = 'none';
+    document.getElementById('ctlDrawer').style.display = 'none';
+  }
+  document.getElementById('ctlDrawerClose').addEventListener('click', () => { ctlClose(); loadControllers(); });
+  document.getElementById('ctlDrawerBackdrop').addEventListener('click', () => { ctlClose(); loadControllers(); });
+
+  async function ctlQueue(method, path, body, note) {
+    if (!ctlOpenId) return;
+    try {
+      await call('supportQueueCommand', { deviceId: ctlOpenId, method, path, body: body || '', note: note || '' });
+      toast('Queued. It runs at the controller\'s next check-in.', 'success');
+    } catch (err) {
+      toast('Not queued: ' + (err.message || 'error'), 'error');
+    }
+  }
+
+  // The same fields the app's Setup > LEDs "White LEDs on this install" buttons
+  // write (StripProduct ucs2904-warm / ucs2904-bright). Takes effect on the
+  // next frame; no restart.
+  const CTL_STRIP = (kelvin) => JSON.stringify({ ledType: 'rgbw', whiteKelvin: kelvin, whiteMode: 'exact', ledsPerPixel: 1, pixelFullScaleMilliamps: 80, maxMilliampsPerPixel: 42 });
+  const CTL_QUICK = {
+    warmLeds: ['PUT', '/api/v1/leds', CTL_STRIP(3000), 'Strip set to warm white LEDs (3000K)'],
+    brightLeds: ['PUT', '/api/v1/leds', CTL_STRIP(6000), 'Strip set to bright white LEDs (6000K)'],
+    on: ['PATCH', '/api/v1/state', '{"power":true}', 'Lights on'],
+    off: ['PATCH', '/api/v1/state', '{"power":false}', 'Lights off'],
+    readLeds: ['GET', '/api/v1/leds', '', 'Read LED setup'],
+    readSchedules: ['GET', '/api/v1/schedules', '', 'Read timers (location is removed by the controller)'],
+    restart: ['POST', '/cloud/restart', '', 'Restart'],
+  };
+  document.querySelectorAll('[data-ctl-quick]').forEach(btn => btn.addEventListener('click', () => {
+    const q = CTL_QUICK[btn.getAttribute('data-ctl-quick')];
+    if (!q) return;
+    if (q[1] === '/cloud/restart' && !confirm('Restart this controller? The lights go off for about 20 seconds.')) return;
+    if (q[1] === '/api/v1/leds' && q[0] === 'PUT' && !confirm(q[3] + '?\n\nOnly do this if you know which strip is installed: the wrong one makes every white look off.')) return;
+    ctlQueue(q[0], q[1], q[2], q[3]);
+  }));
+  document.getElementById('ctlSend').addEventListener('click', () => {
+    const method = document.getElementById('ctlMethod').value;
+    const path = document.getElementById('ctlPath').value.trim();
+    const body = document.getElementById('ctlBodyIn').value.trim();
+    if (body) { try { JSON.parse(body); } catch (_) { toast('Body must be valid JSON.', 'error'); return; } }
+    ctlQueue(method, path, body, 'Custom command');
+  });
+  document.querySelectorAll('[data-ctl-session]').forEach(btn => btn.addEventListener('click', async () => {
+    if (!ctlOpenId) return;
+    const minutes = parseInt(btn.getAttribute('data-ctl-session'), 10);
+    try {
+      await call('supportSession', { deviceId: ctlOpenId, minutes });
+      toast(minutes ? 'Session open for ' + minutes + ' min. The controller speeds up at its next check-in (within 10 min).' : 'Session ended.', 'success');
+    } catch (err) { toast('Failed: ' + (err.message || 'error'), 'error'); }
+  }));
+  document.getElementById('ctlResetEnroll').addEventListener('click', async () => {
+    if (!ctlOpenId) return;
+    if (!confirm('Forget this controller\'s secret? The next check-in from this MAC enrolls as new. Only do this after a factory reset or a replaced controller.')) return;
+    try { await call('supportResetEnrollment', { deviceId: ctlOpenId }); toast('Enrollment reset.', 'success'); }
+    catch (err) { toast('Failed: ' + (err.message || 'error'), 'error'); }
+  });
+  document.getElementById('ctlBlock').addEventListener('click', async () => {
+    if (!ctlOpenId) return;
+    const d = ctlCache.find(x => x._id === ctlOpenId) || {};
+    const blocked = !(document.getElementById('ctlBlock').textContent || '').startsWith('Unblock');
+    if (blocked && !confirm('Block this controller? Every check-in from it is refused until you unblock it.')) return;
+    try { await call('supportSetBlocked', { deviceId: ctlOpenId, blocked }); toast(blocked ? 'Blocked.' : 'Unblocked.', 'success'); }
+    catch (err) { toast('Failed: ' + (err.message || 'error'), 'error'); }
+  });
 
   /* ─── Go ───────────────────────────────────────────────────────── */
   boot();

@@ -75,6 +75,21 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
 
+    // Remote support (functions/src/deviceSupport.js). Admin read only; every
+    // write goes through the Cloud Functions, which check the command
+    // allowlist and record who queued what.
+    match /supportDevices/{deviceId} {
+      allow read:  if isAdmin();
+      allow write: if false;
+      match /commands/{commandId} {
+        allow read:  if isAdmin();
+        allow write: if false;
+      }
+    }
+    match /supportCheckinIp/{key} {
+      allow read, write: if false;
+    }
+
     // Admin audit log: admin read only. Admin SDK writes only.
     match /admin_audit/{entryId} {
       allow read:  if isAdmin();
