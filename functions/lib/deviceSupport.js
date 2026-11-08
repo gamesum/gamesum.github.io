@@ -27,7 +27,6 @@
  *   supportCheckinIp/{ipHash_hour}     abuse counter
  */
 const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
-const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const crypto = require("crypto");
 const db = () => admin.firestore();
@@ -38,11 +37,6 @@ const DEVICE_ID = /^[0-9a-f]{12}$/;
 const SECRET = /^[0-9a-f]{64}$/;
 // Label serial as Porchlight issues them; must match its SERIAL_RE.
 const SERIAL = /^AG-\d{4}-\d{4,}$/;
-// Shared with Porchlight's controllerOwners function (same secret name in
-// both projects). Lets the panel show whose controller it is without the
-// website ever storing a customer's name or address.
-const AG_SUPPORT_LINK_KEY = defineSecret("AG_SUPPORT_LINK_KEY");
-const PORCHLIGHT_OWNERS_URL = "https://us-central1-porchlight-f1d62.cloudfunctions.net/controllerOwners";
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_FIELD_BYTES = 24 * 1024;
 const MAX_COMMAND_BODY = 12 * 1024;
@@ -454,30 +448,8 @@ exports.supportAssignSerial = onCall(callOpts, async (request) => {
     await audit(uid, request.auth.token.email, "support_assign_serial", id, { serial });
     return { ok: true };
 });
-/** Who owns these serials, asked live from Porchlight. Nothing is stored. */
-exports.supportOwners = onCall({ ...callOpts, secrets: [AG_SUPPORT_LINK_KEY] }, async (request) => {
-    await requireAdmin(request);
-    const serials = Array.isArray(request.data && request.data.serials) ? request.data.serials : [];
-    const wanted = [...new Set(serials.map((x) => String(x || "").toUpperCase()).filter((x) => SERIAL.test(x)))].slice(0, 100);
-    if (!wanted.length)
-        return { owners: {} };
-    let r;
-    try {
-        r = await fetch(PORCHLIGHT_OWNERS_URL, {
-            method: "POST",
-            headers: { "content-type": "application/json", "x-ag-link-key": AG_SUPPORT_LINK_KEY.value() },
-            body: JSON.stringify({ serials: wanted }),
-            signal: AbortSignal.timeout(10000),
-        });
-    }
-    catch (e) {
-        throw new HttpsError("unavailable", "Porchlight did not answer.");
-    }
-    if (!r.ok)
-        throw new HttpsError("unavailable", `Porchlight answered ${r.status}.`);
-    const j = await r.json();
-    return { owners: j && typeof j.owners === "object" ? j.owners : {} };
-});
+// Shared with supportOwners.js.
+exports._internal = { requireAdmin, callOpts, SERIAL };
 // Exposed for tests only.
 exports._test = { commandAllowed, scrub, field, sameHash };
 //# sourceMappingURL=deviceSupport.js.map
