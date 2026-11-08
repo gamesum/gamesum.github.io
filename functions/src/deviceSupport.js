@@ -27,6 +27,7 @@
  */
 
 const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const crypto = require("crypto");
 
@@ -37,6 +38,13 @@ const OWNER_EMAIL = "shaneward852@gmail.com";
 const MAC = /^[0-9A-F]{2}(:[0-9A-F]{2}){5}$/;
 const DEVICE_ID = /^[0-9a-f]{12}$/;
 const SECRET = /^[0-9a-f]{64}$/;
+// Label serial as Porchlight issues them; must match its SERIAL_RE.
+const SERIAL = /^AG-\d{4}-\d{4,}$/;
+// Shared with Porchlight's controllerOwners function (same secret name in
+// both projects). Lets the panel show whose controller it is without the
+// website ever storing a customer's name or address.
+const AG_SUPPORT_LINK_KEY = defineSecret("AG_SUPPORT_LINK_KEY");
+const PORCHLIGHT_OWNERS_URL = "https://us-central1-porchlight-f1d62.cloudfunctions.net/controllerOwners";
 const MAX_BODY_BYTES = 64 * 1024;
 const MAX_FIELD_BYTES = 24 * 1024;
 const MAX_COMMAND_BODY = 12 * 1024;
@@ -222,6 +230,8 @@ exports.deviceCheckin = onRequest(
         name: clean(device.name, 64),
         prop: clean(device.prop, 16),
         fw: clean(device.fw || req.headers["x-ag-fw"], 16),
+        // Set on the controller by the app when its label is scanned.
+        serial: typeof device.serial === "string" && SERIAL.test(device.serial) ? device.serial : "",
         snapshot: {
           device: field(device),
           state: field(body.state),
@@ -404,6 +414,43 @@ exports.supportSetBlocked = onCall(callOpts, async (request) => {
   await ref.update({ blocked });
   await audit(uid, request.auth.token.email, blocked ? "support_block" : "support_unblock", id, null);
   return { ok: true };
+});
+
+/** Admin sets the label serial for a controller that has none stored (one
+ *  installed before labels were scanned). The controller's own serial, once
+ *  it reports one, takes priority in the panel. "" clears. */
+exports.supportAssignSerial = onCall(callOpts, async (request) => {
+  const uid = await requireAdmin(request);
+  const id = deviceIdOf(request.data);
+  const serial = String(request.data.serial || "").trim().toUpperCase();
+  if (serial && !SERIAL.test(serial)) throw new HttpsError("invalid-argument", "A serial looks like AG-2026-0012.");
+  const ref = db().collection("supportDevices").doc(id);
+  if (!(await ref.get()).exists) throw new HttpsError("not-found", "Unknown controller.");
+  await ref.update({ assignedSerial: serial || FieldValue.delete() });
+  await audit(uid, request.auth.token.email, "support_assign_serial", id, { serial });
+  return { ok: true };
+});
+
+/** Who owns these serials, asked live from Porchlight. Nothing is stored. */
+exports.supportOwners = onCall({ ...callOpts, secrets: [AG_SUPPORT_LINK_KEY] }, async (request) => {
+  await requireAdmin(request);
+  const serials = Array.isArray(request.data && request.data.serials) ? request.data.serials : [];
+  const wanted = [...new Set(serials.map((x) => String(x || "").toUpperCase()).filter((x) => SERIAL.test(x)))].slice(0, 100);
+  if (!wanted.length) return { owners: {} };
+  let r;
+  try {
+    r = await fetch(PORCHLIGHT_OWNERS_URL, {
+      method: "POST",
+      headers: { "content-type": "application/json", "x-ag-link-key": AG_SUPPORT_LINK_KEY.value() },
+      body: JSON.stringify({ serials: wanted }),
+      signal: AbortSignal.timeout(10000),
+    });
+  } catch (e) {
+    throw new HttpsError("unavailable", "Porchlight did not answer.");
+  }
+  if (!r.ok) throw new HttpsError("unavailable", `Porchlight answered ${r.status}.`);
+  const j = await r.json();
+  return { owners: j && typeof j.owners === "object" ? j.owners : {} };
 });
 
 // Exposed for tests only.

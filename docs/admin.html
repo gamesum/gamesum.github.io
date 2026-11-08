@@ -756,10 +756,10 @@
         <div class="table-wrap">
           <table>
             <thead>
-              <tr><th>Controller</th><th>Status</th><th>Last seen</th><th>Firmware</th><th>Faults</th><th>WiFi</th><th></th></tr>
+              <tr><th>Controller</th><th>Customer</th><th>Status</th><th>Last seen</th><th>Firmware</th><th>Faults</th><th>WiFi</th><th></th></tr>
             </thead>
             <tbody id="ctlBody">
-              <tr><td colspan="7" class="empty-row">Loading controllers.</td></tr>
+              <tr><td colspan="8" class="empty-row">Loading controllers.</td></tr>
             </tbody>
           </table>
         </div>
@@ -864,6 +864,14 @@
   </div>
   <div id="ctlMeta" style="color:var(--muted); font-size:0.82rem; margin-bottom:14px;"></div>
   <div id="ctlNotice" style="display:none; border:1px solid var(--border2); border-radius:10px; padding:10px 14px; margin-bottom:14px; font-size:0.85rem;"></div>
+
+  <div class="ctl-label">Customer</div>
+  <div id="ctlOwner" class="ctl-card" style="margin-bottom:8px;"></div>
+  <div style="display:flex; gap:8px; align-items:center; margin-bottom:18px;">
+    <input id="ctlSerialIn" class="ctl-input" style="width:180px; font-family:ui-monospace,Menlo,monospace;" placeholder="AG-2026-0012" autocomplete="off" />
+    <button class="btn btn-sm" id="ctlSerialSave">Set label serial</button>
+    <span class="cell-sub">Only needed for controllers whose label was never scanned in the app.</span>
+  </div>
 
   <div id="ctlSummary" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:8px; margin-bottom:18px;"></div>
 
@@ -2196,6 +2204,30 @@
   // write the audit log. Everything a controller reports is device-supplied
   // text, so it is always escaped or set with textContent.
   let ctlCache = [];
+  let ctlOwners = {};  // serial -> owner, asked live from Porchlight, never stored
+  function ctlSerialOf(d) { return d.serial || d.assignedSerial || ''; }
+  async function ctlLoadOwners(serials) {
+    const want = [...new Set(serials.filter(Boolean))].filter(x => !(x in ctlOwners));
+    if (!want.length) return;
+    try {
+      const r = await call('supportOwners', { serials: want });
+      Object.assign(ctlOwners, (r && r.owners) || {});
+    } catch (err) {
+      // Until the Porchlight link is set up (or if Porchlight is down) the
+      // panel still works; it just shows serials without names.
+      console.warn('Owner lookup unavailable', err);
+      for (const x of want) ctlOwners[x] = { found: false, unavailable: true };
+    }
+  }
+  function ctlOwnerText(d) {
+    const serial = ctlSerialOf(d);
+    if (!serial) return '<span class="cell-sub">no label serial</span>';
+    const o = ctlOwners[serial];
+    if (!o) return '<span class="cell-sub">' + esc(serial) + '</span>';
+    if (o.unavailable) return '<span class="cell-sub">' + esc(serial) + ' (owner lookup unavailable)</span>';
+    if (!o.found) return '<span class="cell-sub">' + esc(serial) + ' (not in Porchlight)</span>';
+    return '<div>' + esc(o.customerName || 'Unnamed customer') + '</div><div class="cell-sub">' + esc(serial) + (o.status && o.status !== 'active' ? ' &middot; ' + esc(o.status) : '') + '</div>';
+  }
   let ctlOpenId = null;
   let ctlUnsubs = [];
   const CTL_ONLINE_MS = 15 * 60 * 1000;
@@ -2226,18 +2258,24 @@
       const snap = await fbFirestore.collection('supportDevices').orderBy('lastSeen', 'desc').limit(500).get();
       ctlCache = snap.docs.map(d => Object.assign({ _id: d.id }, d.data()));
       renderControllers();
+      await ctlLoadOwners(ctlCache.map(ctlSerialOf));
+      renderControllers();
     } catch (err) {
       console.error(err);
-      body.innerHTML = '<tr><td colspan="7" class="empty-row">Failed to load controllers. ' + esc(err.message || '') + '</td></tr>';
+      body.innerHTML = '<tr><td colspan="8" class="empty-row">Failed to load controllers. ' + esc(err.message || '') + '</td></tr>';
     }
   }
 
   function renderControllers() {
     const body = document.getElementById('ctlBody');
     const q = (document.getElementById('ctlSearch').value || '').toLowerCase().trim();
-    const rows = ctlCache.filter(d => !q || [d.name, d.mac, d.fw, d._id].join(' ').toLowerCase().includes(q));
+    const rows = ctlCache.filter(d => {
+      if (!q) return true;
+      const o = ctlOwners[ctlSerialOf(d)] || {};
+      return [d.name, d.mac, d.fw, d._id, ctlSerialOf(d), o.customerName, o.address].join(' ').toLowerCase().includes(q);
+    });
     if (!rows.length) {
-      body.innerHTML = '<tr><td colspan="7" class="empty-row">' + (ctlCache.length ? 'No controllers match.' : 'No controller has checked in yet. Controllers appear here once they run firmware 1.4.0.') + '</td></tr>';
+      body.innerHTML = '<tr><td colspan="8" class="empty-row">' + (ctlCache.length ? 'No controllers match.' : 'No controller has checked in yet. Controllers appear here once they run firmware 1.4.0.') + '</td></tr>';
       return;
     }
     body.innerHTML = rows.map(d => {
@@ -2247,6 +2285,7 @@
       const rssi = typeof diag.rssi === 'number' ? diag.rssi + ' dBm' : '.';
       return '<tr style="cursor:pointer;" data-ctl-open="' + esc(d._id) + '">'
         + '<td><div>' + esc(d.name || 'Unnamed') + '</div><div class="cell-sub">' + esc(d.mac || d._id) + '</div></td>'
+        + '<td>' + ctlOwnerText(d) + '</td>'
         + '<td>' + ctlStatus(d) + '</td>'
         + '<td>' + esc(ctlAgo(d.lastSeen)) + '</td>'
         + '<td>' + esc(d.fw || '.') + '</td>'
@@ -2275,6 +2314,7 @@
     const diag = ctlParse(snap.diag) || {};
     const sched = ctlParse(snap.schedule) || {};
     document.getElementById('ctlTitle').textContent = d.name || 'Controller';
+    ctlRenderOwner(d);
     document.getElementById('ctlMeta').innerHTML = esc(d.mac || d._id) + ' &middot; ' + ctlStatus(d)
       + ' &middot; last seen ' + esc(ctlAgo(d.lastSeen))
       + (ctlMillis(d.supportUntil) > Date.now() ? ' &middot; <span class="pill pill-creator">session open</span>' : '');
@@ -2306,6 +2346,42 @@
     document.getElementById('ctlRaw').textContent = JSON.stringify(raw, null, 2);
     document.getElementById('ctlBlock').textContent = d.blocked ? 'Unblock controller' : 'Block controller';
   }
+
+  async function ctlRenderOwner(d) {
+    const box = document.getElementById('ctlOwner');
+    const serial = ctlSerialOf(d);
+    const input = document.getElementById('ctlSerialIn');
+    if (document.activeElement !== input) input.value = d.assignedSerial || '';
+    if (!serial) {
+      box.innerHTML = 'No label serial yet. Scan the label in the app (Setup, Connect), or set it below.';
+      return;
+    }
+    await ctlLoadOwners([serial]);
+    const o = ctlOwners[serial] || {};
+    const src = d.serial ? 'scanned in the app' : 'set by support';
+    if (o.unavailable) {
+      box.innerHTML = '<b>' + esc(serial) + '</b>Owner lookup is not available right now.';
+      return;
+    }
+    if (!o.found) {
+      box.innerHTML = '<b>' + esc(serial) + '</b>Not found in Porchlight (' + esc(src) + '). Check the serial.';
+      return;
+    }
+    box.innerHTML = '<b>' + esc(serial) + ' &middot; ' + esc(src) + '</b>'
+      + '<div style="font-size:0.95rem;">' + esc(o.customerName || 'Unnamed customer') + '</div>'
+      + '<div class="cell-sub">' + esc(o.address || '') + '</div>'
+      + '<div class="cell-sub">Installed ' + esc(o.installDate || '.') + (o.status && o.status !== 'active' ? ' &middot; ' + esc(o.status) + (o.replacedBy ? ' by ' + esc(o.replacedBy) : '') : '') + '</div>'
+      + (d.serial && d.assignedSerial && d.assignedSerial !== d.serial ? '<div class="cell-sub" style="color:var(--danger);">Support set ' + esc(d.assignedSerial) + ' but the controller says ' + esc(d.serial) + '. The controller wins.</div>' : '');
+  }
+  document.getElementById('ctlSerialSave').addEventListener('click', async () => {
+    if (!ctlOpenId) return;
+    const serial = document.getElementById('ctlSerialIn').value.trim().toUpperCase();
+    if (serial && !/^AG-\d{4}-\d{4,}$/.test(serial)) { toast('A serial looks like AG-2026-0012.', 'error'); return; }
+    try {
+      await call('supportAssignSerial', { deviceId: ctlOpenId, serial });
+      toast(serial ? 'Serial set.' : 'Serial cleared.', 'success');
+    } catch (err) { toast('Failed: ' + (err.message || 'error'), 'error'); }
+  });
 
   function ctlRenderCommands(docs) {
     const wrap = document.getElementById('ctlCommands');

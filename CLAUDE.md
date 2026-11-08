@@ -13,8 +13,10 @@
 >   **not** by pushing to `main`.
 > - The site's pages live in **`docs/`**, not the repo root. There is no
 >   `index.html` at the root.
-> - The website is **not** in `Desktop/VSCODE/afterglo` (that's the Flutter app +
->   firmware) and **not** in `wled-ridgeline` (legacy ESP32 firmware).
+> - The website is **not** in `C:\Users\18018\Afterglo-Fable` (that's the
+>   Flutter app + gen-2 firmware, repo gamesum/Afterglo-Fable; the old
+>   `Desktop/VSCODE/afterglo` copy no longer exists) and **not** in
+>   `wled-ridgeline` (legacy ESP32 firmware).
 >
 > The local checkout on Shane's Windows machine is
 > **`C:\Users\18018\Desktop\RIDGELINE\Afterglo`** — that is where `firebase

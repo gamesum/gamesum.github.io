@@ -21,6 +21,7 @@ export { reportHours } from "./reportHours";
 // secret; admins queue allowlisted lighting commands — see ./deviceSupport.js.
 export {
   deviceCheckin, supportQueueCommand, supportSession, supportResetEnrollment, supportSetBlocked,
+  supportAssignSerial, supportOwners,
 } from "./deviceSupport";
 
 // Emails afterglolights@gmail.com whenever a website lead arrives: quote forms
