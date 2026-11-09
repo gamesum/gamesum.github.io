@@ -4,15 +4,7 @@
  * Porchlight's controllerOwners function. Admin only. Nothing is stored on
  * the website side.
  *
- * NOT IMPORTED YET. It needs the AG_SUPPORT_LINK_KEY secret, and declaring a
- * secret that does not exist makes every functions deploy fail. To enable:
- *   1. Set the same random value in both projects:
- *        firebase functions:secrets:set AG_SUPPORT_LINK_KEY --project afterglo-website-fbb89
- *        firebase functions:secrets:set AG_SUPPORT_LINK_KEY --project porchlight-f1d62
- *   2. Porchlight: export controllerOwners (functions/controller_owners.js) and deploy it.
- *   3. Here: add `export { supportOwners } from "./supportOwners";` to index.ts
- *      and deploy functions:supportOwners.
- * Until then the admin panel shows serials without names.
+ * Needs the AG_SUPPORT_LINK_KEY secret (same value in both projects).
  */
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
