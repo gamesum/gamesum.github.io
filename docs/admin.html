@@ -11,7 +11,7 @@
   <meta name="description" content="AFTERGLO internal admin console." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@700;800;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet" />
   <!-- Firebase SDK (compat) -->
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check-compat.js"></script>
@@ -176,22 +176,72 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ─── TABS (chip style, like my-library) ──────────────────────── */
-    .tabs {
-      display: flex; gap: 8px; flex-wrap: wrap;
-      margin: 8px 0 24px;
-      padding: 8px; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 999px;
-      width: fit-content;
+    /* ─── SHELL: sidebar + main ──────────────────────────────────── */
+    .container { max-width: 1440px; }
+    .shell { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 32px; align-items: start; }
+    .shell > main { min-width: 0; }
+    .side {
+      position: sticky; top: calc(var(--nav-h) + 24px);
+      display: flex; flex-direction: column; gap: 22px;
     }
-    .tab-chip {
-      padding: 9px 18px; border-radius: 999px;
-      font-size: 0.85rem; font-weight: 600; color: var(--muted);
-      background: transparent; border: none; cursor: pointer;
+    .side-group { display: flex; flex-direction: column; gap: 2px; }
+    .side-label, .side-group > summary {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: #6E6E78; padding: 0 12px 6px;
+    }
+    .side-group > summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; }
+    .side-group > summary::-webkit-details-marker { display: none; }
+    .side-group > summary::after { content: '+'; }
+    .side-group[open] > summary::after { content: '\2212'; }
+    .nav-item {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      width: 100%; text-align: left;
+      padding: 9px 12px; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 500; color: var(--muted);
+      background: transparent; border: none; border-left: 2px solid transparent; cursor: pointer;
       transition: color 0.15s, background 0.15s;
     }
+    .nav-item:hover { color: var(--text); background: var(--surface2); }
+    .nav-item.active { color: var(--text); background: var(--surface2); border-left-color: var(--gold); font-weight: 600; }
+    .side-group.retired .nav-item { font-size: 0.84rem; }
+    .nav-count {
+      font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.7rem; font-weight: 600;
+      min-width: 22px; padding: 1px 7px; border-radius: 999px; text-align: center;
+      background: rgba(212,164,58,0.14); color: var(--gold);
+    }
+    .nav-count.alert { background: rgba(240,90,74,0.14); color: var(--danger); }
+    .nav-count:empty { display: none; }
+    .tab-chip {
+      padding: 7px 14px; border-radius: 999px;
+      font-size: 0.8rem; font-weight: 600; color: var(--muted);
+      background: transparent; border: 1px solid var(--border); cursor: pointer;
+    }
     .tab-chip:hover { color: var(--text); }
-    .tab-chip.active { background: var(--gold); color: #000; }
+    .tab-chip.active { background: var(--gold); color: #000; border-color: var(--gold); }
+
+    /* Controller fleet tiles (also filters) */
+    .fleet { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .fleet-tile {
+      text-align: left; cursor: pointer;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 16px; color: var(--text);
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .fleet-tile:hover { border-color: var(--border2); }
+    .fleet-tile.active { border-color: var(--gold); background: rgba(212,164,58,0.06); }
+    .fleet-tile .k {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 0.66rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+    }
+    .fleet-tile .v { font-family: 'Outfit', sans-serif; font-size: 1.9rem; font-weight: 800; line-height: 1.1; margin-top: 4px; }
+    .fleet-tile.good .v { color: var(--success); }
+    .fleet-tile.warn .v { color: var(--gold); }
+    .fleet-tile.bad .v  { color: var(--danger); }
+    .retired-note {
+      border: 1px dashed var(--border2); border-radius: 10px; padding: 10px 14px;
+      color: var(--muted); font-size: 0.84rem; margin-bottom: 16px;
+    }
 
     /* ─── STATS CARDS ─────────────────────────────────────────────── */
     .stats-grid {
@@ -304,8 +354,21 @@
     }
 
     /* ─── RESPONSIVE ──────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .shell { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+      .side { position: static; flex-direction: row; flex-wrap: nowrap; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+      .nav-item { white-space: nowrap; }
+      .fleet { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .search input { min-width: 0; width: 100%; }
+      .side-label { display: none; }
+      .side-group { flex-direction: row; flex-wrap: nowrap; gap: 4px; flex-shrink: 0; }
+      .side-group > summary { padding: 9px 12px; }
+      .nav-item { width: auto; border-left: none; }
+      .nav-item.active { box-shadow: inset 0 -2px 0 var(--gold); }
+    }
     @media (max-width: 720px) {
       .nav-tag { display: none; }
+      .nav-user { display: none; }
       .search input { min-width: 140px; }
       .page-head h1 { font-size: 1.7rem; }
     }
@@ -362,28 +425,39 @@
 <div class="page" id="dashboard" style="display:none;">
   <div class="container">
 
+   <div class="shell">
+    <aside class="side" aria-label="Admin sections">
+      <div class="side-group">
+        <div class="side-label">Support</div>
+        <button class="nav-item active" data-tab="controllers">Controllers <span class="nav-count" id="countControllers"></span></button>
+        <button class="nav-item" data-tab="feedback">App feedback <span class="nav-count" id="countFeedback"></span></button>
+      </div>
+      <div class="side-group">
+        <div class="side-label">Records</div>
+        <button class="nav-item" data-tab="data-requests">Data requests <span class="nav-count" id="countDataReq"></span></button>
+        <button class="nav-item" data-tab="audit">Audit log</button>
+      </div>
+      <details class="side-group retired" id="retiredGroup">
+        <summary>Community (retired)</summary>
+        <button class="nav-item" data-tab="stats">Overview</button>
+        <button class="nav-item" data-tab="users">Users</button>
+        <button class="nav-item" data-tab="creators-verify">Creator verification</button>
+        <button class="nav-item" data-tab="uploads">Uploads</button>
+        <button class="nav-item" data-tab="purchases">Purchases</button>
+        <button class="nav-item" data-tab="disputes">Disputes</button>
+        <button class="nav-item" data-tab="dmca">DMCA</button>
+        <button class="nav-item" data-tab="giveaway">Giveaway</button>
+      </details>
+    </aside>
+    <main>
     <div class="page-head">
-      <h1>Admin Dashboard</h1>
-      <div class="sub">Manage users, creator verification, uploads, and purchases.</div>
+      <h1 id="pageTitle">Controllers</h1>
+      <div class="sub" id="pageSub"></div>
     </div>
-
-    <div class="tabs" role="tablist">
-      <button class="tab-chip active" data-tab="stats">Stats</button>
-      <button class="tab-chip" data-tab="users">Users</button>
-      <button class="tab-chip" data-tab="creators-verify">Creator verification</button>
-      <button class="tab-chip" data-tab="uploads">Uploads</button>
-      <button class="tab-chip" data-tab="purchases">Purchases</button>
-      <button class="tab-chip" data-tab="disputes">Disputes</button>
-      <button class="tab-chip" data-tab="dmca">DMCA</button>
-      <button class="tab-chip" data-tab="data-requests">Data Requests</button>
-      <button class="tab-chip" data-tab="giveaway">Giveaway</button>
-      <button class="tab-chip" data-tab="feedback">Feedback</button>
-      <button class="tab-chip" data-tab="controllers">Controllers</button>
-      <button class="tab-chip" data-tab="audit">Audit Log</button>
-    </div>
+    <div class="retired-note" id="retiredNote" style="display:none;">The community marketplace is no longer run. These records are kept for reference, refunds and legal requests.</div>
 
     <!-- STATS -->
-    <section class="section active" id="section-stats">
+    <section class="section" id="section-stats">
       <div class="stats-grid">
         <div class="stat-card"><div class="label">Total users</div><div class="value" id="statTotalUsers">.</div></div>
         <div class="stat-card"><div class="label">Creators (agreement signed)</div><div class="value gold" id="statCreators">.</div></div>
@@ -739,14 +813,15 @@
     </section>
 
     <!-- CONTROLLERS (remote support) -->
-    <section class="section" id="section-controllers">
+    <section class="section active" id="section-controllers">
+      <div class="fleet" id="ctlFleet"></div>
       <div class="panel">
         <div class="panel-head">
-          <div class="panel-title">Controllers <span class="cell-sub" style="font-weight:400;">remote support, firmware 1.4.0+</span></div>
+          <div class="panel-title" id="ctlPanelTitle">All controllers</div>
           <div class="panel-tools">
             <div class="search">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-              <input type="text" id="ctlSearch" placeholder="Search name, MAC, firmware" autocomplete="off" />
+              <input type="text" id="ctlSearch" placeholder="Search customer, serial, MAC, firmware" autocomplete="off" />
             </div>
             <button class="btn btn-sm btn-icon" id="refreshControllers" title="Refresh" aria-label="Refresh">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
@@ -797,6 +872,8 @@
       </div>
     </section>
 
+    </main>
+   </div>
   </div>
 </div>
 
@@ -1056,31 +1133,75 @@
   signOutBtn.addEventListener('click', doSignOut);
   deniedSignOut.addEventListener('click', doSignOut);
 
-  /* ─── Tabs ─────────────────────────────────────────────────────── */
-  document.querySelectorAll('.tab-chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.tab-chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const tab = chip.getAttribute('data-tab');
-      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-      document.getElementById('section-' + tab).classList.add('active');
-    });
+  /* ─── Navigation ───────────────────────────────────────────────── */
+  const SECTION_META = {
+    'controllers':     ['Controllers', 'Remote support for controllers on firmware 1.4.0 or newer. Click a row to open it.'],
+    'feedback':        ['App feedback', 'Sent from the AFTERGLO app.'],
+    'data-requests':   ['Data requests', 'Account export and deletion requests.'],
+    'audit':           ['Audit log', 'Every admin action, newest first.'],
+    'stats':           ['Community overview', ''],
+    'users':           ['Users', ''],
+    'creators-verify': ['Creator verification', ''],
+    'uploads':         ['Uploads', ''],
+    'purchases':       ['Purchases', ''],
+    'disputes':        ['Disputes', ''],
+    'dmca':            ['DMCA', ''],
+    'giveaway':        ['Giveaway', ''],
+  };
+  const RETIRED = new Set(['stats', 'users', 'creators-verify', 'uploads', 'purchases', 'disputes', 'dmca', 'giveaway']);
+  // Retired sections load on first visit instead of on every page load.
+  const LOADERS = {
+    'stats':           () => Promise.all([loadUsers(), loadUploads(), loadPurchases()]).then(renderStats),
+    'users':           () => loadUsers(),
+    'creators-verify': () => loadUsers(),
+    'uploads':         () => loadUploads(),
+    'purchases':       () => loadPurchases(),
+    'disputes':        () => loadDisputes(),
+    'dmca':            () => loadDmca(),
+    'giveaway':        () => loadGiveaway(),
+  };
+  const loadedOnce = new Set();
+  let dashboardReady = false;
+
+  function showSection(tab, push) {
+    if (!SECTION_META[tab]) tab = 'controllers';
+    document.querySelectorAll('.nav-item').forEach(c => c.classList.toggle('active', c.getAttribute('data-tab') === tab));
+    document.querySelectorAll('.section').forEach(sec => sec.classList.toggle('active', sec.id === 'section-' + tab));
+    document.getElementById('pageTitle').textContent = SECTION_META[tab][0];
+    const sub = document.getElementById('pageSub');
+    sub.textContent = SECTION_META[tab][1];
+    sub.style.display = SECTION_META[tab][1] ? '' : 'none';
+    document.getElementById('retiredNote').style.display = RETIRED.has(tab) ? '' : 'none';
+    if (RETIRED.has(tab)) document.getElementById('retiredGroup').open = true;
+    if (push) history.replaceState(null, '', '#' + tab);
+    if (dashboardReady && LOADERS[tab] && !loadedOnce.has(tab)) {
+      loadedOnce.add(tab);
+      LOADERS[tab]().catch(err => console.error(err));
+    }
+  }
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => showSection(item.getAttribute('data-tab'), true));
   });
+
+  function setCount(id, n, alert) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = n > 0 ? String(n) : '';
+    el.classList.toggle('alert', !!alert);
+  }
 
   /* ─── Data caches ──────────────────────────────────────────────── */
   let usersCache = [];
   let uploadsCache = [];
   let purchasesCache = [];
 
-  /* ─── Load everything on dashboard init ────────────────────────── */
+  /* ─── Load on dashboard init: only what is still in use ────────── */
   async function initDashboard() {
-    await Promise.all([loadUsers(), loadUploads(), loadPurchases(), loadDisputes(), loadDmca(), loadDataRequests(), loadGiveaway(), loadFeedback(), loadAudit(), loadControllers()]);
-    renderStats();
-    // Deep-link: admin.html#feedback opens the Feedback tab directly.
-    if ((window.location.hash || '').toLowerCase() === '#feedback') {
-      const chip = document.querySelector('.tab-chip[data-tab="feedback"]');
-      if (chip) chip.click();
-    }
+    dashboardReady = true;
+    showSection((window.location.hash || '').slice(1).toLowerCase() || 'controllers', false);
+    await Promise.all([loadControllers(), loadFeedback(), loadDataRequests(), loadAudit()]);
+    setCount('countFeedback', feedbackCache.filter(f => (f.status || 'new') === 'new').length);
+    setCount('countDataReq', dataReqCache.filter(r => r.status === 'pending').length);
   }
 
   /* ─── Users ────────────────────────────────────────────────────── */
@@ -2266,10 +2387,50 @@
     }
   }
 
+  let ctlFilter = 'all';
+  function ctlBucket(d) {
+    if (d.blocked) return 'blocked';
+    if (!d.secretHash) return 'new';
+    if (d.optedOut) return 'off';
+    return Date.now() - ctlMillis(d.lastSeen) < CTL_ONLINE_MS ? 'online' : 'silent';
+  }
+  function ctlHasFaults(d) {
+    const dev = ctlParse(d.snapshot && d.snapshot.device) || {};
+    return Array.isArray(dev.faults) && dev.faults.length > 0;
+  }
+  const CTL_FILTERS = {
+    all:     ['All controllers', () => true, ''],
+    online:  ['Online',          d => ctlBucket(d) === 'online', 'good'],
+    faults:  ['With faults',     ctlHasFaults, 'bad'],
+    silent:  ['Not checking in', d => ctlBucket(d) === 'silent', 'warn'],
+    off:     ['Support off',     d => ctlBucket(d) === 'off', ''],
+    nolabel: ['No label serial', d => !ctlSerialOf(d), ''],
+  };
+  function renderFleet() {
+    const el = document.getElementById('ctlFleet');
+    el.innerHTML = Object.keys(CTL_FILTERS).map(k => {
+      const [label, fn, tone] = CTL_FILTERS[k];
+      const n = ctlCache.filter(fn).length;
+      return '<button class="fleet-tile ' + (n && k !== 'all' ? tone : '') + (ctlFilter === k ? ' active' : '') + '" data-ctl-filter="' + k + '">'
+        + '<div class="k">' + esc(label) + '</div><div class="v">' + n + '</div></button>';
+    }).join('');
+    document.getElementById('ctlPanelTitle').textContent = CTL_FILTERS[ctlFilter][0];
+    const attention = ctlCache.filter(d => ctlHasFaults(d) || ctlBucket(d) === 'silent').length;
+    setCount('countControllers', attention, true);
+  }
+  document.getElementById('ctlFleet').addEventListener('click', (e) => {
+    const t = e.target.closest('[data-ctl-filter]');
+    if (!t) return;
+    const k = t.getAttribute('data-ctl-filter');
+    ctlFilter = (ctlFilter === k) ? 'all' : k;
+    renderControllers();
+  });
+
   function renderControllers() {
     const body = document.getElementById('ctlBody');
+    renderFleet();
     const q = (document.getElementById('ctlSearch').value || '').toLowerCase().trim();
-    const rows = ctlCache.filter(d => {
+    const rows = ctlCache.filter(CTL_FILTERS[ctlFilter][1]).filter(d => {
       if (!q) return true;
       const o = ctlOwners[ctlSerialOf(d)] || {};
       return [d.name, d.mac, d.fw, d._id, ctlSerialOf(d), o.customerName, o.address].join(' ').toLowerCase().includes(q);
