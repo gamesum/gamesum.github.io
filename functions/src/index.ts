@@ -23,9 +23,8 @@ export {
   deviceCheckin, supportQueueCommand, supportSession, supportResetEnrollment, supportSetBlocked,
   supportAssignSerial,
 } from "./deviceSupport";
-// supportOwners (./supportOwners.js) is written but not imported yet: it needs
-// the AG_SUPPORT_LINK_KEY secret, and declaring a missing secret makes every
-// functions deploy fail. Enable steps are at the top of that file.
+// Who owns a controller serial, asked live from Porchlight (needs AG_SUPPORT_LINK_KEY).
+export { supportOwners } from "./supportOwners";
 
 // Emails afterglolights@gmail.com whenever a website lead arrives: quote forms
 // (contact_submissions), homepage email signups (/api/signup -> email_signups),
