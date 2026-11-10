@@ -359,7 +359,6 @@
             </div>
             <div class="sms-opts">
               <label class="sms-opt"><input type="checkbox" id="smsServiceOptIn" /><span id="smsConsent"><strong>Text me about my quote and appointments.</strong> I agree to automated customer care texts from AFTERGLO Lighting about my quote, appointments, installation and service.</span></label>
-              <label class="sms-opt"><input type="checkbox" id="smsMarketingOptIn" /><span id="smsMarketingConsent"><strong>Text me seasonal offers.</strong> I agree to automated marketing texts from AFTERGLO Lighting about promotions and discounts.</span></label>
               <p class="sms-fine">Optional, and not required to get a quote or buy. Msg frequency varies. Msg &amp; data rates may apply. Reply HELP for help, STOP to opt out. <a href="terms.html#sms">SMS Terms</a> · <a href="privacy.html">Privacy Policy</a></p>
             </div>
             <div class="form-submit-row">
@@ -705,9 +704,8 @@
             addressZip: addressZip.slice(0, 20),
             marketingOptIn,
             source: 'contact form',
-            // Each consent is stored only if its box was checked; empty means no texts.
+            // Consent is stored only if the box was checked; empty means no texts.
             consentText: (document.getElementById('smsServiceOptIn') || {}).checked ? ((document.getElementById('smsConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590) : '',
-            smsMarketingConsentText: (document.getElementById('smsMarketingOptIn') || {}).checked ? ((document.getElementById('smsMarketingConsent') || {}).textContent || '').replace(/\s+/g, ' ').trim().slice(0, 590) : '',
             submittedAt: firebase.firestore.FieldValue.serverTimestamp(),
             status: 'new',
             userAgent: navigator.userAgent.slice(0, 300),

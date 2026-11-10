@@ -171,7 +171,6 @@ export const onContactSubmissionCreated = functions
           ["Facebook click", at("fbclid") ? "Yes" : ""],
           ["Google click", at("gclid") || at("gbraid") || at("wbraid") ? "Yes" : ""],
           ["Agreed to texts", str(d.consentText, 600) ? "Yes" : "No"],
-          ["Agreed to marketing texts", str(d.smsMarketingConsentText, 600) ? "Yes" : "No"],
           ["Landing page", at("landingPath")],
           ["Referrer", at("referrer")],
           ["Lead id", context.params.submissionId],
