@@ -68,7 +68,8 @@ function commandAllowed(method, path) {
     const tail = (p) => path.startsWith(p) ? path.slice(p.length) : null;
     if (method === "GET") {
         return ["/api/v1/state", "/api/v1/presets", "/api/v1/patterns", "/api/v1/schedules",
-            "/api/v1/schedules/status", "/api/v1/leds", "/api/v1/segments", "/api/v1/connect"]
+            "/api/v1/schedules/status", "/api/v1/leds", "/api/v1/segments", "/api/v1/connect",
+            "/cloud/network"]
             .includes(path) || plainId(tail("/api/v1/patterns/"));
     }
     const one = (...ms) => ms.includes(method);
@@ -91,6 +92,13 @@ function commandAllowed(method, path) {
     if (path === "/api/v1/locate")
         return one("POST", "PUT", "DELETE");
     if (path === "/cloud/restart")
+        return method === "POST";
+    // Firmware 1.6.0+. forget-wifi needs the body {"confirm":"forget-wifi"}
+    // (checked here AND on the controller); the controller restarts into its
+    // setup network and is offline to support until set up again on site.
+    if (path === "/cloud/forget-wifi")
+        return method === "POST";
+    if (path === "/cloud/name")
         return method === "POST";
     return false;
 }
@@ -360,6 +368,9 @@ exports.supportQueueCommand = onCall(callOpts, async (request) => {
     const body = request.data.body == null ? "" : String(request.data.body);
     if (!commandAllowed(method, path))
         throw new HttpsError("invalid-argument", "That command is not allowed remotely.");
+    if (path === "/cloud/forget-wifi" && body !== JSON.stringify({ confirm: "forget-wifi" })) {
+        throw new HttpsError("invalid-argument", 'Forget WiFi needs the body {"confirm":"forget-wifi"}.');
+    }
     if (body.length > MAX_COMMAND_BODY)
         throw new HttpsError("invalid-argument", "Body too large.");
     if (body) {

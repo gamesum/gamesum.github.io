@@ -5,7 +5,8 @@ const { commandAllowed, scrub, field, sameHash } = _test;
 
 for (const [m, p] of [["GET", "/api/v1/leds"], ["PUT", "/api/v1/leds"], ["PATCH", "/api/v1/state"],
   ["POST", "/api/v1/presets/apply"], ["PUT", "/api/v1/schedules"], ["PATCH", "/api/v1/segments/s1"],
-  ["DELETE", "/api/v1/patterns/u-x"], ["POST", "/cloud/restart"], ["GET", "/api/v1/connect"]]) {
+  ["DELETE", "/api/v1/patterns/u-x"], ["POST", "/cloud/restart"], ["GET", "/api/v1/connect"],
+  ["POST", "/cloud/forget-wifi"], ["GET", "/cloud/network"], ["POST", "/cloud/name"]]) {
   assert.ok(commandAllowed(m, p), `${m} ${p} should be allowed`);
 }
 for (const p of ["/api/v1/network", "/api/v1/network/reset", "/api/v1/network/scan", "/api/v1/ota",
@@ -15,7 +16,7 @@ for (const p of ["/api/v1/network", "/api/v1/network/reset", "/api/v1/network/sc
   }
 }
 for (const [m, p] of [["GET", "/api/v1/leds?x=1"], ["GET", "/api/v1/patterns/../network"],
-  ["PUT", "/api/v1/connect"], ["get", "/api/v1/leds"], ["GET", "//api/v1/leds"], ["PUT", "/api/v1/patterns/a/b"]]) {
+  ["PUT", "/api/v1/connect"], ["GET", "/cloud/forget-wifi"], ["POST", "/cloud/network"], ["get", "/api/v1/leds"], ["GET", "//api/v1/leds"], ["PUT", "/api/v1/patterns/a/b"]]) {
   assert.ok(!commandAllowed(m, p), `${m} ${p} must be refused`);
 }
 const s = scrub({ latitude: 40.7, longitude: -111.9, a: [{ lat: 1, lon: 2, password: "x", keep: 3 }] });

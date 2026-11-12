@@ -1063,6 +1063,14 @@
     <button class="btn btn-sm btn-danger" data-ctl-quick="restart">Restart controller</button>
   </div>
 
+  <div class="ctl-label">Network &amp; setup</div>
+  <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:6px;">
+    <button class="btn btn-sm" data-ctl-net="read">Read WiFi</button>
+    <button class="btn btn-sm" data-ctl-net="rename">Rename controller</button>
+    <button class="btn btn-sm btn-danger" data-ctl-net="forget">Reset WiFi (set up again)</button>
+  </div>
+  <div class="cell-sub" id="ctlNetNote" style="margin-bottom:18px;">Needs firmware 1.6.0. Reset WiFi erases the saved network and restarts the controller into its setup network (AFTERGLO-Setup), so it can be connected again with the app on site. Remote support stops until then. The WiFi password is never sent here.</div>
+
   <details style="margin-bottom:18px;">
     <summary style="cursor:pointer; color:var(--gold); font-size:0.82rem; font-weight:600; letter-spacing:0.04em; text-transform:uppercase;">Custom command</summary>
     <div style="display:flex; gap:8px; margin:10px 0;">
@@ -2789,6 +2797,40 @@
     if (q[1] === '/cloud/restart' && !confirm('Restart this controller? The lights go off for about 20 seconds.')) return;
     if (q[1] === '/api/v1/leds' && q[0] === 'PUT' && !confirm(q[3] + '?\n\nOnly do this if you know which strip is installed: the wrong one makes every white look off.')) return;
     ctlQueue(q[0], q[1], q[2], q[3]);
+  }));
+  // Network & setup (firmware 1.6.0+): handled by the controller's own
+  // glue, checked by both allowlists.
+  function ctlFwAtLeast(fw, want) {
+    const a = String(fw || '').split('.').map(n => parseInt(n, 10) || 0);
+    const b = want.split('.').map(n => parseInt(n, 10));
+    for (let i = 0; i < 3; i++) { if ((a[i] || 0) !== b[i]) return (a[i] || 0) > b[i]; }
+    return true;
+  }
+  document.querySelectorAll('[data-ctl-net]').forEach(btn => btn.addEventListener('click', () => {
+    const d = ctlCache.find(x => x._id === ctlOpenId);
+    const dev = ctlParse(d && d.snapshot && d.snapshot.device) || {};
+    const fw = String((d && d.fw) || dev.fw || '');
+    if (!ctlFwAtLeast(fw, '1.6.0')) {
+      toast('This controller is on firmware ' + (fw || 'unknown') + '. Network & setup needs 1.6.0.', 'error');
+      return;
+    }
+    const what = btn.getAttribute('data-ctl-net');
+    if (what === 'read') {
+      ctlQueue('GET', '/cloud/network', '', 'Read WiFi');
+    } else if (what === 'rename') {
+      const cur = dev.name || '';
+      const name = (prompt('New name for this controller (up to 32 characters):', cur) || '').trim();
+      if (!name || name === cur) return;
+      if (name.length > 32 || /["\\]/.test(name)) { toast('Up to 32 characters, no quotes or backslashes.', 'error'); return; }
+      ctlQueue('POST', '/cloud/name', JSON.stringify({ name }), 'Rename to ' + name);
+    } else if (what === 'forget') {
+      const typed = prompt('Reset WiFi on "' + (dev.name || ctlOpenId) + '"?\n\n'
+        + 'The controller forgets its WiFi and restarts into AFTERGLO-Setup. Its lights and timers are kept, '
+        + 'but it goes offline to remote support until someone sets it up again on site with the app.\n\n'
+        + 'Type RESET to confirm.');
+      if ((typed || '').trim().toUpperCase() !== 'RESET') return;
+      ctlQueue('POST', '/cloud/forget-wifi', JSON.stringify({ confirm: 'forget-wifi' }), 'Reset WiFi (back to setup)');
+    }
   }));
   document.getElementById('ctlSend').addEventListener('click', () => {
     const method = document.getElementById('ctlMethod').value;
