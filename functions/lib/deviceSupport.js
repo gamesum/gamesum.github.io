@@ -29,6 +29,7 @@
 const { onRequest, onCall, HttpsError } = require("firebase-functions/v2/https");
 const admin = require("firebase-admin");
 const crypto = require("crypto");
+const { recordControllerHours } = require("./reportHours");
 const db = () => admin.firestore();
 const FieldValue = admin.firestore.FieldValue;
 const OWNER_EMAIL = "shaneward852@gmail.com";
@@ -256,6 +257,11 @@ exports.deviceCheckin = onRequest({ region: "us-central1", memory: "256MiB", max
                 diag: field(body.diag),
             },
         }, { merge: true });
+        // Warranty hours: the controller's own (authenticated) odometer feeds
+        // controllerHours, max-only. A summary is copied here for the panel.
+        const hours = await recordControllerHours(mac, device, body.diag, now);
+        if (hours.summary)
+            await ref.set({ hours: hours.summary }, { merge: true });
         // Results for commands sent earlier.
         const results = Array.isArray(body.results) ? body.results.slice(0, 16) : [];
         for (const r of results) {
@@ -312,7 +318,10 @@ exports.deviceCheckin = onRequest({ region: "us-central1", memory: "256MiB", max
         const until = verdict.d.supportUntil?.toMillis?.() || 0;
         const more = queued.length > out.length;
         const poll = until > now || more || out.length ? POLL_SESSION_S : POLL_IDLE_S;
-        res.status(200).json({ poll, commands: out });
+        const reply = { poll, commands: out };
+        if (hours.meter)
+            reply.meter = hours.meter; // firmware 1.6.0+ adds it back
+        res.status(200).json(reply);
     }
     catch (e) {
         console.error("deviceCheckin failed", String(e && e.message).slice(0, 200));

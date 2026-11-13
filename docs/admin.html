@@ -2584,6 +2584,12 @@
     if (d.optedOut) notes.push('The customer has switched remote support off in the app. Nothing can be sent until they switch it back on.');
     if (d.blocked) notes.push('This controller is blocked: its check-ins are refused.');
     if ((d.authFailures || 0) > 0) notes.push(esc(d.authFailures) + ' check-in(s) with the wrong secret, last ' + esc(ctlAgo(d.lastAuthFailureAt)) + '. Expected after a factory reset; otherwise someone may be impersonating this MAC.');
+    // Warranty hours: the server's max-only record (controllerHours), which
+    // survives a wiped controller.
+    const wh = d.hours && typeof d.hours === 'object' ? d.hours : null;
+    const whDate = (ms) => typeof ms === 'number' ? new Date(ms).toLocaleDateString() : '?';
+    if (wh && (wh.lowReports || 0) > 0 && wh.lastLowReport) notes.push('Warranty hours: this controller has reported FEWER hours than on record ' + esc(wh.lowReports) + ' time(s), last on ' + esc(whDate(wh.lastLowReport.atMs)) + ' (' + esc(Math.round((wh.lastLowReport.poweredSeconds || 0) / 3600)) + ' h powered). Its flash was erased or the board was swapped. The record below kept the higher figure.');
+    if (wh && (wh.restores || 0) > 0 && wh.lastRestore) notes.push('Warranty hours were restored to this controller from the server record ' + esc(wh.restores) + ' time(s), last on ' + esc(whDate(wh.lastRestore.atMs)) + '.');
     notice.style.display = notes.length ? '' : 'none';
     notice.innerHTML = notes.join('<br>');
     const zones = Array.isArray(dev.zones) ? dev.zones.join(' / ') : '.';
@@ -2599,7 +2605,8 @@
       ctlCard('Clock', diag.clockSynced ? 'set (' + (diag.timezone || '') + ')' : 'NOT set'),
       ctlCard('Up for', typeof diag.uptimeS === 'number' ? Math.round(diag.uptimeS / 3600) + ' h' : '.'),
       ctlCard('Free memory', typeof diag.heapFree === 'number' ? Math.round(diag.heapFree / 1024) + ' KB (min ' + Math.round((diag.heapMin || 0) / 1024) + ')' : '.'),
-      ctlCard('Lit / powered', hrs(dev.litSeconds) + ' / ' + hrs(dev.poweredSeconds)),
+      ctlCard('LED on / controller on', hrs(dev.litSeconds) + ' / ' + hrs(dev.poweredSeconds)),
+      ctlCard('Warranty record', wh ? hrs(wh.litSeconds) + ' / ' + hrs(wh.poweredSeconds) + (wh.firstSeenMs ? ', since ' + whDate(wh.firstSeenMs) : '') : 'none yet'),
       ctlCard('Timers', sched.next ? 'next: ' + JSON.stringify(sched.next).slice(0, 60) : (sched.paused ? 'paused' : '.')),
     ].join('');
     const raw = {};

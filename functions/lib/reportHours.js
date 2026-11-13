@@ -20,6 +20,12 @@
  * Abuse limits: app client header, no CORS, one accepted report per controller
  * per 10 minutes, and a per-IP hourly cap on writes.
  *
+ * Since firmware 1.6.0 the controller's own authenticated check-in
+ * (deviceSupport.js) feeds the same record through recordControllerHours, so
+ * it stays current even when nobody opens the app. A controller that boots
+ * with no odometer at all (flash erased) says so (diag.meterRestore) and is
+ * sent back the hours kept here, once; that is recorded as `restores`.
+ *
  * Read the data in the Firebase console: Firestore → controllerHours.
  */
 const { onRequest } = require("firebase-functions/v2/https");
@@ -73,7 +79,10 @@ function mergeReport(old, rep, nowMs) {
     const elapsedMs = nowMs - (old.updatedAtMs || 0);
     if (elapsedMs < MIN_REPORT_GAP_MS)
         return { doc: null, outcome: "throttled" };
-    const allowed = Math.floor(Math.max(0, elapsedMs) / 1000) + GROWTH_SLACK_S;
+    // After a restore the controller adds back what it had counted since its
+    // wipe, so the next report may jump by that much once.
+    const allowed = Math.floor(Math.max(0, elapsedMs) / 1000) + GROWTH_SLACK_S +
+        (old.restoreCreditS || 0);
     const doc = { ...old, fw: rep.fw || old.fw, name: rep.name || old.name };
     if (rep.poweredSeconds - old.poweredSeconds > allowed ||
         rep.litSeconds - old.litSeconds > allowed) {
@@ -93,7 +102,75 @@ function mergeReport(old, rep, nowMs) {
     doc.litSeconds = Math.min(doc.poweredSeconds, Math.max(old.litSeconds, Math.min(rep.litSeconds, rep.poweredSeconds)));
     doc.updatedAtMs = nowMs;
     doc.reports = (old.reports || 0) + 1;
+    if (outcome === "updated")
+        delete doc.restoreCreditS;
     return { doc, outcome };
+}
+/**
+ * Pure: merge a controller's own check-in report, and decide whether to send
+ * it the hours kept from before its flash was wiped. Returns
+ * { doc (to write, or null), outcome, meter (for the reply, or null) }.
+ */
+function mergeCheckin(old, rep, wantsRestore, nowMs) {
+    const r = mergeReport(old, rep, nowMs);
+    let doc = r.doc;
+    let meter = null;
+    if (wantsRestore && old &&
+        old.poweredSeconds > rep.poweredSeconds + LOW_REPORT_TOLERANCE_S) {
+        meter = { poweredSeconds: old.poweredSeconds, litSeconds: Math.min(old.litSeconds, old.poweredSeconds) };
+        doc = doc || { ...old };
+        doc.restores = (old.restores || 0) + 1;
+        doc.lastRestore = {
+            sentPoweredSeconds: meter.poweredSeconds,
+            sentLitSeconds: meter.litSeconds,
+            controllerPoweredSeconds: rep.poweredSeconds,
+            controllerLitSeconds: rep.litSeconds,
+            fw: rep.fw,
+            atMs: nowMs,
+        };
+        doc.restoreCreditS = rep.poweredSeconds;
+    }
+    if (doc)
+        doc.lastSource = rep.source || doc.lastSource || "";
+    return { doc, outcome: r.outcome, meter };
+}
+/**
+ * Called from deviceCheckin with an authenticated controller's device JSON.
+ * Never throws: hours must not break the check-in. Returns
+ * { meter, summary } (both may be null).
+ */
+async function recordControllerHours(mac, device, diag, nowMs) {
+    try {
+        const litSeconds = seconds(device && device.litSeconds);
+        const poweredSeconds = seconds(device && device.poweredSeconds);
+        if (litSeconds === null || poweredSeconds === null)
+            return { meter: null, summary: null };
+        const rep = {
+            mac, litSeconds, poweredSeconds,
+            fw: clean(device.fw, 24), name: clean(device.name, 40), source: "controller",
+        };
+        const wantsRestore = !!(diag && typeof diag === "object" && diag.meterRestore === true);
+        const ref = db().collection("controllerHours").doc(mac.replace(/:/g, ""));
+        return await db().runTransaction(async (tx) => {
+            const snap = await tx.get(ref);
+            const old = snap.exists ? snap.data() : null;
+            const r = mergeCheckin(old, rep, wantsRestore, nowMs);
+            if (r.doc)
+                tx.set(ref, r.doc);
+            const d = r.doc || old;
+            const summary = d ? {
+                poweredSeconds: d.poweredSeconds, litSeconds: d.litSeconds,
+                firstSeenMs: d.firstSeenMs || null, lowReports: d.lowReports || 0,
+                lastLowReport: d.lastLowReport || null, restores: d.restores || 0,
+                lastRestore: d.lastRestore || null, updatedAtMs: d.updatedAtMs || null,
+            } : null;
+            return { meter: r.meter, summary };
+        });
+    }
+    catch (e) {
+        console.error("recordControllerHours failed", String(e && e.message).slice(0, 200));
+        return { meter: null, summary: null };
+    }
 }
 async function ipAllowed(ip) {
     const hour = new Date().toISOString().slice(0, 13);
@@ -135,6 +212,7 @@ exports.reportHours = onRequest({ cors: false, timeoutSeconds: 15, memory: "256M
         poweredSeconds,
         fw: clean(b.fw, 24),
         name: clean(b.name, 40),
+        source: "app",
     };
     const ip = String(req.headers["x-forwarded-for"] || req.ip || "unknown").split(",")[0].trim();
     try {
@@ -147,6 +225,8 @@ exports.reportHours = onRequest({ cors: false, timeoutSeconds: 15, memory: "256M
             const snap = await tx.get(ref);
             const r = mergeReport(snap.exists ? snap.data() : null, rep, Date.now());
             if (r.doc)
+                r.doc.lastSource = "app";
+            if (r.doc)
                 tx.set(ref, r.doc);
             return r.outcome;
         });
@@ -158,5 +238,6 @@ exports.reportHours = onRequest({ cors: false, timeoutSeconds: 15, memory: "256M
     }
 });
 // Exported for unit tests.
-exports._test = { mergeReport, seconds };
+exports.recordControllerHours = recordControllerHours;
+exports._test = { mergeReport, mergeCheckin, seconds };
 //# sourceMappingURL=reportHours.js.map
