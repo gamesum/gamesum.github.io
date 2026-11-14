@@ -4,7 +4,7 @@
  *
  * SECURITY MODEL
  *  - Controllers call in; nothing here can call a controller. A controller
- *    checks in every 10 minutes (every 15 seconds while a support session is
+ *    checks in every 2 minutes (every 15 seconds while a support session is
  *    open) and collects any commands queued for it.
  *  - Each controller authenticates with its own 256-bit secret, generated on
  *    the device. Only its SHA-256 is stored (supportDevices/{id}.secretHash).
@@ -51,7 +51,7 @@ const MAX_REPLY_BYTES = 14 * 1024;
 const MAX_RESULT_BODY = 2048;
 const COMMANDS_PER_REPLY = 8;
 const COMMAND_TTL_MS = 24 * 3600 * 1000;
-const POLL_IDLE_S = 600;
+const POLL_IDLE_S = 120;  // 2 min: queued commands are picked up quickly without a session
 const POLL_SESSION_S = 15;
 const SESSION_DEFAULT_MIN = 30;
 const SESSION_MAX_MIN = 120;

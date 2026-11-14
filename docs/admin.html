@@ -1050,7 +1050,7 @@
     <button class="btn btn-sm" data-ctl-session="120">Start 2 h</button>
     <button class="btn btn-sm" data-ctl-session="0">End session</button>
   </div>
-  <div class="cell-sub" style="margin-bottom:18px;">While a session is open the controller checks in every 15 s instead of every 10 min. Queuing a command opens a 30 min session on its own.</div>
+  <div class="cell-sub" style="margin-bottom:18px;">While a session is open the controller checks in every 15 s instead of every 2 min. Queuing a command opens a 30 min session on its own.</div>
 
   <div class="ctl-label">Quick fixes</div>
   <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px;">
@@ -2851,7 +2851,7 @@
     const minutes = parseInt(btn.getAttribute('data-ctl-session'), 10);
     try {
       await call('supportSession', { deviceId: ctlOpenId, minutes });
-      toast(minutes ? 'Session open for ' + minutes + ' min. The controller speeds up at its next check-in (within 10 min).' : 'Session ended.', 'success');
+      toast(minutes ? 'Session open for ' + minutes + ' min. The controller speeds up at its next check-in (within 2 min).' : 'Session ended.', 'success');
     } catch (err) { toast('Failed: ' + (err.message || 'error'), 'error'); }
   }));
   document.getElementById('ctlResetEnroll').addEventListener('click', async () => {
