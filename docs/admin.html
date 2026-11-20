@@ -2547,7 +2547,7 @@
       return '<tr style="cursor:pointer;" data-ctl-open="' + esc(d._id) + '">'
         + '<td><div>' + esc(d.name || 'Unnamed') + '</div><div class="cell-sub">' + esc(d.mac || d._id) + '</div></td>'
         + '<td>' + ctlOwnerText(d) + '</td>'
-        + '<td>' + ctlStatus(d) + '</td>'
+        + '<td>' + ctlStatus(d) + (d.ledAlert && !d.ledAlert.restored ? ' <span class="pill pill-rejected">LED type changed</span>' : '') + '</td>'
         + '<td>' + esc(ctlAgo(d.lastSeen)) + '</td>'
         + '<td>' + esc(d.fw || '.') + '</td>'
         + '<td>' + faults + '</td>'
@@ -2590,6 +2590,16 @@
     const whDate = (ms) => typeof ms === 'number' ? new Date(ms).toLocaleDateString() : '?';
     if (wh && (wh.lowReports || 0) > 0 && wh.lastLowReport) notes.push('Warranty hours: this controller has reported FEWER hours than on record ' + esc(wh.lowReports) + ' time(s), last on ' + esc(whDate(wh.lastLowReport.atMs)) + ' (' + esc(Math.round((wh.lastLowReport.poweredSeconds || 0) / 3600)) + ' h powered). Its flash was erased or the board was swapped. The record below kept the higher figure.');
     if (wh && (wh.restores || 0) > 0 && wh.lastRestore) notes.push('Warranty hours were restored to this controller from the server record ' + esc(wh.restores) + ' time(s), last on ' + esc(whDate(wh.lastRestore.atMs)) + '.');
+    // LED type watch (server flags a strip setup that changed across a
+    // firmware update; a deliberate edit on the same firmware is not flagged).
+    const la = d.ledAlert && typeof d.ledAlert === 'object' ? d.ledAlert : null;
+    if (la && la.from && la.to) {
+      const fmt = (x) => [x.ledType, x.colorOrder].filter(Boolean).join(' ');
+      notes.push((la.restored ? 'Resolved: ' : '<b>LED setup changed during a firmware update:</b> ')
+        + esc(fmt(la.from)) + ' on ' + esc(la.fwFrom) + ' became ' + esc(fmt(la.to)) + ' on ' + esc(la.fwTo)
+        + ' (' + esc(whDate(la.atMs)) + ').'
+        + (la.restored ? ' It is back to ' + esc(fmt(la.from)) + '.' : ' If the lights look wrong, set the strip back to ' + esc(fmt(la.from)) + '.'));
+    }
     notice.style.display = notes.length ? '' : 'none';
     notice.innerHTML = notes.join('<br>');
     const zones = Array.isArray(dev.zones) ? dev.zones.join(' / ') : '.';

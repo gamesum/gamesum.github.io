@@ -257,6 +257,37 @@ exports.deviceCheckin = onRequest({ region: "us-central1", memory: "256MiB", max
                 diag: field(body.diag),
             },
         }, { merge: true });
+        // LED type watch: an update must never change what strip the controller
+        // drives (a customer's RGB came back as RGBW after one). The last setup
+        // seen is kept with the firmware it ran; a change ACROSS a firmware
+        // change is flagged for admin. A change on the same firmware is the
+        // customer or support editing it on purpose, and clears nothing.
+        {
+            const ledsNow = body.leds && typeof body.leds === "object" ? body.leds : null;
+            const fwNow = clean(device.fw || req.headers["x-ag-fw"], 16);
+            if (ledsNow && typeof ledsNow.ledType === "string") {
+                const now2 = { ledType: clean(ledsNow.ledType, 8), colorOrder: clean(ledsNow.colorOrder, 4), fw: fwNow };
+                const prev = verdict.d && verdict.d.ledSetup;
+                const upd = { ledSetup: now2 };
+                if (prev && prev.fw && prev.fw !== fwNow &&
+                    (prev.ledType !== now2.ledType || prev.colorOrder !== now2.colorOrder)) {
+                    upd.ledAlert = {
+                        from: { ledType: prev.ledType || "", colorOrder: prev.colorOrder || "" },
+                        to: { ledType: now2.ledType, colorOrder: now2.colorOrder },
+                        fwFrom: prev.fw, fwTo: fwNow, atMs: now, restored: false,
+                    };
+                    console.warn(`LED setup changed across update ${mac}: ${prev.ledType}/${prev.colorOrder} (${prev.fw}) -> ${now2.ledType}/${now2.colorOrder} (${fwNow})`);
+                }
+                else {
+                    const a = verdict.d && verdict.d.ledAlert;
+                    if (a && !a.restored && a.from && a.from.ledType === now2.ledType &&
+                        a.from.colorOrder === now2.colorOrder) {
+                        upd.ledAlert = { ...a, restored: true, restoredAtMs: now };
+                    }
+                }
+                await ref.set(upd, { merge: true });
+            }
+        }
         // Warranty hours: the controller's own (authenticated) odometer feeds
         // controllerHours, max-only. A summary is copied here for the panel.
         const hours = await recordControllerHours(mac, device, body.diag, now);
