@@ -1060,6 +1060,8 @@
     <button class="btn btn-sm" data-ctl-quick="off">Lights off</button>
     <button class="btn btn-sm" data-ctl-quick="readLeds">Read LED setup</button>
     <button class="btn btn-sm" data-ctl-quick="readSchedules">Read timers</button>
+    <button class="btn btn-sm" data-ctl-identify="on">Flash to identify</button>
+    <button class="btn btn-sm" data-ctl-identify="off">Stop flashing</button>
     <button class="btn btn-sm btn-danger" data-ctl-quick="restart">Restart controller</button>
   </div>
 
@@ -2610,6 +2612,8 @@
       ctlCard('Strip', [leds.ledType, leds.colorOrder].filter(Boolean).join(' ')),
       ctlCard('White LED', leds.whiteKelvin ? leds.whiteKelvin + 'K, ' + (leds.whiteMode || '') : '.'),
       ctlCard('LEDs per zone', zones),
+      ctlCard('First seen', d.enrolledAt ? new Date(ctlMillis(d.enrolledAt)).toLocaleString() : '.'),
+      ctlCard('Home IP / code', [dev.ip, dev.hostname ? String(dev.hostname).replace(/^ag-/, '').toUpperCase() : ''].filter(Boolean).join(' · ')),
       ctlCard('Faults', Array.isArray(dev.faults) && dev.faults.length ? dev.faults.join(' ') : 'none'),
       ctlCard('WiFi signal', typeof diag.rssi === 'number' ? diag.rssi + ' dBm' : '.'),
       ctlCard('Clock', diag.clockSynced ? 'set (' + (diag.timezone || '') + ')' : 'NOT set'),
@@ -2798,7 +2802,10 @@
   // The same fields the app's Setup > LEDs "White LEDs on this install" buttons
   // write (StripProduct ucs2904-warm / ucs2904-bright). Takes effect on the
   // next frame; no restart.
-  const CTL_STRIP = (kelvin) => JSON.stringify({ ledType: 'rgbw', whiteKelvin: kelvin, whiteMode: 'exact', ledsPerPixel: 1, pixelFullScaleMilliamps: 80, maxMilliampsPerPixel: 42 });
+  // No ledType here (2026-11-20): forcing 'rgbw' onto an RGB strip is what
+  // turns a customer's lights into a rainbow. The white settings only matter
+  // on an RGBW strip and are ignored on any other.
+  const CTL_STRIP = (kelvin) => JSON.stringify({ whiteKelvin: kelvin, whiteMode: 'exact', ledsPerPixel: 1, pixelFullScaleMilliamps: 80, maxMilliampsPerPixel: 42 });
   const CTL_QUICK = {
     warmLeds: ['PUT', '/api/v1/leds', CTL_STRIP(3000), 'Strip set to warm white LEDs (3000K)'],
     brightLeds: ['PUT', '/api/v1/leds', CTL_STRIP(6000), 'Strip set to bright white LEDs (6000K)'],
@@ -2815,6 +2822,23 @@
     if (q[1] === '/api/v1/leds' && q[0] === 'PUT' && !confirm(q[3] + '?\n\nOnly do this if you know which strip is installed: the wrong one makes every white look off.')) return;
     ctlQueue(q[0], q[1], q[2], q[3]);
   }));
+  // Identify: segment mode's locate lights a whole zone blue (last LED
+  // yellow) even with the lights switched off, and the controller drops it by
+  // itself 2 minutes after the last request, so nothing needs restoring.
+  document.querySelectorAll('[data-ctl-identify]').forEach(btn => btn.addEventListener('click', () => {
+    const d = ctlCache.find(x => x._id === ctlOpenId);
+    if (btn.getAttribute('data-ctl-identify') === 'off') {
+      ctlQueue('DELETE', '/api/v1/locate', '', 'Stop identify flash');
+      return;
+    }
+    const dev = ctlParse(d && d.snapshot && d.snapshot.device) || {};
+    const zones = Array.isArray(dev.zones) ? dev.zones : [];
+    const zone = zones.findIndex(n => n > 0);
+    if (zone < 0) { toast('This controller reports no LEDs on any zone.', 'error'); return; }
+    ctlQueue('POST', '/api/v1/locate', JSON.stringify({ zone, index: zones[zone] - 1 }),
+      'Identify: zone ' + (zone + 1) + ' lights blue for 2 minutes');
+  }));
+
   // Network & setup (firmware 1.6.0+): handled by the controller's own
   // glue, checked by both allowlists.
   function ctlFwAtLeast(fw, want) {
