@@ -48,7 +48,9 @@ exports.firmwareBin = exports.firmwareManifest = void 0;
 // by docs/firmware.html. If gamesum/firmware-update changes its schema, all
 // three break — see the comments in those files.
 const functions = __importStar(require("firebase-functions"));
-const MANIFEST_URL = "https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest.json";
+const MANIFEST_URL = "https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest_v2.json";
+// v2: what current apps install. The original afterglo2_manifest.json is frozen
+// at 1.3.1 for app builds older than 67 and must not be served here.
 const SITE_URL = "https://afterglolighting.org";
 // Fixture families we're willing to serve. Keep in sync with the picker in
 // docs/firmware.html — a family here that the page doesn't offer is harmless,

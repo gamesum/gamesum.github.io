@@ -14,7 +14,9 @@
 import * as functions from "firebase-functions";
 
 const MANIFEST_URL =
-  "https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest.json";
+  "https://raw.githubusercontent.com/gamesum/firmware-update/main/afterglo2_manifest_v2.json";
+// v2: what current apps install. The original afterglo2_manifest.json is frozen
+// at 1.3.1 for app builds older than 67 and must not be served here.
 
 const SITE_URL = "https://afterglolighting.org";
 
