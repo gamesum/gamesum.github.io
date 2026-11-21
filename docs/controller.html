@@ -137,12 +137,21 @@
     $('installed').textContent = day(c.installDate);
     const today = c.today || new Date().toISOString().slice(0, 10);
     const w = $('warranty');
+    // The installation agreement's warranty: Lifetime on LEDs, track, wiring and
+    // connectors (50,000 hours or 20 years), 5 years on the controller and
+    // power supplies (warrantyPartsEnd), 2 years labor. Older servers send no
+    // warrantyLedEnd: 20 years from install.
+    const led = c.warrantyLedEnd || (c.installDate ? `${Number(c.installDate.slice(0, 4)) + 20}${c.installDate.slice(4)}` : '');
+    const ledLine = `LEDs, track & wiring covered through ${month(led)} or 50,000 hours`;
     if (c.warrantyLaborEnd && today <= c.warrantyLaborEnd) {
       w.className = 'warranty ok';
-      w.textContent = `Parts covered through ${month(c.warrantyPartsEnd)} · Labor through ${month(c.warrantyLaborEnd)}`;
+      w.textContent = `${ledLine} · Controller & power supplies through ${month(c.warrantyPartsEnd)} · Labor through ${month(c.warrantyLaborEnd)}`;
     } else if (c.warrantyPartsEnd && today <= c.warrantyPartsEnd) {
       w.className = 'warranty part';
-      w.textContent = `Parts covered through ${month(c.warrantyPartsEnd)} · Labor coverage ended ${month(c.warrantyLaborEnd)}, so a service call fee applies`;
+      w.textContent = `${ledLine} · Controller & power supplies through ${month(c.warrantyPartsEnd)} · Labor coverage ended ${month(c.warrantyLaborEnd)}, so a service call fee applies`;
+    } else if (led && today <= led) {
+      w.className = 'warranty part';
+      w.textContent = `${ledLine}. Controller & power supply coverage ended ${month(c.warrantyPartsEnd)}. A service call fee applies.`;
     } else {
       w.className = 'warranty out';
       w.textContent = 'Out of warranty. A service call fee applies.';
